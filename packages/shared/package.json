@@ -1,0 +1,13 @@
+{
+  "name": "@hope/shared",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Referentiels et RBAC partages entre l'API et le site",
+  "type": "commonjs",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./constants": "./src/constants.js",
+    "./rbac": "./src/rbac.js"
+  }
+}

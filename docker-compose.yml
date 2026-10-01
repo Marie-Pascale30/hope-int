@@ -1,0 +1,72 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: hope_mysql
+    restart: unless-stopped
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: hope_platform
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: hope_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: ""
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+
+  backend:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./apps/api/.env
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: ""
+      DB_NAME: hope_platform
+      CORS_ORIGIN: http://localhost:3001
+      FRONTEND_URL: http://localhost:3001
+      API_PUBLIC_URL: http://localhost:5000/api
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "5000:5000"
+    volumes:
+      - backend_uploads:/app/apps/api/uploads
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:5000/api
+        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_51UHqjSDTdd6YH3TmAChhB3YGE5w3YMQBL1VA7n9lcrGVMq7HvxTfRN01Wx3RU1jYR2Q4vRJXZuBH0jJQ5keZTkJ800Z3A1HJZR
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3001:3001"
+
+volumes:
+  mysql_data:
+  backend_uploads:

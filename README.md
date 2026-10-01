@@ -1,70 +1,74 @@
-# Getting Started with Create React App
+# HOPE International
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Plateforme de l'association : site public (projets, campagnes de dons, actualités, agenda, candidatures), dons par carte (Stripe, EUR) et Mobile Money Orange / MTN (Notch Pay ou Flutterwave, XAF) avec reçus PDF, espace membre, et administration par rôles.
 
-## Available Scripts
+Monorepo npm workspaces :
 
-In the project directory, you can run:
+```
+apps/
+  api/      @hope/api     Express 5 + MySQL 8
+  web/      @hope/web     Next.js 16 (App Router), CSS maison (src/styles)
+packages/
+  shared/   @hope/shared  Référentiels métier et RBAC communs à l'API et au site
+```
 
-### `npm start`
+Les rôles, permissions, statuts, régions et limites de don sont définis **une seule fois** dans `packages/shared` : l'API les importe (`require("@hope/shared/rbac")`) et le site aussi (`import { PERMISSIONS } from "@hope/shared/rbac"`).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Une seule installation à la racine : `npm install`.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Lancer le projet avec Docker
 
-### `npm test`
+```bash
+docker compose up --build
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Site : http://localhost:3001
+- API : http://localhost:5000/api (santé : `/api/health`)
+- phpMyAdmin : http://localhost:8080
+- MySQL : localhost:3306 (volume persistant `mysql_data`)
 
-### `npm run build`
+Données de démonstration : `npm run seed` (complète une base vide) ou `npm run seed -- --reset` (réinitialise les contenus, dons, événements, candidatures et messages de démo ; les comptes sont conservés).
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Comptes de démo : `admin@hope.org` / `Admin@123456` · équipe (`directrice@`, `rh@`, `finance@`, `orga@`, `it@`, `region@`, `secretaire@hope.org`) / `Hope@123456` · membres (`alice@`, `brice@`, `kevin@`, `sandrine@hope.org`) / `Member@123`.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Configuration
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Les secrets backend viennent de `apps/api/.env` (modèle commenté : `apps/api/.env.example`) :
 
-### `npm run eject`
+| Variable | Rôle |
+|---|---|
+| `JWT_SECRET` | ≥ 32 caractères aléatoires (obligatoire en production) |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Dons par carte ; le webhook signé est obligatoire en production |
+| `NOTCHPAY_PUBLIC_KEY`, `NOTCHPAY_WEBHOOK_HASH` | Dons Mobile Money via Notch Pay (prioritaire) |
+| `FLUTTERWAVE_SECRET_KEY`, `FLUTTERWAVE_WEBHOOK_HASH` | Dons Mobile Money via Flutterwave |
+| `MOBILE_MONEY_PROVIDER` | Force le prestataire Mobile Money (`notchpay` ou `flutterwave`) |
+| `SMTP_*` | Emails (identifiants, reçus, réinitialisation). Sans SMTP, ils s'affichent dans la console en développement |
+| `FRONTEND_URL`, `API_PUBLIC_URL` | Liens dans les emails et retour de paiement |
+| `ORG_*`, `RECEIPT_FISCAL_MENTION` | Informations imprimées sur les reçus de don |
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Un moyen de paiement non configuré est simplement affiché comme indisponible sur le site. La page **Administration → État du système** (rôle IT) liste ce qui reste à configurer.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Webhooks à déclarer chez les prestataires :
+- Stripe : `POST {API}/payment/webhook` (événements `payment_intent.*`, `invoice.paid`, `customer.subscription.deleted`)
+- Notch Pay : `POST {API}/payment/notchpay/webhook`
+- Flutterwave : `POST {API}/payment/flutterwave/webhook`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Les variables `NEXT_PUBLIC_*` du frontend sont fixées comme build-args dans [docker-compose.yml](docker-compose.yml) (inlinées au build Next.js).
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Rôles et sécurité
 
-## Learn More
+Les droits sont définis dans `packages/shared/src/rbac.js` et relus en base à chaque requête (un retrait de droits s'applique immédiatement). Règles : on ne peut attribuer que des rôles dont on possède tous les droits, seul un admin crée un admin, personne ne modifie ses propres rôles, le dernier administrateur actif est protégé, et un compte créé par l'administration doit changer son mot de passe provisoire à la première connexion.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Lancer en local sans Docker
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Depuis la racine :
 
-### Code Splitting
+```bash
+npm install
+npm run db        # MySQL + phpMyAdmin dans Docker
+npm run dev       # API (5000) et site (3001) ensemble
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Autres scripts racine : `dev:api`, `dev:web`, `build`, `start:api`, `start:web`, `lint`, `seed`. Pour lancer un script d'une seule appli : `npm run <script> -w @hope/api` (ou `@hope/web`). Une dépendance s'ajoute dans son workspace : `npm install <paquet> -w @hope/web`.
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Les images Docker se construisent depuis la racine (contexte `.`), car elles ont besoin du lockfile unique et de `packages/shared`.

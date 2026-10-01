@@ -1,0 +1,741 @@
+/* =========================================================
+   Administration (partie A) : vue d'ensemble, candidatures, messages,
+   membres, rôles, journal, système, région. Classes préfixées adm-.
+   ========================================================= */
+
+/* ---------- Utilitaires ---------- */
+
+.adm-small {
+  font-size: 0.85rem;
+}
+
+.adm-mono {
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.8rem;
+  word-break: break-all;
+}
+
+.adm-nowrap {
+  white-space: nowrap;
+}
+
+.adm-grow {
+  flex: 1;
+}
+
+.adm-hint {
+  margin: 10px 0 0;
+}
+
+.adm-summary {
+  margin: -12px 0 14px;
+}
+
+.adm-note {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-size: 0.92rem;
+  white-space: pre-wrap;
+}
+
+.adm-subtitle {
+  margin: 0 0 8px;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.adm-quote {
+  margin: 0;
+  padding: 14px 18px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--accent-50);
+  color: var(--ink);
+  white-space: pre-wrap;
+}
+
+.adm-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.adm-clip {
+  display: block;
+  max-width: 320px;
+  font-size: 0.85rem;
+  color: var(--ink-2);
+}
+
+.btn.adm-danger-text {
+  color: var(--danger);
+}
+
+.btn.adm-danger-text:hover {
+  background: var(--danger-50);
+}
+
+.adm-block {
+  margin-bottom: 24px;
+}
+
+.adm-toolbar-note {
+  align-self: flex-end;
+  padding-bottom: 12px;
+}
+
+/* ---------- Mot de passe provisoire ---------- */
+
+.adm-secret {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.adm-secret code {
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  user-select: all;
+  word-break: break-all;
+}
+
+/* ---------- Vue d'ensemble ---------- */
+
+.adm-figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin-bottom: 14px;
+}
+
+.adm-figures div {
+  display: flex;
+  flex-direction: column;
+}
+
+.adm-figures span {
+  font-size: 0.8rem;
+  color: var(--ink-3);
+}
+
+.adm-figures strong {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.adm-allclear {
+  margin: 0;
+  padding: 16px;
+  border-radius: var(--radius);
+  background: var(--success-50);
+  color: var(--success);
+  font-weight: 500;
+}
+
+.adm-todo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-todo__link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.adm-todo__link:hover {
+  border-color: var(--line-strong);
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.adm-todo__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--warning-50);
+  color: var(--warning);
+}
+
+.adm-todo__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.adm-todo__text span {
+  font-size: 0.84rem;
+  color: var(--ink-3);
+}
+
+.adm-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 190px), 1fr));
+  gap: 10px;
+}
+
+.adm-shortcut {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 600;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.adm-shortcut svg {
+  flex-shrink: 0;
+  color: var(--brand);
+}
+
+.adm-shortcut:hover {
+  border-color: var(--brand-100);
+  background: var(--brand-50);
+  color: var(--brand-700);
+}
+
+/* ---------- Messages ---------- */
+
+.adm-inbox {
+  display: grid;
+  grid-template-columns: minmax(260px, 380px) 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.adm-inbox__list,
+.adm-inbox__panel {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.adm-inbox__list ul {
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+}
+
+.adm-mail {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.adm-mail:hover {
+  background: var(--bg);
+}
+
+.adm-mail:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.adm-mail.is-active {
+  background: var(--brand-50);
+}
+
+.adm-mail__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+
+.adm-mail__top strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-mail__top time {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  color: var(--ink-3);
+}
+
+.adm-mail__subject {
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+.adm-mail.is-unread .adm-mail__subject {
+  font-weight: 700;
+}
+
+.adm-mail__excerpt {
+  font-size: 0.82rem;
+  color: var(--ink-3);
+}
+
+.adm-mail__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: var(--ink-2);
+}
+
+.adm-reader {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: clamp(16px, 2.4vw, 28px);
+}
+
+.adm-reader__back {
+  display: none;
+  align-self: flex-start;
+}
+
+.adm-reader__head h2 {
+  margin: 0 0 8px;
+  font-size: 1.4rem;
+}
+
+.adm-reader__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 0.88rem;
+  color: var(--ink-3);
+}
+
+.adm-reader__meta strong {
+  color: var(--ink);
+}
+
+.adm-reader__content {
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  background: var(--bg);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.adm-reader .divider {
+  margin: 4px 0;
+}
+
+.adm-reader__actions {
+  margin-top: 4px;
+}
+
+@media (max-width: 860px) {
+  .adm-inbox {
+    grid-template-columns: 1fr;
+  }
+
+  .adm-inbox:not(.has-selection) .adm-inbox__panel,
+  .adm-inbox.has-selection .adm-inbox__list {
+    display: none;
+  }
+
+  .adm-reader__back {
+    display: inline-flex;
+  }
+}
+
+/* ---------- Membres ---------- */
+
+.adm-member,
+.adm-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.adm-member {
+  min-width: 220px;
+}
+
+.adm-profile {
+  flex-wrap: wrap;
+}
+
+.adm-profile .cell-main {
+  flex: 1;
+}
+
+.adm-profile .tabs {
+  margin-bottom: 0;
+}
+
+/* ---------- Rôles ---------- */
+
+.adm-mine {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.adm-mine p {
+  margin: 0;
+}
+
+.adm-matrix-wrap {
+  max-height: none;
+}
+
+.adm-matrix th,
+.adm-matrix td {
+  padding: 10px 12px;
+}
+
+.adm-matrix thead th {
+  vertical-align: bottom;
+  min-width: 110px;
+  white-space: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.adm-matrix tbody td {
+  text-align: center;
+}
+
+.adm-matrix tbody th {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 200px;
+  max-width: 260px;
+  background: var(--surface);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: normal;
+  text-align: left;
+  border-right: 1px solid var(--line);
+}
+
+.adm-matrix thead .adm-matrix__corner {
+  left: 0;
+  z-index: 2;
+  text-align: left;
+  border-right: 1px solid var(--line);
+}
+
+.adm-matrix__role {
+  display: block;
+}
+
+.adm-matrix__tag {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.adm-matrix .is-mine {
+  background: var(--accent-50);
+}
+
+.adm-matrix tbody tr:hover td.is-mine {
+  background: #f9e6d2;
+}
+
+.adm-matrix svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.adm-yes {
+  color: var(--success);
+}
+
+.adm-no {
+  color: var(--line-strong);
+}
+
+.adm-matrix__total th,
+.adm-matrix__total td {
+  background: var(--surface-2);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.adm-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 12px 0 0;
+  padding-left: 20px;
+}
+
+.adm-rules li {
+  padding-left: 4px;
+}
+
+.adm-rules strong {
+  display: block;
+}
+
+.adm-rules span {
+  font-size: 0.9rem;
+  color: var(--ink-2);
+}
+
+.adm-grant {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-grant li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.92rem;
+}
+
+.adm-grant li:last-child {
+  border-bottom: 0;
+}
+
+/* ---------- Journal ---------- */
+
+.adm-logs td {
+  vertical-align: top;
+}
+
+.adm-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  vertical-align: middle;
+  background: var(--brand);
+}
+
+.adm-dot--info { background: var(--info); }
+.adm-dot--accent { background: var(--accent); }
+.adm-dot--success { background: var(--success); }
+.adm-dot--warning { background: var(--warning); }
+.adm-dot--danger { background: var(--danger); }
+
+.adm-meta summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--brand);
+}
+
+.adm-meta pre {
+  max-width: 360px;
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+  background: #14261f;
+  color: #e8efe9;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+/* ---------- Système ---------- */
+
+.adm-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-checks li {
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.adm-checks li > svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.adm-checks li > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.adm-checks .is-ok > svg {
+  color: var(--success);
+}
+
+.adm-checks .is-warn {
+  background: var(--warning-50);
+  border-color: #f3dcb8;
+}
+
+.adm-checks .is-warn > svg {
+  color: var(--warning);
+}
+
+.adm-checks__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.adm-checks p {
+  margin: 4px 0 0;
+  font-size: 0.86rem;
+  color: var(--ink-2);
+}
+
+/* ---------- Région ---------- */
+
+.adm-scope {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -12px 0 20px;
+  font-size: 0.92rem;
+  color: var(--ink-2);
+}
+
+.adm-bars,
+.adm-events {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-bars li {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.adm-bars__label {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.92rem;
+}
+
+.adm-bars__label strong {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.adm-events li {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.adm-events li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.adm-events li > svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: var(--brand);
+}
+
+.adm-projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 16px;
+}
+
+.adm-project {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.adm-project h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.adm-project p {
+  margin: 0;
+}
+
+.adm-project__impact {
+  margin-top: auto;
+  color: var(--ink-2);
+}
