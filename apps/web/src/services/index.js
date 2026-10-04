@@ -33,6 +33,7 @@ export const publicApi = {
 // --- Authentification / compte ---
 export const authApi = {
   login: (payload) => data(API.post("/auth/login", payload)),
+  logout: () => data(API.post("/auth/logout")),
   register: (payload) => data(API.post("/auth/register", payload)),
   me: () => data(API.get("/auth/me")),
   updateMe: (payload) => data(API.patch("/auth/me", payload)),
@@ -47,8 +48,13 @@ export const paymentApi = {
   getReceipt: (token) => data(API.get(`/payment/receipts/${token}`)),
   confirmReceipt: (token, payload = {}) => data(API.post(`/payment/receipts/${token}/confirm`, payload)),
   receiptPdfUrl: (token) => `${API.defaults.baseURL}/payment/receipts/${token}/pdf`,
+  // Arret d'un don mensuel sans compte, avec le jeton du recu (page de remerciement / lien du recu).
+  cancelSubscriptionByReceipt: (token) => data(API.post(`/payment/receipts/${token}/cancel-subscription`)),
   mine: () => data(API.get("/payment/mine")),
   cancelSubscription: (id) => data(API.delete(`/payment/subscriptions/${id}`)),
+  // Recapitulatif annuel des dons confirmes du compte connecte (cookie de session, Path=/api).
+  annualReceiptPdfUrl: (year) => `${API.defaults.baseURL}/payment/receipts/annual/${year}/pdf`,
+  annualReceipt: (year) => data(API.get(`/payment/receipts/annual/${year}/pdf`, { responseType: "blob" })),
 };
 
 // --- Administration ---
@@ -79,6 +85,10 @@ export const adminApi = {
   donations: (params) => data(API.get("/admin/donations", { params })),
   financeSummary: (year) => data(API.get("/admin/finance/summary", { params: year ? { year } : {} })),
   reconcile: () => data(API.post("/admin/finance/reconcile")),
+  // Don en verification : decision "approve" | "reject", note facultative (500 caracteres max).
+  reviewDonation: (id, decision, note) =>
+    data(API.post(`/admin/donations/${id}/review`, { decision, ...(note ? { note } : {}) })),
+  resendReceipt: (id) => data(API.post(`/admin/donations/${id}/resend-receipt`)),
   // Telechargement authentifie : renvoie un Blob a enregistrer cote navigateur.
   exportDonations: (params) => data(API.get("/admin/finance/export", { params, responseType: "blob" })),
 

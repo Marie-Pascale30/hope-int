@@ -1,4 +1,6 @@
 const authService = require("../services/authService");
+const { resolveLocale } = require("../i18n");
+const { setSessionCookie, clearSessionCookie } = require("../config/session");
 
 exports.register = async (req, res) => {
     await authService.register(req.body);
@@ -7,7 +9,13 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     const { token, user } = await authService.login(req.body.email, req.body.password);
-    res.json({ token, user });
+    setSessionCookie(res, token);
+    res.json({ user });
+};
+
+exports.logout = async (_req, res) => {
+    clearSessionCookie(res);
+    res.json({ message: "Déconnecté" });
 };
 
 exports.me = async (req, res) => {
@@ -19,12 +27,14 @@ exports.updateMe = async (req, res) => {
 };
 
 exports.changePassword = async (req, res) => {
-    const result = await authService.changePassword(req.user.id, req.body);
-    res.json({ message: "Mot de passe modifié", ...result });
+    // Les anciens jetons sont invalides : la session continue avec un nouveau cookie.
+    const { token, user } = await authService.changePassword(req.user.id, req.body);
+    setSessionCookie(res, token);
+    res.json({ message: "Mot de passe modifié", user });
 };
 
 exports.forgotPassword = async (req, res) => {
-    await authService.requestPasswordReset(req.body.email);
+    await authService.requestPasswordReset(req.body.email, resolveLocale(req));
     res.json({ message: "Si un compte existe pour cet email, un lien de réinitialisation vient d'être envoyé." });
 };
 

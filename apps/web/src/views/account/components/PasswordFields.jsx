@@ -2,11 +2,13 @@
 
 import { useId, useState } from "react";
 import { Check, Eye, EyeOff, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Field } from "../../../components/ui";
 import { passwordChecks } from "./authHelpers";
 
 // Champ mot de passe avec bouton afficher / masquer.
 export function PasswordInput({ label, hint, error, required, autoComplete = "current-password", ...props }) {
+  const t = useTranslations("account.password");
   const id = useId();
   const [visible, setVisible] = useState(false);
   return (
@@ -25,7 +27,7 @@ export function PasswordInput({ label, hint, error, required, autoComplete = "cu
           type="button"
           className="acc-password__toggle"
           onClick={() => setVisible((value) => !value)}
-          aria-label={visible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+          aria-label={visible ? t("hide") : t("show")}
           aria-pressed={visible}
         >
           {visible ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
@@ -37,10 +39,10 @@ export function PasswordInput({ label, hint, error, required, autoComplete = "cu
 
 // Indicateur de robustesse : jauge + liste des regles.
 export function PasswordStrength({ password }) {
+  const t = useTranslations("account.password");
   const checks = passwordChecks(password);
   const score = checks.filter((check) => check.ok).length;
   const level = !password ? "empty" : score === checks.length ? (password.length >= 12 ? "strong" : "good") : "weak";
-  const labels = { empty: "", weak: "Trop faible", good: "Correct", strong: "Robuste" };
   return (
     <div className="acc-strength" aria-live="polite">
       <div className={`acc-strength__bar acc-strength__bar--${level}`} aria-hidden="true">
@@ -48,13 +50,13 @@ export function PasswordStrength({ password }) {
         <span />
         <span />
       </div>
-      {labels[level] && <span className="acc-strength__label">Robustesse : {labels[level]}</span>}
+      {level !== "empty" && <span className="acc-strength__label">{t(`strength.${level}`)}</span>}
       <ul className="acc-strength__rules">
         {checks.map((check) => (
           <li key={check.key} className={check.ok ? "is-ok" : undefined}>
             {check.ok ? <Check size={14} aria-hidden="true" /> : <X size={14} aria-hidden="true" />}
-            {check.label}
-            <span className="visually-hidden">{check.ok ? " : respecté" : " : manquant"}</span>
+            {t(`rules.${check.key}`)}
+            <span className="visually-hidden">{check.ok ? t("ruleOk") : t("ruleMissing")}</span>
           </li>
         ))}
       </ul>

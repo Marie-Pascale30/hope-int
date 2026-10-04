@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ShieldAlert } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { localizePath } from "../i18n/config";
 import { useAuth } from "../context/AuthContext";
 import { can } from "../utils/rbac";
 import { Button, LoadingState, EmptyState } from "./ui";
@@ -12,25 +14,27 @@ export default function RequireAuth({ children, permission, permissions = [] }) 
   const { status, user } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const locale = useLocale();
+  const t = useTranslations("ui.auth");
   const required = permission ? [permission, ...permissions] : permissions;
 
   useEffect(() => {
     if (status === "anonymous") {
-      router.replace(`/connexion?next=${encodeURIComponent(pathname)}`);
+      router.replace(localizePath(locale, `/connexion?next=${encodeURIComponent(pathname)}`));
     }
-  }, [status, router, pathname]);
+  }, [status, router, pathname, locale]);
 
   if (status !== "authenticated") {
-    return <LoadingState label="Vérification de votre session…" />;
+    return <LoadingState label={t("checking")} />;
   }
 
   if (required.length && !can(user, ...required)) {
     return (
       <EmptyState
         icon={ShieldAlert}
-        title="Accès réservé"
-        description="Votre rôle ne donne pas accès à cette page. Si vous pensez que c'est une erreur, contactez un administrateur."
-        action={<Button href="/">Retour à l’accueil</Button>}
+        title={t("deniedTitle")}
+        description={t("deniedText")}
+        action={<Button href={localizePath(locale, "/")}>{t("backHome")}</Button>}
       />
     );
   }

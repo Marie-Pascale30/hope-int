@@ -1,21 +1,24 @@
 "use client";
 
 import { MapPin, Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Alert, Badge, Button, ProgressBar } from "../../../components/ui";
-import { formatMoney, formatNumber } from "../../../utils/format";
-import { PROJECT_STATUS, statusOf } from "../../../utils/labels";
+import { useFormat } from "../../../i18n/format";
+import { useLabels } from "../../../utils/labels";
 
 function CampaignProgress({ project }) {
+  const t = useTranslations("account.campaigns");
+  const f = useFormat();
   if (!project.goal_amount) return null;
   return (
     <div className="don-campaign__progress">
-      <ProgressBar value={project.progress} accent label={`Progression de la campagne ${project.title}`} />
+      <ProgressBar value={project.progress} accent label={t("progressLabel", { title: project.title })} />
       <div className="progress-meta">
         <span>
-          <strong>{formatMoney(project.raised_eur)}</strong> collectés
+          {t.rich("raised", { amount: f.money(project.raised_eur), strong: (chunks) => <strong>{chunks}</strong> })}
         </span>
         <span>
-          {project.progress} % de {formatMoney(project.goal_amount)}
+          {t("progress", { percent: f.number(project.progress), goal: f.money(project.goal_amount) })}
         </span>
       </div>
     </div>
@@ -24,14 +27,18 @@ function CampaignProgress({ project }) {
 
 // Choix de l'affectation : fonds general ou campagne en cours (avec sa progression).
 export default function CampaignPicker({ campaigns, loading, error, onRetry, value, onChange, name = "don-affectation" }) {
-  const options = [{ id: "", title: "Là où c’est le plus utile" }, ...campaigns];
+  const t = useTranslations("account.campaigns");
+  const f = useFormat();
+  const labels = useLabels();
+  const options = [{ id: "", title: t("general") }, ...campaigns];
 
   return (
-    <div className="don-campaigns" role="radiogroup" aria-label="Affectation de votre don">
+    <div className="don-campaigns" role="radiogroup" aria-label={t("label")}>
       {options.map((project) => {
         const id = String(project.id);
         const checked = value === id;
         const general = id === "";
+        const status = general ? null : labels.status("projectStatus", project.status);
         return (
           <label key={id || "general"} className={`don-campaign${checked ? " is-checked" : ""}`}>
             <input type="radio" name={name} value={id} checked={checked} onChange={() => onChange(id)} />
@@ -40,20 +47,21 @@ export default function CampaignPicker({ campaigns, loading, error, onRetry, val
               <span className="don-campaign__head">
                 <span className="don-campaign__title">{project.title}</span>
                 {general ? (
-                  <Badge tone="accent">Recommandé</Badge>
+                  <Badge tone="accent">{t("recommended")}</Badge>
                 ) : (
-                  <Badge tone={statusOf(PROJECT_STATUS, project.status).tone}>{statusOf(PROJECT_STATUS, project.status).label}</Badge>
+                  <Badge tone={status.tone}>{status.label}</Badge>
                 )}
               </span>
               {general ? (
                 <span className="don-campaign__text">
-                  <Sparkles size={14} aria-hidden="true" /> Notre équipe oriente votre don vers les besoins les plus urgents :
-                  microcrédits, formations, entraide.
+                  <Sparkles size={14} aria-hidden="true" /> {t("generalText")}
                 </span>
               ) : (
                 <span className="don-campaign__text">
-                  <MapPin size={14} aria-hidden="true" /> {project.region || "Cameroun"}
-                  {project.donors_count > 0 && ` · ${formatNumber(project.donors_count)} donateur${project.donors_count > 1 ? "s" : ""}`}
+                  <MapPin size={14} aria-hidden="true" />{" "}
+                  {project.donors_count > 0
+                    ? t("regionDonors", { region: project.region || t("country"), count: project.donors_count })
+                    : project.region || t("country")}
                 </span>
               )}
               {checked && !general && project.summary && <span className="don-campaign__summary">{project.summary}</span>}
@@ -70,9 +78,9 @@ export default function CampaignPicker({ campaigns, loading, error, onRetry, val
         </div>
       )}
       {error && (
-        <Alert tone="warning" title="Campagnes indisponibles">
-          La liste des campagnes n’a pas pu être chargée. Votre don peut tout de même être affecté là où c’est le plus utile.{" "}
-          <Button variant="ghost" size="sm" onClick={onRetry}>Réessayer</Button>
+        <Alert tone="warning" title={t("errorTitle")}>
+          {t("errorText")}{" "}
+          <Button variant="ghost" size="sm" onClick={onRetry}>{t("retry")}</Button>
         </Alert>
       )}
     </div>

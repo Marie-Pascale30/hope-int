@@ -1,42 +1,94 @@
 "use client";
 
 import "../../styles/account.css";
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle2, Clock, Download, FolderHeart, Heart, RotateCcw, Share2, UserPlus, Wallet, XCircle } from "lucide-react";
-import { Button, Card, ErrorState, LoadingState } from "../../components/ui";
+import { useTranslations } from "next-intl";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Download,
+  FolderHeart,
+  Heart,
+  RotateCcw,
+  Share2,
+  ShieldCheck,
+  UserPlus,
+  Wallet,
+  XCircle,
+} from "lucide-react";
+import { Alert, Button, Card, ErrorState, LoadingState, StatusBadge } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { useAsync } from "../../hooks/useAsync";
+import { usePolling } from "../../hooks/usePolling";
 import { paymentApi } from "../../services";
-import { getErrorMessage } from "../../services/api";
-import { toast } from "../../utils/alerts";
-import { formatDateTime, formatMoney } from "../../utils/format";
-import { FREQUENCY, PAYMENT_METHOD } from "../../utils/labels";
+import { useFormat } from "../../i18n/format";
+import { useLocalePath } from "../../i18n/navigation";
+import { toast, useAlerts } from "../../utils/alerts";
+import { useLabels } from "../../utils/labels";
+import { useErrorMessage } from "../../i18n/errors";
 
 const REF_PATTERN = /^[a-f0-9]{48}$/i;
 
+// Paiement Mobile Money en attente : relecture toutes les 5 s pendant 2 min, puis verification manuelle.
+// La relecture simple (GET) suit les webhooks ; une interrogation du prestataire est faite toutes les 30 s.
+const POLL_INTERVAL = 5000;
+const POLL_ATTEMPTS = 24;
+const CONFIRM_EVERY = 6;
+
+// Ecrans des dons non confirmes (hors attente) : remboursement, contestation, verification, echec.
+// Textes : account.thanks.outcomes.<statut>.{eyebrow,title,lead}
+const OUTCOMES = {
+  review: { icon: ShieldCheck, tone: "pending", retry: false },
+  disputed: { icon: AlertTriangle, tone: "failed", retry: false },
+  refunded: { icon: XCircle, tone: "failed", retry: false },
+  canceled: { icon: XCircle, tone: "failed", retry: true },
+  failed: { icon: XCircle, tone: "failed", retry: true },
+};
+
+// Statuts annonces aux lecteurs d'ecran (account.thanks.live.<statut>).
+const LIVE_STATUSES = ["succeeded", "review", "disputed", "refunded", "canceled", "failed"];
+
+const refundedOf = (payment) => Number(payment.refunded_amount) || 0;
+
 function ReceiptDetails({ payment }) {
+  const t = useTranslations("account.thanks.details");
+  const f = useFormat();
+  const labels = useLabels();
+  const refunded = refundedOf(payment);
+  const amount = f.money(payment.amount, payment.currency);
   return (
     <dl className="dl don-thanks__dl">
-      <dt>Montant</dt>
+      <dt>{t("amount")}</dt>
+      <dd>{payment.frequency === "monthly" ? t("perMonth", { amount }) : amount}</dd>
+      {refunded > 0 && payment.status === "succeeded" && (
+        <>
+          <dt>{t("refunded")}</dt>
+          <dd>{f.money(refunded, payment.currency)}</dd>
+        </>
+      )}
+      <dt>{t("project")}</dt>
+      <dd>{payment.project_title || t("general")}</dd>
+      <dt>{t("method")}</dt>
       <dd>
-        {formatMoney(payment.amount, payment.currency)}
-        {payment.frequency === "monthly" && " par mois"}
+        {t("methodValue", { method: labels.method(payment.method), frequency: labels.frequency(payment.frequency) })}
       </dd>
-      <dt>Affectation</dt>
-      <dd>{payment.project_title || "Là où c’est le plus utile"}</dd>
-      <dt>Moyen</dt>
-      <dd>
-        {PAYMENT_METHOD[payment.method] || payment.method} · {FREQUENCY[payment.frequency] || payment.frequency}
-      </dd>
+      {payment.frequency === "monthly" && payment.subscription_status && (
+        <>
+          <dt>{t("subscription")}</dt>
+          <dd><StatusBadge status={labels.status("subscriptionStatus", payment.subscription_status)} /></dd>
+        </>
+      )}
       {payment.paid_at && (
         <>
-          <dt>Date</dt>
-          <dd>{formatDateTime(payment.paid_at)}</dd>
+          <dt>{t("date")}</dt>
+          <dd>{f.dateTime(payment.paid_at)}</dd>
         </>
       )}
       {payment.receipt_number && (
         <>
-          <dt>N° de reçu</dt>
+          <dt>{t("receiptNumber")}</dt>
           <dd><strong>{payment.receipt_number}</strong></dd>
         </>
       )}
@@ -44,37 +96,95 @@ function ReceiptDetails({ payment }) {
   );
 }
 
-async function share() {
-  const url = `${window.location.origin}/don`;
-  const text = "Je viens de soutenir HOPE International, qui accompagne les familles camerounaises vers l’autonomie. Rejoignez-moi !";
+// t : useTranslations("account.thanks.share") ; path : page de don dans la langue courante.
+async function share(t, path) {
+  const url = `${window.location.origin}${path}`;
+  const text = t("text");
   try {
     if (navigator.share) {
       await navigator.share({ title: "HOPE International", text, url });
     } else {
       await navigator.clipboard.writeText(`${text} ${url}`);
-      toast("Lien copié : il ne reste plus qu’à le partager");
+      toast(t("copied"));
     }
   } catch {
     // Partage annule par l'utilisateur : rien a signaler.
   }
 }
 
-function Success({ payment, isAuthenticated }) {
+// Don mensuel : arret sans compte via le jeton du recu ; un membre connecte passe par son espace.
+function MonthlyControl({ payment, isAuthenticated, onCanceled }) {
+  const t = useTranslations("account.thanks.monthly");
+  const f = useFormat();
+  const lp = useLocalePath();
+  const { confirmAction } = useAlerts();
+  const errorText = useErrorMessage();
+  const [stopping, setStopping] = useState(false);
+  const [stopError, setStopError] = useState("");
+
+  if (payment.frequency !== "monthly" || !payment.subscription_id) return null;
+  if (payment.subscription_status === "canceled") {
+    return <p className="muted don-thanks__note">{t("stopped")}</p>;
+  }
+  if (isAuthenticated) {
+    return (
+      <div className="don-thanks__monthly">
+        <p className="muted don-thanks__note">{t("fromAccount")}</p>
+        <Button href={lp("/espace")} variant="ghost" size="sm">{t("accountLink")}</Button>
+      </div>
+    );
+  }
+
+  const stop = async () => {
+    const amount = f.money(payment.amount, payment.currency);
+    const ok = await confirmAction(t("confirmTitle"), t("confirmText", { amount }), t("confirmButton"), { danger: true });
+    if (!ok) return;
+    setStopping(true);
+    setStopError("");
+    try {
+      const result = await paymentApi.cancelSubscriptionByReceipt(payment.receipt_token);
+      onCanceled();
+      toast(result?.message || t("done"));
+    } catch (err) {
+      setStopError(errorText(err));
+    } finally {
+      setStopping(false);
+    }
+  };
+
+  return (
+    <div className="don-thanks__monthly">
+      <p className="muted don-thanks__note">{t("stopHint")}</p>
+      <Button variant="ghost" size="sm" onClick={stop} loading={stopping}>{t("stopButton")}</Button>
+      {stopError && <Alert tone="danger" title={t("errorTitle")}>{stopError}</Alert>}
+    </div>
+  );
+}
+
+function Success({ payment, isAuthenticated, onSubscriptionCanceled }) {
+  const t = useTranslations("account.thanks.success");
+  const tShare = useTranslations("account.thanks.share");
+  const f = useFormat();
+  const lp = useLocalePath();
   const firstName = (payment.donor_name || "").split(" ")[0];
+  const refunded = refundedOf(payment);
   return (
     <>
       <div className="don-thanks__head">
         <span className="don-thanks__icon don-thanks__icon--success"><CheckCircle2 size={36} aria-hidden="true" /></span>
-        <span className="eyebrow">Don confirmé</span>
-        <h1>Merci{firstName ? `, ${firstName}` : ""} !</h1>
+        <span className="eyebrow">{t("eyebrow")}</span>
+        <h1>{firstName ? t("titleNamed", { name: firstName }) : t("title")}</h1>
         <p className="lead">
-          Votre don de <strong>{formatMoney(payment.amount, payment.currency)}</strong>
-          {payment.frequency === "monthly" && " par mois"} va directement aider des familles à construire leur avenir.
-          Toute l’équipe de HOPE International vous remercie chaleureusement.
+          {t.rich("lead", {
+            amount: f.money(payment.amount, payment.currency),
+            frequency: payment.frequency === "monthly" ? "monthly" : "once",
+            strong: (chunks) => <strong>{chunks}</strong>,
+          })}
         </p>
       </div>
       <Card className="don-thanks__card">
         <ReceiptDetails payment={payment} />
+        {refunded > 0 && <Alert tone="info">{t("partialRefund", { amount: f.money(refunded, payment.currency) })}</Alert>}
         <div className="don-thanks__actions">
           <Button
             href={paymentApi.receiptPdfUrl(payment.receipt_token)}
@@ -82,40 +192,38 @@ function Success({ payment, isAuthenticated }) {
             rel="noopener noreferrer"
             icon={Download}
           >
-            Télécharger mon reçu (PDF)
+            {t("download")}
           </Button>
         </div>
-        <p className="muted don-thanks__note">
-          Un reçu vous a également été envoyé par email.
-          {payment.frequency === "monthly" && " Vous pouvez arrêter votre don mensuel à tout moment depuis votre espace."}
-        </p>
+        <p className="muted don-thanks__note">{t("receiptSent")}</p>
+        <MonthlyControl payment={payment} isAuthenticated={isAuthenticated} onCanceled={onSubscriptionCanceled} />
       </Card>
       <div className="don-thanks__next">
         <Card hover className="don-next">
           <FolderHeart aria-hidden="true" />
-          <h2>Découvrir nos projets</h2>
-          <p className="muted">Microcrédit, formation, coopératives : suivez les actions que vous rendez possibles.</p>
-          <Button href="/projets" variant="secondary" size="sm">Voir les projets</Button>
+          <h2>{t("next.projectsTitle")}</h2>
+          <p className="muted">{t("next.projectsText")}</p>
+          <Button href={lp("/projets")} variant="secondary" size="sm">{t("next.projectsButton")}</Button>
         </Card>
         <Card hover className="don-next">
           <Share2 aria-hidden="true" />
-          <h2>Faire connaître HOPE</h2>
-          <p className="muted">Un partage peut inspirer un proche à rejoindre le mouvement.</p>
-          <Button variant="secondary" size="sm" onClick={share}>Partager</Button>
+          <h2>{t("next.shareTitle")}</h2>
+          <p className="muted">{t("next.shareText")}</p>
+          <Button variant="secondary" size="sm" onClick={() => share(tShare, lp("/don"))}>{t("next.shareButton")}</Button>
         </Card>
         {isAuthenticated ? (
           <Card hover className="don-next">
             <Wallet aria-hidden="true" />
-            <h2>Mes dons</h2>
-            <p className="muted">Retrouvez l’historique de vos dons et tous vos reçus.</p>
-            <Button href="/espace" variant="secondary" size="sm">Mon espace</Button>
+            <h2>{t("next.accountTitle")}</h2>
+            <p className="muted">{t("next.accountText")}</p>
+            <Button href={lp("/espace")} variant="secondary" size="sm">{t("next.accountButton")}</Button>
           </Card>
         ) : (
           <Card hover className="don-next">
             <UserPlus aria-hidden="true" />
-            <h2>Créer un compte</h2>
-            <p className="muted">Pour suivre vos prochains dons et retrouver vos reçus en un clic.</p>
-            <Button href="/inscription" variant="secondary" size="sm">Créer mon compte</Button>
+            <h2>{t("next.registerTitle")}</h2>
+            <p className="muted">{t("next.registerText")}</p>
+            <Button href={lp("/inscription")} variant="secondary" size="sm">{t("next.registerButton")}</Button>
           </Card>
         )}
       </div>
@@ -123,52 +231,57 @@ function Success({ payment, isAuthenticated }) {
   );
 }
 
-function Pending({ payment, onCheck, checking }) {
+function Pending({ payment, onCheck, checking, polling }) {
+  const t = useTranslations("account.thanks.pending");
+  const lp = useLocalePath();
   return (
     <>
       <div className="don-thanks__head">
         <span className="don-thanks__icon don-thanks__icon--pending"><Clock size={36} aria-hidden="true" /></span>
-        <span className="eyebrow">Confirmation en cours</span>
-        <h1>Votre paiement est en cours de validation</h1>
-        <p className="lead">
-          Selon le moyen de paiement, notamment Mobile Money, la confirmation peut prendre quelques minutes. Dès qu’elle
-          nous parvient, votre reçu vous est envoyé par email.
-        </p>
+        <span className="eyebrow">{t("eyebrow")}</span>
+        <h1>{t("title")}</h1>
+        <p className="lead">{t("lead")}</p>
       </div>
       <Card className="don-thanks__card">
         <ReceiptDetails payment={payment} />
+        {polling === "running" && (
+          <p className="don-thanks__polling">
+            <span className="spinner spinner--sm" aria-hidden="true" />
+            {t("pollingNote")}
+          </p>
+        )}
+        {polling === "exhausted" && <p className="muted don-thanks__note don-thanks__note--before">{t("pollingPaused")}</p>}
         <div className="don-thanks__actions">
-          <Button icon={RotateCcw} loading={checking} onClick={onCheck}>Vérifier à nouveau</Button>
-          <Button href="/" variant="ghost">Retour à l’accueil</Button>
+          {polling !== "running" && (
+            <Button icon={RotateCcw} loading={checking} onClick={onCheck}>{t("checkAgain")}</Button>
+          )}
+          <Button href={lp("/")} variant="ghost">{t("home")}</Button>
         </div>
       </Card>
     </>
   );
 }
 
-function Failed({ payment }) {
-  const canceled = payment.status === "canceled";
-  const refunded = payment.status === "refunded";
-  const retry = payment.project_id ? `/don?projet=${payment.project_id}` : "/don";
+function Outcome({ payment }) {
+  const t = useTranslations("account.thanks.outcomes");
+  const lp = useLocalePath();
+  const status = OUTCOMES[payment.status] ? payment.status : "failed";
+  const screen = OUTCOMES[status];
+  const retry = lp(payment.project_id ? `/don?projet=${payment.project_id}` : "/don");
   return (
     <>
       <div className="don-thanks__head">
-        <span className="don-thanks__icon don-thanks__icon--failed"><XCircle size={36} aria-hidden="true" /></span>
-        <span className="eyebrow">{refunded ? "Don remboursé" : canceled ? "Paiement annulé" : "Paiement refusé"}</span>
-        <h1>{refunded ? "Ce don a été remboursé" : "Le paiement n’a pas abouti"}</h1>
-        <p className="lead">
-          {refunded
-            ? "Le montant de ce don vous a été restitué. Pour toute question, n’hésitez pas à nous contacter."
-            : canceled
-              ? "Le paiement a été annulé avant sa validation : aucun montant n’a été encaissé."
-              : "Votre banque ou votre opérateur a refusé le paiement : aucun montant n’a été encaissé. Vous pouvez réessayer, éventuellement avec un autre moyen de paiement."}
-        </p>
+        <span className={`don-thanks__icon don-thanks__icon--${screen.tone}`}><screen.icon size={36} aria-hidden="true" /></span>
+        <span className="eyebrow">{t(`${status}.eyebrow`)}</span>
+        <h1>{t(`${status}.title`)}</h1>
+        <p className="lead">{t(`${status}.lead`)}</p>
       </div>
       <Card className="don-thanks__card">
         <ReceiptDetails payment={payment} />
         <div className="don-thanks__actions">
-          {!refunded && <Button href={retry} variant="accent" icon={Heart}>Réessayer</Button>}
-          <Button href="/contact" variant="ghost">Nous contacter</Button>
+          {screen.retry && <Button href={retry} variant="accent" icon={Heart}>{t("retry")}</Button>}
+          <Button href={lp("/contact")} variant={screen.retry ? "ghost" : "secondary"}>{t("contact")}</Button>
+          {!screen.retry && <Button href={lp("/")} variant="ghost">{t("home")}</Button>}
         </div>
       </Card>
     </>
@@ -176,6 +289,9 @@ function Failed({ payment }) {
 }
 
 export default function DonationThanksView() {
+  const t = useTranslations("account.thanks");
+  const lp = useLocalePath();
+  const errorText = useErrorMessage();
   const params = useSearchParams();
   const { isAuthenticated } = useAuth();
   const ref = params.get("ref") || "";
@@ -183,47 +299,72 @@ export default function DonationThanksView() {
   const redirectStatus = params.get("status") || undefined;
   const valid = REF_PATTERN.test(ref);
 
-  const { data: payment, loading, error, reload } = useAsync(
+  const { data: payment, loading, error, reload, setData } = useAsync(
     () => paymentApi.confirmReceipt(ref, { transactionId, status: redirectStatus }),
     [ref],
     { enabled: valid }
   );
 
+  const awaitingMobile = payment?.status === "pending" && payment.method === "mobile_money";
+  const poll = usePolling(
+    async (attempt) => {
+      const next = attempt % CONFIRM_EVERY === 0
+        ? await paymentApi.confirmReceipt(ref, { transactionId })
+        : await paymentApi.getReceipt(ref);
+      if (next) setData(next);
+    },
+    { active: valid && awaitingMobile, interval: POLL_INTERVAL, maxAttempts: POLL_ATTEMPTS }
+  );
+  const pollingState = !awaitingMobile ? "off" : poll.polling ? "running" : "exhausted";
+
+  const cancelSubscriptionLocally = () => setData((current) => (current ? { ...current, subscription_status: "canceled" } : current));
+
+  // Annonce des changements d'etat aux lecteurs d'ecran (region persistante, polie).
+  let announcement = "";
+  if (payment?.status === "pending") {
+    announcement = pollingState === "running"
+      ? t("live.pendingPolling")
+      : pollingState === "exhausted" ? t("live.pendingExhausted") : t("live.pendingIdle");
+  } else if (payment) {
+    announcement = t(`live.${LIVE_STATUSES.includes(payment.status) ? payment.status : "failed"}`);
+  }
+
   let content;
   if (!valid) {
     content = (
       <ErrorState
-        title="Référence de don manquante"
-        message="Ce lien ne contient pas de référence de don valide. Si vous venez d’effectuer un paiement, consultez l’email de confirmation ou votre espace donateur."
+        title={t("invalid.title")}
+        message={t("invalid.text")}
       />
     );
   } else if (!payment && loading) {
-    content = <LoadingState label="Vérification de votre paiement…" />;
+    content = <LoadingState label={t("checking")} />;
   } else if (!payment) {
     const notFound = error?.response?.status === 404;
     content = (
       <ErrorState
-        title={notFound ? "Don introuvable" : "Vérification impossible"}
-        message={notFound ? "Aucun don ne correspond à cette référence." : getErrorMessage(error)}
+        title={notFound ? t("notFound.title") : t("checkError")}
+        message={notFound ? t("notFound.text") : errorText(error)}
         onRetry={notFound ? undefined : reload}
       />
     );
   } else if (payment.status === "succeeded") {
-    content = <Success payment={payment} isAuthenticated={isAuthenticated} />;
+    content = <Success payment={payment} isAuthenticated={isAuthenticated} onSubscriptionCanceled={cancelSubscriptionLocally} />;
   } else if (payment.status === "pending") {
-    content = <Pending payment={payment} onCheck={reload} checking={loading} />;
+    content = <Pending payment={payment} onCheck={reload} checking={loading} polling={pollingState} />;
   } else {
-    content = <Failed payment={payment} />;
+    content = <Outcome payment={payment} />;
   }
 
   return (
     <section className="section--tight don-thanks">
       <div className="container don-thanks__inner">
+        <p className="visually-hidden" aria-live="polite" aria-atomic="true">{announcement}</p>
         {content}
         {(!valid || (!payment && !loading)) && (
           <div className="don-thanks__actions don-thanks__actions--center">
-            <Button href="/don" variant="accent" icon={Heart}>Faire un don</Button>
-            <Button href="/espace" variant="ghost">Mon espace</Button>
+            <Button href={lp("/don")} variant="accent" icon={Heart}>{t("donate")}</Button>
+            <Button href={lp("/espace")} variant="ghost">{t("account")}</Button>
           </div>
         )}
       </div>

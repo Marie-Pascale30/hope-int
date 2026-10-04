@@ -81,6 +81,8 @@ const STATUS_MAP = {
     canceled: "canceled",
     expired: "canceled",
     abandoned: "canceled",
+    // Paiement rembourse depuis le tableau de bord Notch Pay (statut renvoye a la relecture).
+    refunded: "refunded",
 };
 
 exports.toPaymentStatus = (status) => STATUS_MAP[status] || null;

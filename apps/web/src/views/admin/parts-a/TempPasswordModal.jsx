@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Alert, Button, Modal } from "../../../components/ui";
 import { toast } from "../../../utils/alerts";
 
 // Mot de passe provisoire renvoye quand l'email n'a pas pu partir (SMTP absent) : affiche une seule fois.
 export default function TempPasswordModal({ credentials, onClose }) {
+  const t = useTranslations("admin.tempPassword");
   const [copied, setCopied] = useState(false);
   if (!credentials) return null;
 
@@ -14,34 +16,33 @@ export default function TempPasswordModal({ credentials, onClose }) {
     try {
       await navigator.clipboard.writeText(credentials.password);
       setCopied(true);
-      toast("Mot de passe copié");
+      toast(t("copiedToast"));
     } catch {
-      toast("Copie impossible : sélectionnez le mot de passe manuellement", "warning");
+      toast(t("copyFailed"), "warning");
     }
   };
 
   return (
     <Modal
       open
-      title="Compte créé : identifiants provisoires"
+      title={t("title")}
       onClose={onClose}
-      footer={<Button onClick={onClose}>J&apos;ai transmis le mot de passe</Button>}
+      footer={<Button onClick={onClose}>{t("done")}</Button>}
     >
       <div className="stack">
-        <Alert tone="warning" title="À noter maintenant : il ne sera plus affiché">
-          L&apos;email d&apos;identifiants n&apos;a pas pu être envoyé (serveur d&apos;emails non configuré).
-          Transmettez ce mot de passe par un canal sûr ; il devra être changé à la première connexion.
+        <Alert tone="warning" title={t("alertTitle")}>
+          {t("alertText")}
         </Alert>
         <dl className="dl">
-          <dt>Nom</dt>
+          <dt>{t("name")}</dt>
           <dd>{credentials.name}</dd>
-          <dt>Email de connexion</dt>
+          <dt>{t("loginEmail")}</dt>
           <dd>{credentials.email}</dd>
         </dl>
         <div className="adm-secret">
-          <code aria-label="Mot de passe provisoire">{credentials.password}</code>
+          <code aria-label={t("passwordLabel")}>{credentials.password}</code>
           <Button variant="secondary" size="sm" icon={copied ? Check : Copy} onClick={copy}>
-            {copied ? "Copié" : "Copier"}
+            {copied ? t("copied") : t("copy")}
           </Button>
         </div>
       </div>

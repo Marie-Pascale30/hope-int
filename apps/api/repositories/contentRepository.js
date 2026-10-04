@@ -1,5 +1,5 @@
 const db = require("../config/db");
-const { XAF_PER_EUR } = require("@hope/shared/constants");
+const { DONOR_KEY_SQL, NET_EUR_SQL } = require("../utils/sql");
 
 const CONTENT_TYPES = {
     projects: {
@@ -20,7 +20,15 @@ const CONTENT_TYPES = {
 };
 
 // Montant collecte converti en EUR (le XAF a une parite fixe).
-const RAISED_EUR_SQL = `COALESCE(SUM(CASE WHEN p.currency = 'xaf' THEN p.amount / ${XAF_PER_EUR} ELSE p.amount END), 0)`;
+const RAISED_EUR_SQL = `COALESCE(SUM(${NET_EUR_SQL}), 0)`;
+
+// Projet actif pendant l'annee : periode [debut, fin] qui recoupe l'annee. Sans date de debut,
+// la date de creation fait foi ; sans date de fin, le projet est considere comme toujours actif.
+const ACTIVE_IN_YEAR_SQL = "COALESCE(start_date, DATE(created_at)) <= ? AND (end_date IS NULL OR end_date >= ?)";
+const activeInYearParams = (year) => [`${year}-12-31`, `${year}-01-01`];
+
+exports.ACTIVE_IN_YEAR_SQL = ACTIVE_IN_YEAR_SQL;
+exports.activeInYearParams = activeInYearParams;
 
 function resolve(type) {
     const config = CONTENT_TYPES[type];
@@ -54,7 +62,7 @@ function mapRow(type, row) {
 function projectSelect(where = "") {
     return `
     SELECT pr.*, ${RAISED_EUR_SQL} AS raised_eur,
-           COUNT(DISTINCT COALESCE(p.donor_email, CONCAT('user:', p.user_id))) AS donors_count
+           COUNT(DISTINCT ${DONOR_KEY_SQL}) AS donors_count
     FROM projects pr
     LEFT JOIN payments p ON p.project_id = pr.id AND p.status = 'succeeded'
     ${where}
@@ -63,7 +71,9 @@ function projectSelect(where = "") {
 
 exports.CONTENT_TYPES = Object.keys(CONTENT_TYPES);
 
-exports.getAll = async (type, { publishedOnly = false, region } = {}) => {
+// scopeRegion (administration, acteur restreint a sa region) : projets de la region, et
+// actualites / temoignages rattaches a un projet de la region.
+exports.getAll = async (type, { publishedOnly = false, region, scopeRegion } = {}) => {
     const { table } = resolve(type);
     const clauses = [];
     const params = [];
@@ -72,6 +82,10 @@ exports.getAll = async (type, { publishedOnly = false, region } = {}) => {
     if (region && type === "projects") {
         clauses.push("pr.region = ?");
         params.push(region);
+    }
+    if (scopeRegion) {
+        clauses.push(type === "projects" ? "pr.region = ?" : "project_id IN (SELECT id FROM projects WHERE region = ?)");
+        params.push(scopeRegion);
     }
     const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
 
@@ -91,8 +105,9 @@ exports.getById = async (type, id, { publishedOnly = false } = {}) => {
     return mapRow(type, rows[0]);
 };
 
+// Un champ absent ou undefined n'est jamais ecrit (evite d'ecraser une valeur par NULL).
 function pickFields(fields, payload) {
-    return fields.filter((field) => Object.prototype.hasOwnProperty.call(payload, field));
+    return fields.filter((field) => Object.prototype.hasOwnProperty.call(payload, field) && payload[field] !== undefined);
 }
 
 exports.create = async (type, payload) => {
@@ -116,14 +131,32 @@ exports.update = async (type, id, payload) => {
     );
 };
 
+// Region du projet (undefined si le projet n'existe pas).
+exports.getProjectRegion = async (id) => {
+    const [rows] = await db.query("SELECT region FROM projects WHERE id = ?", [id]);
+    return rows[0] ? rows[0].region : undefined;
+};
+
 exports.remove = async (type, id) => {
     const { table } = resolve(type);
     const [result] = await db.query(`DELETE FROM ${table} WHERE id = ?`, [id]);
     return result.affectedRows;
 };
 
-exports.getImpactTotals = async ({ region } = {}) => {
-    const where = region ? "AND region = ?" : "";
+// Les compteurs d'impact (beneficiaries, trainees, credits_granted) sont des cumuls par projet,
+// sans date. activeInYear restreint aux projets dont la periode recoupe l'annee : c'est la
+// meilleure approximation honnete de l'impact d'une annee (et non un impact strictement annuel).
+exports.getImpactTotals = async ({ region, activeInYear } = {}) => {
+    const clauses = ["published = 1"];
+    const params = [];
+    if (region) {
+        clauses.push("region = ?");
+        params.push(region);
+    }
+    if (activeInYear) {
+        clauses.push(ACTIVE_IN_YEAR_SQL);
+        params.push(...activeInYearParams(activeInYear));
+    }
     const [rows] = await db.query(
         `SELECT COUNT(*) AS projects,
                 SUM(status = 'en_cours') AS active_projects,
@@ -132,8 +165,8 @@ exports.getImpactTotals = async ({ region } = {}) => {
                 COALESCE(SUM(trainees), 0) AS trainees,
                 COALESCE(SUM(credits_granted), 0) AS credits_granted,
                 COUNT(DISTINCT region) AS regions_covered
-         FROM projects WHERE published = 1 ${where}`,
-        region ? [region] : []
+         FROM projects WHERE ${clauses.join(" AND ")}`,
+        params
     );
     const row = rows[0] || {};
     return {

@@ -1,24 +1,7 @@
 import { API_ORIGIN } from "../services/api";
+import { INTL_LOCALES, TIME_ZONE } from "../i18n/config";
 
 const LOCALE = "fr-FR";
-
-export function formatMoney(amount, currency = "eur", { compact = false } = {}) {
-  const value = Number(amount) || 0;
-  const code = String(currency || "eur").toUpperCase();
-  if (code === "XAF") {
-    return `${new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 0 }).format(value)} FCFA`;
-  }
-  return new Intl.NumberFormat(LOCALE, {
-    style: "currency",
-    currency: code,
-    notation: compact ? "compact" : "standard",
-    maximumFractionDigits: compact || Number.isInteger(value) ? 0 : 2,
-  }).format(value);
-}
-
-export function formatNumber(value, options) {
-  return new Intl.NumberFormat(LOCALE, options).format(Number(value) || 0);
-}
 
 function toDate(value) {
   if (!value) return null;
@@ -29,53 +12,6 @@ function toDate(value) {
   }
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
-}
-
-export function formatDate(value, options = { day: "numeric", month: "long", year: "numeric" }) {
-  const date = toDate(value);
-  return date ? new Intl.DateTimeFormat(LOCALE, options).format(date) : "—";
-}
-
-export function formatShortDate(value) {
-  return formatDate(value, { day: "2-digit", month: "2-digit", year: "numeric" });
-}
-
-export function formatDateTime(value) {
-  const date = toDate(value);
-  return date
-    ? new Intl.DateTimeFormat(LOCALE, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(date)
-    : "—";
-}
-
-export function formatTime(value) {
-  const date = toDate(value);
-  return date ? new Intl.DateTimeFormat(LOCALE, { hour: "2-digit", minute: "2-digit" }).format(date) : "";
-}
-
-export function formatMonth(value) {
-  // "2026-03" -> "mars 2026"
-  if (!value) return "";
-  const [y, m] = String(value).split("-").map(Number);
-  return new Intl.DateTimeFormat(LOCALE, { month: "short", year: "2-digit" }).format(new Date(y, m - 1, 1));
-}
-
-export function formatRelative(value) {
-  const date = toDate(value);
-  if (!date) return "—";
-  const diff = (date.getTime() - Date.now()) / 1000;
-  const units = [
-    ["year", 31536000],
-    ["month", 2592000],
-    ["week", 604800],
-    ["day", 86400],
-    ["hour", 3600],
-    ["minute", 60],
-  ];
-  const rtf = new Intl.RelativeTimeFormat(LOCALE, { numeric: "auto" });
-  for (const [unit, seconds] of units) {
-    if (Math.abs(diff) >= seconds) return rtf.format(Math.round(diff / seconds), unit);
-  }
-  return "à l'instant";
 }
 
 // Valeur pour <input type="datetime-local"> a partir d'une date ISO (heure locale).
@@ -125,4 +61,83 @@ export function saveBlob(blob, filename) {
   link.click();
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// ---------- Variantes par langue ----------
+// Les fonctions ci-dessus formatent en francais (fuseau du navigateur) et restent utilisees
+// par le back-office. Pour les vues traduites : getFormatters(locale) renvoie les memes
+// formats dans la langue demandee, avec un fuseau fixe (identique serveur / client).
+// Dans un composant : const f = useFormat() (src/i18n/format.js) ; f.date(value), f.money(12, "eur")...
+
+export const DEFAULT_TIME_ZONE = TIME_ZONE;
+
+export const toIntlLocale = (locale) => INTL_LOCALES[locale] || locale || LOCALE;
+
+const DATE_ONLY_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+export function getFormatters(locale = "fr", { timeZone = DEFAULT_TIME_ZONE } = {}) {
+  const tag = toIntlLocale(locale);
+
+  // Une colonne DATE ("2026-03-01") n'a pas d'heure : formatee en UTC pour ne jamais changer de jour.
+  const parse = (value) => {
+    if (!value) return null;
+    if (typeof value === "string" && DATE_ONLY_RE.test(value)) {
+      const [y, m, d] = value.split("-").map(Number);
+      return { date: new Date(Date.UTC(y, m - 1, d)), zone: "UTC" };
+    }
+    const date = value instanceof Date ? value : new Date(value);
+    return Number.isNaN(date.getTime()) ? null : { date, zone: timeZone };
+  };
+
+  const formatWith = (value, options, empty = "—") => {
+    const parsed = parse(value);
+    return parsed ? new Intl.DateTimeFormat(tag, { timeZone: parsed.zone, ...options }).format(parsed.date) : empty;
+  };
+
+  // Cle "AAAA-MM-JJ" du jour dans le fuseau d'affichage.
+  const dayKey = (value) => {
+    const parsed = parse(value);
+    if (!parsed) return "";
+    return new Intl.DateTimeFormat("en-CA", { timeZone: parsed.zone, year: "numeric", month: "2-digit", day: "2-digit" }).format(parsed.date);
+  };
+
+  return {
+    locale: tag,
+    timeZone,
+    number: (value, options) => new Intl.NumberFormat(tag, options).format(Number(value) || 0),
+    money(amount, currency = "eur", { compact = false } = {}) {
+      const value = Number(amount) || 0;
+      const code = String(currency || "eur").toUpperCase();
+      if (code === "XAF") return `${new Intl.NumberFormat(tag, { maximumFractionDigits: 0 }).format(value)} FCFA`;
+      return new Intl.NumberFormat(tag, {
+        style: "currency",
+        currency: code,
+        notation: compact ? "compact" : "standard",
+        maximumFractionDigits: compact || Number.isInteger(value) ? 0 : 2,
+      }).format(value);
+    },
+    date: (value, options = { day: "numeric", month: "long", year: "numeric" }) => formatWith(value, options),
+    shortDate: (value) => formatWith(value, { day: "2-digit", month: "2-digit", year: "numeric" }),
+    dateTime: (value) => formatWith(value, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }),
+    time: (value) => formatWith(value, { hour: "2-digit", minute: "2-digit" }, ""),
+    dayKey,
+    monthKey: (value) => dayKey(value).slice(0, 7),
+    // Formate une cle "AAAA-MM" ou "AAAA-MM-JJ" (sans decalage de fuseau).
+    key(key, options = { day: "numeric", month: "long", year: "numeric" }) {
+      if (!key) return "";
+      const [y, m, d = 1] = String(key).split("-").map(Number);
+      return new Intl.DateTimeFormat(tag, { timeZone: "UTC", ...options }).format(new Date(Date.UTC(y, m - 1, d)));
+    },
+    relative(value) {
+      const parsed = parse(value);
+      if (!parsed) return "—";
+      const diff = (parsed.date.getTime() - Date.now()) / 1000;
+      const units = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
+      const rtf = new Intl.RelativeTimeFormat(tag, { numeric: "auto" });
+      for (const [unit, seconds] of units) {
+        if (Math.abs(diff) >= seconds) return rtf.format(Math.round(diff / seconds), unit);
+      }
+      return rtf.format(0, "second");
+    },
+  };
 }

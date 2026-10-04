@@ -1,26 +1,39 @@
 "use client";
 
 // Graphiques de la vue d'ensemble (charge via next/dynamic, ssr: false).
-import { Bar, Line, baseOptions, barDataset, lineDataset } from "../../../components/AdminCharts";
-import { formatMoney, formatNumber } from "../../../utils/format";
-
-const moneyFormat = (value) => formatMoney(value, "eur", { compact: value >= 10000 });
-const countFormat = (value) => formatNumber(value);
+import { useTranslations } from "next-intl";
+import { Bar, Line, baseOptions, barDataset, lineDataset, useChartTheme } from "../../../components/AdminCharts";
+import { useFormat } from "../../../i18n/format";
 
 export function DonationsChart({ labels, values }) {
+  const t = useTranslations("admin.charts");
+  const f = useFormat();
+  const theme = useChartTheme();
+  const format = (value) => f.money(value, "eur", { compact: value >= 10000 });
   return (
-    <div className="chart-box" role="img" aria-label="Montant des dons par mois sur 12 mois, en euros">
-      <Bar data={{ labels, datasets: [barDataset("Dons", values)] }} options={baseOptions({ format: moneyFormat })} />
+    <div className="chart-box" role="img" aria-label={t("donationsAria")}>
+      <Bar
+        key={theme.mode}
+        data={{ labels, datasets: [barDataset(t("donationsDataset"), values, theme.series[0], theme)] }}
+        options={baseOptions({ format, theme })}
+      />
     </div>
   );
 }
 
 export function MembersChart({ labels, values }) {
-  const options = baseOptions({ format: countFormat });
+  const t = useTranslations("admin.charts");
+  const f = useFormat();
+  const theme = useChartTheme();
+  const options = baseOptions({ format: (value) => f.number(value), theme });
   options.scales.y.ticks.precision = 0;
   return (
-    <div className="chart-box" role="img" aria-label="Nombre de nouveaux membres inscrits par mois sur 12 mois">
-      <Line data={{ labels, datasets: [lineDataset("Nouveaux membres", values)] }} options={options} />
+    <div className="chart-box" role="img" aria-label={t("membersAria")}>
+      <Line
+        key={theme.mode}
+        data={{ labels, datasets: [lineDataset(t("membersDataset"), values, theme.series[0], { theme })] }}
+        options={options}
+      />
     </div>
   );
 }

@@ -1,0 +1,718 @@
+{
+  "adminOps": {
+    "charts": {
+      "collected": "Amount raised",
+      "tooltip": "{amount} · {count, plural, =0 {no donations} one {# donation} other {# donations}}",
+      "aria": "{label} per month, in euros"
+    },
+    "tables": {
+      "label": "Item",
+      "donations": "Donations",
+      "amountEur": "Amount (EUR)",
+      "share": "Share",
+      "month": "Month"
+    },
+    "image": {
+      "label": "Image",
+      "hint": "JPG, PNG, WebP or GIF — {max} MB maximum (the file content is checked). Landscape format recommended.",
+      "formatTitle": "Unsupported format",
+      "formatText": "Choose a JPG, PNG, WebP or GIF image.",
+      "sizeTitle": "Image too large",
+      "sizeText": "The maximum size is {max} MB. Reduce the image and try again.",
+      "preview": "Image preview",
+      "removedNote": "Image will be removed on save",
+      "none": "No image: a default illustration will be displayed",
+      "replace": "Replace image",
+      "choose": "Choose an image",
+      "undoNew": "Discard new image",
+      "remove": "Remove image",
+      "keep": "Keep current image"
+    },
+    "common": {
+      "exported": "CSV export downloaded",
+      "exportFailed": "Export failed"
+    },
+    "donations": {
+      "eyebrow": "Donations",
+      "title": "Donations received",
+      "description": "Track each donation, its allocation and its receipt. Click a row to see the details.",
+      "export": "Export to CSV",
+      "loading": "Loading donations…",
+      "generalFund": "General fund",
+      "refundedPart": "incl. {amount} refunded",
+      "search": "Name, email, receipt no.…",
+      "rowLabel": "Details of the donation from {name}",
+      "rowLabelAnonymous": "Details of a donation from an anonymous donor",
+      "rateNote": "Donations in CFA francs are converted at the fixed rate of €1 = {rate} FCFA.",
+      "limitNote": "Only the {limit} most recent donations are shown: refine the filters.",
+      "columns": {
+        "date": "Date",
+        "donor": "Donor",
+        "amount": "Amount",
+        "allocation": "Allocation",
+        "method": "Method",
+        "frequency": "Frequency",
+        "status": "Status",
+        "receipt": "Receipt no."
+      },
+      "filters": {
+        "label": "Filter donations",
+        "status": "Status",
+        "allStatuses": "All statuses",
+        "provider": "Provider",
+        "allProviders": "All",
+        "project": "Project",
+        "allProjects": "All projects",
+        "from": "From",
+        "to": "To",
+        "periodInvalid": "Must be after the start date",
+        "reset": "Reset"
+      },
+      "stats": {
+        "amount": "Net amount collected",
+        "amountHint": "Successful donations, euro equivalent",
+        "amountHintRefunds": "Successful donations, after {amount} in partial refunds",
+        "count": "Donations in selection",
+        "countHint": "{count, plural, =0 {None successful} one {# successful} other {# successful}}",
+        "donors": "Unique donors",
+        "donorsHint": "Among successful donations",
+        "pending": "Pending",
+        "pendingHint": "{amount} awaiting confirmation",
+        "pendingNone": "No payments awaiting confirmation"
+      },
+      "reviewBanner": {
+        "title": "{count, plural, one {# donation to review} other {# donations to review}}",
+        "text": "The amount or currency confirmed by the provider does not match the donation: check the transaction with the provider, then approve or reject it.",
+        "show": "Show donations to review"
+      },
+      "empty": {
+        "title": "No donations yet",
+        "text": "Donations will appear here as soon as a donor starts a payment.",
+        "filteredTitle": "No donations match these filters",
+        "filteredText": "Widen the period or remove a filter to see more results."
+      },
+      "detail": {
+        "title": "Donation no. {id}",
+        "close": "Close",
+        "receiptPdf": "Tax receipt (PDF)",
+        "status": "Status",
+        "amount": "Amount",
+        "eurEquivalent": "i.e. {amount}",
+        "refunded": "Refunded",
+        "net": "net amount: {amount}",
+        "frequency": "Frequency",
+        "method": "Payment method",
+        "donor": "Donor",
+        "email": "Email",
+        "account": "Member account",
+        "accountYes": "Yes (account no. {id})",
+        "accountNo": "Donation made without an account",
+        "allocation": "Allocation",
+        "generalFund": "General fund",
+        "createdAt": "Created on",
+        "paidAt": "Paid on",
+        "notConfirmed": "Not yet confirmed",
+        "receiptNumber": "Receipt no.",
+        "receiptPending": "Issued once the payment is confirmed",
+        "reference": "Provider reference",
+        "subscription": "Subscription",
+        "reviewTitle": "Donation under review",
+        "reviewReadOnly": "The amount or currency confirmed by the provider does not match the donation. A finance manager must approve or reject it.",
+        "disputedTitle": "Payment disputed",
+        "disputedText": "The donor has disputed this payment with their bank. The receipt remains on hold until the dispute is resolved; its outcome is tracked automatically through the provider.",
+        "resend": "Resend receipt",
+        "resendConfirmTitle": "Resend the tax receipt?",
+        "resendConfirmText": "The receipt will be emailed again to {email}.",
+        "resendConfirmNoEmail": "The receipt will be emailed again to the donor's address.",
+        "resent": "Receipt resent to the donor",
+        "resendFailed": "Unable to resend"
+      },
+      "review": {
+        "title": "Donation under review",
+        "explain": "The amount or currency confirmed by the provider does not match the donation. Check the transaction in the provider's dashboard before deciding: approving issues the tax receipt, rejecting cancels the donation.",
+        "noteLabel": "Decision note (optional)",
+        "noteHint": "{count} / {max} characters · saved in the activity log",
+        "approve": "Approve donation",
+        "reject": "Reject donation",
+        "confirmApproveTitle": "Approve this donation?",
+        "confirmApproveText": "The {amount} donation will be marked as successful and the tax receipt will be sent to the donor. Only confirm if the provider has actually collected this amount.",
+        "confirmRejectTitle": "Reject this donation?",
+        "confirmRejectText": "The donation will be cancelled and no receipt will be issued. Any refund must be made from the provider's dashboard.",
+        "approved": "Donation approved",
+        "rejected": "Donation rejected",
+        "failed": "Unable to record the decision"
+      }
+    },
+    "finance": {
+      "eyebrow": "Donations",
+      "title": "Finance",
+      "description": "Summary of successful donations, breakdown by payment method and allocation, payment reconciliation.",
+      "period": "Period",
+      "allYears": "All years",
+      "export": "Export successful donations (CSV)",
+      "loading": "Calculating summary…",
+      "eurEquivalent": "i.e. {amount}",
+      "generalFund": "General fund",
+      "generalFundHint": "Unallocated donations",
+      "rateNote": "Amounts in CFA francs are converted to euros at the fixed rate of €1 = {rate} FCFA.",
+      "currencies": {
+        "eur": "Euro (EUR)",
+        "xaf": "CFA franc (XAF)"
+      },
+      "stats": {
+        "total": "Total raised",
+        "totalHint": "Successful donations {mode, select, year {in {year}} other {since the start}}",
+        "count": "Number of donations",
+        "donors": "Donors",
+        "donorsHint": "Unique individuals",
+        "average": "Average donation",
+        "recurring": "Monthly donors",
+        "recurringHint": "At least one monthly donation",
+        "pending": "Pending payments",
+        "pendingHint": "All periods combined"
+      },
+      "empty": {
+        "title": "No successful donations {mode, select, year {in {year}} other {since the start}}",
+        "text": "Choose another period to view the summary."
+      },
+      "monthly": {
+        "title": "Amount raised per month",
+        "description": "In euros, successful donations {mode, select, year {in {year}} other {since the start}}.",
+        "details": "View month-by-month figures"
+      },
+      "byProvider": {
+        "title": "By payment method",
+        "header": "Method",
+        "caption": "Breakdown by payment method"
+      },
+      "byCurrency": {
+        "title": "By currency",
+        "description": "Amounts in the original currency; share calculated in euro equivalent.",
+        "header": "Currency",
+        "amount": "Amount",
+        "caption": "Breakdown by currency"
+      },
+      "byProject": {
+        "title": "By allocation",
+        "description": "Projects and campaigns supported; the general fund groups unrestricted donations.",
+        "header": "Allocation",
+        "caption": "Breakdown by allocation"
+      },
+      "reconcile": {
+        "title": "Payment reconciliation",
+        "description": "A donation may remain “pending” if the donor closed the page before confirmation. Reconciliation re-reads its status with the provider (Stripe for cards, Notch Pay or Flutterwave for Mobile Money), confirms those that went through (the receipt is then sent automatically), recovers late-confirmed payments, flags for review those whose amount does not match, and closes those abandoned for more than 24 hours.",
+        "run": "Reconcile pending payments",
+        "confirmTitle": "Reconcile pending payments?",
+        "confirmText": "Donations pending for more than 15 minutes, as well as failed or cancelled donations from the last 7 days, will be checked with the providers. Those still unanswered after 24 hours will be closed as abandoned.",
+        "confirm": "Start reconciliation",
+        "done": "Reconciliation complete",
+        "nothing": "No payments to reconcile",
+        "failed": "Reconciliation failed",
+        "noProviderTitle": "Providers not configured",
+        "noProviderText": "No payment provider is connected to the server yet: only abandoned payments will be closed.",
+        "reviewTitle": "{count, plural, one {# donation flagged for review} other {# donations flagged for review}}",
+        "reviewText": "The amount or currency confirmed by the provider does not match the donation. Handle them from the Donations page (“Under review” filter).",
+        "counters": {
+          "checked": "{count, plural, one {checked} other {checked}}",
+          "succeeded": "{count, plural, one {confirmed} other {confirmed}}",
+          "recovered": "{count, plural, one {recovered (late payment)} other {recovered (late payments)}}",
+          "review": "{count, plural, one {under review} other {under review}}",
+          "failed": "{count, plural, one {failed} other {failed}}",
+          "abandoned": "{count, plural, one {abandoned} other {abandoned}}",
+          "errors": "{count, plural, one {read error} other {read errors}}"
+        }
+      }
+    },
+    "report": {
+      "eyebrow": "Management",
+      "title": "Annual report",
+      "description": "A summary ready to share with the board of directors, partners and donors.",
+      "descriptionRegion": "Summary of activity in the {region} region, ready to share with management, partners and donors.",
+      "year": "Year",
+      "print": "Print / PDF",
+      "loading": "Preparing the report…",
+      "unavailableTitle": "Report unavailable",
+      "unavailableText": "No data could be gathered for this year.",
+      "heading": "Activity report {year}",
+      "period": "Period from {start} to {end}",
+      "regionScope": "{region} region",
+      "generatedAt": "Generated on {date}",
+      "highlights": {
+        "title": "Highlights",
+        "collected": "raised",
+        "collectedDetail": "{count, plural, =0 {no successful donations} one {# successful donation} other {# successful donations}}",
+        "donors": "{count, plural, one {donor} other {donors}}",
+        "donorsDetail": "{count, plural, =0 {none giving monthly} one {including # giving monthly} other {including # giving monthly}}",
+        "newMembers": "{count, plural, one {new member} other {new members}}",
+        "events": "{count, plural, one {event held} other {events held}}",
+        "eventsDetail": "{count, plural, =0 {no registrations} one {# registration} other {# registrations}}",
+        "applications": "{count, plural, one {application received} other {applications received}}",
+        "applicationsDetail": "{count, plural, =0 {none accepted} one {# accepted} other {# accepted}}",
+        "messages": "{count, plural, one {message handled} other {messages handled}}",
+        "messagesDetail": "out of {count, plural, one {# received} other {# received}}"
+      },
+      "impact": {
+        "title": "Impact of the year's projects",
+        "scopeNote": "Reported cumulative figures for projects active in {year}: a multi-year project counts in every year it covers, so these figures do not add up from one year to the next.",
+        "scopeNoteRegion": "Reported cumulative figures for projects in the {region} region active in {year}: a multi-year project counts in every year it covers, so these figures do not add up from one year to the next.",
+        "beneficiaries": "{count, plural, one {beneficiary} other {beneficiaries}}",
+        "trainees": "{count, plural, one {person trained} other {people trained}}",
+        "credits": "{count, plural, one {loan granted} other {loans granted}}",
+        "activeProjects": "{count, plural, one {ongoing project} other {ongoing projects}}",
+        "completedDetail": "{count, plural, one {# completed} other {# completed}} out of {total}",
+        "regions": "{count, plural, one {region covered} other {regions covered}}"
+      },
+      "finance": {
+        "title": "Finances",
+        "empty": "No successful donations were recorded in {year}.",
+        "average": "Average donation: <strong>{amount}</strong>.",
+        "monthly": "Amount raised per month (EUR)",
+        "monthlyDetail": "Monthly breakdown",
+        "byProject": "By allocation",
+        "byProjectCaption": "Donations by allocation",
+        "allocationHeader": "Allocation",
+        "generalFund": "General fund",
+        "byProvider": "By payment method",
+        "byProviderCaption": "Donations by payment method",
+        "methodHeader": "Method",
+        "byCurrency": "By currency:",
+        "currency": "{amount} ({count, plural, one {# donation} other {# donations}})",
+        "currencyXaf": "{amount} ({count, plural, one {# donation} other {# donations}}, i.e. {eur})"
+      },
+      "projects": {
+        "title": "Projects of the year",
+        "project": "Project",
+        "status": "Status",
+        "region": "Region",
+        "beneficiaries": "Beneficiaries",
+        "trainees": "Trained",
+        "credits": "Loans",
+        "period": "Period",
+        "ongoing": "ongoing",
+        "empty": "No active projects this year."
+      },
+      "footer": "Document generated on {date} from platform data. Amounts in CFA francs converted to euros at the fixed rate of €1 = {rate} FCFA."
+    },
+    "logs": {
+      "eyebrow": "System",
+      "title": "Activity log",
+      "description": "All sensitive actions, time-stamped: sign-ins, donations, decisions, changes to accounts and content.",
+      "refresh": "Refresh",
+      "filter": "Action type",
+      "allActions": "All actions",
+      "entries": "{count, plural, =0 {No entries} one {# entry} other {# entries}}",
+      "loading": "Loading the log…",
+      "details": "Details",
+      "account": "Account no. {id}",
+      "deletedAccount": "Deleted account",
+      "system": "Visitor or system",
+      "pagination": "{from}–{to} of {total}",
+      "newer": "Newer",
+      "older": "Older",
+      "unknown": "Other action",
+      "unknownInDomain": "Other action · {domain}",
+      "columns": {
+        "date": "Date",
+        "action": "Action",
+        "author": "Performed by",
+        "details": "Details"
+      },
+      "empty": {
+        "title": "No entries",
+        "text": "The log is empty for now.",
+        "filtered": "No actions of this type have been recorded."
+      },
+      "categories": {
+        "auth": "Sign-ins and accounts",
+        "admin": "Account administration",
+        "hr": "Human resources",
+        "payment": "Payments",
+        "finance": "Finance",
+        "application": "Applications",
+        "message": "Messages",
+        "content": "Content",
+        "event": "Events",
+        "email": "Emails"
+      },
+      "actions": {
+        "auth": {
+          "login": "Sign-in",
+          "login_failed": "Failed sign-in",
+          "login_inactive": "Sign-in refused (account disabled)",
+          "register": "Registration",
+          "password_changed": "Password changed",
+          "password_reset_requested": "Password reset requested",
+          "password_reset": "Password reset"
+        },
+        "admin": {
+          "create_user": "Account created",
+          "update_user_roles": "Roles changed",
+          "delete_user": "Account deleted"
+        },
+        "hr": {
+          "update_profile": "Member profile updated"
+        },
+        "payment": {
+          "initiated": "Donation started",
+          "pending": "Payment pending",
+          "succeeded": "Donation confirmed",
+          "failed": "Payment failed",
+          "canceled": "Payment cancelled",
+          "abandoned": "Payment abandoned (closed)",
+          "amount_mismatch": "Amount or currency mismatch reported",
+          "review": "Donation flagged for review",
+          "review_approved": "Donation under review approved",
+          "review_rejected": "Donation under review rejected",
+          "refunded": "Donation refunded",
+          "partially_refunded": "Donation partially refunded",
+          "disputed": "Payment disputed by the donor",
+          "dispute_won": "Dispute won: donation reinstated",
+          "dispute_lost": "Dispute lost: donation refunded",
+          "receipt_revoked": "Tax receipt cancelled",
+          "receipt_resent": "Tax receipt resent",
+          "annual_receipt": "Annual tax receipt downloaded",
+          "subscription_canceled": "Monthly donation stopped",
+          "subscription_ended": "Monthly donation ended",
+          "subscription_updated": "Monthly donation updated",
+          "subscription_payment_failed": "Monthly donation instalment unpaid"
+        },
+        "finance": {
+          "reconcile": "Payment reconciliation",
+          "export_donations": "Donations CSV export"
+        },
+        "application": {
+          "submitted": "Application received",
+          "reviewing": "Application under review",
+          "accepted": "Application accepted",
+          "rejected": "Application declined"
+        },
+        "message": {
+          "created": "Message received",
+          "updated": "Message updated",
+          "deleted": "Message deleted"
+        },
+        "content": {
+          "create": {
+            "projects": "Project created",
+            "news": "News item created",
+            "testimonials": "Testimonial created"
+          },
+          "update": {
+            "projects": "Project edited",
+            "news": "News item edited",
+            "testimonials": "Testimonial edited"
+          },
+          "delete": {
+            "projects": "Project deleted",
+            "news": "News item deleted",
+            "testimonials": "Testimonial deleted"
+          }
+        },
+        "event": {
+          "create": "Event created",
+          "update": "Event edited",
+          "delete": "Event deleted",
+          "register": "Event registration",
+          "unregister": "Event registration cancelled",
+          "view_registrations": "Registration list viewed"
+        },
+        "email": {
+          "failed": "Email delivery failed"
+        },
+        "seed": {
+          "initialized": "Demo data initialised"
+        }
+      },
+      "meta": {
+        "statusChange": "Account status: {from} → {to}",
+        "rolesChange": "Roles: {from} → {to}",
+        "roles": "Roles: {roles}",
+        "fields": "Fields changed: {fields}",
+        "targetUser": "Account concerned: no. {id}",
+        "payment": "Donation no. {id}",
+        "amount": "Amount: {amount}",
+        "mismatch": "Expected: {expected} · received: {received}",
+        "receipt": "Receipt no. {number}",
+        "previousStatus": "Previous status: {status}",
+        "note": "Note: {note}",
+        "reconcile": "Checked: {checked} · confirmed: {succeeded} · recovered: {recovered} · under review: {review} · failed: {failed} · abandoned: {abandoned} · errors: {errors}",
+        "rows": "{count, plural, =0 {No rows exported} one {# row exported} other {# rows exported}}",
+        "registrations": "{count, plural, =0 {No registrations} one {# registration} other {# registrations}}",
+        "eventDeleted": "“{title}” · {count, plural, =0 {no registrations} one {# registration deleted} other {# registrations deleted}}",
+        "recipient": "Recipient: {to}",
+        "attempts": "{count, plural, one {# attempt} other {# attempts}}"
+      }
+    },
+    "content": {
+      "eyebrow": "Content",
+      "loading": "Loading content…",
+      "search": "Search…",
+      "published": "Published",
+      "draft": "Draft",
+      "noCampaign": "No campaign",
+      "campaignProgress": "Fundraising: {progress}%",
+      "copyName": "{name} (copy)",
+      "types": {
+        "projects": {
+          "title": "Projects and campaigns",
+          "description": "Present your field projects, their results and, if needed, a fundraising target.",
+          "create": "New project",
+          "edit": "Edit project",
+          "created": "Project created",
+          "empty": "No projects yet",
+          "emptyHint": "Create your first project: it can receive donations as soon as it is published."
+        },
+        "news": {
+          "title": "News",
+          "description": "Share the association's news: launches, results, highlights.",
+          "create": "New news item",
+          "edit": "Edit news item",
+          "created": "News item created",
+          "empty": "No news yet",
+          "emptyHint": "Tell the story of a recent milestone: published news items appear on the website."
+        },
+        "testimonials": {
+          "title": "Testimonials",
+          "description": "Give a voice to beneficiaries, volunteers and partners (with their consent).",
+          "create": "New testimonial",
+          "edit": "Edit testimonial",
+          "created": "Testimonial created",
+          "empty": "No testimonials yet",
+          "emptyHint": "Collect the words of someone you support: nothing speaks better for your work."
+        }
+      },
+      "scope": {
+        "title": "Content for the {region} region",
+        "noRegionTitle": "Region not specified",
+        "noRegion": "No region is linked to your profile: ask HR to add it so you can manage your region's content.",
+        "projects": "You only manage your region's projects: new projects are automatically assigned to it.",
+        "linked": "Each item must be linked to a project in your region; only those projects are offered.",
+        "noProject": "No project has been recorded for your region yet: create a project first."
+      },
+      "tabs": {
+        "label": "Filter by publication status",
+        "all": "All",
+        "published": "Published",
+        "draft": "Drafts"
+      },
+      "emptyTab": {
+        "draft": "No drafts",
+        "published": "No published content",
+        "text": "Switch tabs or change your search to see other content."
+      },
+      "columns": {
+        "title": "Title",
+        "author": "Author",
+        "status": "Status",
+        "region": "Region",
+        "campaign": "Campaign",
+        "project": "Linked project",
+        "createdAt": "Created on",
+        "published": "Publication",
+        "actions": "Actions"
+      },
+      "actions": {
+        "publish": "Publish",
+        "publishNamed": "Publish “{name}”",
+        "unpublish": "Revert to draft",
+        "unpublishNamed": "Revert “{name}” to draft",
+        "edit": "Edit",
+        "editNamed": "Edit “{name}”",
+        "duplicate": "Duplicate as draft",
+        "duplicateNamed": "Duplicate “{name}” as draft",
+        "view": "View on website",
+        "viewNamed": "View “{name}” on the website",
+        "delete": "Delete",
+        "deleteNamed": "Delete “{name}”"
+      },
+      "delete": {
+        "title": "Delete “{name}”?",
+        "text": "This deletion is permanent.",
+        "textProject": "This deletion is permanent. Donations already received are kept and assigned to the general fund. To simply hide the project, revert it to draft.",
+        "confirm": "Delete"
+      },
+      "toast": {
+        "published": "Published on the website",
+        "unpublished": "Reverted to draft",
+        "duplicated": "Copy created as draft",
+        "deleted": "Content deleted"
+      },
+      "errors": {
+        "update": "Unable to update",
+        "duplicate": "Unable to duplicate",
+        "delete": "Unable to delete"
+      }
+    },
+    "contentForm": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "create": "Create",
+      "saved": "Changes saved",
+      "saveFailed": "Unable to save",
+      "serverRefused": "The server rejected the changes",
+      "counter": "{count} / {max}",
+      "projectRequired": "Choose the project in your region to link this content to.",
+      "projectUnavailable": "Project no. {id} (outside your scope)",
+      "publishedOn": "Published: visible on the website",
+      "publishedOff": "Draft: not visible on the website",
+      "sections": {
+        "content": "Content",
+        "frame": "Project details",
+        "impact": "Impact indicators",
+        "publication": "Image and publication"
+      },
+      "status": {
+        "planifie": "Planned (coming soon)",
+        "en_cours": "Ongoing",
+        "termine": "Completed"
+      },
+      "fields": {
+        "author": "Author",
+        "roleLabel": "Role or location",
+        "testimonial": "Testimonial",
+        "title": "Title",
+        "summary": "Summary",
+        "description": "Description",
+        "content": "Content",
+        "project": "Linked project",
+        "status": "Status",
+        "region": "Region",
+        "startDate": "Start date",
+        "endDate": "End date",
+        "budget": "Total budget (EUR)",
+        "goal": "Fundraising target (EUR)",
+        "beneficiaries": "Beneficiaries",
+        "trainees": "People trained",
+        "credits": "Loans granted"
+      },
+      "placeholders": {
+        "author": "e.g. Estelle K.",
+        "roleLabel": "e.g. Class of 2025, Douala",
+        "noProject": "No project",
+        "chooseProject": "Choose a project",
+        "noRegion": "Not specified"
+      },
+      "hints": {
+        "testimonial": "The person's own words, as they shared them (with their consent).",
+        "summary": "One or two sentences shown on cards and at the top of the page.",
+        "project": "Optional: links this content to a project page.",
+        "projectScoped": "Required: only projects in the {region} region are offered.",
+        "regionScoped": "Projects you create are assigned to your region.",
+        "goal": "Leave blank if the project has no fundraising campaign under way."
+      },
+      "errors": {
+        "dates": "The end date must be after the start date"
+      }
+    },
+    "events": {
+      "eyebrow": "Content",
+      "title": "Events",
+      "description": "Workshops, fundraisers, field visits: schedule your events and track registrations.",
+      "create": "New event",
+      "loading": "Loading events…",
+      "draft": "Draft",
+      "pastBadge": "Past",
+      "when": "{date} · {time}",
+      "fillRate": "Fill rate: {fill}%",
+      "registeredOf": "<strong>{count, number}</strong> / {capacity} {count, plural, one {registered} other {registered}}",
+      "registered": "<strong>{count, number}</strong> {count, plural, one {registered} other {registered}}",
+      "full": "Full",
+      "spotsLeft": "{count, plural, one {# spot left} other {# spots left}}",
+      "unlimited": "Unlimited spots",
+      "registrations": "Registrations",
+      "edit": "Edit",
+      "editNamed": "Edit “{name}”",
+      "view": "View on website",
+      "viewNamed": "View “{name}” on the website",
+      "delete": "Delete",
+      "deleteNamed": "Delete “{name}”",
+      "deleted": "Event deleted",
+      "deleteFailed": "Unable to delete",
+      "deleteConfirm": {
+        "title": "Delete “{name}”?",
+        "text": "This deletion is permanent.",
+        "withRegistrations": "{count, plural, one {The registration will be deleted} other {The # registrations will be deleted}} along with the event. Remember to notify the participants."
+      },
+      "tabs": {
+        "label": "Event period",
+        "upcoming": "Upcoming",
+        "past": "Past"
+      },
+      "empty": {
+        "upcomingTitle": "No upcoming events",
+        "upcomingText": "Schedule a workshop or a fundraiser: members will be able to register from the website.",
+        "pastTitle": "No past events",
+        "pastText": "Completed events will appear here with their number of participants."
+      }
+    },
+    "eventForm": {
+      "createTitle": "New event",
+      "editTitle": "Edit event",
+      "cancel": "Cancel",
+      "save": "Save",
+      "create": "Create",
+      "created": "Event created",
+      "updated": "Event updated",
+      "saveFailed": "Unable to save",
+      "serverRefused": "The server rejected the changes",
+      "publishedOn": "Published: visible and open for registration",
+      "publishedOff": "Draft: not visible on the website",
+      "sections": {
+        "presentation": "Overview",
+        "place": "Location and schedule",
+        "publication": "Image and publication"
+      },
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "project": "Linked project",
+        "location": "Location",
+        "region": "Region",
+        "start": "Start",
+        "end": "End",
+        "capacity": "Capacity"
+      },
+      "placeholders": {
+        "noProject": "No project",
+        "location": "e.g. HOPE Centre, Douala",
+        "noRegion": "Not specified"
+      },
+      "hints": {
+        "description": "Programme, intended audience, what to bring… ({min} characters minimum)",
+        "capacity": "Leave blank for unlimited spots.",
+        "capacityRegistered": "Leave blank for unlimited spots. {count, plural, one {# person} other {# people}} currently registered."
+      },
+      "errors": {
+        "end": "The end must be after the start",
+        "capacity": "At least {min, plural, one {# spot} other {# spots}}: {count, plural, one {# person is} other {# people are}} already registered"
+      }
+    },
+    "registrations": {
+      "title": "Registrations — {title}",
+      "close": "Close",
+      "copy": "Copy emails",
+      "export": "Export to CSV",
+      "loading": "Loading registrations…",
+      "emptyTitle": "No registrations yet",
+      "emptyText": "Members who register from the website will appear here.",
+      "search": "Name, email, region…",
+      "copied": "{count, plural, one {# address copied} other {# addresses copied}}",
+      "copyFailed": "Unable to copy",
+      "copyFailedText": "Your browser blocked access to the clipboard.",
+      "exported": "Registration list downloaded",
+      "columns": {
+        "participant": "Participant",
+        "phone": "Phone",
+        "region": "Region",
+        "registeredAt": "Registered on"
+      },
+      "csv": {
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "region": "Region",
+        "registeredAt": "Registered on"
+      }
+    }
+  }
+}

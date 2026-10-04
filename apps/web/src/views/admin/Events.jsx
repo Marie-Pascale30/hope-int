@@ -1,15 +1,16 @@
 "use client";
 
-import "../../styles/admin-b.css";
 import { useCallback, useMemo, useState } from "react";
 import { CalendarDays, Clock, ExternalLink, FolderHeart, MapPin, Pencil, Plus, Trash2, Users } from "lucide-react";
-import { Badge, Button, EmptyState, ErrorState, LoadingState, PageHeader, ProgressBar, Tabs } from "../../components/ui";
+import { useTranslations } from "next-intl";
+import { Badge, Button, EmptyState, ErrorState, PageSkeleton, PageHeader, ProgressBar, TabPanel, Tabs } from "../../components/ui";
 import RequireAuth from "../../components/RequireAuth";
 import { useAsync } from "../../hooks/useAsync";
+import { useFormat } from "../../i18n/format";
+import { useLocalePath } from "../../i18n/navigation";
 import { adminApi, publicApi } from "../../services";
-import { getErrorMessage } from "../../services/api";
-import { formatDate, formatNumber, formatTime } from "../../utils/format";
-import { confirmAction, showError, toast } from "../../utils/alerts";
+import { useErrorMessage } from "../../i18n/errors";
+import { useAlerts } from "../../utils/alerts";
 import { PERMISSIONS as P } from "../../utils/rbac";
 import EventForm from "./parts-b/EventForm";
 import EventRegistrations from "./parts-b/EventRegistrations";
@@ -17,65 +18,89 @@ import EventRegistrations from "./parts-b/EventRegistrations";
 const isPast = (event) => new Date(event.end_at || event.start_at).getTime() < Date.now();
 
 function EventRow({ event, past, onEdit, onRegistrations, onDelete, busy }) {
-  const start = new Date(event.start_at);
+  const t = useTranslations("adminOps.events");
+  const f = useFormat();
+  const lp = useLocalePath();
   const registered = Number(event.registered_count) || 0;
   const fill = event.capacity ? Math.round((registered / event.capacity) * 100) : 0;
-  const sameDay = event.end_at && formatDate(event.end_at) === formatDate(event.start_at);
+  const sameDay = event.end_at && f.dayKey(event.end_at) === f.dayKey(event.start_at);
+  const startLabel = t("when", {
+    date: f.date(event.start_at, { weekday: "long", day: "numeric", month: "long", year: "numeric" }),
+    time: f.time(event.start_at),
+  });
+  const endLabel = event.end_at
+    ? sameDay
+      ? ` – ${f.time(event.end_at)}`
+      : ` → ${t("when", { date: f.date(event.end_at), time: f.time(event.end_at) })}`
+    : "";
 
   return (
-    <article className={`admb-event${past ? " admb-event--past" : ""}`}>
-      <div className="admb-datebox" aria-hidden="true">
-        <strong>{start.getDate()}</strong>
-        <span>{new Intl.DateTimeFormat("fr-FR", { month: "short" }).format(start).replace(".", "")}</span>
-        <span>{start.getFullYear()}</span>
+    <article className={`adm-event-card${past ? " adm-event-card--past" : ""}`}>
+      <div className="adm-datebox" aria-hidden="true">
+        <strong>{f.date(event.start_at, { day: "numeric" })}</strong>
+        <span>{f.date(event.start_at, { month: "short" }).replace(".", "")}</span>
+        <span>{f.date(event.start_at, { year: "numeric" })}</span>
       </div>
 
       <div>
-        <h2 className="admb-event__title">
+        <h2 className="adm-event-card__title">
           {event.title}
-          {!event.published && <Badge>Brouillon</Badge>}
-          {past && <Badge plain>Passé</Badge>}
+          {!event.published && <Badge>{t("draft")}</Badge>}
+          {past && <Badge plain>{t("pastBadge")}</Badge>}
         </h2>
-        <div className="admb-event__meta">
+        <div className="adm-event-card__meta">
           <span>
             <Clock aria-hidden="true" />
-            {formatDate(event.start_at, { weekday: "long", day: "numeric", month: "long", year: "numeric" })} · {formatTime(event.start_at)}
-            {event.end_at && (sameDay ? ` – ${formatTime(event.end_at)}` : ` → ${formatDate(event.end_at)} ${formatTime(event.end_at)}`)}
+            {startLabel}
+            {endLabel}
           </span>
           <span><MapPin aria-hidden="true" />{event.location}{event.region ? ` · ${event.region}` : ""}</span>
           {event.project_title && <span><FolderHeart aria-hidden="true" />{event.project_title}</span>}
         </div>
       </div>
 
-      <div className="admb-event__spots">
+      <div className="adm-event-card__spots">
         {event.capacity ? (
           <>
-            <ProgressBar value={fill} accent={fill >= 90} label={`Taux de remplissage : ${fill} %`} />
+            <ProgressBar value={fill} accent={fill >= 90} label={t("fillRate", { fill })} />
             <div className="progress-meta">
-              <span><strong>{formatNumber(registered)}</strong> / {formatNumber(event.capacity)} inscrits</span>
-              <span>{event.remaining_spots === 0 ? "Complet" : `${formatNumber(event.remaining_spots)} place(s)`}</span>
+              <span>
+                {t.rich("registeredOf", {
+                  count: registered,
+                  capacity: f.number(event.capacity),
+                  strong: (chunks) => <strong>{chunks}</strong>,
+                })}
+              </span>
+              <span>{event.remaining_spots === 0 ? t("full") : t("spotsLeft", { count: Number(event.remaining_spots) || 0 })}</span>
             </div>
           </>
         ) : (
           <div className="progress-meta" style={{ marginTop: 0 }}>
-            <span><strong>{formatNumber(registered)}</strong> inscrit(s)</span>
-            <span>Places illimitées</span>
+            <span>{t.rich("registered", { count: registered, strong: (chunks) => <strong>{chunks}</strong> })}</span>
+            <span>{t("unlimited")}</span>
           </div>
         )}
       </div>
 
-      <div className="admb-actions">
-        <Button size="sm" variant="secondary" icon={Users} onClick={() => onRegistrations(event)}>Inscrits</Button>
-        <Button size="sm" variant="ghost" icon={Pencil} onClick={() => onEdit(event)} aria-label={`Modifier « ${event.title} »`} title="Modifier" />
+      <div className="adm-actions">
+        <Button size="sm" variant="secondary" icon={Users} onClick={() => onRegistrations(event)}>{t("registrations")}</Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          icon={Pencil}
+          onClick={() => onEdit(event)}
+          aria-label={t("editNamed", { name: event.title })}
+          title={t("edit")}
+        />
         {event.published && !past && (
           <Button
             size="sm"
             variant="ghost"
             icon={ExternalLink}
-            href={`/evenements/${event.id}`}
+            href={lp(`/evenements/${event.id}`)}
             target="_blank"
-            aria-label={`Voir « ${event.title} » sur le site`}
-            title="Voir sur le site"
+            aria-label={t("viewNamed", { name: event.title })}
+            title={t("view")}
           />
         )}
         <Button
@@ -84,8 +109,8 @@ function EventRow({ event, past, onEdit, onRegistrations, onDelete, busy }) {
           icon={Trash2}
           disabled={busy}
           onClick={() => onDelete(event)}
-          aria-label={`Supprimer « ${event.title} »`}
-          title="Supprimer"
+          aria-label={t("deleteNamed", { name: event.title })}
+          title={t("delete")}
         />
       </div>
     </article>
@@ -93,6 +118,9 @@ function EventRow({ event, past, onEdit, onRegistrations, onDelete, busy }) {
 }
 
 function EventsView() {
+  const getErrorMessage = useErrorMessage();
+  const t = useTranslations("adminOps.events");
+  const { confirmAction, showError, toast } = useAlerts();
   const { data, loading, error, reload, setData } = useAsync(() => adminApi.events(), []);
   // Liste publique des projets : accessible a toutes les personnes qui gerent les evenements.
   const { data: projects } = useAsync(() => publicApi.listContent("projects"), []);
@@ -120,62 +148,59 @@ function EventsView() {
 
   const remove = async (event) => {
     const registered = Number(event.registered_count) || 0;
-    const warning = registered
-      ? `Les ${registered} inscription(s) seront supprimées avec lui. Pensez à prévenir les participants.`
-      : "Cette suppression est définitive.";
-    const ok = await confirmAction(`Supprimer « ${event.title} » ?`, warning, "Supprimer", { danger: true });
+    const ok = await confirmAction(
+      t("deleteConfirm.title", { name: event.title }),
+      registered ? t("deleteConfirm.withRegistrations", { count: registered }) : t("deleteConfirm.text"),
+      t("delete"),
+      { danger: true }
+    );
     if (!ok) return;
     setBusyId(event.id);
     try {
       await adminApi.deleteEvent(event.id);
       setData((prev) => prev.filter((row) => row.id !== event.id));
-      toast("Événement supprimé");
+      toast(t("deleted"));
     } catch (err) {
-      showError("Suppression impossible", getErrorMessage(err));
+      showError(t("deleteFailed"), getErrorMessage(err));
     } finally {
       setBusyId(null);
     }
   };
 
+  const createButton = <Button icon={Plus} onClick={() => setEditing({ event: null })}>{t("create")}</Button>;
+
   return (
     <>
-      <PageHeader
-        eyebrow="Contenus"
-        title="Événements"
-        description="Ateliers, collectes, visites de terrain : planifiez vos rendez-vous et suivez les inscriptions."
-        actions={<Button icon={Plus} onClick={() => setEditing({ event: null })}>Nouvel événement</Button>}
-      />
+      <PageHeader eyebrow={t("eyebrow")} title={t("title")} description={t("description")} actions={createButton} />
 
       {error ? (
         <ErrorState message={getErrorMessage(error)} onRetry={reload} />
       ) : loading && !data ? (
-        <LoadingState label="Chargement des événements…" />
+        <PageSkeleton variant="list" rows={4} label={t("loading")} />
       ) : (
         <>
           <Tabs
+            id="events-tabs"
             tabs={[
-              { value: "upcoming", label: "À venir", count: upcoming.length },
-              { value: "past", label: "Passés", count: past.length },
+              { value: "upcoming", label: t("tabs.upcoming"), count: upcoming.length },
+              { value: "past", label: t("tabs.past"), count: past.length },
             ]}
             value={tab}
             onChange={setTab}
-            label="Période des événements"
+            label={t("tabs.label")}
           />
+          <TabPanel tabsId="events-tabs" value={tab}>
           {list.length === 0 ? (
             <div className="panel">
               <EmptyState
                 icon={CalendarDays}
-                title={tab === "upcoming" ? "Aucun événement à venir" : "Aucun événement passé"}
-                description={
-                  tab === "upcoming"
-                    ? "Programmez un atelier ou une collecte : les membres pourront s'y inscrire depuis le site."
-                    : "Les événements terminés apparaîtront ici avec leur nombre de participants."
-                }
-                action={tab === "upcoming" && <Button icon={Plus} onClick={() => setEditing({ event: null })}>Nouvel événement</Button>}
+                title={tab === "upcoming" ? t("empty.upcomingTitle") : t("empty.pastTitle")}
+                description={tab === "upcoming" ? t("empty.upcomingText") : t("empty.pastText")}
+                action={tab === "upcoming" && createButton}
               />
             </div>
           ) : (
-            <div className="admb-events">
+            <div className="adm-event-list">
               {list.map((event) => (
                 <EventRow
                   key={event.id}
@@ -189,6 +214,7 @@ function EventsView() {
               ))}
             </div>
           )}
+          </TabPanel>
         </>
       )}
 

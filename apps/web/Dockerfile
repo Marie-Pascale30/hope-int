@@ -1,5 +1,5 @@
 # Contexte de build : racine du monorepo (voir docker-compose.yml).
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -19,7 +19,7 @@ ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 
 RUN npm run build -w @hope/web
 
-FROM node:20-alpine AS runner
+FROM node:24-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3001

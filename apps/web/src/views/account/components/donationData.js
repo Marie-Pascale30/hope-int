@@ -8,19 +8,21 @@ export const PRESET_AMOUNTS = {
 export const DEFAULT_PRESET_INDEX = 1;
 
 // Equivalences indicatives, exprimees en euros (seuil minimal du palier), du plus eleve au plus faible.
+// Textes : account.donate.impact.<cle> (ICU, variable {amount} = montant du microcredit en FCFA).
 const IMPACT_TIERS = [
-  { min: 250, text: "le stock de démarrage d’une coopérative agricole : semences améliorées et petit outillage pour cinq familles." },
-  { min: 100, text: "trois mois de suivi par un agent de terrain pour un groupement de dix femmes, formations comprises." },
-  { min: 50, text: "un premier microcrédit solidaire de 30 000 FCFA pour lancer une activité : beignets, couture ou petit élevage." },
-  { min: 25, text: "une formation complète en gestion pour une commerçante : tenir sa caisse, calculer sa marge, fixer ses prix." },
-  { min: 10, text: "une séance d’éducation financière pour un groupe de 20 femmes : épargner, budgéter, rembourser." },
-  { min: 5, text: "un carnet d’épargne et un cahier de caisse pour une nouvelle membre d’un groupe solidaire." },
-  { min: 0, text: "une contribution au fonds solidaire qui finance les prêts des familles accompagnées." },
+  { min: 250, key: "cooperative" },
+  { min: 100, key: "fieldAgent" },
+  { min: 50, key: "microcredit" },
+  { min: 25, key: "training" },
+  { min: 10, key: "education" },
+  { min: 5, key: "savingsBook" },
+  { min: 0, key: "fund" },
 ];
 
-export function impactFor(amountEur) {
+// Cle de traduction de l'equivalence d'impact d'un montant en euros.
+export function impactKey(amountEur) {
   const value = Number(amountEur) || 0;
-  return IMPACT_TIERS.find((tier) => value >= tier.min).text;
+  return IMPACT_TIERS.find((tier) => value >= tier.min).key;
 }
 
 // Conversion indicative entre devises, arrondie pour rester lisible.
@@ -42,38 +44,21 @@ export function parseAmount(value, currency) {
   return currency === "xaf" ? Math.round(amount) : amount;
 }
 
-const STRIPE_MESSAGES = {
-  card_declined: "Votre carte a été refusée. Vérifiez vos informations ou essayez une autre carte.",
-  generic_decline: "Votre carte a été refusée. Contactez votre banque ou essayez une autre carte.",
-  insufficient_funds: "Le solde de cette carte est insuffisant pour ce montant.",
-  lost_card: "Cette carte a été déclarée perdue : utilisez une autre carte.",
-  stolen_card: "Cette carte a été déclarée volée : utilisez une autre carte.",
-  expired_card: "Votre carte a expiré. Utilisez une carte en cours de validité.",
-  incorrect_cvc: "Le code de sécurité (CVC) est incorrect.",
-  invalid_cvc: "Le code de sécurité (CVC) est invalide.",
-  incomplete_cvc: "Le code de sécurité (CVC) est incomplet.",
-  incorrect_number: "Le numéro de carte est incorrect.",
-  invalid_number: "Le numéro de carte est invalide.",
-  incomplete_number: "Le numéro de carte est incomplet.",
-  invalid_expiry_month: "Le mois d’expiration est invalide.",
-  invalid_expiry_year: "L’année d’expiration est invalide.",
-  invalid_expiry_year_past: "La date d’expiration est déjà passée.",
-  incomplete_expiry: "La date d’expiration est incomplète.",
-  processing_error: "Une erreur est survenue pendant le traitement de la carte. Réessayez dans un instant.",
-  authentication_required: "Votre banque demande une authentification : réessayez et validez la demande de votre banque.",
-  payment_intent_authentication_failure: "L’authentification demandée par votre banque (3D Secure) a échoué ou a été annulée.",
-  card_not_supported: "Cette carte ne permet pas ce type de paiement. Essayez une autre carte.",
-  currency_not_supported: "Cette carte n’accepte pas les paiements en euros.",
-  do_not_honor: "Votre banque a refusé le paiement. Contactez-la ou essayez une autre carte.",
-  rate_limit: "Trop de tentatives en peu de temps : patientez quelques instants avant de réessayer.",
-};
+// Codes Stripe pour lesquels un message plus explicite est fourni (account.stripe.<code>).
+const STRIPE_CODES = new Set([
+  "card_declined", "generic_decline", "insufficient_funds", "lost_card", "stolen_card", "expired_card",
+  "incorrect_cvc", "invalid_cvc", "incomplete_cvc", "incorrect_number", "invalid_number", "incomplete_number",
+  "invalid_expiry_month", "invalid_expiry_year", "invalid_expiry_year_past", "incomplete_expiry",
+  "processing_error", "authentication_required", "payment_intent_authentication_failure", "card_not_supported",
+  "currency_not_supported", "do_not_honor", "rate_limit",
+]);
 
-export function stripeErrorMessage(error) {
+// t : useTranslations("account.stripe"). Pour un code inconnu, le message de Stripe (deja localise
+// d'apres la langue passee a Stripe.js / Elements) est affiche pour les erreurs de saisie et de carte.
+export function stripeErrorMessage(error, t) {
   if (!error) return "";
-  return (
-    STRIPE_MESSAGES[error.decline_code] ||
-    STRIPE_MESSAGES[error.code] ||
-    (error.type === "validation_error" && error.message) ||
-    "Le paiement n’a pas abouti. Réessayez ou utilisez une autre carte."
-  );
+  if (STRIPE_CODES.has(error.decline_code)) return t(error.decline_code);
+  if (STRIPE_CODES.has(error.code)) return t(error.code);
+  if ((error.type === "validation_error" || error.type === "card_error") && error.message) return error.message;
+  return t("fallback");
 }

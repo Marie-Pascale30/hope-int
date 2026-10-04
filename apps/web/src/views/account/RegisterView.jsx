@@ -2,80 +2,82 @@
 
 import "../../styles/account.css";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UserPlus } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { Alert, Button, Input, LoadingState } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { authApi } from "../../services";
-import { getErrorMessage } from "../../services/api";
+import { Link } from "../../i18n/navigation";
 import { toast } from "../../utils/alerts";
 import AuthCard from "./components/AuthCard";
 import { PasswordInput, PasswordStrength } from "./components/PasswordFields";
 import { EMAIL_PATTERN, destinationFor, isStrongPassword } from "./components/authHelpers";
+import { useErrorMessage } from "../../i18n/errors";
 
 const EMPTY = { name: "", email: "", password: "", confirm: "" };
 
-function validate(form) {
+// tf : traducteur de account.fields.
+function validate(form, tf) {
   const errors = {};
-  if (form.name.trim().length < 2) errors.name = "Indiquez votre nom (2 caractères minimum)";
-  if (!EMAIL_PATTERN.test(form.email.trim())) errors.email = "Adresse email invalide";
-  if (!isStrongPassword(form.password)) errors.password = "Le mot de passe ne respecte pas encore les règles ci-dessous";
-  if (form.confirm !== form.password) errors.confirm = "Les mots de passe ne correspondent pas";
+  if (form.name.trim().length < 2) errors.name = tf("nameMin", { min: 2 });
+  if (!EMAIL_PATTERN.test(form.email.trim())) errors.email = tf("emailInvalid");
+  if (!isStrongPassword(form.password)) errors.password = tf("passwordRules");
+  if (form.confirm !== form.password) errors.confirm = tf("passwordMismatch");
   return errors;
 }
 
 export default function RegisterView() {
   const { login, status, user } = useAuth();
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations("account.register");
+  const tf = useTranslations("account.fields");
+  const errorText = useErrorMessage();
   const [form, setForm] = useState(EMPTY);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (status === "authenticated" && user) router.replace(destinationFor(user));
-  }, [status, user, router]);
+    if (status === "authenticated" && user) router.replace(destinationFor(user, null, locale));
+  }, [status, user, router, locale]);
 
   const set = (key) => (event) => setForm((prev) => ({ ...prev, [key]: event.target.value }));
-  const errors = submitted ? validate(form) : {};
+  const errors = submitted ? validate(form, tf) : {};
 
   const submit = async (event) => {
     event.preventDefault();
     setSubmitted(true);
     setError("");
-    if (Object.keys(validate(form)).length) return;
+    if (Object.keys(validate(form, tf)).length) return;
     setLoading(true);
     const email = form.email.trim().toLowerCase();
     try {
       await authApi.register({ name: form.name.trim(), email, password: form.password });
       await login(email, form.password);
-      toast("Bienvenue chez HOPE International !");
+      toast(t("welcome"));
     } catch (err) {
-      setError(getErrorMessage(err));
+      setError(errorText(err));
       setLoading(false);
     }
   };
 
   if (status === "authenticated") {
-    return <LoadingState label="Ouverture de votre espace…" />;
+    return <LoadingState label={t("opening")} />;
   }
 
   return (
     <AuthCard
-      title="Créer votre compte"
-      description="Suivez vos dons, téléchargez vos reçus et inscrivez-vous à nos événements solidaires."
-      footer={
-        <>
-          Déjà inscrit ? <Link href="/connexion">Se connecter</Link>
-        </>
-      }
+      title={t("title")}
+      description={t("description")}
+      footer={t.rich("hasAccount", { link: (chunks) => <Link href="/connexion">{chunks}</Link> })}
     >
       <form className="stack" onSubmit={submit} noValidate>
         {error && <Alert tone="danger">{error}</Alert>}
-        <Input label="Nom complet" autoComplete="name" required value={form.name} onChange={set("name")} error={errors.name} />
+        <Input label={tf("fullName")} autoComplete="name" required value={form.name} onChange={set("name")} error={errors.name} />
         <Input
-          label="Adresse email"
+          label={tf("email")}
           type="email"
           autoComplete="email"
           inputMode="email"
@@ -85,7 +87,7 @@ export default function RegisterView() {
           error={errors.email}
         />
         <PasswordInput
-          label="Mot de passe"
+          label={tf("password")}
           autoComplete="new-password"
           required
           value={form.password}
@@ -94,19 +96,18 @@ export default function RegisterView() {
         />
         <PasswordStrength password={form.password} />
         <PasswordInput
-          label="Confirmez le mot de passe"
+          label={tf("confirmPassword")}
           autoComplete="new-password"
           required
           value={form.confirm}
           onChange={set("confirm")}
-          error={errors.confirm || (form.confirm && form.confirm !== form.password ? "Les mots de passe ne correspondent pas" : undefined)}
+          error={errors.confirm || (form.confirm && form.confirm !== form.password ? tf("passwordMismatch") : undefined)}
         />
         <Button type="submit" size="lg" block icon={UserPlus} loading={loading}>
-          Créer mon compte
+          {t("submit")}
         </Button>
         <p className="acc-auth__note">
-          Vous souhaitez rejoindre l’équipe de HOPE International (bénévole, salarié, responsable régional) ? Le compte
-          membre ne suffit pas : <Link href="/rejoindre">déposez votre candidature</Link>, nous vous recontacterons.
+          {t.rich("teamNote", { link: (chunks) => <Link href="/rejoindre">{chunks}</Link> })}
         </p>
       </form>
     </AuthCard>

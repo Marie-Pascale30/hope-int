@@ -12,9 +12,10 @@ export function LogoMark({ size = 36 }) {
   );
 }
 
-export default function Logo({ href = "/", light = false }) {
+// label : nom accessible du lien (traduit par l'appelant).
+export default function Logo({ href = "/", light = false, label = "HOPE International — accueil" }) {
   return (
-    <Link href={href} className={`logo${light ? " logo--light" : ""}`} aria-label="HOPE International — accueil">
+    <Link href={href} className={`logo${light ? " logo--light" : ""}`} aria-label={label}>
       <LogoMark />
       <span className="logo__text">
         HOPE

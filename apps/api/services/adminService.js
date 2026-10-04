@@ -5,12 +5,15 @@ const contentRepo = require("../repositories/contentRepository");
 const eventRepo = require("../repositories/eventRepository");
 const userRepo = require("../repositories/userRepository");
 const paymentService = require("./paymentService");
+const logService = require("./activityLogService");
 const { hasMailConfig } = require("./emailService");
 const { getRoleMatrix, hasGlobalScope, PERMISSION_LABELS, ROLE_LABELS } = require("@hope/shared/rbac");
 const { REGIONS } = require("@hope/shared/constants");
 const { badRequest, forbidden } = require("../utils/httpError");
+const { getScopeRegion, NO_REGION_MESSAGE } = require("../utils/scope");
 
-exports.getStats = async () => statsRepo.getDashboard();
+// Statistiques : un acteur restreint a sa region ne voit que les chiffres de sa region.
+exports.getStats = async (actor) => statsRepo.getDashboard({ region: getScopeRegion(actor) });
 
 exports.getLogs = async (filters) => activityRepo.getLatest(filters);
 
@@ -20,15 +23,14 @@ exports.getRoles = async () => ({
     roleLabels: ROLE_LABELS,
 });
 
-// Hors roles a portee globale, la vue regionale est limitee a la region de la fiche.
+// Hors roles a portee globale, la vue regionale est limitee a la region de la fiche
+// (la route exige MANAGE_REGIONAL : un acteur non global y est donc restreint a sa region).
 function resolveRegion(actor, requested) {
     if (hasGlobalScope(actor.roles)) {
         if (requested && !REGIONS.includes(requested)) throw badRequest("Région inconnue");
         return requested || null;
     }
-    if (!actor.region) {
-        throw forbidden("Aucune région n'est associée à votre fiche : demandez aux RH de la renseigner");
-    }
+    if (!actor.region) throw forbidden(NO_REGION_MESSAGE);
     return actor.region;
 }
 
@@ -61,22 +63,43 @@ exports.getRegional = async (actor, requestedRegion) => {
     };
 };
 
-exports.getAnnualReport = async (year) => {
+// Impact de l'annee : les compteurs des projets sont des cumuls sans date ; on additionne
+// ceux des projets actifs pendant l'annee (periode qui recoupe l'annee), ce qui est signale
+// dans impactScope pour que le rapport ne le presente pas comme un impact strictement annuel.
+exports.getAnnualReport = async (actor, year) => {
     const targetYear = Number(year) || new Date().getFullYear();
+    const region = getScopeRegion(actor);
     const [finance, activity, impact, years] = await Promise.all([
-        paymentService.getSummary({ year: targetYear }),
-        statsRepo.getYearActivity(targetYear),
-        contentRepo.getImpactTotals(),
+        paymentService.getSummary({ year: targetYear, ...(region ? { region } : {}) }),
+        statsRepo.getYearActivity(targetYear, { region }),
+        contentRepo.getImpactTotals({ region, activeInYear: targetYear }),
         statsRepo.getAvailableYears(),
     ]);
     return {
         year: targetYear,
+        region: region || null,
         availableYears: years.includes(targetYear) ? years : [targetYear, ...years],
         finance,
         activity,
         impact,
+        impactScope: {
+            basis: "projects_active_in_year",
+            note: "Cumuls déclarés des projets actifs pendant l'année (un projet pluriannuel compte dans chaque année couverte).",
+        },
         generatedAt: new Date().toISOString(),
     };
+};
+
+// Bilan financier : limite a la region pour un acteur restreint.
+exports.getFinanceSummary = async (actor, filters = {}) => {
+    const region = getScopeRegion(actor);
+    return paymentService.getSummary({ ...filters, ...(region ? { region } : {}) });
+};
+
+// Liste des dons : limitee a la region (dons affectes a un projet de la region) pour un acteur restreint.
+exports.getDonations = async (actor, filters = {}) => {
+    const region = getScopeRegion(actor);
+    return paymentService.getAll({ ...filters, ...(region ? { region } : {}) });
 };
 
 exports.getSystemStatus = async () => {
@@ -182,8 +205,16 @@ function csvCell(value) {
 }
 
 // Separateur ";" et BOM UTF-8 : ouverture directe dans Excel en francais.
-exports.exportDonationsCsv = async (filters) => {
-    const rows = await paymentService.getAll(filters);
+// Export complet (sans limite de lignes) et journalise : il contient des donnees personnelles.
+exports.exportDonationsCsv = async (actor, filters = {}) => {
+    const region = getScopeRegion(actor);
+    const scoped = { ...filters, ...(region ? { region } : {}) };
+    const rows = await paymentService.getForExport(scoped);
+    await logService.log({
+        userId: actor.id,
+        action: "finance.export_donations",
+        meta: { filters: scoped, rows: rows.length },
+    });
     const lines = [
         CSV_COLUMNS.map(([, label]) => label).join(";"),
         ...rows.map((row) => CSV_COLUMNS.map(([key]) => {
@@ -191,5 +222,6 @@ exports.exportDonationsCsv = async (filters) => {
             return csvCell(row[key]);
         }).join(";")),
     ];
-    return `﻿${lines.join("\r\n")}`;
+    // BOM UTF-8 : Excel detecte l'encodage et affiche correctement les accents.
+    return `\uFEFF${lines.join("\r\n")}`;
 };

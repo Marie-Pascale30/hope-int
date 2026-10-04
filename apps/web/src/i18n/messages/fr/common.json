@@ -1,0 +1,157 @@
+{
+  "common": {
+    "siteName": "HOPE International",
+    "loading": "Chargement…"
+  },
+  "nav": {
+    "home": "HOPE International — accueil",
+    "main": "Navigation principale",
+    "projects": "Nos projets",
+    "news": "Actualités",
+    "events": "Agenda",
+    "join": "Nous rejoindre",
+    "contact": "Contact",
+    "donate": "Faire un don",
+    "login": "Connexion",
+    "account": "Mon espace",
+    "admin": "Administration",
+    "logout": "Se déconnecter",
+    "menu": "Menu",
+    "menuOpen": "Ouvrir le menu",
+    "menuClose": "Fermer le menu",
+    "donateShort": "Don",
+    "skip": "Aller au contenu"
+  },
+  "theme": {
+    "label": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "footer": {
+    "tagline": "Microfinance solidaire, formation et entraide au service des familles camerounaises.",
+    "explore": "Découvrir",
+    "act": "Agir",
+    "contact": "Nous contacter",
+    "rights": "Tous droits réservés.",
+    "language": "Langue"
+  },
+  "language": {
+    "label": "Langue",
+    "current": "Langue : {language}. Changer de langue"
+  },
+  "errors": {
+    "loadTitle": "Chargement impossible",
+    "loadText": "Ces informations n’ont pas pu être chargées. Réessayez dans un instant.",
+    "retry": "Réessayer",
+    "generic": "Une erreur est survenue. Réessayez dans un instant.",
+    "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",
+    "timeout": "Le serveur met trop de temps à répondre.",
+    "invalidField": "Champ invalide : {field}.",
+    "close": "Fermer",
+    "pageTitle": "Cette page n’a pas pu s’afficher",
+    "pageText": "Un incident technique nous empêche d’afficher cette page. Réessayez, ou revenez à l’accueil.",
+    "backHome": "Retour à l’accueil",
+    "notFoundTitle": "Page introuvable",
+    "notFoundText": "Cette adresse ne correspond à aucune page.",
+    "backAdmin": "Retour à l’administration"
+  },
+  "labels": {
+    "role": {
+      "admin": "Administrateur système",
+      "directrice_generale": "Directrice générale",
+      "conseiller": "Conseiller stratégique",
+      "responsable_rh": "Responsable RH",
+      "responsable_finance": "Responsable financier",
+      "organisatrice": "Organisatrice",
+      "responsable_it": "Responsable IT",
+      "directrice_regionale": "Directrice régionale",
+      "secretaire_generale": "Secrétaire générale",
+      "membre": "Membre"
+    },
+    "projectStatus": {
+      "planifie": "Bientôt",
+      "en_cours": "En cours",
+      "termine": "Terminé"
+    },
+    "messageStatus": {
+      "nouveau": "Nouveau",
+      "lu": "Lu",
+      "traite": "Traité",
+      "archive": "Archivé"
+    },
+    "applicationStatus": {
+      "nouvelle": "Nouvelle",
+      "en_etude": "En étude",
+      "acceptee": "Acceptée",
+      "refusee": "Refusée"
+    },
+    "paymentStatus": {
+      "pending": "En attente",
+      "succeeded": "Réussi",
+      "failed": "Échoué",
+      "canceled": "Annulé",
+      "refunded": "Remboursé",
+      "disputed": "Contesté",
+      "review": "En vérification"
+    },
+    "userStatus": {
+      "active": "Actif",
+      "inactive": "Désactivé"
+    },
+    "subscriptionStatus": {
+      "active": "Actif",
+      "trialing": "Actif",
+      "past_due": "Paiement en retard",
+      "incomplete": "En attente",
+      "canceled": "Arrêté",
+      "unpaid": "Impayé",
+      "unknown": "Statut indisponible"
+    },
+    "paymentMethod": {
+      "card": "Carte bancaire",
+      "mobile_money": "Mobile Money"
+    },
+    "frequency": {
+      "once": "Ponctuel",
+      "monthly": "Mensuel"
+    }
+  },
+  "ui": {
+    "loading": "Chargement…",
+    "loadingShort": "Chargement",
+    "loadingStats": "Chargement des indicateurs…",
+    "loadingTable": "Chargement du tableau…",
+    "empty": "Rien à afficher",
+    "errorTitle": "Chargement impossible",
+    "retry": "Réessayer",
+    "progress": "Progression",
+    "tabs": "Onglets",
+    "close": "Fermer",
+    "search": "Rechercher…",
+    "noResults": "Aucun résultat",
+    "pagination": "Pagination du tableau",
+    "range": "{from}–{to} sur {total}",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "auth": {
+      "checking": "Vérification de votre session…",
+      "deniedTitle": "Accès réservé",
+      "deniedText": "Votre rôle ne donne pas accès à cette page. Si vous pensez que c’est une erreur, contactez un administrateur.",
+      "backHome": "Retour à l’accueil"
+    },
+    "alerts": {
+      "ok": "OK",
+      "close": "Fermer",
+      "understood": "J’ai compris",
+      "confirm": "Confirmer",
+      "cancel": "Annuler"
+    },
+    "logout": {
+      "title": "Se déconnecter ?",
+      "text": "Vous allez être déconnecté(e) de votre compte HOPE International. Vous pourrez vous reconnecter à tout moment.",
+      "confirm": "Se déconnecter",
+      "done": "Vous êtes déconnecté(e). À bientôt !"
+    }
+  }
+}

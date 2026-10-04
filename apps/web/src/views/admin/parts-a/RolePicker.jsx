@@ -1,12 +1,16 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { ChoiceGroup } from "../../../components/ui";
+import { useLabels } from "../../../utils/labels";
 import { canGrantRole } from "./roles";
 
 // Selection des roles : admin exclusif, roles au-dessus des droits de l'utilisateur desactives.
-export default function RolePicker({ user, matrix, value, onChange, label = "Rôles", hint, error }) {
+export default function RolePicker({ user, matrix, value, onChange, label, hint, error }) {
+  const t = useTranslations("admin.rolePicker");
+  const labels = useLabels();
   const entries = matrix?.roles || [];
-  const options = entries.map((entry) => ({ value: entry.role, label: entry.label }));
+  const options = entries.map((entry) => ({ value: entry.role, label: labels.role(entry.role) }));
   const disabledValues = entries.filter((entry) => !canGrantRole(user, entry)).map((entry) => entry.role);
 
   const handleChange = (next) => {
@@ -18,8 +22,8 @@ export default function RolePicker({ user, matrix, value, onChange, label = "Rô
 
   return (
     <ChoiceGroup
-      label={label}
-      hint={hint || "Le rôle Administrateur système ne se combine avec aucun autre. Les rôles grisés dépassent vos propres droits."}
+      label={label || t("label")}
+      hint={hint || t("hint")}
       error={error}
       full
       options={options}

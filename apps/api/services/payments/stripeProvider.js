@@ -80,6 +80,12 @@ exports.retrieveIntentStatus = async (paymentIntentId) => {
     return intent.status;
 };
 
+// Echeance d'abonnement enregistree sous l'id de facture (in_...) : draft | open | paid | uncollectible | void.
+exports.retrieveInvoiceStatus = async (invoiceId) => {
+    const invoice = await client().invoices.retrieve(invoiceId);
+    return invoice.status;
+};
+
 // Avec STRIPE_WEBHOOK_SECRET : verification de signature. Sans : l'evenement est relu
 // directement aupres de l'API Stripe, donc un appel forge ne peut rien valider.
 exports.parseWebhookEvent = async (signature, payloadBuffer) => {

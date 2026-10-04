@@ -1,0 +1,157 @@
+{
+  "common": {
+    "siteName": "HOPE International",
+    "loading": "Loading…"
+  },
+  "nav": {
+    "home": "HOPE International — home",
+    "main": "Main navigation",
+    "projects": "Our projects",
+    "news": "News",
+    "events": "Events",
+    "join": "Join us",
+    "contact": "Contact",
+    "donate": "Donate",
+    "login": "Sign in",
+    "account": "My account",
+    "admin": "Administration",
+    "logout": "Sign out",
+    "menu": "Menu",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu",
+    "donateShort": "Give",
+    "skip": "Skip to content"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "footer": {
+    "tagline": "Solidarity microfinance, training and mutual support for Cameroonian families.",
+    "explore": "Explore",
+    "act": "Take action",
+    "contact": "Contact us",
+    "rights": "All rights reserved.",
+    "language": "Language"
+  },
+  "language": {
+    "label": "Language",
+    "current": "Language: {language}. Change language"
+  },
+  "errors": {
+    "loadTitle": "Unable to load",
+    "loadText": "This information could not be loaded. Please try again in a moment.",
+    "retry": "Try again",
+    "generic": "Something went wrong. Please try again in a moment.",
+    "network": "We can’t reach the server. Please check your connection.",
+    "timeout": "The server is taking too long to respond.",
+    "invalidField": "Invalid field: {field}.",
+    "close": "Close",
+    "pageTitle": "This page could not be displayed",
+    "pageText": "A technical issue is preventing this page from loading. Please try again, or go back to the home page.",
+    "backHome": "Back to home",
+    "notFoundTitle": "Page not found",
+    "notFoundText": "This address does not match any page.",
+    "backAdmin": "Back to administration"
+  },
+  "labels": {
+    "role": {
+      "admin": "System administrator",
+      "directrice_generale": "Executive director",
+      "conseiller": "Strategic advisor",
+      "responsable_rh": "HR manager",
+      "responsable_finance": "Finance manager",
+      "organisatrice": "Event organizer",
+      "responsable_it": "IT manager",
+      "directrice_regionale": "Regional director",
+      "secretaire_generale": "Secretary general",
+      "membre": "Member"
+    },
+    "projectStatus": {
+      "planifie": "Coming soon",
+      "en_cours": "Ongoing",
+      "termine": "Completed"
+    },
+    "messageStatus": {
+      "nouveau": "New",
+      "lu": "Read",
+      "traite": "Handled",
+      "archive": "Archived"
+    },
+    "applicationStatus": {
+      "nouvelle": "New",
+      "en_etude": "Under review",
+      "acceptee": "Accepted",
+      "refusee": "Declined"
+    },
+    "paymentStatus": {
+      "pending": "Pending",
+      "succeeded": "Succeeded",
+      "failed": "Failed",
+      "canceled": "Cancelled",
+      "refunded": "Refunded",
+      "disputed": "Disputed",
+      "review": "Under review"
+    },
+    "userStatus": {
+      "active": "Active",
+      "inactive": "Disabled"
+    },
+    "subscriptionStatus": {
+      "active": "Active",
+      "trialing": "Active",
+      "past_due": "Payment overdue",
+      "incomplete": "Pending",
+      "canceled": "Stopped",
+      "unpaid": "Unpaid",
+      "unknown": "Status unavailable"
+    },
+    "paymentMethod": {
+      "card": "Bank card",
+      "mobile_money": "Mobile Money"
+    },
+    "frequency": {
+      "once": "One-time",
+      "monthly": "Monthly"
+    }
+  },
+  "ui": {
+    "loading": "Loading…",
+    "loadingShort": "Loading",
+    "loadingStats": "Loading indicators…",
+    "loadingTable": "Loading table…",
+    "empty": "Nothing to show",
+    "errorTitle": "Unable to load",
+    "retry": "Try again",
+    "progress": "Progress",
+    "tabs": "Tabs",
+    "close": "Close",
+    "search": "Search…",
+    "noResults": "No results",
+    "pagination": "Table pagination",
+    "range": "{from}–{to} of {total}",
+    "previous": "Previous",
+    "next": "Next",
+    "auth": {
+      "checking": "Checking your session…",
+      "deniedTitle": "Restricted access",
+      "deniedText": "Your role does not give you access to this page. If you think this is a mistake, please contact an administrator.",
+      "backHome": "Back to home"
+    },
+    "alerts": {
+      "ok": "OK",
+      "close": "Close",
+      "understood": "Got it",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "logout": {
+      "title": "Sign out?",
+      "text": "You are about to sign out of your HOPE International account. You can sign back in at any time.",
+      "confirm": "Sign out",
+      "done": "You have been signed out. See you soon!"
+    }
+  }
+}

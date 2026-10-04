@@ -1,38 +1,31 @@
-"use client";
-
+// Liste des actualites (composant serveur).
 import "../../styles/public.css";
 import { Newspaper } from "lucide-react";
-import { Button, EmptyState, ErrorState } from "../../components/ui";
-import { useAsync } from "../../hooks/useAsync";
-import { publicApi } from "../../services";
-import { getErrorMessage } from "../../services/api";
-import { CardsSkeleton, NewsCard, PublicHero } from "./components";
+import { useTranslations } from "next-intl";
+import { useLocalePath } from "../../i18n/navigation";
+import { Empty, LinkButton, NewsCard, PublicHero } from "./components";
+import LoadError from "./components/LoadError";
 
 const byDateDesc = (a, b) => new Date(b.created_at) - new Date(a.created_at);
 
-export default function NewsView() {
-  const { data, loading, error, reload } = useAsync(() => publicApi.listContent("news"), []);
-  const [featured, ...others] = [...(data || [])].sort(byDateDesc);
+export default function NewsView({ news, error }) {
+  const t = useTranslations("site.news");
+  const lp = useLocalePath();
+  const [featured, ...others] = [...(news || [])].sort(byDateDesc);
 
   return (
     <>
-      <PublicHero
-        eyebrow="Actualités"
-        title="Nouvelles du terrain"
-        lead="Lancements de projets, retours d’expérience, vie de l’association : suivez ce que vos dons et votre engagement rendent possible."
-      />
+      <PublicHero eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
       <section className="section section--tight">
         <div className="container">
-          {loading ? (
-            <CardsSkeleton count={3} />
-          ) : error ? (
-            <ErrorState message={getErrorMessage(error)} onRetry={reload} />
+          {error ? (
+            <LoadError />
           ) : !featured ? (
-            <EmptyState
+            <Empty
               icon={Newspaper}
-              title="Aucune actualité pour le moment"
-              description="Nos équipes publieront bientôt des nouvelles des projets. En attendant, découvrez nos actions en cours."
-              action={<Button href="/projets">Voir nos projets</Button>}
+              title={t("emptyTitle")}
+              description={t("emptyText")}
+              action={<LinkButton href={lp("/projets")}>{t("emptyCta")}</LinkButton>}
             />
           ) : (
             <div className="stack" style={{ gap: "clamp(20px, 3vw, 32px)" }}>

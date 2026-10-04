@@ -1,0 +1,927 @@
+/* =========================================================
+   Administration : styles propres a chaque page (prefixe adm-)
+   Charge uniquement par app/admin/layout.jsx.
+   ========================================================= */
+
+/* ---------- Vue d'ensemble ---------- */
+
+.adm-figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin-bottom: 14px;
+}
+
+.adm-figures div {
+  display: flex;
+  flex-direction: column;
+}
+
+.adm-figures span {
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+.adm-figures strong {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.adm-allclear {
+  margin: 0;
+  padding: 16px;
+  border-radius: var(--radius);
+  background: var(--success-50);
+  color: var(--success);
+  font-weight: 500;
+}
+
+.adm-todo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-todo__link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.adm-todo__link:hover {
+  border-color: var(--line-strong);
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.adm-todo__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--warning-50);
+  color: var(--warning);
+}
+
+.adm-todo__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.adm-todo__text span {
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+}
+
+.adm-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 190px), 1fr));
+  gap: 10px;
+}
+
+.adm-shortcut {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-md);
+  font-weight: 600;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.adm-shortcut svg {
+  flex-shrink: 0;
+  color: var(--brand);
+}
+
+.adm-shortcut:hover {
+  border-color: var(--brand-100);
+  background: var(--brand-50);
+  color: var(--brand-700);
+}
+
+/* ---------- Messages ---------- */
+
+.adm-inbox {
+  display: grid;
+  grid-template-columns: minmax(260px, 380px) 1fr;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.adm-inbox__list,
+.adm-inbox__panel {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.adm-inbox__list ul {
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+}
+
+.adm-mail {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.adm-mail:hover {
+  background: var(--bg);
+}
+
+.adm-mail:focus-visible {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: var(--focus-offset);
+}
+
+.adm-mail.is-active {
+  background: var(--brand-50);
+}
+
+.adm-mail__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: var(--text-md);
+}
+
+.adm-mail__top strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-mail__top time {
+  flex-shrink: 0;
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+.adm-mail__subject {
+  font-size: var(--text-md);
+  color: var(--ink);
+}
+
+.adm-mail.is-unread .adm-mail__subject {
+  font-weight: 700;
+}
+
+.adm-mail__excerpt {
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+}
+
+.adm-mail__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: 4px;
+  font-size: var(--text-xs);
+  color: var(--ink-2);
+}
+
+.adm-reader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: clamp(16px, 2.4vw, 28px);
+}
+
+.adm-reader__back {
+  display: none;
+  align-self: flex-start;
+}
+
+.adm-reader__head h2 {
+  margin: 0 0 8px;
+  font-size: 1.4rem;
+}
+
+.adm-reader__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+}
+
+.adm-reader__meta strong {
+  color: var(--ink);
+}
+
+.adm-reader__content {
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  background: var(--bg);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.adm-reader .divider {
+  margin: 4px 0;
+}
+
+.adm-reader__actions {
+  margin-top: 4px;
+}
+
+@media (max-width: 960px) {
+  .adm-inbox {
+    grid-template-columns: 1fr;
+  }
+
+  .adm-inbox:not(.has-selection) .adm-inbox__panel,
+  .adm-inbox.has-selection .adm-inbox__list {
+    display: none;
+  }
+
+  .adm-reader__back {
+    display: inline-flex;
+  }
+}
+
+/* ---------- Membres ---------- */
+
+.adm-member,
+.adm-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.adm-member {
+  min-width: 220px;
+}
+
+.adm-profile {
+  flex-wrap: wrap;
+}
+
+.adm-profile .cell-main {
+  flex: 1;
+}
+
+.adm-profile .tabs {
+  margin-bottom: 0;
+}
+
+/* ---------- Rôles ---------- */
+
+.adm-mine {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.adm-mine p {
+  margin: 0;
+}
+
+.adm-matrix-wrap {
+  max-height: none;
+}
+
+.adm-matrix th,
+.adm-matrix td {
+  padding: 10px 12px;
+}
+
+.adm-matrix thead th {
+  vertical-align: bottom;
+  min-width: 110px;
+  white-space: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: var(--text-xs);
+  line-height: 1.3;
+  text-align: center;
+}
+
+.adm-matrix tbody td {
+  text-align: center;
+}
+
+.adm-matrix tbody th {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 200px;
+  max-width: 260px;
+  background: var(--surface);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink);
+  white-space: normal;
+  text-align: left;
+  border-right: 1px solid var(--line);
+}
+
+.adm-matrix thead .adm-matrix__corner {
+  left: 0;
+  z-index: 2;
+  text-align: left;
+  border-right: 1px solid var(--line);
+}
+
+.adm-matrix__role {
+  display: block;
+}
+
+.adm-matrix__tag {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 0 8px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-solid);
+  color: var(--on-accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.adm-matrix .is-mine {
+  background: var(--accent-50);
+}
+
+.adm-matrix tbody tr:hover td.is-mine {
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+}
+
+.adm-matrix svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.adm-yes {
+  color: var(--success);
+}
+
+.adm-no {
+  color: var(--line-input);
+}
+
+.adm-matrix__total th,
+.adm-matrix__total td {
+  background: var(--surface-2);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.adm-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 12px 0 0;
+  padding-left: 20px;
+}
+
+.adm-rules li {
+  padding-left: 4px;
+}
+
+.adm-rules strong {
+  display: block;
+}
+
+.adm-rules span {
+  font-size: var(--text-md);
+  color: var(--ink-2);
+}
+
+.adm-grant {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-grant li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-md);
+}
+
+.adm-grant li:last-child {
+  border-bottom: 0;
+}
+
+/* ---------- Journal ---------- */
+
+.adm-logs td {
+  vertical-align: top;
+}
+
+.adm-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  vertical-align: middle;
+  background: var(--brand);
+}
+
+.adm-dot--info { background: var(--info); }
+.adm-dot--accent { background: var(--accent); }
+.adm-dot--success { background: var(--success); }
+.adm-dot--warning { background: var(--warning); }
+.adm-dot--danger { background: var(--danger); }
+
+.adm-meta summary {
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--brand);
+}
+
+.adm-meta pre {
+  max-width: 360px;
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+  background: var(--surface-dark);
+  color: var(--on-dark-2);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
+/* ---------- Système ---------- */
+
+.adm-checks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-checks li {
+  display: flex;
+  gap: var(--space-3);
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.adm-checks li > svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.adm-checks li > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.adm-checks .is-ok > svg {
+  color: var(--success);
+}
+
+.adm-checks .is-warn {
+  background: var(--warning-50);
+  border-color: color-mix(in srgb, var(--warning) 25%, var(--warning-50));
+}
+
+.adm-checks .is-warn > svg {
+  color: var(--warning);
+}
+
+.adm-checks__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.adm-checks p {
+  margin: 4px 0 0;
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+}
+
+/* ---------- Région ---------- */
+
+.adm-scope {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: -12px 0 20px;
+  font-size: var(--text-md);
+  color: var(--ink-2);
+}
+
+.adm-bars,
+.adm-events {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-bars li {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.adm-bars__label {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--text-md);
+}
+
+.adm-bars__label strong {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.adm-events li {
+  display: flex;
+  gap: var(--space-3);
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.adm-events li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.adm-events li > svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: var(--brand);
+}
+
+.adm-projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: var(--space-4);
+}
+
+.adm-project {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.adm-project h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.adm-project p {
+  margin: 0;
+}
+
+.adm-project__impact {
+  margin-top: auto;
+  color: var(--ink-2);
+}
+
+/* ---------- Dons et finance : totaux d'une sélection ---------- */
+
+.adm-selection-note {
+  margin: -8px 0 20px;
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+}
+
+/* ---------- Dons et finance : rapprochement ---------- */
+
+.adm-reconcile {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 120px), 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.adm-reconcile div {
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+}
+
+.adm-reconcile strong {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  line-height: 1.2;
+}
+
+.adm-reconcile span {
+  font-size: var(--text-xs);
+  color: var(--ink-2);
+}
+
+/* ---------- Événements ---------- */
+
+.adm-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.adm-event-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(180px, 240px) auto;
+  gap: 16px 20px;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.adm-datebox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 68px;
+  border-radius: var(--radius);
+  background: var(--brand-50);
+  color: var(--brand-700);
+  line-height: 1.1;
+}
+
+.adm-datebox strong {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+}
+
+.adm-datebox span {
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.adm-event-card--past .adm-datebox {
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+
+.adm-event-card__title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 4px;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.adm-event-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+}
+
+.adm-event-card__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.adm-event-card__meta svg {
+  width: 14px;
+  height: 14px;
+  color: var(--ink-3);
+}
+
+.adm-event-card__spots .progress-meta {
+  margin-top: 6px;
+  font-size: var(--text-xs);
+}
+
+@media (max-width: 960px) {
+  .adm-event-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .adm-event-card__spots,
+  .adm-event-card .adm-actions {
+    grid-column: 1 / -1;
+  }
+
+  .adm-event-card .adm-actions {
+    justify-content: flex-start;
+  }
+}
+
+/* ---------- Rapport annuel (document imprimable) ---------- */
+
+.adm-report {
+  max-width: 960px;
+  margin-inline: auto;
+  padding: clamp(20px, 4vw, 48px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.adm-report__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-3);
+  padding-bottom: 20px;
+  margin-bottom: 8px;
+  border-bottom: 3px solid var(--brand);
+}
+
+.adm-report__head h1 {
+  margin: 4px 0 0;
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
+}
+
+.adm-report__head p {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-md);
+}
+
+.adm-report section {
+  padding-top: 28px;
+}
+
+.adm-report h2 {
+  margin: 0 0 14px;
+  font-size: 1.3rem;
+  color: var(--brand-700);
+}
+
+.adm-report h3 {
+  margin: 20px 0 10px;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.adm-report-figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr));
+  gap: var(--space-3);
+}
+
+.adm-report-figure {
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.adm-report-figure strong {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1.2;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.adm-report-figure span {
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+}
+
+.adm-report-figure small {
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+.adm-report .table-wrap {
+  box-shadow: none;
+}
+
+.adm-report__foot {
+  margin-top: 32px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+/* ---------- Impression (rapport annuel et cadre) ---------- */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 12mm;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .admin-sidebar,
+  .admin-topbar,
+  .admin-overlay,
+  .adm-noprint,
+  .btn {
+    display: none !important;
+  }
+
+  .admin-layout {
+    display: block;
+    min-height: 0;
+  }
+
+  .admin-content {
+    max-width: none;
+    padding: 0;
+  }
+
+  .adm-report {
+    max-width: none;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+    font-size: 10.5pt;
+  }
+
+  .adm-report section {
+    break-inside: avoid;
+    padding-top: 18px;
+  }
+
+  .adm-report .table-wrap {
+    overflow: visible;
+    border-color: #ccc;
+  }
+
+  .adm-report .table th,
+  .adm-report .table td {
+    padding: 6px 8px;
+  }
+
+  .adm-report-figure {
+    border: 1px solid #ddd;
+    background: #fff;
+  }
+
+  .adm-report .chart-box {
+    height: 220px;
+  }
+
+  .adm-share__track,
+  .adm-share__fill {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

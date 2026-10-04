@@ -22,6 +22,18 @@ exports.downloadReceipt = async (req, res) => {
     res.send(buffer);
 };
 
+exports.downloadAnnualReceipt = async (req, res) => {
+    const { buffer, year } = await paymentService.getAnnualReceiptPdf(req.user, req.params.year);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `inline; filename="recapitulatif-dons-${year}.pdf"`);
+    res.send(buffer);
+};
+
+exports.cancelSubscriptionByReceipt = async (req, res) => {
+    const { alreadyCanceled } = await paymentService.cancelSubscriptionByReceiptToken(req.params.token);
+    res.json({ message: alreadyCanceled ? "Ce don mensuel était déjà arrêté" : "Don mensuel arrêté", alreadyCanceled });
+};
+
 exports.getMine = async (req, res) => {
     res.json(await paymentService.getForUser(req.user));
 };

@@ -1,18 +1,28 @@
-import { formatDate, formatMoney, formatTime, resolveImage } from "../../../utils/format";
+import { resolveImage } from "../../../utils/format";
+import { API_ORIGIN } from "../../../services/api";
 
 export const PLACEHOLDER = "/images/placeholder.svg";
 
 export const imageSrc = (url) => resolveImage(url) || PLACEHOLDER;
 
-export const cx = (...classes) => classes.filter(Boolean).join(" ");
+// Pas d'optimisation next/image pour les SVG (servis tels quels) ni pour une API locale :
+// l'optimiseur de Next refuse les adresses locales (localhost, reseau Docker).
+const LOCAL_API = (() => {
+  try {
+    const { hostname } = new URL(API_ORIGIN);
+    return /^(localhost|127\.|0\.0\.0\.0|\[::1\]|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(hostname) || !hostname.includes(".");
+  } catch {
+    return true;
+  }
+})();
 
-// Accord simple : 0 ou 1 -> singulier, sinon pluriel.
-export function plural(count, singular, pluralForm = `${singular}s`) {
-  const n = Number(count) || 0;
-  return `${new Intl.NumberFormat("fr-FR").format(n)} ${n > 1 ? pluralForm : singular}`;
+export function isUnoptimizedImage(url) {
+  if (!url) return true;
+  if (url.split("?")[0].endsWith(".svg")) return true;
+  return /^https?:\/\//.test(url) && url.startsWith(API_ORIGIN) && LOCAL_API;
 }
 
-export const euros = (amount) => formatMoney(Math.round(Number(amount) || 0), "eur");
+export const cx = (...classes) => classes.filter(Boolean).join(" ");
 
 export const isNotFound = (error) => error?.response?.status === 404;
 
@@ -25,20 +35,23 @@ export function campaignPercent(project) {
   return goal ? Math.round(((Number(project?.raised_eur) || 0) / goal) * 100) : 0;
 }
 
-// Places restantes d'un evenement -> { label, tone } pour un badge.
-export function spotsStatus(event) {
+// Montant arrondi en euros dans la langue courante (f : getFormatters / useFormat).
+export const euros = (f, amount) => f.money(Math.round(Number(amount) || 0), "eur");
+
+// Places restantes d'un evenement -> { label, tone } pour un badge (t : useTranslations("site.spots")).
+export function spotsStatus(event, t) {
   const remaining = event?.remaining_spots;
-  if (remaining === null || remaining === undefined) return { label: "Entrée libre", tone: "brand" };
-  if (remaining <= 0) return { label: "Complet", tone: "danger" };
-  if (remaining <= 5) return { label: `Plus que ${plural(remaining, "place")}`, tone: "warning" };
-  return { label: `${plural(remaining, "place restante", "places restantes")}`, tone: "info" };
+  if (remaining === null || remaining === undefined) return { label: t("free"), tone: "brand" };
+  if (remaining <= 0) return { label: t("full"), tone: "danger" };
+  if (remaining <= 5) return { label: t("fewLeft", { count: remaining }), tone: "warning" };
+  return { label: t("left", { count: remaining }), tone: "info" };
 }
 
-export function eventTimeRange(event) {
-  const start = formatTime(event?.start_at);
+export function eventTimeRange(event, f) {
+  const start = f.time(event?.start_at);
   if (!event?.end_at) return start;
-  const sameDay = formatDate(event.start_at) === formatDate(event.end_at);
-  return sameDay ? `${start} – ${formatTime(event.end_at)}` : `${start} → ${formatDate(event.end_at)} ${formatTime(event.end_at)}`;
+  const sameDay = f.dayKey(event.start_at) === f.dayKey(event.end_at);
+  return sameDay ? `${start} – ${f.time(event.end_at)}` : `${start} → ${f.date(event.end_at)} ${f.time(event.end_at)}`;
 }
 
 export const isPast = (event) => {

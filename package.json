@@ -6,20 +6,22 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "concurrently -n api,web -c magenta,cyan \"npm run dev -w @hope/api\" \"npm run dev -w @hope/web\"",
+    "dev": "node scripts/dev.js",
     "dev:api": "npm run dev -w @hope/api",
-    "dev:web": "npm run dev -w @hope/web",
+    "dev:web": "node scripts/dev.js web",
     "build": "npm run build -w @hope/web",
     "start:api": "npm run start -w @hope/api",
     "start:web": "npm run start -w @hope/web",
-    "lint": "npm run lint -w @hope/web",
+    "lint": "npm run lint --workspaces --if-present",
     "seed": "npm run seed -w @hope/api --",
-    "db": "docker compose up -d mysql phpmyadmin"
+    "db": "docker compose --profile dev up -d mysql phpmyadmin",
+    "test": "npm run test --workspaces --if-present",
+    "migrate": "npm run migrate -w @hope/api --"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   }
 }

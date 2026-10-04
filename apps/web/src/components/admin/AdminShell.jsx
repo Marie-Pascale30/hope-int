@@ -1,90 +1,116 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   BarChart3, CalendarDays, ClipboardCheck, ExternalLink, FileText, HandCoins, Inbox, KeyRound, LayoutDashboard,
   LogOut, MapPinned, Menu, MessageSquareQuote, Newspaper, ScrollText, Server, Sprout, Users, Wallet, X,
 } from "lucide-react";
 import { LogoMark } from "../site/Logo";
 import { Avatar } from "../ui";
+import ThemeSwitcher from "../ThemeSwitcher";
 import RequireAuth from "../RequireAuth";
 import { useAuth } from "../../context/AuthContext";
 import { adminApi } from "../../services";
 import { can, PERMISSIONS as P } from "../../utils/rbac";
-import { roleLabel } from "../../utils/labels";
+import { useLabels } from "../../utils/labels";
 
 // Navigation de l'administration : chaque entree n'apparait qu'avec la permission requise.
+// title / label : cles des messages "admin.nav" (sections : "admin.nav.sections").
 export const ADMIN_NAV = [
   {
-    title: "Pilotage",
+    title: "steering",
     items: [
-      { href: "/admin", label: "Vue d'ensemble", icon: LayoutDashboard, permission: P.VIEW_STATS, exact: true },
-      { href: "/admin/rapport", label: "Rapport annuel", icon: FileText, permission: P.VIEW_STATS },
-      { href: "/admin/region", label: "Ma région", icon: MapPinned, permission: P.MANAGE_REGIONAL },
+      { href: "/admin", label: "overview", icon: LayoutDashboard, permission: P.VIEW_STATS, exact: true },
+      { href: "/admin/rapport", label: "report", icon: FileText, permission: P.VIEW_STATS },
+      { href: "/admin/region", label: "region", icon: MapPinned, permission: P.MANAGE_REGIONAL },
     ],
   },
   {
-    title: "Relations",
+    title: "relations",
     items: [
-      { href: "/admin/candidatures", label: "Candidatures", icon: ClipboardCheck, permission: P.MANAGE_APPLICATIONS, badge: "pendingApplications" },
-      { href: "/admin/messages", label: "Messages", icon: Inbox, permission: P.VIEW_MESSAGES, badge: "unreadMessages" },
+      { href: "/admin/candidatures", label: "applications", icon: ClipboardCheck, permission: P.MANAGE_APPLICATIONS, badge: "pendingApplications" },
+      { href: "/admin/messages", label: "messages", icon: Inbox, permission: P.VIEW_MESSAGES, badge: "unreadMessages" },
     ],
   },
   {
-    title: "Équipe",
+    title: "team",
     items: [
-      { href: "/admin/membres", label: "Membres", icon: Users, permission: P.VIEW_USERS },
-      { href: "/admin/roles", label: "Rôles et droits", icon: KeyRound, permission: P.ACCESS_ADMIN_DASHBOARD },
+      { href: "/admin/membres", label: "members", icon: Users, permission: P.VIEW_USERS },
+      { href: "/admin/roles", label: "roles", icon: KeyRound, permission: P.ACCESS_ADMIN_DASHBOARD },
     ],
   },
   {
-    title: "Dons",
+    title: "donations",
     items: [
-      { href: "/admin/dons", label: "Dons", icon: HandCoins, permission: P.VIEW_DONATIONS },
-      { href: "/admin/finance", label: "Finance", icon: Wallet, permission: P.MANAGE_FINANCE },
+      { href: "/admin/dons", label: "donations", icon: HandCoins, permission: P.VIEW_DONATIONS },
+      { href: "/admin/finance", label: "finance", icon: Wallet, permission: P.MANAGE_FINANCE },
     ],
   },
   {
-    title: "Contenus",
+    title: "content",
     items: [
-      { href: "/admin/projets", label: "Projets et campagnes", icon: Sprout, permission: P.MANAGE_CONTENT },
-      { href: "/admin/actualites", label: "Actualités", icon: Newspaper, permission: P.MANAGE_CONTENT },
-      { href: "/admin/temoignages", label: "Témoignages", icon: MessageSquareQuote, permission: P.MANAGE_CONTENT },
-      { href: "/admin/evenements", label: "Événements", icon: CalendarDays, permission: P.MANAGE_ORGANIZATION },
+      { href: "/admin/projets", label: "projects", icon: Sprout, permission: P.MANAGE_CONTENT },
+      { href: "/admin/actualites", label: "news", icon: Newspaper, permission: P.MANAGE_CONTENT },
+      { href: "/admin/temoignages", label: "testimonials", icon: MessageSquareQuote, permission: P.MANAGE_CONTENT },
+      { href: "/admin/evenements", label: "events", icon: CalendarDays, permission: P.MANAGE_ORGANIZATION },
     ],
   },
   {
-    title: "Système",
+    title: "system",
     items: [
-      { href: "/admin/journal", label: "Journal d'activité", icon: ScrollText, permission: P.VIEW_LOGS },
-      { href: "/admin/systeme", label: "État du système", icon: Server, permission: P.MANAGE_IT },
+      { href: "/admin/journal", label: "logs", icon: ScrollText, permission: P.VIEW_LOGS },
+      { href: "/admin/systeme", label: "system", icon: Server, permission: P.MANAGE_IT },
     ],
   },
 ];
 
-function Sidebar({ user, counts, onNavigate, onLogout }) {
+// Tiroir de navigation sous 960 px (meme valeur que admin.css).
+const DRAWER_QUERY = "(max-width: 960px)";
+
+function useIsDrawer() {
+  const [isDrawer, setIsDrawer] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia(DRAWER_QUERY);
+    const sync = () => setIsDrawer(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+  return isDrawer;
+}
+
+function Sidebar({ user, counts, onNavigate, onLogout, onClose }) {
+  const t = useTranslations("admin.shell");
+  const tNav = useTranslations("admin.nav");
+  const labels = useLabels();
   const pathname = usePathname();
   const isActive = (item) => (item.exact ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`));
 
   return (
     <div className="admin-sidebar__inner">
-      <Link href="/admin" className="admin-brand" onClick={onNavigate}>
-        <LogoMark size={32} />
-        <span>
-          HOPE
-          <small>Administration</small>
-        </span>
-      </Link>
+      <div className="admin-sidebar__head">
+        <Link href="/admin" className="admin-brand" onClick={onNavigate}>
+          <LogoMark size={32} />
+          <span>
+            HOPE
+            <small>{t("brand")}</small>
+          </span>
+        </Link>
+        <button type="button" className="admin-sidebar__close" onClick={onClose} aria-label={t("closeMenu")}>
+          <X size={20} aria-hidden="true" />
+        </button>
+      </div>
 
-      <nav className="admin-nav" aria-label="Administration">
+      <nav className="admin-nav" aria-label={t("navLabel")}>
         {ADMIN_NAV.map((section) => {
           const items = section.items.filter((item) => can(user, item.permission));
           if (!items.length) return null;
           return (
             <div key={section.title} className="admin-nav__section">
-              <span className="admin-nav__title">{section.title}</span>
+              <span className="admin-nav__title">{tNav(`sections.${section.title}`)}</span>
               {items.map((item) => {
                 const Icon = item.icon;
                 const count = item.badge ? counts?.[item.badge] : 0;
@@ -97,8 +123,13 @@ function Sidebar({ user, counts, onNavigate, onLogout }) {
                     onClick={onNavigate}
                   >
                     <Icon size={18} aria-hidden="true" />
-                    <span>{item.label}</span>
-                    {count > 0 && <span className="admin-nav__badge">{count}</span>}
+                    <span>{tNav(item.label)}</span>
+                    {count > 0 && (
+                      <span className="admin-nav__badge">
+                        <span aria-hidden="true">{count}</span>
+                        <span className="visually-hidden">{t("pendingBadge", { count })}</span>
+                      </span>
+                    )}
                   </Link>
                 );
               })}
@@ -112,13 +143,16 @@ function Sidebar({ user, counts, onNavigate, onLogout }) {
           <Avatar name={user.name} />
           <div>
             <strong>{user.name}</strong>
-            <span>{roleLabel(user.roles?.[0])}{user.roles?.length > 1 ? ` +${user.roles.length - 1}` : ""}</span>
+            <span>{labels.role(user.roles?.[0])}{user.roles?.length > 1 ? ` ${t("moreRoles", { count: user.roles.length - 1 })}` : ""}</span>
           </div>
         </div>
         <div className="admin-sidebar__links">
-          <Link href="/" onClick={onNavigate}><ExternalLink size={16} aria-hidden="true" /> Voir le site</Link>
-          <Link href="/espace" onClick={onNavigate}><BarChart3 size={16} aria-hidden="true" /> Mon espace</Link>
-          <button type="button" onClick={onLogout}><LogOut size={16} aria-hidden="true" /> Déconnexion</button>
+          <Link href="/" onClick={onNavigate}><ExternalLink size={16} aria-hidden="true" /> {t("viewSite")}</Link>
+          <Link href="/espace" onClick={onNavigate}><BarChart3 size={16} aria-hidden="true" /> {t("mySpace")}</Link>
+          <button type="button" onClick={onLogout}><LogOut size={16} aria-hidden="true" /> {t("logout")}</button>
+        </div>
+        <div className="admin-sidebar__theme">
+          <ThemeSwitcher onDark compact />
         </div>
       </div>
     </div>
@@ -126,10 +160,14 @@ function Sidebar({ user, counts, onNavigate, onLogout }) {
 }
 
 function Shell({ children }) {
+  const t = useTranslations("admin.shell");
   const { user, logout } = useAuth();
   const pathname = usePathname();
+  const isDrawer = useIsDrawer();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [counts, setCounts] = useState(null);
+  const burgerRef = useRef(null);
+  const sidebarRef = useRef(null);
 
   // Compteurs "a traiter" (candidatures, messages) rafraichis a chaque navigation.
   useEffect(() => {
@@ -141,21 +179,63 @@ function Shell({ children }) {
     setDrawerOpen(false);
   }, [pathname]);
 
+  // Fermeture du tiroir : le focus revient au bouton qui l'a ouvert
+  // (apres le rendu, une fois le contenu principal sorti de l'etat inert).
+  const restoreFocus = useRef(false);
+  const closeDrawer = useCallback(() => {
+    restoreFocus.current = true;
+    setDrawerOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (drawerOpen || !restoreFocus.current) return;
+    restoreFocus.current = false;
+    burgerRef.current?.focus();
+  }, [drawerOpen]);
+
+  const drawerVisible = isDrawer && drawerOpen;
+
+  // Tiroir ouvert : focus sur le premier lien, Echap pour fermer.
+  useEffect(() => {
+    if (!drawerVisible) return undefined;
+    sidebarRef.current?.querySelector("a, button")?.focus();
+    const onKey = (event) => event.key === "Escape" && closeDrawer();
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [drawerVisible, closeDrawer]);
+
   return (
     <div className="admin-layout">
-      <aside className={`admin-sidebar${drawerOpen ? " is-open" : ""}`}>
-        <Sidebar user={user} counts={counts} onNavigate={() => setDrawerOpen(false)} onLogout={logout} />
+      <a href="#admin-contenu" className="skip-link">{t("skipLink")}</a>
+      <aside
+        id="admin-sidebar"
+        ref={sidebarRef}
+        className={`admin-sidebar${drawerOpen ? " is-open" : ""}`}
+        aria-label={t("sidebarLabel")}
+        inert={isDrawer && !drawerOpen ? true : undefined}
+      >
+        <Sidebar user={user} counts={counts} onNavigate={() => setDrawerOpen(false)} onLogout={logout} onClose={closeDrawer} />
       </aside>
-      {drawerOpen && <div className="admin-overlay" onClick={() => setDrawerOpen(false)} aria-hidden="true" />}
+      {drawerVisible && <div className="admin-overlay" onClick={closeDrawer} aria-hidden="true" />}
 
-      <div className="admin-main">
+      {/* Tiroir ouvert : le reste de la page sort de l'ordre de tabulation (piege de focus). */}
+      <div className="admin-main" inert={drawerVisible ? true : undefined}>
         <header className="admin-topbar">
-          <button type="button" className="admin-topbar__burger" aria-label="Ouvrir le menu" onClick={() => setDrawerOpen(true)}>
+          <button
+            ref={burgerRef}
+            type="button"
+            className="admin-topbar__burger"
+            aria-label={drawerOpen ? t("closeMenu") : t("openMenu")}
+            aria-expanded={drawerOpen}
+            aria-controls="admin-sidebar"
+            onClick={() => setDrawerOpen((value) => !value)}
+          >
             {drawerOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
           </button>
-          <span className="admin-topbar__title">HOPE Administration</span>
+          <span className="admin-topbar__title">{t("topbarTitle")}</span>
+          <ThemeSwitcher compact />
         </header>
-        <main className="admin-content">{children}</main>
+        <main id="admin-contenu" className="admin-content" tabIndex={-1}>{children}</main>
       </div>
     </div>
   );

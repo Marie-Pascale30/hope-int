@@ -1,6 +1,7 @@
+import { adminPageMetadata } from "../_lib/metadata";
 import Roles from "@/src/views/admin/Roles";
 
-export const metadata = { title: "Rôles et droits" };
+export const generateMetadata = adminPageMetadata("roles");
 
 export default function Page() {
   return <Roles />;

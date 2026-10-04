@@ -1,18 +1,31 @@
 // Aides de calcul et de mise en forme pour les dons, la finance et le rapport annuel.
-import { formatMoney } from "../../../utils/format";
-import { PAYMENT_METHOD } from "../../../utils/labels";
+// Les libelles et formats dependent de la langue : les fonctions recoivent les formatteurs
+// (useFormat()) ou les libelles (useLabels()) en parametre.
 
-export const PROVIDER_LABELS = { stripe: "Stripe", notchpay: "Notch Pay", flutterwave: "Flutterwave" };
+// Noms commerciaux des prestataires (identiques dans toutes les langues).
+export const PROVIDER_NAMES = { stripe: "Stripe", notchpay: "Notch Pay", flutterwave: "Flutterwave" };
+export const PROVIDER_KEYS = Object.keys(PROVIDER_NAMES);
+// Moyen de paiement propose par chaque prestataire.
+export const PROVIDER_METHOD = { stripe: "card", notchpay: "mobile_money", flutterwave: "mobile_money" };
 
-export const providerLabel = (provider, method) =>
-  `${PAYMENT_METHOD[method] || method || "—"} (${PROVIDER_LABELS[provider] || provider || "—"})`;
+export const providerName = (provider) => PROVIDER_NAMES[provider] || provider || "—";
+
+// "Carte bancaire (Stripe)" dans la langue courante ; labels : useLabels().
+export const providerLabel = (labels, provider, method) =>
+  `${method ? labels.method(method) : "—"} (${providerName(provider)})`;
 
 // Le franc CFA a une parite fixe avec l'euro.
 export const toEur = (amount, currency, xafPerEur) =>
   String(currency).toLowerCase() === "xaf" ? (Number(amount) || 0) / xafPerEur : Number(amount) || 0;
 
-export const formatEur = (value) => formatMoney(value, "eur");
-export const formatEurCompact = (value) => formatMoney(value, "eur", { compact: true });
+// Montant net d'un don (deduction d'un remboursement partiel), dans sa devise d'origine.
+export const netAmount = (row) => Math.max(0, (Number(row.amount) || 0) - (Number(row.refunded_amount) || 0));
+
+// f : useFormat()
+export const formatEur = (f, value) => f.money(value, "eur");
+export const formatEurCompact = (f, value) => f.money(value, "eur", { compact: true });
+// Mois "AAAA-MM" en abrege ("mars 26", "Mar 26"...).
+export const formatMonthKey = (f, month) => f.key(month, { month: "short", year: "2-digit" });
 
 export const percent = (part, total) => (total ? Math.round((part / total) * 1000) / 10 : 0);
 

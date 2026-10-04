@@ -1,60 +1,51 @@
 "use client";
 
-import "../../styles/admin-a.css";
 import { AlertTriangle, CheckCircle2, Clock, Cpu, Database, RefreshCw, Server } from "lucide-react";
-import { Alert, Badge, Button, ErrorState, LoadingState, PageHeader, StatCard } from "../../components/ui";
+import { useTranslations } from "next-intl";
+import { Alert, Badge, Button, ErrorState, PageSkeleton, PageHeader, StatCard } from "../../components/ui";
 import RequireAuth from "../../components/RequireAuth";
 import { useAsync } from "../../hooks/useAsync";
+import { useFormat } from "../../i18n/format";
 import { adminApi } from "../../services";
-import { getErrorMessage } from "../../services/api";
-import { formatNumber } from "../../utils/format";
 import { PERMISSIONS as P } from "../../utils/rbac";
+import { useErrorMessage } from "../../i18n/errors";
 
-const TABLE_LABELS = {
-  users: "Comptes",
-  payments: "Paiements",
-  projects: "Projets",
-  news: "Actualités",
-  testimonials: "Témoignages",
-  messages: "Messages",
-  applications: "Candidatures",
-  events: "Événements",
-  event_registrations: "Inscriptions aux événements",
-  activity_logs: "Journal d'activité",
-  subscriptions: "Dons mensuels",
-};
-
-const ENVIRONMENTS = { production: "Production", development: "Développement", test: "Test" };
-
-function formatUptime(seconds) {
-  const total = Math.max(0, Number(seconds) || 0);
+function formatUptime(t, seconds) {
+  const total = Math.max(0, Math.floor(Number(seconds) || 0));
   const days = Math.floor(total / 86400);
   const hours = Math.floor((total % 86400) / 3600);
   const minutes = Math.floor((total % 3600) / 60);
-  if (days) return `${days} j ${hours} h`;
-  if (hours) return `${hours} h ${minutes} min`;
-  if (minutes) return `${minutes} min`;
-  return `${total} s`;
+  if (days) return t("uptimeDays", { days, hours });
+  if (hours) return t("uptimeHours", { hours, minutes });
+  if (minutes) return t("uptimeMinutes", { minutes });
+  return t("uptimeSeconds", { seconds: total });
 }
 
+// Habillage traduit ; les diagnostics (libelles et conseils des verifications, erreur de base de
+// donnees) sont des textes techniques renvoyes par l'API et affiches tels quels.
 function SystemStatus() {
+  const t = useTranslations("admin.system");
+  const f = useFormat();
+  const errorText = useErrorMessage();
   const { data, loading, error, reload } = useAsync(() => adminApi.system(), []);
 
   const header = (
     <PageHeader
-      eyebrow="Système"
-      title="État du système"
-      description="Santé technique de la plateforme et points de configuration à vérifier avant la mise en production."
-      actions={<Button variant="secondary" icon={RefreshCw} loading={loading} onClick={reload}>Actualiser</Button>}
+      eyebrow={t("eyebrow")}
+      title={t("title")}
+      description={t("description")}
+      actions={<Button variant="secondary" icon={RefreshCw} loading={loading} onClick={reload}>{t("refresh")}</Button>}
     />
   );
 
-  if (loading && !data) return <>{header}<LoadingState label="Interrogation du serveur…" /></>;
-  if (error) return <>{header}<ErrorState message={getErrorMessage(error)} onRetry={reload} /></>;
+  if (loading && !data) return <>{header}<PageSkeleton variant="stats-table" columns={3} label={t("loading")} /></>;
+  if (error) return <>{header}<ErrorState message={errorText(error)} onRetry={reload} /></>;
 
   const { database, checks = [], tables = {} } = data;
   const failing = checks.filter((check) => !check.ok);
   const isProduction = data.environment === "production";
+  const environmentLabel = t.has(`environments.${data.environment}`) ? t(`environments.${data.environment}`) : data.environment;
+  const tableLabel = (name) => (t.has(`tables.${name}`) ? t(`tables.${name}`) : name);
 
   return (
     <>
@@ -62,39 +53,35 @@ function SystemStatus() {
 
       <div className="admin-grid-stats">
         <StatCard
-          label="Base de données"
-          value={database.ok ? "Opérationnelle" : "Injoignable"}
-          hint={database.ok ? `MySQL ${database.version} · ${database.latencyMs} ms` : database.error}
+          label={t("database")}
+          value={database.ok ? t("dbOk") : t("dbDown")}
+          hint={database.ok ? t("dbHint", { version: database.version, latency: database.latencyMs }) : database.error}
           icon={Database}
           tone={database.ok ? undefined : "warning"}
         />
         <StatCard
-          label="Environnement"
-          value={ENVIRONMENTS[data.environment] || data.environment}
-          hint={`Node.js ${data.nodeVersion}`}
+          label={t("environment")}
+          value={environmentLabel}
+          hint={t("node", { version: data.nodeVersion })}
           icon={Server}
           tone={isProduction ? undefined : "info"}
         />
-        <StatCard label="Disponibilité" value={formatUptime(data.uptimeSeconds)} hint="Depuis le dernier démarrage de l'API" icon={Clock} />
-        <StatCard label="Mémoire utilisée" value={`${formatNumber(data.memoryMb)} Mo`} hint="Processus de l'API (RSS)" icon={Cpu} />
+        <StatCard label={t("uptime")} value={formatUptime(t, data.uptimeSeconds)} hint={t("uptimeHint")} icon={Clock} />
+        <StatCard label={t("memory")} value={t("memoryValue", { value: data.memoryMb })} hint={t("memoryHint")} icon={Cpu} />
       </div>
 
       <div className="admin-panels">
         <section className="panel" aria-labelledby="adm-checks-title">
           <div className="panel__head">
             <div>
-              <h2 className="panel__title" id="adm-checks-title">Vérifications de configuration</h2>
+              <h2 className="panel__title" id="adm-checks-title">{t("checksTitle")}</h2>
               <p className="panel__desc">
-                {failing.length
-                  ? `${failing.length} point${failing.length > 1 ? "s" : ""} sur ${checks.length} à régler.`
-                  : "Tous les points de configuration sont en ordre."}
+                {failing.length ? t("checksFailing", { count: failing.length, total: checks.length }) : t("checksOk")}
               </p>
             </div>
           </div>
           {failing.length > 0 && isProduction && (
-            <Alert tone="danger" title="Environnement de production">
-              Certains réglages manquants exposent la plateforme ou bloquent les dons : à corriger en priorité.
-            </Alert>
+            <Alert tone="danger" title={t("productionTitle")}>{t("productionText")}</Alert>
           )}
           <ul className="adm-checks">
             {checks.map((check) => (
@@ -105,20 +92,21 @@ function SystemStatus() {
                 <div>
                   <div className="adm-checks__head">
                     <strong>{check.label}</strong>
-                    {check.ok ? <Badge tone="success">OK</Badge> : <Badge tone="warning">À vérifier</Badge>}
+                    {check.ok ? <Badge tone="success">{t("ok")}</Badge> : <Badge tone="warning">{t("toCheck")}</Badge>}
                   </div>
                   {!check.ok && check.hint && <p>{check.hint}</p>}
                 </div>
               </li>
             ))}
           </ul>
+          <p className="muted adm-small">{t("checksNote")}</p>
         </section>
 
         <section className="panel" aria-labelledby="adm-tables-title">
           <div className="panel__head">
             <div>
-              <h2 className="panel__title" id="adm-tables-title">Volumes par table</h2>
-              <p className="panel__desc">Nombre d&apos;enregistrements en base.</p>
+              <h2 className="panel__title" id="adm-tables-title">{t("tablesTitle")}</h2>
+              <p className="panel__desc">{t("tablesDesc")}</p>
             </div>
           </div>
           {Object.keys(tables).length ? (
@@ -126,8 +114,8 @@ function SystemStatus() {
               <table className="table">
                 <thead>
                   <tr>
-                    <th scope="col">Table</th>
-                    <th scope="col" className="num">Lignes</th>
+                    <th scope="col">{t("tableColumn")}</th>
+                    <th scope="col" className="num">{t("rowsColumn")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -135,18 +123,18 @@ function SystemStatus() {
                     <tr key={name}>
                       <td>
                         <div className="cell-main">
-                          <strong>{TABLE_LABELS[name] || name}</strong>
+                          <strong>{tableLabel(name)}</strong>
                           <span className="adm-mono">{name}</span>
                         </div>
                       </td>
-                      <td className="num">{formatNumber(count)}</td>
+                      <td className="num">{f.number(count)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           ) : (
-            <p className="adm-note">Volumes indisponibles : la base de données ne répond pas.</p>
+            <p className="adm-note">{t("tablesEmpty")}</p>
           )}
         </section>
       </div>

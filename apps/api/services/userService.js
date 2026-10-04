@@ -34,7 +34,12 @@ async function assertNotLastAdmin(target, { removingAdmin }) {
     }
 }
 
-exports.list = async (filters) => userRepo.getAll(filters);
+exports.list = async (filters, pagination = null) => {
+    const result = await userRepo.getAll(filters, pagination);
+    return pagination ? { ...result, page: pagination.page, pageSize: pagination.pageSize } : result;
+};
+
+exports.assertValidRoleSet = assertValidRoleSet;
 
 exports.updateRoles = async (actor, targetId, rawRoles) => {
     const roles = normalizeRoles(rawRoles);
@@ -59,29 +64,34 @@ exports.updateRoles = async (actor, targetId, rawRoles) => {
     return userRepo.findById(target.id);
 };
 
-// Cree un compte avec mot de passe provisoire a changer a la premiere connexion.
-exports.createWithGeneratedPassword = async (actor, { name, email, roles: rawRoles, phone, region }) => {
+// Prepare un compte avec mot de passe provisoire (controles de roles compris), sans l'ecrire :
+// l'appelant l'insere lui-meme (eventuellement dans une transaction) puis appelle finalizeNewAccount.
+exports.prepareNewAccount = async (actor, { name, email, roles: rawRoles, phone, region }) => {
     const roles = normalizeRoles(rawRoles);
     assertValidRoleSet(roles);
     if (!canGrantRoles(actor.roles, roles)) {
         throw forbidden("Vous ne pouvez pas attribuer un rôle disposant de droits que vous n'avez pas");
     }
-    if (await userRepo.findByEmail(email)) throw conflict("Un compte existe déjà avec cet email");
-
     const tempPassword = generateTempPassword();
-    const id = await userRepo.create({
-        name,
-        email,
-        password: await bcrypt.hash(tempPassword, 12),
-        roles,
-        phone,
-        region,
-        mustChangePassword: true,
-    });
+    return {
+        tempPassword,
+        record: {
+            name,
+            email,
+            password: await bcrypt.hash(tempPassword, 12),
+            roles,
+            phone,
+            region,
+            mustChangePassword: true,
+        },
+    };
+};
 
+// Apres ecriture (et commit) : envoi des identifiants et journal.
+exports.finalizeNewAccount = async (actor, id, { record, tempPassword }, extraMeta = {}) => {
     const mail = await sendNewCredentialsEmail({
-        to: email,
-        fullName: name,
+        to: record.email,
+        fullName: record.name,
         password: tempPassword,
         loginUrl: `${FRONTEND_URL}/connexion`,
     });
@@ -89,15 +99,23 @@ exports.createWithGeneratedPassword = async (actor, { name, email, roles: rawRol
     await logService.log({
         userId: actor.id,
         action: "admin.create_user",
-        meta: { targetUserId: id, email, roles, emailSent: mail.sent },
+        meta: { targetUserId: id, email: record.email, roles: record.roles, emailSent: Boolean(mail?.sent), ...extraMeta },
     });
 
     return {
         user: await userRepo.findById(id),
         emailStatus: mail,
         // Sans email envoye, le mot de passe provisoire est montre une seule fois a l'administrateur.
-        tempPassword: mail.sent ? undefined : tempPassword,
+        tempPassword: mail?.sent ? undefined : tempPassword,
     };
+};
+
+// Cree un compte avec mot de passe provisoire a changer a la premiere connexion.
+exports.createWithGeneratedPassword = async (actor, data) => {
+    const prepared = await exports.prepareNewAccount(actor, data);
+    if (await userRepo.findByEmail(prepared.record.email)) throw conflict("Un compte existe déjà avec cet email");
+    const id = await userRepo.create(prepared.record);
+    return exports.finalizeNewAccount(actor, id, prepared);
 };
 
 exports.updateProfile = async (actor, targetId, payload) => {
@@ -115,10 +133,16 @@ exports.updateProfile = async (actor, targetId, payload) => {
         await userRepo.bumpTokenVersion(target.id);
     }
 
+    const fields = Object.keys(payload).filter((key) => payload[key] !== undefined);
+    const statusChanged = payload.status !== undefined && payload.status !== target.status;
     await logService.log({
         userId: actor.id,
         action: "hr.update_profile",
-        meta: { targetUserId: target.id, fields: Object.keys(payload) },
+        meta: {
+            targetUserId: target.id,
+            fields,
+            ...(statusChanged ? { status: { from: target.status, to: payload.status } } : {}),
+        },
     });
     return userRepo.findById(target.id);
 };

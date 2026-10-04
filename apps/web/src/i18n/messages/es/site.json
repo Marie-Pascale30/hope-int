@@ -1,0 +1,420 @@
+{
+  "site": {
+    "meta": {
+      "home": {
+        "absoluteTitle": "HOPE International — Invertir en los sueños de las familias",
+        "description": "Microfinanzas solidarias, formación y ayuda mutua: HOPE International acompaña a mujeres, jóvenes y comunidades rurales de Camerún hacia la autonomía. Haz un donativo o hazte voluntario."
+      },
+      "projects": {
+        "title": "Nuestros proyectos",
+        "description": "Microcréditos, formación, agricultura, agua, salud: descubre los proyectos de HOPE International en Camerún y apoya el que prefieras."
+      },
+      "news": {
+        "title": "Noticias",
+        "description": "Las últimas noticias de los proyectos de HOPE International: lanzamientos, historias sobre el terreno y vida de la asociación."
+      },
+      "events": {
+        "title": "Agenda",
+        "description": "Talleres, jornadas de recaudación, visitas sobre el terreno: la agenda de los próximos eventos de HOPE International."
+      },
+      "join": {
+        "title": "Únete",
+        "description": "Hazte voluntario o miembro de HOPE International: indica tus áreas de interés y envía tu candidatura en línea."
+      },
+      "contact": {
+        "title": "Contacto",
+        "description": "Contacta con HOPE International: preguntas, alianzas, prensa. Nuestro equipo te responde rápidamente."
+      },
+      "donate": {
+        "title": "Donar",
+        "description": "Apoya a las familias de Camerún: microcréditos solidarios, formación y ayuda mutua. Donativo puntual o mensual, con tarjeta o Mobile Money, con recibo enviado por correo electrónico."
+      },
+      "thanks": {
+        "title": "Gracias por tu donativo",
+        "description": "Confirmación de tu donativo a HOPE International y recibo para descargar."
+      },
+      "account": {
+        "title": "Mi espacio",
+        "description": "Tus donativos, recibos, eventos y datos de perfil."
+      },
+      "login": {
+        "title": "Iniciar sesión",
+        "description": "Inicia sesión en tu espacio de HOPE International."
+      },
+      "register": {
+        "title": "Crear una cuenta",
+        "description": "Crea tu cuenta de donante o de miembro de HOPE International."
+      },
+      "changePassword": {
+        "title": "Cambiar mi contraseña",
+        "description": "Cambia la contraseña de tu cuenta de HOPE International."
+      },
+      "forgotPassword": {
+        "title": "Contraseña olvidada",
+        "description": "Recibe un enlace para restablecer tu contraseña."
+      },
+      "resetPassword": {
+        "title": "Nueva contraseña",
+        "description": "Elige una nueva contraseña para tu cuenta."
+      },
+      "project": {
+        "title": "Proyecto",
+        "description": "Descubre este proyecto de HOPE International y apóyalo con un donativo."
+      },
+      "article": {
+        "title": "Noticia",
+        "description": "Una noticia de HOPE International."
+      },
+      "event": {
+        "title": "Evento",
+        "description": "Un evento de HOPE International: información práctica e inscripción."
+      }
+    },
+    "status": {
+      "planifie": "Próximamente",
+      "en_cours": "En curso",
+      "termine": "Finalizado"
+    },
+    "spots": {
+      "free": "Entrada libre",
+      "full": "Completo",
+      "fewLeft": "{count, plural, one {Solo queda # plaza} other {Solo quedan # plazas}}",
+      "left": "{count, plural, one {# plaza disponible} other {# plazas disponibles}}"
+    },
+    "campaign": {
+      "donors": "{count, plural, one {# donante} other {# donantes}}",
+      "raised": "<strong>{raised}</strong> recaudados de {goal}",
+      "progressLabel": "Campaña: {percent} % del objetivo alcanzado",
+      "percent": "{percent} % del objetivo"
+    },
+    "cards": {
+      "discover": "Descubrir",
+      "support": "Apoyar",
+      "supportProject": "Apoyar el proyecto {title}",
+      "featured": "Destacado",
+      "readArticle": "Leer el artículo",
+      "registered": "Estás inscrito/a"
+    },
+    "home": {
+      "eyebrow": "Asociación de solidaridad internacional",
+      "title": "Invertir en los sueños de las familias",
+      "lead": "En Camerún, acompañamos a mujeres, jóvenes y comunidades rurales hacia la autonomía con microfinanzas solidarias, formación y ayuda mutua.",
+      "ctaDonate": "Donar",
+      "ctaDiscover": "Descubrir los proyectos",
+      "ctaTitle": "Cambiemos vidas, juntos",
+      "ctaText": "Cada contribución fortalece a una familia, un barrio y una generación. Dona una vez o cada mes, con tarjeta o Mobile Money.",
+      "ctaJoin": "Hazte voluntario",
+      "heroFloat": "{count, plural, one {<strong>{value}</strong> persona acompañada hacia la autonomía} other {<strong>{value}</strong> personas acompañadas hacia la autonomía}}",
+      "partialError": "No se ha podido cargar parte de la información",
+      "impact": {
+        "eyebrow": "Nuestro impacto",
+        "title": "Resultados concretos, sobre el terreno",
+        "text": "Cifras consolidadas de todos nuestros programas en Camerún, actualizadas de forma continua.",
+        "beneficiaries": "Personas beneficiarias acompañadas",
+        "trainees": "Personas formadas",
+        "credits": "Microcréditos concedidos",
+        "regions": "Regiones cubiertas",
+        "raised": "Recaudados gracias a ti",
+        "donors": "Donantes comprometidos"
+      },
+      "approach": {
+        "eyebrow": "Nuestro enfoque",
+        "title": "Dar los medios para avanzar, no solo ayuda",
+        "text": "Tres palancas complementarias, pensadas con las comunidades, para cambios que perduran más allá de nuestros programas.",
+        "training": {
+          "title": "Formación",
+          "text": "Gestión, contabilidad básica, técnicas agrícolas, emprendimiento: transmitimos los conocimientos que hacen sostenible una actividad."
+        },
+        "microfinance": {
+          "title": "Microfinanzas solidarias",
+          "text": "Microcréditos a un tipo solidario, con un seguimiento mensual. Cada préstamo devuelto financia una nueva actividad."
+        },
+        "solidarity": {
+          "title": "Grupos solidarios y ayuda mutua",
+          "text": "Cooperativas, cajas de ahorro comunitarias, mentoría: la fuerza del grupo protege a las familias ante los imprevistos."
+        }
+      },
+      "campaigns": {
+        "eyebrow": "Campañas en curso",
+        "title": "Apoya un proyecto concreto",
+        "text": "Tu donativo se destina al proyecto que elijas. Sigue con total transparencia el avance de cada campaña.",
+        "all": "Todos nuestros proyectos"
+      },
+      "quotes": {
+        "eyebrow": "Testimonios",
+        "title": "Ellos y ellas cuentan su historia",
+        "quoted": "«{text}»"
+      },
+      "news": {
+        "eyebrow": "Noticias",
+        "title": "Las últimas noticias del terreno",
+        "all": "Todas las noticias"
+      },
+      "events": {
+        "eyebrow": "Agenda",
+        "title": "Próximas citas",
+        "text": "Talleres, jornadas de recaudación, visitas sobre el terreno: ven a conocernos.",
+        "all": "Toda la agenda"
+      }
+    },
+    "projects": {
+      "eyebrow": "Nuestros proyectos",
+      "title": "Proyectos arraigados en las comunidades",
+      "lead": "Microcréditos, formación, agricultura, acceso al agua, ahorro para la salud: descubre nuestras acciones en las regiones de Camerún y elige la que quieres apoyar.",
+      "emptyTitle": "Todavía no hay proyectos publicados",
+      "emptyText": "Nuestros equipos preparan nuevas acciones. Vuelve pronto o apoya desde ahora el conjunto de nuestros programas.",
+      "donate": "Donar",
+      "tabs": {
+        "all": "Todos",
+        "en_cours": "En curso",
+        "planifie": "Próximamente",
+        "termine": "Finalizados"
+      },
+      "filterStatus": "Filtrar por estado",
+      "region": "Región",
+      "allRegions": "Todas las regiones",
+      "count": "{count, plural, =0 {Ningún proyecto mostrado} one {# proyecto mostrado} other {# proyectos mostrados}}",
+      "noMatchTitle": "Ningún proyecto coincide con estos criterios",
+      "noMatchText": "Prueba con otra región u otro estado.",
+      "reset": "Restablecer los filtros"
+    },
+    "projectDetail": {
+      "back": "Todos los proyectos",
+      "about": "El proyecto",
+      "impact": "Impacto",
+      "beneficiaries": "Personas beneficiarias",
+      "trainees": "Personas formadas",
+      "credits": "Microcréditos concedidos",
+      "upcoming": "Próximamente",
+      "start": "Inicio",
+      "end": "Fin previsto",
+      "toBeDefined": "Por definir",
+      "noEnd": "Programa sin fecha de finalización",
+      "budget": "Presupuesto total",
+      "asideLabel": "Apoyar este proyecto",
+      "newsEyebrow": "Sobre el terreno",
+      "newsTitle": "Noticias del proyecto",
+      "aside": {
+        "doneTitle": "Proyecto finalizado",
+        "doneThanks": "Gracias por tu apoyo",
+        "doneText": "Este proyecto ha finalizado y sigue su camino de forma autónoma. ¡Gracias a todas las personas que lo han hecho posible!",
+        "doneMore": "Apoya nuestras otras acciones en curso para que más familias se beneficien.",
+        "doneCta": "Ver los proyectos en curso",
+        "supportTitle": "Apoyar este proyecto",
+        "noCampaign": "Este proyecto no tiene una campaña propia: se financia con los donativos generales a HOPE International.",
+        "donate": "Donar",
+        "campaign": "Campaña de recaudación",
+        "donateProject": "Donar a este proyecto",
+        "note": "Tu donativo se destina a este proyecto. Recibirás un recibo en cuanto se confirme el pago."
+      }
+    },
+    "news": {
+      "eyebrow": "Noticias",
+      "title": "Noticias del terreno",
+      "lead": "Lanzamientos de proyectos, experiencias, vida de la asociación: descubre lo que tus donativos y tu compromiso hacen posible.",
+      "emptyTitle": "Todavía no hay noticias",
+      "emptyText": "Nuestros equipos publicarán pronto noticias de los proyectos. Mientras tanto, descubre nuestras acciones en curso.",
+      "emptyCta": "Ver nuestros proyectos"
+    },
+    "newsDetail": {
+      "back": "Todas las noticias",
+      "projectLabel": "Proyecto:",
+      "linkedEyebrow": "Proyecto relacionado",
+      "linkedCta": "Descubrir el proyecto"
+    },
+    "events": {
+      "eyebrow": "Agenda",
+      "title": "Nuestras próximas citas",
+      "lead": "Talleres de formación, jornadas de recaudación, visitas sobre el terreno, asamblea general: inscríbete y ven a actuar con nosotros.",
+      "emptyTitle": "No hay eventos programados",
+      "emptyText": "Pronto anunciaremos nuevas citas. Sigue nuestras noticias o únete a la asociación para enterarte antes que nadie.",
+      "emptyCta": "Únete",
+      "calendarLabel": "Calendario de eventos",
+      "upcomingMonths": "Próximos meses",
+      "region": "Región",
+      "allRegions": "Todas las regiones",
+      "count": "{count, plural, =0 {Ningún evento próximo} one {# evento próximo} other {# eventos próximos}}",
+      "monthCount": "{count, plural, one {# evento} other {# eventos}}",
+      "showAll": "Toda la agenda",
+      "noneInRegion": "No hay eventos en esta región",
+      "noneOnDate": "No hay eventos en esta fecha",
+      "noneText": "Elige otra fecha en el calendario o consulta toda la agenda.",
+      "filterDay": "El {day}",
+      "filterMonth": "En {month}"
+    },
+    "calendar": {
+      "previousMonth": "Mes anterior",
+      "nextMonth": "Mes siguiente",
+      "dayWithEvents": "{day}: {count, plural, one {# evento} other {# eventos}}",
+      "help": "Usa las flechas para recorrer los días, Re Pág y Av Pág para cambiar de mes y Intro para mostrar los eventos del día.",
+      "legendEvents": "Día con evento",
+      "legendToday": "Hoy"
+    },
+    "eventDetail": {
+      "back": "Toda la agenda",
+      "program": "Programa",
+      "practical": "Información práctica",
+      "schedule": "Horario",
+      "location": "Lugar",
+      "region": "Región",
+      "capacity": "Aforo",
+      "capacityValue": "{count, plural, one {# plaza} other {# plazas}}",
+      "unlimited": "Sin límite de plazas",
+      "project": "Proyecto relacionado",
+      "registrationLabel": "Inscripción",
+      "registration": {
+        "title": "Participar",
+        "spots": "Plazas",
+        "participants": "Participantes inscritos",
+        "register": "Inscribirme",
+        "registered": "Inscripción confirmada, ¡hasta pronto!",
+        "registerError": "No se ha podido realizar la inscripción",
+        "cancel": "Cancelar mi inscripción",
+        "cancelTitle": "¿Cancelar tu inscripción?",
+        "cancelText": "Tu plaza quedará libre para otra persona. Podrás volver a inscribirte si quedan plazas.",
+        "cancelConfirm": "Cancelar mi inscripción",
+        "keep": "Mantener mi plaza",
+        "canceled": "Inscripción cancelada",
+        "cancelError": "No se ha podido cancelar",
+        "past": "Este evento ya ha terminado. Consulta la agenda para ver las próximas citas.",
+        "checking": "Comprobando tu sesión…",
+        "login": "Inicia sesión para inscribirte",
+        "noAccount": "¿Todavía no tienes cuenta? <link>Créala en un minuto</link>.",
+        "youAreRegistered": "Estás inscrito/a en este evento."
+      }
+    },
+    "join": {
+      "eyebrow": "Únete",
+      "title": "Comprométete con nosotros",
+      "lead": "Voluntarios, miembros, profesionales: cada persona puede contribuir a la autonomía de las familias cameruneses, según su tiempo y sus competencias.",
+      "ways": {
+        "volunteer": {
+          "title": "Voluntario/a",
+          "text": "Dedica unas horas: acogida en las campañas de recaudación, apoyo en los talleres, logística, comunicación."
+        },
+        "member": {
+          "title": "Miembro",
+          "text": "Hazte socio/a de la asociación, participa en la asamblea general y en las decisiones, y accede a tu espacio de miembro."
+        },
+        "responsibility": {
+          "title": "Competencias y responsabilidades",
+          "text": "Finanzas, comunicación, informática, coordinación regional: pon tus competencias al servicio del proyecto."
+        }
+      },
+      "steps": {
+        "eyebrow": "Candidatura",
+        "title": "¿Cómo funciona?",
+        "s1": {
+          "title": "Rellenas el formulario",
+          "text": "Preséntate e indica, si lo deseas, los ámbitos en los que te gustaría colaborar."
+        },
+        "s2": {
+          "title": "Estudiamos tu solicitud",
+          "text": "El equipo de recursos humanos lee tu candidatura y puede ponerse en contacto contigo para conversar."
+        },
+        "s3": {
+          "title": "Te proponemos un rol",
+          "text": "Si tu candidatura es aceptada, el equipo elige contigo el rol más adecuado, crea tu cuenta y te envía tus datos de acceso."
+        }
+      },
+      "privacy": "Tus datos se utilizan únicamente para gestionar tu candidatura.",
+      "interests": {
+        "terrain": "Acciones sobre el terreno y logística",
+        "sante": "Salud y acompañamiento social",
+        "education": "Educación y formación",
+        "entrepreneuriat": "Microcréditos y emprendimiento",
+        "communication": "Comunicación y redes sociales",
+        "collecte": "Recaudación de fondos y alianzas",
+        "informatique": "Informática y digital",
+        "administration": "Administración, secretaría y contabilidad",
+        "autre": "Otro"
+      },
+      "form": {
+        "title": "Tu candidatura",
+        "required": "Los campos marcados con un asterisco son obligatorios.",
+        "alreadyMember": "Ya has iniciado sesión: si deseas un nuevo rol, contacta mejor con el equipo a través de la página de Contacto.",
+        "name": "Nombre completo",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "region": "Región",
+        "regionPlaceholder": "Elige una región",
+        "interests": "Áreas de interés (opcional)",
+        "interestsHint": "Puedes elegir varias. Son preferencias: después, el equipo elige contigo el rol más adecuado.",
+        "motivation": "Tu motivación",
+        "motivationPlaceholder": "Háblanos de ti, de tu experiencia y de lo que te motiva a unirte a nosotros.",
+        "counter": "{count} / {min} caracteres como mínimo",
+        "notSent": "Candidatura no enviada",
+        "duplicate": "Si ya tienes una cuenta, inicia sesión en tu espacio; si no, ten paciencia: tu candidatura anterior está en estudio.",
+        "legal": "Al enviar este formulario, aceptas que HOPE International se ponga en contacto contigo.",
+        "submit": "Enviar mi candidatura",
+        "errors": {
+          "name": "Indica tu nombre completo.",
+          "email": "Dirección de correo no válida.",
+          "motivation": "Tu mensaje debe tener al menos {min} caracteres."
+        }
+      },
+      "confirmation": {
+        "title": "¡Gracias, hemos recibido tu candidatura!",
+        "intro": "Estos son los próximos pasos:",
+        "s1": {
+          "title": "Estudio de tu candidatura",
+          "text": "Nuestro equipo de recursos humanos lee cada solicitud con atención."
+        },
+        "s2": {
+          "title": "Respuesta por correo electrónico",
+          "text": "Recibirás nuestra respuesta en {email}, normalmente en unos días."
+        },
+        "s3": {
+          "title": "Tu rol y tus datos de acceso",
+          "text": "Si tu candidatura es aceptada, el equipo te asigna un rol, crea tu cuenta y te envía tus datos de acceso."
+        },
+        "home": "Volver al inicio",
+        "again": "Enviar otra candidatura"
+      }
+    },
+    "contact": {
+      "eyebrow": "Contacto",
+      "title": "Hablemos",
+      "lead": "¿Una pregunta sobre nuestros proyectos, una alianza, una solicitud de prensa? Escríbenos: nuestro equipo te responderá lo antes posible.",
+      "details": "Nuestros datos de contacto",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "office": "Sede",
+      "defaultAddress": "Camerún",
+      "donateTitle": "¿Quieres donar?",
+      "donateText": "Con tarjeta o Mobile Money, una vez o cada mes, para el proyecto que elijas.",
+      "donateCta": "Donar",
+      "joinTitle": "¿Quieres unirte a nosotros?",
+      "joinText": "Voluntario/a o miembro: descubre cómo comprometerte.",
+      "joinCta": "Únete",
+      "form": {
+        "title": "Escríbenos",
+        "required": "Todos los campos son obligatorios.",
+        "name": "Nombre",
+        "email": "Correo electrónico",
+        "subject": "Asunto",
+        "message": "Mensaje",
+        "counter": "{count} caracteres ({min} como mínimo)",
+        "notSent": "Mensaje no enviado",
+        "legal": "Tus datos solo se utilizan para responderte.",
+        "submit": "Enviar el mensaje",
+        "sentTitle": "¡Mensaje enviado, gracias!",
+        "sentText": "Hemos recibido tu mensaje. Un miembro del equipo te responderá por correo electrónico lo antes posible.",
+        "again": "Escribir otro mensaje",
+        "errors": {
+          "name": "Indica tu nombre.",
+          "email": "Dirección de correo no válida.",
+          "subject": "Indica el asunto de tu mensaje (3 caracteres como mínimo).",
+          "content": "Tu mensaje debe tener al menos {min} caracteres."
+        }
+      }
+    },
+    "notFound": {
+      "metaTitle": "Página no encontrada · HOPE International",
+      "title": "Página no encontrada",
+      "text": "Esta página no existe, se ha movido o ya no está publicada. Descubre nuestros proyectos o vuelve al inicio.",
+      "home": "Volver al inicio",
+      "projects": "Ver nuestros proyectos"
+    }
+  }
+}

@@ -3,7 +3,7 @@ require("dotenv").config();
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const db = require("../config/db");
-const { initDb } = require("../config/initDb");
+const { runMigrations } = require("../config/migrate");
 
 // Usage : npm run seed            -> complete la base si elle est vide
 //         npm run seed -- --reset -> vide les donnees de demo puis les recree
@@ -217,11 +217,12 @@ async function seedMessagesAndApplications(assigneeId) {
 
     if (await isEmpty("applications")) {
         await db.query(
-            "INSERT INTO applications (name, email, phone, region, desired_roles, motivation, status, created_at) VALUES ?",
+            // Poles d'interet indicatifs (referentiel INTEREST_AREAS de @hope/shared).
+            "INSERT INTO applications (name, email, phone, region, interests, motivation, status, created_at) VALUES ?",
             [[
-                ["Nadine Fotso", "nadine@example.com", "+237 6 77 11 22 33", "Littoral", JSON.stringify(["membre", "organisatrice"]),
+                ["Nadine Fotso", "nadine@example.com", "+237 6 77 11 22 33", "Littoral", JSON.stringify(["terrain", "education"]),
                     "Je souhaite intégrer l'ONG en tant que bénévole terrain. J'ai animé des ateliers pour une association de quartier pendant trois ans.", "nouvelle", new Date(Date.now() - 1 * 86400000)],
-                ["Paul Essomba", "paul@example.com", null, "Centre", JSON.stringify(["membre"]),
+                ["Paul Essomba", "paul@example.com", null, "Centre", JSON.stringify(["entrepreneuriat", "administration"]),
                     "Étudiant en économie, je voudrais contribuer au suivi des microcrédits et apprendre sur le terrain.", "en_etude", new Date(Date.now() - 5 * 86400000)],
             ]]
         );
@@ -302,7 +303,7 @@ async function seedLogs(adminId) {
 
 async function main() {
     try {
-        await initDb();
+        await runMigrations();
         if (RESET) {
             await resetDemoData();
             console.log("Données de démo réinitialisées.");

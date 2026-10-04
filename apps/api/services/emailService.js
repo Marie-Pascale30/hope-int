@@ -1,60 +1,71 @@
-const nodemailer = require("nodemailer");
+const transport = require("./emailTransport");
+const outbox = require("./emailOutbox");
 
 const isProduction = process.env.NODE_ENV === "production";
 const ORG_NAME = process.env.ORG_NAME || "HOPE International";
 
-function hasMailConfig() {
-    return Boolean(
-        process.env.SMTP_HOST &&
-        process.env.SMTP_PORT &&
-        process.env.SMTP_USER &&
-        process.env.SMTP_PASS
-    );
-}
+const { hasMailConfig } = transport;
 
-let transporter;
-function getTransporter() {
-    if (!transporter) {
-        transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: Number(process.env.SMTP_PORT),
-            secure: String(process.env.SMTP_SECURE || "false") === "true",
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS,
-            },
-        });
-    }
-    return transporter;
-}
-
-// Envoi generique. Sans SMTP, l'email est affiche dans la console en developpement
-// (pratique pour tester les liens de reinitialisation) et simplement ignore en production.
-async function send({ to, subject, text, attachments }) {
+// Semantique des valeurs de retour (inchangee pour les appelants) :
+// - SMTP non configure : rien n'est mis en file, email affiche en console hors production,
+//   { sent: false, queued: false, reason: "smtp-not-configured" } ;
+// - SMTP configure : l'email est enregistre dans email_outbox puis envoye par le worker avec
+//   nouvelles tentatives. sent: true signifie "pris en charge pour envoi" : { sent: true, queued: true } ;
+// - options.immediate (identifiants) : envoi tente tout de suite, sans nouvel essai ;
+//   { sent: true, queued: true } si parti, sinon { sent: false, queued: false, reason: "smtp-error" }
+//   (l'appelant peut alors communiquer le contenu autrement, ex. mot de passe montre a l'admin).
+async function send({ to, subject, text, attachments }, options = {}) {
     if (!hasMailConfig()) {
         if (!isProduction) {
-            console.log(`\n[email non envoyé - SMTP non configuré]\nÀ : ${to}\nObjet : ${subject}\n${text}\n`);
+            console.log(`
+[email non envoyé - SMTP non configuré]
+À : ${to}
+Objet : ${subject}
+${text}
+`);
         }
-        return { sent: false, reason: "smtp-not-configured" };
+        return { sent: false, queued: false, reason: "smtp-not-configured" };
+    }
+
+    const message = {
+        kind: options.kind,
+        to,
+        subject,
+        text,
+        attachments,
+        paymentId: options.paymentId,
+        sensitive: options.sensitive,
+        expiresInMinutes: options.expiresInMinutes,
+    };
+
+    if (options.immediate) {
+        try {
+            const result = await outbox.sendNow(message);
+            return result.sent ? { sent: true, queued: true } : { sent: false, queued: false, reason: "smtp-error" };
+        } catch (error) {
+            console.error("email-error:", error.message);
+            return { sent: false, queued: false, reason: "smtp-error" };
+        }
     }
 
     try {
-        await getTransporter().sendMail({
-            from: process.env.SMTP_FROM || process.env.SMTP_USER,
-            to,
-            subject,
-            text,
-            attachments,
-        });
-        return { sent: true };
+        await outbox.enqueue(message);
+        return { sent: true, queued: true };
     } catch (error) {
-        console.error("email-error:", error.message);
-        return { sent: false, reason: "smtp-error" };
+        // File indisponible (base, migration manquante) : envoi direct en dernier recours.
+        console.error("email-outbox-enqueue-error:", error.message);
+        try {
+            await transport.deliver(message);
+            return { sent: true, queued: false };
+        } catch (sendError) {
+            console.error("email-error:", sendError.message);
+            return { sent: false, queued: false, reason: "smtp-error" };
+        }
     }
 }
 
 exports.hasMailConfig = hasMailConfig;
-exports.send = send;
+exports.send = (message) => send(message);
 
 exports.sendNewCredentialsEmail = ({ to, fullName, password, loginUrl }) =>
     send({
@@ -70,7 +81,7 @@ exports.sendNewCredentialsEmail = ({ to, fullName, password, loginUrl }) =>
             "",
             "Vous devrez choisir un nouveau mot de passe lors de votre première connexion.",
         ].join("\n"),
-    });
+    }, { kind: "credentials", sensitive: true, immediate: true });
 
 exports.sendPasswordResetEmail = ({ to, fullName, resetUrl }) =>
     send({
@@ -84,7 +95,7 @@ exports.sendPasswordResetEmail = ({ to, fullName, resetUrl }) =>
             "",
             "Si vous n'êtes pas à l'origine de cette demande, ignorez simplement ce message.",
         ].join("\n"),
-    });
+    }, { kind: "password_reset", sensitive: true, expiresInMinutes: 55 });
 
 exports.sendApplicationReceivedEmail = ({ to, fullName }) =>
     send({
@@ -95,7 +106,7 @@ exports.sendApplicationReceivedEmail = ({ to, fullName }) =>
             "",
             `Merci pour votre candidature ! L'équipe ${ORG_NAME} va l'étudier et reviendra vers vous rapidement.`,
         ].join("\n"),
-    });
+    }, { kind: "application_received" });
 
 exports.sendApplicationDecisionEmail = ({ to, fullName, accepted, note }) =>
     send({
@@ -109,9 +120,10 @@ exports.sendApplicationDecisionEmail = ({ to, fullName, accepted, note }) =>
                 : "Nous vous remercions pour l'intérêt porté à notre association. Après étude, nous ne pouvons pas donner une suite favorable à votre candidature pour le moment.",
             note ? `\nMessage de l'équipe : ${note}` : "",
         ].join("\n"),
-    });
+    }, { kind: "application_decision" });
 
-exports.sendDonationReceiptEmail = ({ to, fullName, amountLabel, receiptNumber, receiptUrl, pdfBuffer }) =>
+// paymentId (facultatif) : renseigne payments.receipt_sent_at quand l'email part reellement.
+exports.sendDonationReceiptEmail = ({ to, fullName, amountLabel, receiptNumber, receiptUrl, pdfBuffer, paymentId }) =>
     send({
         to,
         subject: `${ORG_NAME} - Merci pour votre don (${receiptNumber})`,
@@ -122,5 +134,5 @@ exports.sendDonationReceiptEmail = ({ to, fullName, amountLabel, receiptNumber, 
             `Votre reçu n° ${receiptNumber} est joint à ce message.`,
             receiptUrl ? `Vous pouvez aussi le télécharger ici : ${receiptUrl}` : "",
         ].join("\n"),
-        attachments: pdfBuffer ? [{ filename: `recu-${receiptNumber}.pdf`, content: pdfBuffer }] : undefined,
-    });
+        attachments: pdfBuffer ? [{ filename: `recu-${receiptNumber}.pdf`, content: pdfBuffer, contentType: "application/pdf" }] : undefined,
+    }, { kind: "donation_receipt", paymentId });

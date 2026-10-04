@@ -25,8 +25,3 @@ export function canGrantRole(user, entry) {
 export function canGrantAll(user, matrix, roles = []) {
   return roles.every((role) => canGrantRole(user, matrix?.roles.find((entry) => entry.role === role)));
 }
-
-// Libelle d'un role d'apres la matrice (libelles longs du backend), sinon libelle local.
-export function matrixRoleLabel(matrix, role, fallback) {
-  return matrix?.roleLabels?.[role] || fallback(role);
-}

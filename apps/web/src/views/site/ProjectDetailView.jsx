@@ -1,87 +1,62 @@
-"use client";
-
+// Detail d'un projet (composant serveur) : charge par app/[locale]/projets/[id]/page.jsx.
 import "../../styles/public.css";
-import { useParams } from "next/navigation";
-import { CalendarCheck, CalendarDays, FolderSearch, GraduationCap, HandCoins, Heart, MapPin, Users, Wallet } from "lucide-react";
-import { Alert, Badge, Button, Card, EmptyState, ErrorState, LoadingState, StatCard, StatusBadge } from "../../components/ui";
-import { useAsync } from "../../hooks/useAsync";
-import { publicApi } from "../../services";
-import { getErrorMessage } from "../../services/api";
-import { formatDate, formatNumber } from "../../utils/format";
-import { PROJECT_STATUS, statusOf } from "../../utils/labels";
-import { BackLink, CampaignProgress, CoverImage, NewsCard } from "./components";
-import { euros, hasCampaign, isNotFound, paragraphs } from "./components/helpers";
+import { CalendarCheck, CalendarDays, GraduationCap, HandCoins, Heart, MapPin, Users, Wallet } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Alert, Badge, Card, StatusBadge } from "../../components/ui";
+import { useFormat } from "../../i18n/format";
+import { useLocalePath } from "../../i18n/navigation";
+import { BackLink, CampaignProgress, CoverImage, LinkButton, NewsCard, Stat, useProjectStatus } from "./components";
+import { euros, hasCampaign, paragraphs } from "./components/helpers";
 
 function CampaignAside({ project }) {
+  const t = useTranslations("site.projectDetail.aside");
+  const lp = useLocalePath();
   if (project.status === "termine") {
     return (
       <Card>
-        <h2 className="pub-aside__title">Projet terminé</h2>
-        <Alert tone="success" title="Merci pour votre soutien">
-          Ce projet est terminé et poursuit sa route de manière autonome. Merci à toutes celles et ceux qui l’ont rendu possible !
-        </Alert>
-        <p className="muted" style={{ margin: "14px 0 0" }}>Soutenez nos autres actions en cours pour que d’autres familles en bénéficient.</p>
-        <Button href="/projets" block>Voir les projets en cours</Button>
+        <h2 className="pub-aside__title">{t("doneTitle")}</h2>
+        <Alert tone="success" title={t("doneThanks")}>{t("doneText")}</Alert>
+        <p className="muted" style={{ margin: "14px 0 0" }}>{t("doneMore")}</p>
+        <LinkButton href={lp("/projets")} block>{t("doneCta")}</LinkButton>
       </Card>
     );
   }
   if (!hasCampaign(project)) {
     return (
       <Card>
-        <h2 className="pub-aside__title">Soutenir ce projet</h2>
-        <p className="muted">Ce projet n’a pas de collecte dédiée : il est financé par les dons généraux faits à HOPE International.</p>
-        <Button href="/don" variant="accent" icon={Heart} block>Faire un don</Button>
+        <h2 className="pub-aside__title">{t("supportTitle")}</h2>
+        <p className="muted">{t("noCampaign")}</p>
+        <LinkButton href={lp("/don")} variant="accent" icon={Heart} block>{t("donate")}</LinkButton>
       </Card>
     );
   }
   return (
     <Card>
-      <span className="eyebrow">Campagne de collecte</span>
+      <span className="eyebrow">{t("campaign")}</span>
       <CampaignProgress project={project} large />
-      <Button href={`/don?projet=${project.id}`} variant="accent" size="lg" icon={Heart} block>
-        Faire un don pour ce projet
-      </Button>
-      <p className="pub-aside__note">Votre don est affecté à ce projet. Un reçu vous est délivré dès la confirmation du paiement.</p>
+      <LinkButton href={lp(`/don?projet=${project.id}`)} variant="accent" size="lg" icon={Heart} block>
+        {t("donateProject")}
+      </LinkButton>
+      <p className="pub-aside__note">{t("note")}</p>
     </Card>
   );
 }
 
-export default function ProjectDetailView() {
-  const { id } = useParams();
-  const { data: project, loading, error, reload } = useAsync(() => publicApi.getContent("projects", id), [id]);
-  const news = useAsync(() => publicApi.listContent("news"), []);
-
-  if (loading) return <div className="container section"><LoadingState label="Chargement du projet…" /></div>;
-
-  if (error) {
-    return (
-      <div className="container section">
-        {isNotFound(error) ? (
-          <EmptyState
-            icon={FolderSearch}
-            title="Projet introuvable"
-            description="Ce projet n’existe pas ou n’est plus publié. Découvrez nos autres actions en cours."
-            action={<Button href="/projets">Retour aux projets</Button>}
-          />
-        ) : (
-          <ErrorState message={getErrorMessage(error)} onRetry={reload} />
-        )}
-      </div>
-    );
-  }
-
-  const related = (news.data || []).filter((item) => String(item.project_id) === String(project.id)).slice(0, 3);
+export default function ProjectDetailView({ project, related = [] }) {
+  const t = useTranslations("site.projectDetail");
+  const f = useFormat();
+  const statusOf = useProjectStatus();
   const planned = project.status === "planifie";
-  const indicator = (value) => (planned && !Number(value) ? "À venir" : formatNumber(value));
+  const indicator = (value) => (planned && !Number(value) ? t("upcoming") : f.number(value));
 
   return (
     <>
       <div className="container pub-detail-head">
-        <BackLink href="/projets">Tous les projets</BackLink>
-        <CoverImage src={project.image_url} variant="wide" priority />
+        <BackLink href="/projets">{t("back")}</BackLink>
+        <CoverImage src={project.image_url} variant="wide" priority sizes="wide" />
         <div className="pub-detail-title">
           <div className="chip-list" style={{ marginBottom: 14 }}>
-            <StatusBadge status={statusOf(PROJECT_STATUS, project.status)} />
+            <StatusBadge status={statusOf(project.status)} />
             {project.region && (
               <Badge plain><MapPin size={14} aria-hidden="true" /> {project.region}</Badge>
             )}
@@ -95,39 +70,39 @@ export default function ProjectDetailView() {
         <div className="container pub-detail-layout">
           <div>
             <div className="pub-block">
-              <h2>Le projet</h2>
+              <h2>{t("about")}</h2>
               <div className="prose pub-prose">
                 {paragraphs(project.description).map((text, index) => <p key={index}>{text}</p>)}
               </div>
             </div>
 
             <div className="pub-block">
-              <h2>Impact</h2>
+              <h2>{t("impact")}</h2>
               <div className="pub-indicators">
-                <StatCard label="Bénéficiaires" value={indicator(project.beneficiaries)} icon={Users} />
-                <StatCard label="Personnes formées" value={indicator(project.trainees)} icon={GraduationCap} tone="info" />
-                <StatCard label="Microcrédits accordés" value={indicator(project.credits_granted)} icon={HandCoins} tone="accent" />
+                <Stat label={t("beneficiaries")} value={indicator(project.beneficiaries)} icon={Users} />
+                <Stat label={t("trainees")} value={indicator(project.trainees)} icon={GraduationCap} tone="info" />
+                <Stat label={t("credits")} value={indicator(project.credits_granted)} icon={HandCoins} tone="accent" />
               </div>
               <dl className="pub-facts">
                 <div>
-                  <dt><CalendarDays aria-hidden="true" /> Début</dt>
-                  <dd>{project.start_date ? formatDate(project.start_date) : "À définir"}</dd>
+                  <dt><CalendarDays aria-hidden="true" /> {t("start")}</dt>
+                  <dd>{project.start_date ? f.date(project.start_date) : t("toBeDefined")}</dd>
                 </div>
                 <div>
-                  <dt><CalendarCheck aria-hidden="true" /> Fin prévue</dt>
-                  <dd>{project.end_date ? formatDate(project.end_date) : "Programme sans date de fin"}</dd>
+                  <dt><CalendarCheck aria-hidden="true" /> {t("end")}</dt>
+                  <dd>{project.end_date ? f.date(project.end_date) : t("noEnd")}</dd>
                 </div>
                 {Number(project.budget) > 0 && (
                   <div>
-                    <dt><Wallet aria-hidden="true" /> Budget total</dt>
-                    <dd>{euros(project.budget)}</dd>
+                    <dt><Wallet aria-hidden="true" /> {t("budget")}</dt>
+                    <dd>{euros(f, project.budget)}</dd>
                   </div>
                 )}
               </dl>
             </div>
           </div>
 
-          <aside className="pub-aside" aria-label="Soutenir ce projet">
+          <aside className="pub-aside" aria-label={t("asideLabel")}>
             <CampaignAside project={project} />
           </aside>
         </div>
@@ -137,8 +112,8 @@ export default function ProjectDetailView() {
         <section className="section section--alt" aria-labelledby="project-news-title">
           <div className="container">
             <div className="section-head">
-              <span className="eyebrow">Sur le terrain</span>
-              <h2 id="project-news-title">Actualités du projet</h2>
+              <span className="eyebrow">{t("newsEyebrow")}</span>
+              <h2 id="project-news-title">{t("newsTitle")}</h2>
             </div>
             <div className="grid grid--3">
               {related.map((item) => <NewsCard key={item.id} item={item} />)}

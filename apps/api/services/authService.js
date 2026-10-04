@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { SESSION_TTL_SECONDS } = require("../config/session");
 const userRepo = require("../repositories/userRepository");
 const resetRepo = require("../repositories/passwordResetRepository");
 const logService = require("./activityLogService");
@@ -31,7 +32,7 @@ function signToken(user) {
     return jwt.sign(
         { id: user.id, tv: Number(user.token_version || 0) },
         process.env.JWT_SECRET,
-        { expiresIn: "12h" }
+        { expiresIn: SESSION_TTL_SECONDS }
     );
 }
 
@@ -55,6 +56,7 @@ exports.login = async (email, password) => {
         throw unauthorized(INVALID_CREDENTIALS);
     }
     if (user.status !== "active") {
+        await logService.log({ userId: user.id, action: "auth.login_inactive", meta: { email: user.email } });
         throw unauthorized("Ce compte est désactivé. Contactez l'administration.");
     }
 
@@ -70,7 +72,9 @@ exports.getMe = async (userId) => {
 };
 
 exports.updateMe = async (userId, { name, phone }) => {
-    await userRepo.updateProfile(userId, { name, phone });
+    // Seuls les champs envoyes sont modifies (un champ absent ne doit pas etre ecrase).
+    const changes = Object.fromEntries(Object.entries({ name, phone }).filter(([, value]) => value !== undefined));
+    await userRepo.updateProfile(userId, changes);
     return exports.getMe(userId);
 };
 
@@ -93,7 +97,8 @@ exports.changePassword = async (userId, { currentPassword, newPassword }) => {
 };
 
 // Reponse identique que l'email existe ou non, pour ne pas reveler les comptes.
-exports.requestPasswordReset = async (email) => {
+// locale : langue du site de la demande, pour que le lien ouvre la page dans la meme langue.
+exports.requestPasswordReset = async (email, locale = "fr") => {
     const user = await userRepo.findByEmail(email);
     if (!user || user.status !== "active") return;
 
@@ -102,14 +107,14 @@ exports.requestPasswordReset = async (email) => {
     await sendPasswordResetEmail({
         to: user.email,
         fullName: user.name,
-        resetUrl: `${FRONTEND_URL}/reinitialiser-mot-de-passe?token=${token}`,
+        resetUrl: `${FRONTEND_URL}${locale === "fr" ? "" : `/${locale}`}/reinitialiser-mot-de-passe?token=${token}`,
     });
     await logService.log({ userId: user.id, action: "auth.password_reset_requested" });
 };
 
 exports.resetPassword = async (token, newPassword) => {
     const reset = await resetRepo.findValid(sha256(token));
-    if (!reset) throw badRequest("Ce lien est invalide ou a expiré. Faites une nouvelle demande.");
+    if (!reset) throw badRequest("Ce lien est invalide ou a expiré. Faites une nouvelle demande.", { code: "RESET_LINK_INVALID" });
     assertStrongPassword(newPassword);
 
     await userRepo.updatePassword(reset.user_id, await bcrypt.hash(newPassword, 12));

@@ -48,6 +48,8 @@ router.post(
     authController.resetPassword
 );
 
+router.post("/logout", authController.logout);
+
 router.get("/me", auth, authController.me);
 
 router.patch(

@@ -1,30 +1,29 @@
-"use client";
-
-import Link from "next/link";
+// Pied de page (composant serveur) : les coordonnees viennent de GET /meta, chargees par le layout.
+// Selecteurs de langue et de theme : ilots client.
 import { Mail, MapPin, Phone } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Logo from "./Logo";
-import { useI18n, SUPPORTED_LANGS } from "../../i18n";
-import { useMeta } from "../../hooks/useMeta";
+import LocaleSwitcher from "./LocaleSwitcher";
+import ThemeSwitcher from "../ThemeSwitcher";
+import { Link, useLocalePath } from "../../i18n/navigation";
 
-export default function SiteFooter() {
-  const { t, lang, setLang } = useI18n();
-  const { meta } = useMeta();
-  const org = meta.organization;
+const DEFAULT_ORGANIZATION = { name: "HOPE International", email: "", phone: "", address: "" };
+
+export default function SiteFooter({ organization }) {
+  const t = useTranslations();
+  const lp = useLocalePath();
+  const org = { ...DEFAULT_ORGANIZATION, ...(organization || {}) };
 
   return (
     <footer className="site-footer">
       <div className="container site-footer__grid">
         <div className="site-footer__brand">
-          <Logo light />
+          <Logo href={lp("/")} label={t("nav.home")} light />
           <p>{t("footer.tagline")}</p>
-          <label className="site-footer__lang">
-            <span>{t("footer.language")}</span>
-            <select value={lang} onChange={(e) => setLang(e.target.value)}>
-              {SUPPORTED_LANGS.map((option) => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
-          </label>
+          <div className="site-footer__prefs">
+            <LocaleSwitcher onDark />
+            <ThemeSwitcher onDark />
+          </div>
         </div>
 
         <div>
@@ -49,8 +48,8 @@ export default function SiteFooter() {
           <h2 className="site-footer__title">{t("footer.contact")}</h2>
           <ul className="site-footer__contact">
             {org.address && <li><MapPin size={16} aria-hidden="true" /> {org.address}</li>}
-            {org.email && <li><Mail size={16} aria-hidden="true" /> {org.email}</li>}
-            {org.phone && <li><Phone size={16} aria-hidden="true" /> {org.phone}</li>}
+            {org.email && <li><Mail size={16} aria-hidden="true" /> <a href={`mailto:${org.email}`}>{org.email}</a></li>}
+            {org.phone && <li><Phone size={16} aria-hidden="true" /> <a href={`tel:${org.phone.replace(/\s+/g, "")}`}>{org.phone}</a></li>}
             <li><Link href="/contact">{t("nav.contact")} →</Link></li>
           </ul>
         </div>

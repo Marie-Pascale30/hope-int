@@ -22,7 +22,7 @@ const PROJECT_STATUSES = ["planifie", "en_cours", "termine"];
 const MESSAGE_STATUSES = ["nouveau", "lu", "traite", "archive"];
 const APPLICATION_STATUSES = ["nouvelle", "en_etude", "acceptee", "refusee"];
 const USER_STATUSES = ["active", "inactive"];
-const PAYMENT_STATUSES = ["pending", "succeeded", "failed", "canceled", "refunded"];
+const PAYMENT_STATUSES = ["pending", "succeeded", "failed", "canceled", "refunded", "disputed", "review"];
 const SUCCESS_PAYMENT_STATUSES = ["succeeded", "completed"];
 
 const DONATION_LIMITS = {

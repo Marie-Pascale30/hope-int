@@ -5,12 +5,16 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "seed": "node scripts/seed.js"
+    "seed": "node scripts/seed.js",
+    "migrate": "node scripts/migrate.js",
+    "test": "node --test --test-concurrency=1 \"test/*.test.js\"",
+    "lint": "eslint ."
   },
   "type": "commonjs",
   "dependencies": {
     "@hope/shared": "*",
     "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
@@ -21,11 +25,15 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.2",
     "mysql2": "^3.20.0",
-    "nodemailer": "^8.0.5",
+    "nodemailer": "^10.0.13",
     "pdfkit": "^0.17.2",
     "stripe": "^20.4.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "globals": "^17.13.0",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.3.0"
   }
 }

@@ -8,20 +8,33 @@ exports.create = async ({ name, email, subject, content }) => {
     return result.insertId;
 };
 
-exports.getAll = async ({ status } = {}) => {
+const LIST_SELECT = `
+  SELECT m.id, m.name, m.email, m.subject, m.content, m.status, m.assigned_to, m.notes, m.handled_at, m.created_at,
+         a.name AS assigned_name
+  FROM messages m LEFT JOIN users a ON a.id = m.assigned_to`;
+
+// Sans pagination : tableau complet. Avec { limit, offset } : { rows, total }.
+exports.getAll = async ({ status } = {}, pagination = null) => {
     const where = status ? "WHERE m.status = ?" : "";
+    const params = status ? [status] : [];
+    const limit = pagination ? " LIMIT ? OFFSET ?" : "";
     const [rows] = await db.query(
-        `SELECT m.id, m.name, m.email, m.subject, m.content, m.status, m.assigned_to, m.notes, m.handled_at, m.created_at,
-                a.name AS assigned_name
-         FROM messages m LEFT JOIN users a ON a.id = m.assigned_to
-         ${where} ORDER BY m.created_at DESC`,
-        status ? [status] : []
+        `${LIST_SELECT} ${where} ORDER BY m.created_at DESC, m.id DESC${limit}`,
+        pagination ? [...params, pagination.limit, pagination.offset] : params
     );
-    return rows;
+    if (!pagination) return rows;
+    const [[count]] = await db.query(`SELECT COUNT(*) AS total FROM messages m ${where}`, params);
+    return { rows, total: Number(count.total) };
 };
 
 exports.findById = async (id) => {
     const [rows] = await db.query("SELECT * FROM messages WHERE id = ?", [id]);
+    return rows[0];
+};
+
+// Meme forme qu'une ligne de liste (avec le nom de la personne assignee).
+exports.findDetailedById = async (id) => {
+    const [rows] = await db.query(`${LIST_SELECT} WHERE m.id = ?`, [id]);
     return rows[0];
 };
 

@@ -1,23 +1,23 @@
 "use client";
 
-import "../../styles/admin-b.css";
 import { useMemo, useState } from "react";
 import { Printer } from "lucide-react";
-import { Button, EmptyState, ErrorState, LoadingState, PageHeader, StatusBadge } from "../../components/ui";
+import { useTranslations } from "next-intl";
+import { Button, EmptyState, ErrorState, PageSkeleton, PageHeader, StatusBadge } from "../../components/ui";
 import RequireAuth from "../../components/RequireAuth";
 import { useAsync } from "../../hooks/useAsync";
 import { useMeta } from "../../hooks/useMeta";
+import { useFormat } from "../../i18n/format";
 import { adminApi } from "../../services";
-import { getErrorMessage } from "../../services/api";
-import { formatDate, formatDateTime, formatMoney, formatNumber, formatShortDate } from "../../utils/format";
-import { PROJECT_STATUS, statusOf } from "../../utils/labels";
+import { useErrorMessage } from "../../i18n/errors";
+import { useLabels } from "../../utils/labels";
 import { PERMISSIONS as P } from "../../utils/rbac";
 import { fillMonths, formatEur, providerLabel, toEur } from "./parts-b/finance";
 import { InlineSelect, MonthlyChart, MonthTable, ShareTable } from "./parts-b/widgets";
 
 function Figure({ value, label, detail }) {
   return (
-    <div className="admb-figure">
+    <div className="adm-report-figure">
       <strong>{value}</strong>
       <span>{label}</span>
       {detail && <small>{detail}</small>}
@@ -26,107 +26,128 @@ function Figure({ value, label, detail }) {
 }
 
 function Report({ report, organization, xafPerEur }) {
-  const { year, finance, activity, impact } = report;
+  const t = useTranslations("adminOps.report");
+  const f = useFormat();
+  const labels = useLabels();
+  const { year, finance, activity, impact, region } = report;
   const applications = activity.applications || {};
   const received = Object.values(applications).reduce((sum, value) => sum + Number(value || 0), 0);
   const months = fillMonths(finance.byMonth, year);
+  const n = (value) => f.number(value || 0);
 
   return (
-    <article className="admb-report" aria-labelledby="admb-report-title">
-      <header className="admb-report__head">
+    <article className="adm-report" aria-labelledby="adm-report-title">
+      <header className="adm-report__head">
         <div>
           <span className="eyebrow">{organization.name}</span>
-          <h1 id="admb-report-title">Rapport d&apos;activité {year}</h1>
-          <p>Période du 1er janvier au 31 décembre {year}</p>
+          <h1 id="adm-report-title">{t("heading", { year })}</h1>
+          <p>
+            {t("period", { start: f.date(`${year}-01-01`), end: f.date(`${year}-12-31`) })}
+            {region && <> · <strong>{t("regionScope", { region })}</strong></>}
+          </p>
         </div>
-        <p>Généré le {formatDateTime(report.generatedAt)}</p>
+        <p>{t("generatedAt", { date: f.dateTime(report.generatedAt) })}</p>
       </header>
 
-      <section aria-labelledby="admb-r-highlights">
-        <h2 id="admb-r-highlights">Faits marquants</h2>
-        <div className="admb-figures">
-          <Figure value={formatEur(finance.totalEur)} label="collectés" detail={`${formatNumber(finance.count)} don(s) réussi(s)`} />
+      <section aria-labelledby="adm-r-highlights">
+        <h2 id="adm-r-highlights">{t("highlights.title")}</h2>
+        <div className="adm-report-figures">
           <Figure
-            value={formatNumber(finance.donors)}
-            label="donateurs"
-            detail={`dont ${formatNumber(finance.recurringDonors)} en don mensuel`}
-          />
-          <Figure value={formatNumber(activity.newMembers)} label="nouveaux membres" />
-          <Figure
-            value={formatNumber(activity.events)}
-            label="événements organisés"
-            detail={`${formatNumber(activity.eventRegistrations)} inscription(s)`}
+            value={formatEur(f, finance.totalEur)}
+            label={t("highlights.collected")}
+            detail={t("highlights.collectedDetail", { count: Number(finance.count) || 0 })}
           />
           <Figure
-            value={formatNumber(received)}
-            label="candidatures reçues"
-            detail={`${formatNumber(applications.acceptee || 0)} acceptée(s)`}
+            value={n(finance.donors)}
+            label={t("highlights.donors", { count: Number(finance.donors) || 0 })}
+            detail={t("highlights.donorsDetail", { count: Number(finance.recurringDonors) || 0 })}
+          />
+          <Figure value={n(activity.newMembers)} label={t("highlights.newMembers", { count: Number(activity.newMembers) || 0 })} />
+          <Figure
+            value={n(activity.events)}
+            label={t("highlights.events", { count: Number(activity.events) || 0 })}
+            detail={t("highlights.eventsDetail", { count: Number(activity.eventRegistrations) || 0 })}
           />
           <Figure
-            value={formatNumber(activity.messages?.handled || 0)}
-            label="messages traités"
-            detail={`sur ${formatNumber(activity.messages?.total || 0)} reçu(s)`}
+            value={n(received)}
+            label={t("highlights.applications", { count: received })}
+            detail={t("highlights.applicationsDetail", { count: Number(applications.acceptee) || 0 })}
+          />
+          <Figure
+            value={n(activity.messages?.handled)}
+            label={t("highlights.messages", { count: Number(activity.messages?.handled) || 0 })}
+            detail={t("highlights.messagesDetail", { count: Number(activity.messages?.total) || 0 })}
           />
         </div>
       </section>
 
-      <section aria-labelledby="admb-r-impact">
-        <h2 id="admb-r-impact">Impact cumulé</h2>
-        <div className="admb-figures">
-          <Figure value={formatNumber(impact.beneficiaries)} label="bénéficiaires" />
-          <Figure value={formatNumber(impact.trainees)} label="personnes formées" />
-          <Figure value={formatNumber(impact.creditsGranted)} label="crédits accordés" />
+      <section aria-labelledby="adm-r-impact">
+        <h2 id="adm-r-impact">{t("impact.title")}</h2>
+        {/* Note de l'API (francais) non affichee : seule la base de calcul est interpretee. */}
+        {report.impactScope?.basis === "projects_active_in_year" && (
+          <p className="adm-muted-small" style={{ marginTop: 0 }}>
+            {region ? t("impact.scopeNoteRegion", { year, region }) : t("impact.scopeNote", { year })}
+          </p>
+        )}
+        <div className="adm-report-figures">
+          <Figure value={n(impact.beneficiaries)} label={t("impact.beneficiaries", { count: Number(impact.beneficiaries) || 0 })} />
+          <Figure value={n(impact.trainees)} label={t("impact.trainees", { count: Number(impact.trainees) || 0 })} />
+          <Figure value={n(impact.creditsGranted)} label={t("impact.credits", { count: Number(impact.creditsGranted) || 0 })} />
           <Figure
-            value={formatNumber(impact.activeProjects)}
-            label="projets en cours"
-            detail={`${formatNumber(impact.completedProjects)} terminé(s) sur ${formatNumber(impact.projects)}`}
+            value={n(impact.activeProjects)}
+            label={t("impact.activeProjects", { count: Number(impact.activeProjects) || 0 })}
+            detail={t("impact.completedDetail", { count: Number(impact.completedProjects) || 0, total: n(impact.projects) })}
           />
-          <Figure value={formatNumber(impact.regionsCovered)} label="régions couvertes" />
+          <Figure value={n(impact.regionsCovered)} label={t("impact.regions", { count: Number(impact.regionsCovered) || 0 })} />
         </div>
       </section>
 
-      <section aria-labelledby="admb-r-finance">
-        <h2 id="admb-r-finance">Finances</h2>
+      <section aria-labelledby="adm-r-finance">
+        <h2 id="adm-r-finance">{t("finance.title")}</h2>
         {finance.count === 0 ? (
-          <p className="muted">Aucun don réussi n&apos;a été enregistré en {year}.</p>
+          <p className="muted">{t("finance.empty", { year })}</p>
         ) : (
           <>
             <p className="muted" style={{ marginTop: 0 }}>
-              Don moyen : <strong>{formatEur(finance.averageEur)}</strong>.
+              {t.rich("finance.average", { amount: formatEur(f, finance.averageEur), strong: (chunks) => <strong>{chunks}</strong> })}
             </p>
-            <h3>Montant collecté par mois (EUR)</h3>
+            <h3>{t("finance.monthly")}</h3>
             <MonthlyChart months={months} />
-            <h3>Détail mensuel</h3>
+            <h3>{t("finance.monthlyDetail")}</h3>
             <MonthTable months={months} />
-            <h3>Par affectation</h3>
+            <h3>{t("finance.byProject")}</h3>
             <ShareTable
               rows={finance.byProject.map((row) => ({
                 key: row.projectId ?? "general",
-                label: row.title,
+                label: row.projectId ? row.title : t("finance.generalFund"),
                 count: row.count,
                 value: row.amountEur,
               }))}
-              labelHeader="Affectation"
-              caption="Dons par affectation"
+              labelHeader={t("finance.allocationHeader")}
+              caption={t("finance.byProjectCaption")}
             />
-            <h3>Par moyen de paiement</h3>
+            <h3>{t("finance.byProvider")}</h3>
             <ShareTable
               rows={finance.byProvider.map((row) => ({
                 key: `${row.provider}-${row.method}`,
-                label: providerLabel(row.provider, row.method),
+                label: providerLabel(labels, row.provider, row.method),
                 count: row.count,
                 value: row.amountEur,
               }))}
-              labelHeader="Moyen"
-              caption="Dons par moyen de paiement"
+              labelHeader={t("finance.methodHeader")}
+              caption={t("finance.byProviderCaption")}
             />
-            <p className="admb-muted-small" style={{ marginTop: 10 }}>
-              Par devise :{" "}
+            <p className="adm-muted-small" style={{ marginTop: 10 }}>
+              {t("finance.byCurrency")}{" "}
               {finance.byCurrency
                 .map((row) =>
-                  `${formatMoney(row.amount, row.currency)} (${formatNumber(row.count)} don(s)${
-                    row.currency === "xaf" ? `, soit ${formatEur(toEur(row.amount, "xaf", xafPerEur))}` : ""
-                  })`
+                  row.currency === "xaf"
+                    ? t("finance.currencyXaf", {
+                        amount: f.money(row.amount, row.currency),
+                        count: Number(row.count) || 0,
+                        eur: formatEur(f, toEur(row.amount, "xaf", xafPerEur)),
+                      })
+                    : t("finance.currency", { amount: f.money(row.amount, row.currency), count: Number(row.count) || 0 })
                 )
                 .join(" · ")}
             </p>
@@ -134,35 +155,35 @@ function Report({ report, organization, xafPerEur }) {
         )}
       </section>
 
-      <section aria-labelledby="admb-r-projects">
-        <h2 id="admb-r-projects">Projets de l&apos;année</h2>
+      <section aria-labelledby="adm-r-projects">
+        <h2 id="adm-r-projects">{t("projects.title")}</h2>
         {activity.projects?.length ? (
           <div className="table-wrap">
             <table className="table">
               <thead>
                 <tr>
-                  <th scope="col">Projet</th>
-                  <th scope="col">Statut</th>
-                  <th scope="col">Région</th>
-                  <th scope="col" className="num">Bénéficiaires</th>
-                  <th scope="col" className="num">Formés</th>
-                  <th scope="col" className="num">Crédits</th>
-                  <th scope="col">Période</th>
+                  <th scope="col">{t("projects.project")}</th>
+                  <th scope="col">{t("projects.status")}</th>
+                  <th scope="col">{t("projects.region")}</th>
+                  <th scope="col" className="num">{t("projects.beneficiaries")}</th>
+                  <th scope="col" className="num">{t("projects.trainees")}</th>
+                  <th scope="col" className="num">{t("projects.credits")}</th>
+                  <th scope="col">{t("projects.period")}</th>
                 </tr>
               </thead>
               <tbody>
                 {activity.projects.map((project) => (
                   <tr key={project.id}>
                     <td><strong>{project.title}</strong></td>
-                    <td><StatusBadge status={statusOf(PROJECT_STATUS, project.status)} /></td>
+                    <td><StatusBadge status={labels.status("projectStatus", project.status)} /></td>
                     <td>{project.region || "—"}</td>
-                    <td className="num">{formatNumber(project.beneficiaries)}</td>
-                    <td className="num">{formatNumber(project.trainees)}</td>
-                    <td className="num">{formatNumber(project.credits_granted)}</td>
-                    <td className="admb-nowrap">
-                      {project.start_date ? formatShortDate(project.start_date) : "—"}
+                    <td className="num">{n(project.beneficiaries)}</td>
+                    <td className="num">{n(project.trainees)}</td>
+                    <td className="num">{n(project.credits_granted)}</td>
+                    <td className="adm-nowrap">
+                      {project.start_date ? f.shortDate(project.start_date) : "—"}
                       {" → "}
-                      {project.end_date ? formatShortDate(project.end_date) : "en cours"}
+                      {project.end_date ? f.shortDate(project.end_date) : t("projects.ongoing")}
                     </td>
                   </tr>
                 ))}
@@ -170,21 +191,22 @@ function Report({ report, organization, xafPerEur }) {
             </table>
           </div>
         ) : (
-          <p className="muted">Aucun projet actif sur cette année.</p>
+          <p className="muted">{t("projects.empty")}</p>
         )}
       </section>
 
-      <footer className="admb-report__foot">
+      <footer className="adm-report__foot">
         {organization.name}
-        {organization.address ? ` — ${organization.address}` : ""} · Document généré le {formatDate(report.generatedAt)} à partir
-        des données de la plateforme. Montants en francs CFA convertis en euros à la parité fixe de 1 € ={" "}
-        {formatNumber(xafPerEur, { maximumFractionDigits: 3 })} FCFA.
+        {organization.address ? ` — ${organization.address}` : ""} ·{" "}
+        {t("footer", { date: f.date(report.generatedAt), rate: f.number(xafPerEur, { maximumFractionDigits: 3 }) })}
       </footer>
     </article>
   );
 }
 
 function AnnualReportView() {
+  const getErrorMessage = useErrorMessage();
+  const t = useTranslations("adminOps.report");
   const { meta } = useMeta();
   const [year, setYear] = useState("");
   const { data, loading, error, reload } = useAsync(() => adminApi.annualReport(year || undefined), [year]);
@@ -196,15 +218,15 @@ function AnnualReportView() {
 
   return (
     <>
-      <div className="admb-noprint">
+      <div className="adm-noprint">
         <PageHeader
-          eyebrow="Pilotage"
-          title="Rapport annuel"
-          description="Une synthèse prête à partager avec le conseil d'administration, les partenaires et les donateurs."
+          eyebrow={t("eyebrow")}
+          title={t("title")}
+          description={data?.region ? t("descriptionRegion", { region: data.region }) : t("description")}
           actions={
             <>
-              <InlineSelect label="Année" value={year || String(data?.year || "")} onChange={setYear} options={yearOptions} />
-              <Button icon={Printer} onClick={() => window.print()} disabled={!data}>Imprimer / PDF</Button>
+              <InlineSelect label={t("year")} value={year || String(data?.year || "")} onChange={setYear} options={yearOptions} />
+              <Button icon={Printer} onClick={() => window.print()} disabled={!data}>{t("print")}</Button>
             </>
           }
         />
@@ -213,11 +235,11 @@ function AnnualReportView() {
       {error ? (
         <ErrorState message={getErrorMessage(error)} onRetry={reload} />
       ) : loading || !data ? (
-        <LoadingState label="Préparation du rapport…" />
+        <PageSkeleton variant="dashboard" label={t("loading")} />
       ) : data.finance && data.activity ? (
         <Report report={data} organization={meta.organization} xafPerEur={meta.xafPerEur} />
       ) : (
-        <EmptyState title="Rapport indisponible" description="Aucune donnée n'a pu être rassemblée pour cette année." />
+        <EmptyState title={t("unavailableTitle")} description={t("unavailableText")} />
       )}
     </>
   );

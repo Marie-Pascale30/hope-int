@@ -1,0 +1,718 @@
+{
+  "adminOps": {
+    "charts": {
+      "collected": "Importe recaudado",
+      "tooltip": "{amount} · {count, plural, =0 {ningún donativo} one {# donativo} other {# donativos}}",
+      "aria": "{label} por mes, en euros"
+    },
+    "tables": {
+      "label": "Concepto",
+      "donations": "Donativos",
+      "amountEur": "Importe (EUR)",
+      "share": "Proporción",
+      "month": "Mes"
+    },
+    "image": {
+      "label": "Imagen",
+      "hint": "JPG, PNG, WebP o GIF — {max} MB como máximo (se verifica el contenido del archivo). Se recomienda formato horizontal.",
+      "formatTitle": "Formato no admitido",
+      "formatText": "Elige una imagen JPG, PNG, WebP o GIF.",
+      "sizeTitle": "Imagen demasiado pesada",
+      "sizeText": "El tamaño máximo es de {max} MB. Reduce la imagen e inténtalo de nuevo.",
+      "preview": "Vista previa de la imagen",
+      "removedNote": "La imagen se eliminará al guardar",
+      "none": "Sin imagen: se mostrará una ilustración predeterminada",
+      "replace": "Cambiar la imagen",
+      "choose": "Elegir una imagen",
+      "undoNew": "Descartar la nueva imagen",
+      "remove": "Quitar la imagen",
+      "keep": "Conservar la imagen actual"
+    },
+    "common": {
+      "exported": "Exportación CSV descargada",
+      "exportFailed": "No se ha podido exportar"
+    },
+    "donations": {
+      "eyebrow": "Donativos",
+      "title": "Donativos recibidos",
+      "description": "Sigue cada donativo, su destino y su recibo. Haz clic en una fila para ver el detalle.",
+      "export": "Exportar a CSV",
+      "loading": "Cargando donativos…",
+      "generalFund": "Fondo general",
+      "refundedPart": "{amount} reembolsado",
+      "search": "Nombre, correo, n.º de recibo…",
+      "rowLabel": "Detalle del donativo de {name}",
+      "rowLabelAnonymous": "Detalle del donativo de un donante anónimo",
+      "rateNote": "Los donativos en francos CFA se convierten al tipo fijo de 1 € = {rate} FCFA.",
+      "limitNote": "Solo se muestran los {limit} donativos más recientes: afina los filtros.",
+      "columns": {
+        "date": "Fecha",
+        "donor": "Donante",
+        "amount": "Importe",
+        "allocation": "Destino",
+        "method": "Medio",
+        "frequency": "Frecuencia",
+        "status": "Estado",
+        "receipt": "N.º de recibo"
+      },
+      "filters": {
+        "label": "Filtrar los donativos",
+        "status": "Estado",
+        "allStatuses": "Todos los estados",
+        "provider": "Proveedor",
+        "allProviders": "Todos",
+        "project": "Proyecto",
+        "allProjects": "Todos los proyectos",
+        "from": "Desde",
+        "to": "Hasta",
+        "periodInvalid": "Debe ser posterior a la fecha de inicio",
+        "reset": "Restablecer"
+      },
+      "stats": {
+        "amount": "Importe neto cobrado",
+        "amountHint": "Donativos completados, equivalente en euros",
+        "amountHintRefunds": "Donativos completados, tras {amount} de reembolsos parciales",
+        "count": "Donativos de la selección",
+        "countHint": "{count, plural, =0 {Ninguno completado} one {# completado} other {# completados}}",
+        "donors": "Donantes distintos",
+        "donorsHint": "Entre los donativos completados",
+        "pending": "Pendientes",
+        "pendingHint": "Es decir, {amount} por confirmar",
+        "pendingNone": "Ningún pago por confirmar"
+      },
+      "reviewBanner": {
+        "title": "{count, plural, one {# donativo por verificar} other {# donativos por verificar}}",
+        "text": "El importe o la divisa confirmados por el proveedor no coinciden con el donativo: comprueba la transacción en el proveedor y, después, valídalo o recházalo.",
+        "show": "Mostrar los donativos por verificar"
+      },
+      "empty": {
+        "title": "Todavía no hay donativos",
+        "text": "Los donativos aparecerán aquí en cuanto un donante inicie un pago.",
+        "filteredTitle": "Ningún donativo con estos filtros",
+        "filteredText": "Amplía el periodo o quita un filtro para ver más resultados."
+      },
+      "detail": {
+        "title": "Donativo n.º {id}",
+        "close": "Cerrar",
+        "receiptPdf": "Recibo fiscal (PDF)",
+        "status": "Estado",
+        "amount": "Importe",
+        "eurEquivalent": "es decir, {amount}",
+        "refunded": "Reembolsado",
+        "net": "importe neto: {amount}",
+        "frequency": "Frecuencia",
+        "method": "Medio de pago",
+        "donor": "Donante",
+        "email": "Correo electrónico",
+        "account": "Cuenta de miembro",
+        "accountYes": "Sí (cuenta n.º {id})",
+        "accountNo": "Donativo realizado sin cuenta",
+        "allocation": "Destino",
+        "generalFund": "Fondo general",
+        "createdAt": "Creado el",
+        "paidAt": "Pagado el",
+        "notConfirmed": "Aún no confirmado",
+        "receiptNumber": "N.º de recibo",
+        "receiptPending": "Se emite una vez confirmado el pago",
+        "reference": "Referencia del proveedor",
+        "subscription": "Suscripción",
+        "reviewTitle": "Donativo en verificación",
+        "reviewReadOnly": "El importe o la divisa confirmados por el proveedor no coinciden con el donativo. Un responsable financiero debe validarlo o rechazarlo.",
+        "disputedTitle": "Pago en disputa",
+        "disputedText": "El donante ha impugnado este pago ante su banco. El recibo queda en suspenso hasta que se resuelva la disputa, cuyo desenlace se sigue automáticamente a través del proveedor.",
+        "resend": "Reenviar el recibo",
+        "resendConfirmTitle": "¿Reenviar el recibo fiscal?",
+        "resendConfirmText": "El recibo se enviará de nuevo por correo electrónico a {email}.",
+        "resendConfirmNoEmail": "El recibo se enviará de nuevo a la dirección de correo del donante.",
+        "resent": "Recibo reenviado al donante",
+        "resendFailed": "No se ha podido reenviar"
+      },
+      "review": {
+        "title": "Donativo en verificación",
+        "explain": "El importe o la divisa confirmados por el proveedor no coinciden con el donativo. Comprueba la transacción en el panel del proveedor antes de decidir: la validación emite el recibo fiscal y el rechazo cancela el donativo.",
+        "noteLabel": "Nota de la decisión (opcional)",
+        "noteHint": "{count} / {max} caracteres · se guarda en el registro de actividad",
+        "approve": "Validar el donativo",
+        "reject": "Rechazar el donativo",
+        "confirmApproveTitle": "¿Validar este donativo?",
+        "confirmApproveText": "El donativo de {amount} pasará a «Completado» y se enviará el recibo fiscal al donante. Confirma solo si el proveedor ha cobrado realmente este importe.",
+        "confirmRejectTitle": "¿Rechazar este donativo?",
+        "confirmRejectText": "El donativo se cancelará y no se emitirá ningún recibo. Cualquier reembolso se realiza desde el panel del proveedor.",
+        "approved": "Donativo validado",
+        "rejected": "Donativo rechazado",
+        "failed": "No se ha podido registrar la decisión"
+      }
+    },
+    "finance": {
+      "eyebrow": "Donativos",
+      "title": "Finanzas",
+      "description": "Balance de los donativos completados, desglose por medio de pago y por destino, conciliación de pagos.",
+      "period": "Periodo",
+      "allYears": "Todos los años",
+      "export": "Exportar los donativos completados (CSV)",
+      "loading": "Calculando el balance…",
+      "eurEquivalent": "es decir, {amount}",
+      "generalFund": "Fondo general",
+      "generalFundHint": "Donativos sin destino específico",
+      "rateNote": "Los importes en francos CFA se convierten a euros al tipo fijo de 1 € = {rate} FCFA.",
+      "currencies": {
+        "eur": "Euro (EUR)",
+        "xaf": "Franco CFA (XAF)"
+      },
+      "stats": {
+        "total": "Total recaudado",
+        "totalHint": "Donativos completados {mode, select, year {en {year}} other {desde el inicio}}",
+        "count": "Número de donativos",
+        "donors": "Donantes",
+        "donorsHint": "Personas distintas",
+        "average": "Donativo medio",
+        "recurring": "Donantes mensuales",
+        "recurringHint": "Al menos un donativo mensual",
+        "pending": "Pagos pendientes",
+        "pendingHint": "Todos los periodos"
+      },
+      "empty": {
+        "title": "Ningún donativo completado {mode, select, year {en {year}} other {desde el inicio}}",
+        "text": "Elige otro periodo para consultar el balance."
+      },
+      "monthly": {
+        "title": "Importe recaudado por mes",
+        "description": "En euros, donativos completados {mode, select, year {en {year}} other {desde el inicio}}.",
+        "details": "Ver los valores mes a mes"
+      },
+      "byProvider": {
+        "title": "Por medio de pago",
+        "header": "Medio",
+        "caption": "Desglose por medio de pago"
+      },
+      "byCurrency": {
+        "title": "Por divisa",
+        "description": "Importes en la divisa de origen; proporción calculada en equivalente en euros.",
+        "header": "Divisa",
+        "amount": "Importe",
+        "caption": "Desglose por divisa"
+      },
+      "byProject": {
+        "title": "Por destino",
+        "description": "Proyectos y campañas apoyados; el fondo general agrupa los donativos sin destino específico.",
+        "header": "Destino",
+        "caption": "Desglose por destino"
+      },
+      "reconcile": {
+        "title": "Conciliación de pagos",
+        "description": "Un donativo puede quedarse «pendiente» si el donante cerró la página antes de la confirmación. La conciliación vuelve a consultar su estado en el proveedor (Stripe para la tarjeta, Notch Pay o Flutterwave para Mobile Money), valida los que se completaron (el recibo se envía entonces automáticamente), recupera los pagos confirmados con retraso, pone en verificación aquellos cuyo importe no coincide y cierra los abandonados desde hace más de 24 horas.",
+        "run": "Conciliar los pagos pendientes",
+        "confirmTitle": "¿Conciliar los pagos pendientes?",
+        "confirmText": "Se comprobarán con los proveedores los donativos pendientes desde hace más de 15 minutos, así como los donativos fallidos o cancelados de los últimos 7 días. Los que sigan sin respuesta tras más de 24 horas se cerrarán como abandonados.",
+        "confirm": "Iniciar la conciliación",
+        "done": "Conciliación finalizada",
+        "nothing": "Ningún pago que conciliar",
+        "failed": "No se ha podido realizar la conciliación",
+        "noProviderTitle": "Proveedores no configurados",
+        "noProviderText": "Todavía no hay ningún proveedor de pago conectado al servidor: solo se cerrarán los pagos abandonados.",
+        "reviewTitle": "{count, plural, one {# donativo pasado a verificación} other {# donativos pasados a verificación}}",
+        "reviewText": "El importe o la divisa confirmados por el proveedor no coinciden con el donativo. Gestiónalos desde la página Donativos (filtro «En verificación»).",
+        "counters": {
+          "checked": "{count, plural, one {comprobado} other {comprobados}}",
+          "succeeded": "{count, plural, one {validado} other {validados}}",
+          "recovered": "{count, plural, one {recuperado (pago tardío)} other {recuperados (pagos tardíos)}}",
+          "review": "{count, plural, one {en verificación} other {en verificación}}",
+          "failed": "{count, plural, one {fallido} other {fallidos}}",
+          "abandoned": "{count, plural, one {abandonado} other {abandonados}}",
+          "errors": "{count, plural, one {error de lectura} other {errores de lectura}}"
+        }
+      }
+    },
+    "report": {
+      "eyebrow": "Dirección",
+      "title": "Informe anual",
+      "description": "Una síntesis lista para compartir con la junta directiva, los socios y los donantes.",
+      "descriptionRegion": "Síntesis de la actividad de la región {region}, lista para compartir con la dirección, los socios y los donantes.",
+      "year": "Año",
+      "print": "Imprimir / PDF",
+      "loading": "Preparando el informe…",
+      "unavailableTitle": "Informe no disponible",
+      "unavailableText": "No se han podido reunir datos para este año.",
+      "heading": "Informe de actividad {year}",
+      "period": "Periodo del {start} al {end}",
+      "regionScope": "Región {region}",
+      "generatedAt": "Generado el {date}",
+      "highlights": {
+        "title": "Datos destacados",
+        "collected": "recaudados",
+        "collectedDetail": "{count, plural, =0 {ningún donativo completado} one {# donativo completado} other {# donativos completados}}",
+        "donors": "{count, plural, one {donante} other {donantes}}",
+        "donorsDetail": "{count, plural, =0 {ninguno con donativo mensual} one {de ellos # con donativo mensual} other {de ellos # con donativo mensual}}",
+        "newMembers": "{count, plural, one {nuevo miembro} other {nuevos miembros}}",
+        "events": "{count, plural, one {evento organizado} other {eventos organizados}}",
+        "eventsDetail": "{count, plural, =0 {ninguna inscripción} one {# inscripción} other {# inscripciones}}",
+        "applications": "{count, plural, one {candidatura recibida} other {candidaturas recibidas}}",
+        "applicationsDetail": "{count, plural, =0 {ninguna aceptada} one {# aceptada} other {# aceptadas}}",
+        "messages": "{count, plural, one {mensaje tramitado} other {mensajes tramitados}}",
+        "messagesDetail": "de {count, plural, one {# recibido} other {# recibidos}}"
+      },
+      "impact": {
+        "title": "Impacto de los proyectos del año",
+        "scopeNote": "Cifras acumuladas declaradas de los proyectos activos en {year}: un proyecto plurianual cuenta en cada año que abarca, por lo que estas cifras no se suman de un año a otro.",
+        "scopeNoteRegion": "Cifras acumuladas declaradas de los proyectos de la región {region} activos en {year}: un proyecto plurianual cuenta en cada año que abarca, por lo que estas cifras no se suman de un año a otro.",
+        "beneficiaries": "{count, plural, one {beneficiario} other {beneficiarios}}",
+        "trainees": "{count, plural, one {persona formada} other {personas formadas}}",
+        "credits": "{count, plural, one {crédito concedido} other {créditos concedidos}}",
+        "activeProjects": "{count, plural, one {proyecto en curso} other {proyectos en curso}}",
+        "completedDetail": "{count, plural, one {# finalizado} other {# finalizados}} de {total}",
+        "regions": "{count, plural, one {región cubierta} other {regiones cubiertas}}"
+      },
+      "finance": {
+        "title": "Finanzas",
+        "empty": "No se registró ningún donativo completado en {year}.",
+        "average": "Donativo medio: <strong>{amount}</strong>.",
+        "monthly": "Importe recaudado por mes (EUR)",
+        "monthlyDetail": "Detalle mensual",
+        "byProject": "Por destino",
+        "byProjectCaption": "Donativos por destino",
+        "allocationHeader": "Destino",
+        "generalFund": "Fondo general",
+        "byProvider": "Por medio de pago",
+        "byProviderCaption": "Donativos por medio de pago",
+        "methodHeader": "Medio",
+        "byCurrency": "Por divisa:",
+        "currency": "{amount} ({count, plural, one {# donativo} other {# donativos}})",
+        "currencyXaf": "{amount} ({count, plural, one {# donativo} other {# donativos}}, es decir, {eur})"
+      },
+      "projects": {
+        "title": "Proyectos del año",
+        "project": "Proyecto",
+        "status": "Estado",
+        "region": "Región",
+        "beneficiaries": "Beneficiarios",
+        "trainees": "Formados",
+        "credits": "Créditos",
+        "period": "Periodo",
+        "ongoing": "en curso",
+        "empty": "Ningún proyecto activo en este año."
+      },
+      "footer": "Documento generado el {date} a partir de los datos de la plataforma. Importes en francos CFA convertidos a euros al tipo fijo de 1 € = {rate} FCFA."
+    },
+    "logs": {
+      "eyebrow": "Sistema",
+      "title": "Registro de actividad",
+      "description": "Todas las acciones sensibles, con fecha y hora: inicios de sesión, donativos, decisiones, cambios en cuentas y contenidos.",
+      "refresh": "Actualizar",
+      "filter": "Tipo de acción",
+      "allActions": "Todas las acciones",
+      "entries": "{count, plural, =0 {Ninguna entrada} one {# entrada} other {# entradas}}",
+      "loading": "Cargando el registro…",
+      "details": "Detalles",
+      "account": "Cuenta n.º {id}",
+      "deletedAccount": "Cuenta eliminada",
+      "system": "Visitante o sistema",
+      "pagination": "{from}–{to} de {total}",
+      "newer": "Más recientes",
+      "older": "Más antiguas",
+      "unknown": "Otra acción",
+      "unknownInDomain": "Otra acción · {domain}",
+      "columns": {
+        "date": "Fecha",
+        "action": "Acción",
+        "author": "Autor",
+        "details": "Detalles"
+      },
+      "empty": {
+        "title": "Ninguna entrada",
+        "text": "El registro está vacío por ahora.",
+        "filtered": "No se ha registrado ninguna acción de este tipo."
+      },
+      "categories": {
+        "auth": "Inicios de sesión y cuentas",
+        "admin": "Administración de cuentas",
+        "hr": "Recursos humanos",
+        "payment": "Pagos",
+        "finance": "Finanzas",
+        "application": "Candidaturas",
+        "message": "Mensajes",
+        "content": "Contenidos",
+        "event": "Eventos",
+        "email": "Correos electrónicos"
+      },
+      "actions": {
+        "auth": {
+          "login": "Inicio de sesión",
+          "login_failed": "Inicio de sesión fallido",
+          "login_inactive": "Inicio de sesión denegado (cuenta desactivada)",
+          "register": "Registro",
+          "password_changed": "Contraseña modificada",
+          "password_reset_requested": "Solicitud de restablecimiento de contraseña",
+          "password_reset": "Contraseña restablecida"
+        },
+        "admin": {
+          "create_user": "Cuenta creada",
+          "update_user_roles": "Roles modificados",
+          "delete_user": "Cuenta eliminada"
+        },
+        "hr": {
+          "update_profile": "Ficha de miembro actualizada"
+        },
+        "payment": {
+          "initiated": "Donativo iniciado",
+          "pending": "Pago pendiente",
+          "succeeded": "Donativo confirmado",
+          "failed": "Pago fallido",
+          "canceled": "Pago cancelado",
+          "abandoned": "Pago abandonado (cerrado)",
+          "amount_mismatch": "Importe o divisa no coincidentes",
+          "review": "Donativo pasado a verificación",
+          "review_approved": "Donativo en verificación validado",
+          "review_rejected": "Donativo en verificación rechazado",
+          "refunded": "Donativo reembolsado",
+          "partially_refunded": "Donativo reembolsado parcialmente",
+          "disputed": "Pago impugnado por el donante",
+          "dispute_won": "Disputa ganada: donativo restablecido",
+          "dispute_lost": "Disputa perdida: donativo reembolsado",
+          "receipt_revoked": "Recibo fiscal anulado",
+          "receipt_resent": "Recibo fiscal reenviado",
+          "annual_receipt": "Recibo fiscal anual descargado",
+          "subscription_canceled": "Donativo mensual detenido",
+          "subscription_ended": "Donativo mensual finalizado",
+          "subscription_updated": "Donativo mensual actualizado",
+          "subscription_payment_failed": "Cuota de donativo mensual impagada"
+        },
+        "finance": {
+          "reconcile": "Conciliación de pagos",
+          "export_donations": "Exportación CSV de donativos"
+        },
+        "application": {
+          "submitted": "Candidatura recibida",
+          "reviewing": "Candidatura en estudio",
+          "accepted": "Candidatura aceptada",
+          "rejected": "Candidatura rechazada"
+        },
+        "message": {
+          "created": "Mensaje recibido",
+          "updated": "Mensaje actualizado",
+          "deleted": "Mensaje eliminado"
+        },
+        "content": {
+          "create": {
+            "projects": "Proyecto creado",
+            "news": "Noticia creada",
+            "testimonials": "Testimonio creado"
+          },
+          "update": {
+            "projects": "Proyecto modificado",
+            "news": "Noticia modificada",
+            "testimonials": "Testimonio modificado"
+          },
+          "delete": {
+            "projects": "Proyecto eliminado",
+            "news": "Noticia eliminada",
+            "testimonials": "Testimonio eliminado"
+          }
+        },
+        "event": {
+          "create": "Evento creado",
+          "update": "Evento modificado",
+          "delete": "Evento eliminado",
+          "register": "Inscripción en un evento",
+          "unregister": "Baja de un evento",
+          "view_registrations": "Lista de inscritos consultada"
+        },
+        "email": {
+          "failed": "Error al enviar un correo electrónico"
+        },
+        "seed": {
+          "initialized": "Inicialización de los datos de demostración"
+        }
+      },
+      "meta": {
+        "statusChange": "Estado de la cuenta: {from} → {to}",
+        "rolesChange": "Roles: {from} → {to}",
+        "roles": "Roles: {roles}",
+        "fields": "Campos modificados: {fields}",
+        "targetUser": "Cuenta afectada: n.º {id}",
+        "payment": "Donativo n.º {id}",
+        "amount": "Importe: {amount}",
+        "mismatch": "Esperado: {expected} · recibido: {received}",
+        "receipt": "Recibo n.º {number}",
+        "previousStatus": "Estado anterior: {status}",
+        "note": "Nota: {note}",
+        "reconcile": "Comprobados: {checked} · validados: {succeeded} · recuperados: {recovered} · en verificación: {review} · fallidos: {failed} · abandonados: {abandoned} · errores: {errors}",
+        "rows": "{count, plural, =0 {Ninguna fila exportada} one {# fila exportada} other {# filas exportadas}}",
+        "registrations": "{count, plural, =0 {Ningún inscrito} one {# inscrito} other {# inscritos}}",
+        "eventDeleted": "«{title}» · {count, plural, =0 {ninguna inscripción} one {# inscripción eliminada} other {# inscripciones eliminadas}}",
+        "recipient": "Destinatario: {to}",
+        "attempts": "{count, plural, one {# intento} other {# intentos}}"
+      }
+    },
+    "content": {
+      "eyebrow": "Contenidos",
+      "loading": "Cargando contenidos…",
+      "search": "Buscar…",
+      "published": "Publicado",
+      "draft": "Borrador",
+      "noCampaign": "Sin campaña",
+      "campaignProgress": "Recaudación: {progress} %",
+      "copyName": "{name} (copia)",
+      "types": {
+        "projects": {
+          "title": "Proyectos y campañas",
+          "description": "Presenta tus proyectos sobre el terreno, sus resultados y, si es necesario, un objetivo de recaudación.",
+          "create": "Nuevo proyecto",
+          "edit": "Modificar el proyecto",
+          "created": "Proyecto creado",
+          "empty": "Todavía no hay proyectos",
+          "emptyHint": "Crea tu primer proyecto: podrá recibir donativos en cuanto se publique."
+        },
+        "news": {
+          "title": "Noticias",
+          "description": "Comparte las novedades de la asociación: lanzamientos, resultados, momentos destacados.",
+          "create": "Nueva noticia",
+          "edit": "Modificar la noticia",
+          "created": "Noticia creada",
+          "empty": "Todavía no hay noticias",
+          "emptyHint": "Cuenta un avance reciente: las noticias publicadas aparecen en el sitio."
+        },
+        "testimonials": {
+          "title": "Testimonios",
+          "description": "Da voz a los beneficiarios, voluntarios y socios (con su consentimiento).",
+          "create": "Nuevo testimonio",
+          "edit": "Modificar el testimonio",
+          "created": "Testimonio creado",
+          "empty": "Todavía no hay testimonios",
+          "emptyHint": "Recoge las palabras de una persona acompañada: nada habla mejor de vuestra labor."
+        }
+      },
+      "scope": {
+        "title": "Contenidos de la región {region}",
+        "noRegionTitle": "Región no indicada",
+        "noRegion": "Tu ficha no tiene ninguna región asociada: pide a RR. HH. que la indiquen para gestionar los contenidos de tu región.",
+        "projects": "Solo gestionas los proyectos de tu región: los nuevos proyectos se asignan automáticamente a ella.",
+        "linked": "Cada contenido debe vincularse a un proyecto de tu región; solo se te proponen esos proyectos.",
+        "noProject": "Todavía no hay ningún proyecto registrado en tu región: crea primero un proyecto."
+      },
+      "tabs": {
+        "label": "Filtrar por publicación",
+        "all": "Todos",
+        "published": "Publicados",
+        "draft": "Borradores"
+      },
+      "emptyTab": {
+        "draft": "Ningún borrador",
+        "published": "Ningún contenido publicado",
+        "text": "Cambia de pestaña o de búsqueda para ver los demás contenidos."
+      },
+      "columns": {
+        "title": "Título",
+        "author": "Autor",
+        "status": "Estado",
+        "region": "Región",
+        "campaign": "Campaña",
+        "project": "Proyecto vinculado",
+        "createdAt": "Creado el",
+        "published": "Publicación",
+        "actions": "Acciones"
+      },
+      "actions": {
+        "publish": "Publicar",
+        "publishNamed": "Publicar «{name}»",
+        "unpublish": "Volver a borrador",
+        "unpublishNamed": "Volver a poner «{name}» como borrador",
+        "edit": "Modificar",
+        "editNamed": "Modificar «{name}»",
+        "duplicate": "Duplicar como borrador",
+        "duplicateNamed": "Duplicar «{name}» como borrador",
+        "view": "Ver en el sitio",
+        "viewNamed": "Ver «{name}» en el sitio",
+        "delete": "Eliminar",
+        "deleteNamed": "Eliminar «{name}»"
+      },
+      "delete": {
+        "title": "¿Eliminar «{name}»?",
+        "text": "Esta eliminación es definitiva.",
+        "textProject": "Esta eliminación es definitiva. Los donativos ya recibidos se conservan y se asignan al fondo general. Para simplemente ocultarlo, vuelve a ponerlo como borrador.",
+        "confirm": "Eliminar"
+      },
+      "toast": {
+        "published": "Publicado en el sitio",
+        "unpublished": "Vuelto a borrador",
+        "duplicated": "Copia creada como borrador",
+        "deleted": "Contenido eliminado"
+      },
+      "errors": {
+        "update": "No se ha podido modificar",
+        "duplicate": "No se ha podido duplicar",
+        "delete": "No se ha podido eliminar"
+      }
+    },
+    "contentForm": {
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "create": "Crear",
+      "saved": "Cambios guardados",
+      "saveFailed": "No se ha podido guardar",
+      "serverRefused": "El servidor ha rechazado los cambios",
+      "counter": "{count} / {max}",
+      "projectRequired": "Elige el proyecto de tu región al que vincular este contenido.",
+      "projectUnavailable": "Proyecto n.º {id} (fuera de tu ámbito)",
+      "publishedOn": "Publicado: visible en el sitio",
+      "publishedOff": "Borrador: no visible en el sitio",
+      "sections": {
+        "content": "Contenido",
+        "frame": "Marco del proyecto",
+        "impact": "Indicadores de impacto",
+        "publication": "Imagen y publicación"
+      },
+      "status": {
+        "planifie": "Planificado (próximamente)",
+        "en_cours": "En curso",
+        "termine": "Finalizado"
+      },
+      "fields": {
+        "author": "Autor",
+        "roleLabel": "Cargo o lugar",
+        "testimonial": "Testimonio",
+        "title": "Título",
+        "summary": "Resumen",
+        "description": "Descripción",
+        "content": "Contenido",
+        "project": "Proyecto vinculado",
+        "status": "Estado",
+        "region": "Región",
+        "startDate": "Fecha de inicio",
+        "endDate": "Fecha de finalización",
+        "budget": "Presupuesto total (EUR)",
+        "goal": "Objetivo de recaudación (EUR)",
+        "beneficiaries": "Beneficiarios",
+        "trainees": "Personas formadas",
+        "credits": "Créditos concedidos"
+      },
+      "placeholders": {
+        "author": "P. ej., Estelle K.",
+        "roleLabel": "P. ej., Promoción 2025, Duala",
+        "noProject": "Ningún proyecto",
+        "chooseProject": "Elige un proyecto",
+        "noRegion": "Sin especificar"
+      },
+      "hints": {
+        "testimonial": "Las palabras de la persona, tal como las compartió (con su consentimiento).",
+        "summary": "Una o dos frases que se muestran en las tarjetas y al principio de la página.",
+        "project": "Opcional: vincula este contenido a la página de un proyecto.",
+        "projectScoped": "Obligatorio: solo se proponen los proyectos de la región {region}.",
+        "regionScoped": "Los proyectos que creas se asignan a tu región.",
+        "goal": "Déjalo vacío si el proyecto no tiene una campaña de recaudación en curso."
+      },
+      "errors": {
+        "dates": "La fecha de finalización debe ser posterior a la de inicio"
+      }
+    },
+    "events": {
+      "eyebrow": "Contenidos",
+      "title": "Eventos",
+      "description": "Talleres, jornadas de recaudación, visitas sobre el terreno: planifica tus citas y sigue las inscripciones.",
+      "create": "Nuevo evento",
+      "loading": "Cargando eventos…",
+      "draft": "Borrador",
+      "pastBadge": "Pasado",
+      "when": "{date} · {time}",
+      "fillRate": "Tasa de ocupación: {fill} %",
+      "registeredOf": "<strong>{count, number}</strong> / {capacity} {count, plural, one {inscrito} other {inscritos}}",
+      "registered": "<strong>{count, number}</strong> {count, plural, one {inscrito} other {inscritos}}",
+      "full": "Completo",
+      "spotsLeft": "{count, plural, one {# plaza libre} other {# plazas libres}}",
+      "unlimited": "Plazas ilimitadas",
+      "registrations": "Inscritos",
+      "edit": "Modificar",
+      "editNamed": "Modificar «{name}»",
+      "view": "Ver en el sitio",
+      "viewNamed": "Ver «{name}» en el sitio",
+      "delete": "Eliminar",
+      "deleteNamed": "Eliminar «{name}»",
+      "deleted": "Evento eliminado",
+      "deleteFailed": "No se ha podido eliminar",
+      "deleteConfirm": {
+        "title": "¿Eliminar «{name}»?",
+        "text": "Esta eliminación es definitiva.",
+        "withRegistrations": "{count, plural, one {La inscripción se eliminará} other {Las # inscripciones se eliminarán}} junto con el evento. Recuerda avisar a los participantes."
+      },
+      "tabs": {
+        "label": "Periodo de los eventos",
+        "upcoming": "Próximos",
+        "past": "Pasados"
+      },
+      "empty": {
+        "upcomingTitle": "Ningún evento próximo",
+        "upcomingText": "Programa un taller o una jornada de recaudación: los miembros podrán inscribirse desde el sitio.",
+        "pastTitle": "Ningún evento pasado",
+        "pastText": "Los eventos finalizados aparecerán aquí con su número de participantes."
+      }
+    },
+    "eventForm": {
+      "createTitle": "Nuevo evento",
+      "editTitle": "Modificar el evento",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "create": "Crear",
+      "created": "Evento creado",
+      "updated": "Evento actualizado",
+      "saveFailed": "No se ha podido guardar",
+      "serverRefused": "El servidor ha rechazado los cambios",
+      "publishedOn": "Publicado: visible y abierto a inscripciones",
+      "publishedOff": "Borrador: no visible en el sitio",
+      "sections": {
+        "presentation": "Presentación",
+        "place": "Lugar y horario",
+        "publication": "Imagen y publicación"
+      },
+      "fields": {
+        "title": "Título",
+        "description": "Descripción",
+        "project": "Proyecto vinculado",
+        "location": "Lugar",
+        "region": "Región",
+        "start": "Inicio",
+        "end": "Fin",
+        "capacity": "Aforo"
+      },
+      "placeholders": {
+        "noProject": "Ningún proyecto",
+        "location": "P. ej., Centro HOPE, Duala",
+        "noRegion": "Sin especificar"
+      },
+      "hints": {
+        "description": "Programa, público previsto, qué hay que llevar… (mínimo {min} caracteres)",
+        "capacity": "Vacío = plazas ilimitadas.",
+        "capacityRegistered": "Vacío = plazas ilimitadas. {count, plural, one {# persona inscrita} other {# personas inscritas}} actualmente."
+      },
+      "errors": {
+        "end": "El fin debe ser posterior al inicio",
+        "capacity": "Al menos {min, plural, one {# plaza} other {# plazas}}: {count, plural, one {ya hay # persona inscrita} other {ya hay # personas inscritas}}"
+      }
+    },
+    "registrations": {
+      "title": "Inscritos — {title}",
+      "close": "Cerrar",
+      "copy": "Copiar los correos",
+      "export": "Exportar a CSV",
+      "loading": "Cargando inscritos…",
+      "emptyTitle": "Todavía no hay inscritos",
+      "emptyText": "Los miembros inscritos desde el sitio aparecerán aquí.",
+      "search": "Nombre, correo, región…",
+      "copied": "{count, plural, one {# dirección copiada} other {# direcciones copiadas}}",
+      "copyFailed": "No se ha podido copiar",
+      "copyFailedText": "Tu navegador ha bloqueado el acceso al portapapeles.",
+      "exported": "Lista de inscritos descargada",
+      "columns": {
+        "participant": "Participante",
+        "phone": "Teléfono",
+        "region": "Región",
+        "registeredAt": "Inscrito el"
+      },
+      "csv": {
+        "name": "Nombre",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "region": "Región",
+        "registeredAt": "Inscrito el"
+      }
+    }
+  }
+}

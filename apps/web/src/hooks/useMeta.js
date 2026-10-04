@@ -11,7 +11,7 @@ let pending = null;
 const FALLBACK = {
   regions: [],
   projectStatuses: PROJECT_STATUSES,
-  applicationRoles: [],
+  interestAreas: [],
   providers: { stripe: false, mobileMoney: false, mobileMoneyProvider: null, notchpay: false, flutterwave: false },
   donationLimits: DONATION_LIMITS,
   xafPerEur: XAF_PER_EUR,

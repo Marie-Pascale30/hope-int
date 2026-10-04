@@ -1,0 +1,420 @@
+{
+  "site": {
+    "meta": {
+      "home": {
+        "absoluteTitle": "HOPE International — Investing in families' dreams",
+        "description": "Solidarity microfinance, training and mutual support: HOPE International helps women, young people and rural communities in Cameroon become self-reliant. Donate or become a volunteer."
+      },
+      "projects": {
+        "title": "Our projects",
+        "description": "Microcredit, training, farming, water, health: discover HOPE International's projects in Cameroon and support the one that matters most to you."
+      },
+      "news": {
+        "title": "News",
+        "description": "The latest news from HOPE International's projects: launches, stories from the field and life in our organisation."
+      },
+      "events": {
+        "title": "Events",
+        "description": "Workshops, fundraising days, field visits: the calendar of HOPE International's upcoming events."
+      },
+      "join": {
+        "title": "Join us",
+        "description": "Become a volunteer or a member of HOPE International: tell us what you are interested in and apply online."
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "Get in touch with HOPE International: questions, partnerships, press. Our team will get back to you quickly."
+      },
+      "donate": {
+        "title": "Donate",
+        "description": "Support families in Cameroon: solidarity microcredit, training and mutual support. One-off or monthly donation, by card or Mobile Money, with a receipt sent by email."
+      },
+      "thanks": {
+        "title": "Thank you for your donation",
+        "description": "Confirmation of your donation to HOPE International and receipt to download."
+      },
+      "account": {
+        "title": "My account",
+        "description": "Your donations, receipts, events and profile details."
+      },
+      "login": {
+        "title": "Sign in",
+        "description": "Sign in to your HOPE International account."
+      },
+      "register": {
+        "title": "Create an account",
+        "description": "Create your HOPE International donor or member account."
+      },
+      "changePassword": {
+        "title": "Change my password",
+        "description": "Change the password of your HOPE International account."
+      },
+      "forgotPassword": {
+        "title": "Forgotten password",
+        "description": "Receive a link to reset your password."
+      },
+      "resetPassword": {
+        "title": "New password",
+        "description": "Choose a new password for your account."
+      },
+      "project": {
+        "title": "Project",
+        "description": "Discover this HOPE International project and support it with a donation."
+      },
+      "article": {
+        "title": "News",
+        "description": "News from HOPE International."
+      },
+      "event": {
+        "title": "Event",
+        "description": "A HOPE International event: practical information and registration."
+      }
+    },
+    "status": {
+      "planifie": "Coming soon",
+      "en_cours": "Ongoing",
+      "termine": "Completed"
+    },
+    "spots": {
+      "free": "Free entry",
+      "full": "Full",
+      "fewLeft": "{count, plural, one {Only # place left} other {Only # places left}}",
+      "left": "{count, plural, one {# place left} other {# places left}}"
+    },
+    "campaign": {
+      "donors": "{count, plural, one {# donor} other {# donors}}",
+      "raised": "<strong>{raised}</strong> raised of {goal}",
+      "progressLabel": "Campaign: {percent}% of the goal reached",
+      "percent": "{percent}% of the goal"
+    },
+    "cards": {
+      "discover": "Discover",
+      "support": "Support",
+      "supportProject": "Support the project {title}",
+      "featured": "Featured",
+      "readArticle": "Read the article",
+      "registered": "You are registered"
+    },
+    "home": {
+      "eyebrow": "International solidarity organisation",
+      "title": "Investing in families' dreams",
+      "lead": "In Cameroon, we help women, young people and rural communities become self-reliant through solidarity microfinance, training and mutual support.",
+      "ctaDonate": "Donate",
+      "ctaDiscover": "Discover our projects",
+      "ctaTitle": "Let's change lives, together",
+      "ctaText": "Every contribution strengthens a family, a neighbourhood and a generation. Give once or monthly, by card or Mobile Money.",
+      "ctaJoin": "Volunteer",
+      "heroFloat": "{count, plural, one {<strong>{value}</strong> person supported towards self-reliance} other {<strong>{value}</strong> people supported towards self-reliance}}",
+      "partialError": "Some information could not be loaded",
+      "impact": {
+        "eyebrow": "Our impact",
+        "title": "Real results, on the ground",
+        "text": "Consolidated figures from all our programmes in Cameroon, continuously updated.",
+        "beneficiaries": "Beneficiaries supported",
+        "trainees": "People trained",
+        "credits": "Microcredits granted",
+        "regions": "Regions covered",
+        "raised": "Raised thanks to you",
+        "donors": "Committed donors"
+      },
+      "approach": {
+        "eyebrow": "Our approach",
+        "title": "Giving people the means to move forward, not just aid",
+        "text": "Three complementary levers, designed with communities, for changes that last beyond our programmes.",
+        "training": {
+          "title": "Training",
+          "text": "Management, basic bookkeeping, farming techniques, entrepreneurship: we pass on the skills that make an activity sustainable."
+        },
+        "microfinance": {
+          "title": "Solidarity microfinance",
+          "text": "Microcredits at solidarity rates, with monthly follow-up. Every loan repaid funds a new activity."
+        },
+        "solidarity": {
+          "title": "Solidarity groups and mutual support",
+          "text": "Cooperatives, village savings groups, mentoring: the strength of the group protects families when the unexpected happens."
+        }
+      },
+      "campaigns": {
+        "eyebrow": "Current campaigns",
+        "title": "Support a specific project",
+        "text": "Your donation goes to the project of your choice. Follow the progress of each campaign with full transparency.",
+        "all": "All our projects"
+      },
+      "quotes": {
+        "eyebrow": "Testimonials",
+        "title": "In their own words",
+        "quoted": "“{text}”"
+      },
+      "news": {
+        "eyebrow": "News",
+        "title": "The latest news from the field",
+        "all": "All news"
+      },
+      "events": {
+        "eyebrow": "Events",
+        "title": "Upcoming events",
+        "text": "Workshops, fundraising days, field visits: come and meet us.",
+        "all": "All events"
+      }
+    },
+    "projects": {
+      "eyebrow": "Our projects",
+      "title": "Projects rooted in communities",
+      "lead": "Microcredit, training, farming, access to water, health savings: discover our work across the regions of Cameroon and choose the action you would like to support.",
+      "emptyTitle": "No projects published yet",
+      "emptyText": "Our teams are preparing new initiatives. Come back soon, or support all our programmes today.",
+      "donate": "Donate",
+      "tabs": {
+        "all": "All",
+        "en_cours": "Ongoing",
+        "planifie": "Coming soon",
+        "termine": "Completed"
+      },
+      "filterStatus": "Filter by status",
+      "region": "Region",
+      "allRegions": "All regions",
+      "count": "{count, plural, =0 {No projects shown} one {# project shown} other {# projects shown}}",
+      "noMatchTitle": "No projects match these filters",
+      "noMatchText": "Try another region or status.",
+      "reset": "Reset filters"
+    },
+    "projectDetail": {
+      "back": "All projects",
+      "about": "About the project",
+      "impact": "Impact",
+      "beneficiaries": "Beneficiaries",
+      "trainees": "People trained",
+      "credits": "Microcredits granted",
+      "upcoming": "Coming soon",
+      "start": "Start",
+      "end": "Planned end",
+      "toBeDefined": "To be confirmed",
+      "noEnd": "Ongoing programme with no end date",
+      "budget": "Total budget",
+      "asideLabel": "Support this project",
+      "newsEyebrow": "From the field",
+      "newsTitle": "Project news",
+      "aside": {
+        "doneTitle": "Project completed",
+        "doneThanks": "Thank you for your support",
+        "doneText": "This project is complete and now continues on its own. Thank you to everyone who made it possible!",
+        "doneMore": "Support our other ongoing projects so that more families can benefit.",
+        "doneCta": "See ongoing projects",
+        "supportTitle": "Support this project",
+        "noCampaign": "This project has no dedicated campaign: it is funded by general donations to HOPE International.",
+        "donate": "Donate",
+        "campaign": "Fundraising campaign",
+        "donateProject": "Donate to this project",
+        "note": "Your donation goes to this project. A receipt is issued as soon as the payment is confirmed."
+      }
+    },
+    "news": {
+      "eyebrow": "News",
+      "title": "News from the field",
+      "lead": "Project launches, lessons learned, life in our organisation: see what your donations and commitment make possible.",
+      "emptyTitle": "No news yet",
+      "emptyText": "Our teams will soon share news from the projects. In the meantime, discover our current work.",
+      "emptyCta": "See our projects"
+    },
+    "newsDetail": {
+      "back": "All news",
+      "projectLabel": "Project:",
+      "linkedEyebrow": "Related project",
+      "linkedCta": "Discover the project"
+    },
+    "events": {
+      "eyebrow": "Events",
+      "title": "Our upcoming events",
+      "lead": "Training workshops, fundraising days, field visits, general assembly: sign up and come and take action with us.",
+      "emptyTitle": "No events scheduled",
+      "emptyText": "New events will be announced soon. Follow our news or join the organisation to be the first to know.",
+      "emptyCta": "Join us",
+      "calendarLabel": "Events calendar",
+      "upcomingMonths": "Upcoming months",
+      "region": "Region",
+      "allRegions": "All regions",
+      "count": "{count, plural, =0 {No upcoming events} one {# upcoming event} other {# upcoming events}}",
+      "monthCount": "{count, plural, one {# event} other {# events}}",
+      "showAll": "All events",
+      "noneInRegion": "No events in this region",
+      "noneOnDate": "No events on this date",
+      "noneText": "Choose another date in the calendar or browse all events.",
+      "filterDay": "On {day}",
+      "filterMonth": "In {month}"
+    },
+    "calendar": {
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "dayWithEvents": "{day}: {count, plural, one {# event} other {# events}}",
+      "help": "Use the arrow keys to move between days, Page Up and Page Down to change month, and Enter to show the events of the day.",
+      "legendEvents": "Day with an event",
+      "legendToday": "Today"
+    },
+    "eventDetail": {
+      "back": "All events",
+      "program": "Programme",
+      "practical": "Practical information",
+      "schedule": "Time",
+      "location": "Venue",
+      "region": "Region",
+      "capacity": "Capacity",
+      "capacityValue": "{count, plural, one {# place} other {# places}}",
+      "unlimited": "No limit on places",
+      "project": "Related project",
+      "registrationLabel": "Registration",
+      "registration": {
+        "title": "Take part",
+        "spots": "Places",
+        "participants": "Registered participants",
+        "register": "Sign me up",
+        "registered": "Registration confirmed, see you soon!",
+        "registerError": "Registration failed",
+        "cancel": "Cancel my registration",
+        "cancelTitle": "Cancel your registration?",
+        "cancelText": "Your place will be freed up for someone else. You can sign up again if places are still available.",
+        "cancelConfirm": "Cancel my registration",
+        "keep": "Keep my place",
+        "canceled": "Registration cancelled",
+        "cancelError": "Cancellation failed",
+        "past": "This event has ended. Check the calendar for upcoming events.",
+        "checking": "Checking your session…",
+        "login": "Sign in to register",
+        "noAccount": "No account yet? <link>Create one in a minute</link>.",
+        "youAreRegistered": "You are registered for this event."
+      }
+    },
+    "join": {
+      "eyebrow": "Join us",
+      "title": "Get involved with us",
+      "lead": "Volunteers, members, professionals: everyone can help Cameroonian families become self-reliant, according to their time and skills.",
+      "ways": {
+        "volunteer": {
+          "title": "Volunteer",
+          "text": "Give a few hours: welcoming the public at fundraising events, supporting workshops, logistics, communication."
+        },
+        "member": {
+          "title": "Member",
+          "text": "Join the organisation, take part in the general assembly and in decisions, and access your member area."
+        },
+        "responsibility": {
+          "title": "Skills and responsibilities",
+          "text": "Finance, communication, IT, regional coordination: put your skills to work for the project."
+        }
+      },
+      "steps": {
+        "eyebrow": "Application",
+        "title": "How does it work?",
+        "s1": {
+          "title": "You fill in the form",
+          "text": "Introduce yourself and, if you wish, tell us the areas you would like to get involved in."
+        },
+        "s2": {
+          "title": "We review your application",
+          "text": "Our human resources team reads your application and may contact you for a chat."
+        },
+        "s3": {
+          "title": "We offer you a role",
+          "text": "If your application is accepted, the team chooses the most suitable role with you, creates your account and sends you your login details."
+        }
+      },
+      "privacy": "Your data is used only to process your application.",
+      "interests": {
+        "terrain": "Field work and logistics",
+        "sante": "Health and social support",
+        "education": "Education and training",
+        "entrepreneuriat": "Microcredit and entrepreneurship",
+        "communication": "Communication and social media",
+        "collecte": "Fundraising and partnerships",
+        "informatique": "IT and digital",
+        "administration": "Administration, secretarial work and accounting",
+        "autre": "Other"
+      },
+      "form": {
+        "title": "Your application",
+        "required": "Fields marked with an asterisk are required.",
+        "alreadyMember": "You are already signed in: if you would like a new role, please contact the team via the Contact page instead.",
+        "name": "Full name",
+        "email": "Email",
+        "phone": "Phone",
+        "region": "Region",
+        "regionPlaceholder": "Choose a region",
+        "interests": "Areas of interest (optional)",
+        "interestsHint": "Several choices possible. These are preferences: the team will then choose the most suitable role with you.",
+        "motivation": "Your motivation",
+        "motivationPlaceholder": "Tell us about yourself, your experience and what makes you want to join us.",
+        "counter": "{count} / {min} characters minimum",
+        "notSent": "Application not sent",
+        "duplicate": "If you already have an account, sign in to your account; otherwise, please be patient: your previous application is being reviewed.",
+        "legal": "By sending this form, you agree to be contacted by HOPE International.",
+        "submit": "Send my application",
+        "errors": {
+          "name": "Please enter your full name.",
+          "email": "Invalid email address.",
+          "motivation": "Your message must contain at least {min} characters."
+        }
+      },
+      "confirmation": {
+        "title": "Thank you, your application has been received!",
+        "intro": "Here is what happens next:",
+        "s1": {
+          "title": "Application review",
+          "text": "Our human resources team reads every application carefully."
+        },
+        "s2": {
+          "title": "Reply by email",
+          "text": "You will receive our reply at {email}, usually within a few days."
+        },
+        "s3": {
+          "title": "Your role and login details",
+          "text": "If your application is accepted, the team assigns you a role, creates your account and sends you your login details."
+        },
+        "home": "Back to home",
+        "again": "Send another application"
+      }
+    },
+    "contact": {
+      "eyebrow": "Contact",
+      "title": "Let's talk",
+      "lead": "A question about our projects, a partnership, a press enquiry? Write to us: our team will reply as soon as possible.",
+      "details": "Our contact details",
+      "email": "Email",
+      "phone": "Phone",
+      "office": "Head office",
+      "defaultAddress": "Cameroon",
+      "donateTitle": "Would you like to give?",
+      "donateText": "By card or Mobile Money, once or every month, to the project of your choice.",
+      "donateCta": "Donate",
+      "joinTitle": "Would you like to join us?",
+      "joinText": "Volunteer or member: find out how to get involved.",
+      "joinCta": "Join us",
+      "form": {
+        "title": "Write to us",
+        "required": "All fields are required.",
+        "name": "Name",
+        "email": "Email",
+        "subject": "Subject",
+        "message": "Message",
+        "counter": "{count} characters ({min} minimum)",
+        "notSent": "Message not sent",
+        "legal": "Your details are only used to reply to you.",
+        "submit": "Send message",
+        "sentTitle": "Message sent, thank you!",
+        "sentText": "We have received your message. A member of the team will reply by email as soon as possible.",
+        "again": "Write another message",
+        "errors": {
+          "name": "Please enter your name.",
+          "email": "Invalid email address.",
+          "subject": "Please give your message a subject (at least 3 characters).",
+          "content": "Your message must contain at least {min} characters."
+        }
+      }
+    },
+    "notFound": {
+      "metaTitle": "Page not found · HOPE International",
+      "title": "Page not found",
+      "text": "This page does not exist, has been moved or is no longer published. Discover our projects or go back to the home page.",
+      "home": "Back to home",
+      "projects": "See our projects"
+    }
+  }
+}

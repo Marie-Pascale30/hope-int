@@ -11,3 +11,6 @@ export function alignMonthly(rows = [], valueKey, months = lastMonths()) {
   const byMonth = new Map(rows.map((row) => [row.month, Number(row[valueKey]) || 0]));
   return months.map((month) => byMonth.get(month) || 0);
 }
+
+// Libelle court d'un mois "AAAA-MM" dans la langue courante (f : useFormat()).
+export const monthLabel = (f, month) => f.key(month, { month: "short", year: "2-digit" });

@@ -5,7 +5,7 @@ const publicController = require("../controllers/publicController");
 const auth = require("../middlewares/authMiddleware");
 const validate = require("../middlewares/validateRequest");
 const { optionalAuth } = require("../middlewares/authMiddleware");
-const { ORG_ROLES } = require("@hope/shared/rbac");
+const { INTEREST_VALUES } = require("@hope/shared/applications");
 const { REGIONS } = require("@hope/shared/constants");
 const { CONTENT_TYPES } = require("../repositories/contentRepository");
 
@@ -52,8 +52,9 @@ router.post(
         body("phone").optional({ values: "falsy" }).isString().trim().isLength({ max: 40 }),
         body("region").optional({ values: "falsy" }).isIn(REGIONS),
         body("motivation").isString().trim().isLength({ min: 30, max: 5000 }),
-        body("desiredRoles").optional().isArray({ max: 9 }),
-        body("desiredRoles.*").isIn(ORG_ROLES.filter((role) => role !== "admin")),
+        // Poles d'interet indicatifs (referentiel INTEREST_AREAS) ; l'ancien champ desiredRoles est ignore.
+        body("interests").optional().isArray({ max: INTEREST_VALUES.length }),
+        body("interests.*").isIn(INTEREST_VALUES),
         validate,
     ],
     publicController.createApplication

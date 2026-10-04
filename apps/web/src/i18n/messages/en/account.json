@@ -1,0 +1,503 @@
+{
+  "account": {
+    "fields": {
+      "fullName": "Full name",
+      "email": "Email address",
+      "password": "Password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm your password",
+      "nameMin": "Please enter your name (at least {min} characters)",
+      "emailInvalid": "Invalid email address",
+      "passwordRequired": "Please enter your password",
+      "passwordRules": "Your password doesn’t meet the rules below yet",
+      "passwordMismatch": "The passwords don’t match"
+    },
+    "password": {
+      "show": "Show password",
+      "hide": "Hide password",
+      "strength": {
+        "weak": "Strength: too weak",
+        "good": "Strength: good",
+        "strong": "Strength: excellent"
+      },
+      "rules": {
+        "length": "At least 8 characters",
+        "letter": "At least one letter",
+        "digit": "At least one number"
+      },
+      "ruleOk": " (met)",
+      "ruleMissing": " (missing)",
+      "current": "Current password",
+      "new": "New password",
+      "confirmNew": "Confirm your new password",
+      "update": "Update password",
+      "changed": "Password changed",
+      "errors": {
+        "weakNew": "Your new password must be at least 8 characters long and include a letter and a number.",
+        "newMismatch": "The two new passwords don’t match.",
+        "currentRequired": "Please enter your current password",
+        "mismatch": "The passwords don’t match"
+      }
+    },
+    "login": {
+      "title": "Welcome back",
+      "description": "Sign in to find your donations, receipts and event registrations.",
+      "noAccount": "Don’t have an account yet? <link>Create an account</link>",
+      "expiredTitle": "Session expired",
+      "expiredText": "For your security, you have been signed out. Please sign in again to continue.",
+      "forgot": "Forgot your password?",
+      "submit": "Sign in",
+      "redirecting": "Taking you to your account…"
+    },
+    "register": {
+      "title": "Create your account",
+      "description": "Track your donations, download your receipts and sign up for our community events.",
+      "hasAccount": "Already registered? <link>Sign in</link>",
+      "submit": "Create my account",
+      "teamNote": "Would you like to join the HOPE International team (as a volunteer, employee or regional coordinator)? A member account is not enough: <link>submit your application</link> and we will get back to you.",
+      "welcome": "Welcome to HOPE International!",
+      "opening": "Opening your account…"
+    },
+    "forgot": {
+      "title": "Forgot your password",
+      "description": "Enter the email address of your account and we will send you a link to choose a new password.",
+      "submit": "Send me the link",
+      "sent": "If an account exists for this email, a reset link has just been sent.",
+      "sentTitle": "Check your inbox",
+      "sentHelp": "The link is valid for 1 hour. Remember to check your spam folder. Nothing received? <button>Make a new request</button>",
+      "remember": "Remembered it? <link>Back to sign in</link>"
+    },
+    "reset": {
+      "title": "Choose a new password",
+      "description": "To keep your account secure, choose a password you don’t use anywhere else.",
+      "submit": "Save my password",
+      "backToLogin": "Back to sign in",
+      "invalidTitle": "Invalid or expired link",
+      "invalidText": "This reset link is incomplete, has already been used or has expired (it is valid for 1 hour).",
+      "newRequest": "Make a new request",
+      "doneTitle": "Password reset",
+      "doneText": "Your new password has been saved. You can now sign in with it.",
+      "login": "Sign in"
+    },
+    "changePassword": {
+      "title": "Change my password",
+      "description": "Your new password will replace the current one on all your devices.",
+      "requiredTitle": "Choose your password",
+      "requiredDescription": "To secure your account, choose your own personal password. The temporary password you received by email will then stop working.",
+      "welcome": "Welcome, {name}",
+      "mandatory": "This step is required before you can access your account.",
+      "saveAndContinue": "Save and continue",
+      "backToAccount": "Back to my account"
+    },
+    "space": {
+      "eyebrow": "My account",
+      "hello": "Hello, {name}",
+      "admin": "Go to administration",
+      "logout": "Sign out",
+      "tabsLabel": "My account sections",
+      "tabs": {
+        "dons": "My donations",
+        "evenements": "My events",
+        "profil": "My profile",
+        "securite": "Security"
+      },
+      "security": {
+        "title": "Change my password",
+        "tipsTitle": "Good practice",
+        "tip1": "Choose a unique password, ideally at least 12 characters long.",
+        "tip2": "After a change, your other sessions are signed out automatically.",
+        "tip3": "HOPE International will never ask for your password by email or phone."
+      }
+    },
+    "profile": {
+      "title": "My details",
+      "phone": "Phone",
+      "phonePlaceholder": "E.g. +237 6 77 12 34 56",
+      "phoneHint": "Useful for Mobile Money donations and events.",
+      "save": "Save",
+      "saved": "Profile updated",
+      "saveError": "Unable to save",
+      "accountTitle": "Account",
+      "email": "Email",
+      "region": "Region",
+      "regionEmpty": "Not specified",
+      "roles": "Roles",
+      "managedNote": "To change your email, region or roles, write to us from the Contact page: this information is managed by our team."
+    },
+    "events": {
+      "loading": "Loading your events…",
+      "emptyTitle": "No registrations yet",
+      "emptyText": "Workshops, fundraising days, meet-ups: join us in the field at our upcoming events.",
+      "agenda": "View the events calendar",
+      "upcoming": "Upcoming",
+      "past": "Past",
+      "pastBadge": "Past",
+      "noUpcoming": "No upcoming events. <link>Browse the events calendar</link> to sign up.",
+      "timeRange": "{start} – {end}",
+      "details": "Details",
+      "leaveTitle": "Cancel your registration?",
+      "leaveText": "Your place at “{title}” will be released for someone else.",
+      "leaveConfirm": "Cancel my registration",
+      "left": "Registration cancelled",
+      "leaveError": "Unable to cancel your registration"
+    },
+    "donations": {
+      "loading": "Loading your donations…",
+      "emptyTitle": "You haven’t made a donation from this account yet",
+      "emptyText": "Your first donation will appear here with its downloadable receipt. {amount} is enough to train a market trader in business management.",
+      "donate": "Donate",
+      "general": "Where it’s needed most",
+      "stats": {
+        "total": "Total given",
+        "totalEquivalent": "{breakdown} (euro equivalent)",
+        "totalThanks": "Thank you for your loyalty",
+        "succeeded": "Successful donations",
+        "overall": "{count, plural, one {# in total} other {# in total}}",
+        "projects": "Projects supported",
+        "last": "Latest donation"
+      },
+      "monthlyTitle": "Monthly donations",
+      "unknownStatus": "The status of some monthly donations cannot be checked with our payment provider at the moment.",
+      "historyTitle": "History",
+      "newDonation": "New donation",
+      "emptyTable": "No donations",
+      "columns": {
+        "date": "Date",
+        "amount": "Amount",
+        "project": "Allocation",
+        "method": "Method",
+        "status": "Status",
+        "receipt": "Receipt"
+      },
+      "partialRefund": "including {amount} refunded",
+      "receiptLabel": "Download receipt {number} (PDF)",
+      "receiptUnavailable": {
+        "refunded": { "label": "Receipt cancelled", "hint": "Donation refunded" },
+        "disputed": { "label": "Receipt suspended", "hint": "Bank dispute in progress" },
+        "review": { "label": "Receipt pending", "hint": "Available after review" }
+      },
+      "perMonth": "{amount} / month",
+      "since": "Since {date}",
+      "stop": "Stop",
+      "stopTitle": "Stop this monthly donation?",
+      "stopText": "No further payments of {amount} will be taken. Donations already made remain with the project.",
+      "stopConfirm": "Stop the monthly donation",
+      "stopped": "Monthly donation stopped",
+      "stopError": "Unable to stop the donation",
+      "annual": {
+        "title": "Annual summaries",
+        "description": "One document per calendar year listing all your confirmed donations, with their receipt numbers.",
+        "button": "{year} summary (PDF)",
+        "label": "Download the {year} annual summary of your donations (PDF)",
+        "file": "donation-summary-{year}.pdf",
+        "notFound": "No confirmed donation is recorded for {year}, so there is no summary for that year.",
+        "errorTitle": "Download failed"
+      }
+    },
+    "campaigns": {
+      "label": "Allocation of your donation",
+      "general": "Where it’s needed most",
+      "recommended": "Recommended",
+      "generalText": "Our team directs your donation to the most urgent needs: microloans, training, mutual support.",
+      "country": "Cameroon",
+      "regionDonors": "{region} · {count, plural, one {# donor} other {# donors}}",
+      "progressLabel": "Progress of the {title} campaign",
+      "raised": "<strong>{amount}</strong> raised",
+      "progress": "{percent}% of {goal}",
+      "errorTitle": "Campaigns unavailable",
+      "errorText": "The list of campaigns could not be loaded. Your donation can still go where it’s needed most.",
+      "retry": "Try again"
+    },
+    "card": {
+      "group": "Bank card",
+      "number": "Card number",
+      "expiry": "Expiry date",
+      "expiryPlaceholder": "MM / YY",
+      "cvc": "CVC",
+      "country": "Country or region",
+      "holder": "Cardholder’s full name",
+      "holderPlaceholder": "As shown on the card",
+      "secure": "Your card details are sent directly to Stripe, never to our servers."
+    },
+    "stripe": {
+      "card_declined": "Your card was declined. Check your details or try another card.",
+      "generic_decline": "Your card was declined. Contact your bank or try another card.",
+      "insufficient_funds": "This card has insufficient funds for this amount.",
+      "lost_card": "This card has been reported lost: please use another card.",
+      "stolen_card": "This card has been reported stolen: please use another card.",
+      "expired_card": "Your card has expired. Please use a valid card.",
+      "incorrect_cvc": "The security code (CVC) is incorrect.",
+      "invalid_cvc": "The security code (CVC) is invalid.",
+      "incomplete_cvc": "The security code (CVC) is incomplete.",
+      "incorrect_number": "The card number is incorrect.",
+      "invalid_number": "The card number is invalid.",
+      "incomplete_number": "The card number is incomplete.",
+      "invalid_expiry_month": "The expiry month is invalid.",
+      "invalid_expiry_year": "The expiry year is invalid.",
+      "invalid_expiry_year_past": "The expiry date has already passed.",
+      "incomplete_expiry": "The expiry date is incomplete.",
+      "processing_error": "An error occurred while processing the card. Please try again in a moment.",
+      "authentication_required": "Your bank requires authentication: try again and approve your bank’s request.",
+      "payment_intent_authentication_failure": "The authentication requested by your bank (3D Secure) failed or was cancelled.",
+      "card_not_supported": "This card does not support this type of payment. Try another card.",
+      "currency_not_supported": "This card does not accept payments in euros.",
+      "do_not_honor": "Your bank declined the payment. Contact your bank or try another card.",
+      "rate_limit": "Too many attempts in a short time: please wait a moment before trying again.",
+      "fallback": "The payment did not go through. Try again or use another card."
+    },
+    "donate": {
+      "hero": {
+        "eyebrow": "Donate",
+        "title": "Give families the means to succeed",
+        "lead": "Every donation funds community microloans, training and hands-on support in Cameroon. You choose where your generosity goes, and we show you what it makes possible."
+      },
+      "general": "Where it’s needed most",
+      "perMonthShort": "/ month",
+      "noProvider": {
+        "title": "Online payment is coming very soon",
+        "text": "Our secure payment methods are being activated. In the meantime, you can give by bank transfer or Mobile Money by writing to us at <strong>{email}</strong> or through the <link>Contact page</link>: we reply within 48 hours.",
+        "emailFallback": "our contact address"
+      },
+      "steps": {
+        "support": {
+          "title": "Your support",
+          "description": "A monthly donation helps us plan our support for families over the long term."
+        },
+        "amount": {
+          "title": "Amount",
+          "description": "Amounts in {currency, select, eur {euros} other {CFA francs}}{frequency, select, monthly {, charged every month} other {}}."
+        },
+        "project": {
+          "title": "Allocation",
+          "description": "Choose a campaign or let us direct your donation."
+        },
+        "donor": {
+          "title": "Your details",
+          "description": "We use them to issue your receipt and email it to you."
+        },
+        "payment": {
+          "title": "Payment"
+        }
+      },
+      "frequency": {
+        "label": "Donation frequency",
+        "once": "One-time",
+        "monthly": "Monthly"
+      },
+      "methods": {
+        "label": "Payment method",
+        "onceOnly": "One-time donations only",
+        "soon": "Coming soon",
+        "card": {
+          "title": "Bank card",
+          "detail": "In euros · Visa, Mastercard, CB",
+          "soonTitle": "Bank card: coming soon",
+          "soonText": "This payment method is being activated. You can already give by Mobile Money today."
+        },
+        "mobile_money": {
+          "title": "Mobile Money",
+          "detail": "In FCFA · Orange Money, MTN MoMo",
+          "soonTitle": "Mobile Money: coming soon",
+          "soonText": "This payment method is being activated. You can already give by bank card today."
+        }
+      },
+      "notices": {
+        "monthlyCard": "Monthly donations are made by bank card, so we have selected this payment method for you.",
+        "mobileOnce": "Mobile Money only supports one-time donations, so your donation has been switched to one-time."
+      },
+      "amount": {
+        "suggested": "Suggested amount",
+        "other": "Other amount",
+        "placeholder": "E.g. {amount}",
+        "range": "From {min} to {max}"
+      },
+      "impact": {
+        "sentence": "<strong>{amount}{frequency, select, monthly { a month} other {}}</strong>{currency, select, xaf { (≈ {equivalent})} other {}} could provide, for example, {impact}",
+        "cooperative": "the starter stock for a farming cooperative: improved seeds and small tools for five families.",
+        "fieldAgent": "three months of support from a field officer for a group of ten women, training included.",
+        "microcredit": "a first community microloan of {loan} to start a business: fritters, sewing or small-scale livestock.",
+        "training": "a full business management course for a market trader: keeping her cash book, working out her margin, setting her prices.",
+        "education": "a financial literacy session for a group of 20 women: saving, budgeting, repaying.",
+        "savingsBook": "a savings book and a cash book for a new member of a solidarity group.",
+        "fund": "a contribution to the solidarity fund that finances loans for the families we support."
+      },
+      "requestedClosed": "The requested project is no longer accepting donations or is no longer online: you can support another campaign below.",
+      "donor": {
+        "as": "You are giving as <strong>{name}</strong> ({email}).",
+        "inAccount": "This donation will appear in your account, with its receipt.",
+        "name": "Full name",
+        "email": "Email address",
+        "emailHint": "Your receipt will be sent there.",
+        "loginHint": "Already have an account? <link>Sign in</link> to find all your donations and receipts in your account.",
+        "phone": "Mobile Money number",
+        "phonePlaceholder": "E.g. 6 77 12 34 56",
+        "phoneHint": "The Orange Money or MTN MoMo number that will approve the payment."
+      },
+      "errors": {
+        "amount": "Please enter an amount between {min} and {max}.",
+        "name": "Please enter your name (at least {min} characters)",
+        "email": "Invalid email address",
+        "phone": "Please enter the Mobile Money number to be charged",
+        "card": "Please complete your card details"
+      },
+      "payment": {
+        "redirectPartner": "Once confirmed, you will be redirected to the secure page of our partner {partner} to approve the payment on your phone.",
+        "redirect": "Once confirmed, you will be redirected to the secure page of our payment partner to approve the payment on your phone.",
+        "notOpen": "This payment method is not open yet. Thank you for your patience: it will be activated very soon.",
+        "checking": "Checking available payment methods…",
+        "failedTitle": "The payment did not go through"
+      },
+      "receiptNote": "Once the payment is confirmed, a numbered donation receipt is emailed to you. You can also download it as a PDF from the confirmation page and, if you have an account, from your account.",
+      "summary": {
+        "label": "Summary of your donation",
+        "eyebrow": "Summary",
+        "yearly": "That is {amount} over a year, and you can stop at any time.",
+        "frequency": "Frequency",
+        "frequencyValue": {
+          "once": "One-time",
+          "monthly": "Monthly"
+        },
+        "project": "Allocation",
+        "method": "Method",
+        "methodValue": {
+          "card": "Bank card (EUR)",
+          "mobile_money": "Mobile Money (FCFA)"
+        },
+        "donor": "Donor",
+        "donorEmpty": "To be completed",
+        "checkFields": "Please check the highlighted fields before confirming your donation."
+      },
+      "submit": {
+        "pending": "Loading…",
+        "unavailable": "Payment coming soon",
+        "invalid": "Confirm my donation",
+        "donate": "{frequency, select, monthly {Give {amount} a month (≈ {equivalent})} other {Give {amount} (≈ {equivalent})}}"
+      },
+      "reassure": {
+        "secureVia": "Secure, encrypted payment via {partner}",
+        "secureMobile": "Secure, encrypted payment via our Mobile Money partner",
+        "receipt": "Receipt sent by email and downloadable as a PDF",
+        "stop": "Monthly donations can be stopped at any time from your account or the link in your receipt"
+      },
+      "sticky": {
+        "label": "Your donation",
+        "submit": "Give"
+      }
+    },
+    "thanks": {
+      "checking": "Checking your payment…",
+      "checkError": "Unable to check the payment",
+      "invalid": {
+        "title": "Missing donation reference",
+        "text": "This link does not contain a valid donation reference. If you have just made a payment, check the confirmation email or your donor account."
+      },
+      "notFound": {
+        "title": "Donation not found",
+        "text": "No donation matches this reference."
+      },
+      "donate": "Donate",
+      "account": "My account",
+      "live": {
+        "pendingPolling": "Payment awaiting confirmation. Automatic check in progress.",
+        "pendingIdle": "Payment awaiting confirmation.",
+        "pendingExhausted": "Confirmation has not arrived yet. You can check again.",
+        "succeeded": "Payment confirmed. Thank you for your donation!",
+        "review": "Payment being reviewed by our team.",
+        "disputed": "Payment disputed.",
+        "refunded": "Donation refunded.",
+        "canceled": "Payment cancelled.",
+        "failed": "Payment declined."
+      },
+      "details": {
+        "amount": "Amount",
+        "perMonth": "{amount} a month",
+        "refunded": "Refunded",
+        "project": "Allocation",
+        "general": "Where it’s needed most",
+        "method": "Method",
+        "methodValue": "{method} · {frequency}",
+        "subscription": "Monthly donation",
+        "date": "Date",
+        "receiptNumber": "Receipt no."
+      },
+      "share": {
+        "text": "I’ve just supported HOPE International, which helps Cameroonian families on their path to independence. Join me!",
+        "copied": "Link copied: now you just need to share it"
+      },
+      "monthly": {
+        "stopped": "This monthly donation has been stopped: no further payments will be taken.",
+        "fromAccount": "You can stop your monthly donation at any time from your account.",
+        "accountLink": "Manage my monthly donations",
+        "stopHint": "You can stop your monthly donation at any time, without an account, from this page or the link in your receipt.",
+        "stopButton": "Stop my monthly donation",
+        "confirmTitle": "Stop this monthly donation?",
+        "confirmText": "No further payments of {amount} will be taken. Donations already made remain with the project.",
+        "confirmButton": "Stop the monthly donation",
+        "done": "Monthly donation stopped",
+        "errorTitle": "Unable to stop the donation"
+      },
+      "success": {
+        "eyebrow": "Donation confirmed",
+        "title": "Thank you!",
+        "titleNamed": "Thank you, {name}!",
+        "lead": "Your donation of <strong>{amount}</strong>{frequency, select, monthly { a month} other {}} will directly help families build their future. The whole HOPE International team warmly thanks you.",
+        "partialRefund": "A partial refund of {amount} has been made on this donation. The balance remains with the project.",
+        "download": "Download my receipt (PDF)",
+        "receiptSent": "A receipt has also been sent to you by email.",
+        "next": {
+          "projectsTitle": "Discover our projects",
+          "projectsText": "Microloans, training, cooperatives: follow the work you are making possible.",
+          "projectsButton": "View projects",
+          "shareTitle": "Spread the word about HOPE",
+          "shareText": "A single share can inspire someone close to you to join the movement.",
+          "shareButton": "Share",
+          "accountTitle": "My donations",
+          "accountText": "Find your donation history and all your receipts.",
+          "accountButton": "My account",
+          "registerTitle": "Create an account",
+          "registerText": "To keep track of your future donations and find your receipts in one click.",
+          "registerButton": "Create my account"
+        }
+      },
+      "pending": {
+        "eyebrow": "Confirmation in progress",
+        "title": "Your payment is being processed",
+        "lead": "Depending on the payment method, especially Mobile Money, confirmation may take a few minutes. As soon as we receive it, your receipt will be emailed to you.",
+        "pollingNote": "Automatic check in progress: this page updates as soon as your operator confirms the payment.",
+        "pollingPaused": "Confirmation has not arrived yet. Approve the request on your phone, then check again.",
+        "checkAgain": "Check again",
+        "home": "Back to home"
+      },
+      "outcomes": {
+        "retry": "Try again",
+        "contact": "Contact us",
+        "home": "Back to home",
+        "review": {
+          "eyebrow": "Review in progress",
+          "title": "Your payment is being reviewed by our team",
+          "lead": "We are checking this payment before confirming it. Your receipt will be emailed to you as soon as it is approved: there is nothing you need to do in the meantime."
+        },
+        "disputed": {
+          "eyebrow": "Payment disputed",
+          "title": "This donation is subject to a dispute",
+          "lead": "Your bank has notified us of a dispute on this payment: the receipt is suspended until the dispute is resolved. If you did not initiate this dispute, please contact us."
+        },
+        "refunded": {
+          "eyebrow": "Donation refunded",
+          "title": "This donation has been refunded",
+          "lead": "The amount of this donation has been returned to you and its receipt has been cancelled. If you have any questions, please feel free to contact us."
+        },
+        "canceled": {
+          "eyebrow": "Payment cancelled",
+          "title": "The payment did not go through",
+          "lead": "The payment was cancelled before it was approved: no money has been taken."
+        },
+        "failed": {
+          "eyebrow": "Payment declined",
+          "title": "The payment did not go through",
+          "lead": "Your bank or operator declined the payment: no money has been taken. You can try again, possibly with another payment method."
+        }
+      }
+    }
+  }
+}

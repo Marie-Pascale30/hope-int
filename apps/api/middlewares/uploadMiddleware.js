@@ -1,40 +1,64 @@
 const multer = require("multer");
-const path = require("path");
 const fs = require("fs");
+const path = require("path");
+const crypto = require("crypto");
+const { UPLOADS_DIR, detectImageType, removeUpload } = require("../utils/uploads");
 
-const uploadsPath = path.join(process.cwd(), "uploads");
-if (!fs.existsSync(uploadsPath)) {
-    fs.mkdirSync(uploadsPath, { recursive: true });
+if (!fs.existsSync(UPLOADS_DIR)) {
+    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
 
-// SVG exclu volontairement : il peut embarquer du script.
-const ALLOWED_TYPES = {
-    "image/jpeg": ".jpg",
-    "image/png": ".png",
-    "image/webp": ".webp",
-    "image/gif": ".gif",
-};
+const FORMAT_ERROR = "Formats acceptés : JPG, PNG, WebP ou GIF";
 
-const storage = multer.diskStorage({
-    destination: (_req, _file, cb) => cb(null, uploadsPath),
-    filename: (_req, file, cb) => {
-        const ext = ALLOWED_TYPES[file.mimetype] || ".bin";
-        cb(null, `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
-    },
-});
+function formatError() {
+    const error = new Error(FORMAT_ERROR);
+    error.status = 400;
+    return error;
+}
 
-const fileFilter = (_req, file, cb) => {
-    if (ALLOWED_TYPES[file.mimetype]) {
-        cb(null, true);
-    } else {
-        const error = new Error("Formats acceptés : JPG, PNG, WebP ou GIF");
-        error.status = 400;
-        cb(error);
-    }
-};
-
-module.exports = multer({
-    storage,
-    fileFilter,
+// Le fichier reste en memoire (5 Mo max) le temps de verifier sa signature binaire :
+// rien n'est ecrit sur le disque tant que le type reel n'est pas une image autorisee.
+const memoryUpload = multer({
+    storage: multer.memoryStorage(),
     limits: { fileSize: 5 * 1024 * 1024, files: 1 },
 });
+
+// Si la requete echoue ensuite (validation, droits, erreur metier), le fichier ecrit est supprime.
+function cleanupOnFailure(req, res) {
+    res.on("finish", () => {
+        if (res.statusCode >= 400 && req.file?.filename) {
+            removeUpload(`/uploads/${req.file.filename}`);
+        }
+    });
+}
+
+async function persist(req) {
+    const file = req.file;
+    if (!file) return;
+    const type = detectImageType(file.buffer);
+    if (!type) throw formatError();
+
+    const filename = `${Date.now()}-${crypto.randomInt(1e9)}${type.ext}`;
+    const destination = path.join(UPLOADS_DIR, filename);
+    await fs.promises.writeFile(destination, file.buffer);
+
+    file.mimetype = type.mime;
+    file.filename = filename;
+    file.destination = UPLOADS_DIR;
+    file.path = destination;
+    delete file.buffer;
+}
+
+// Meme usage qu'avant : upload.single("image").
+function single(field) {
+    const parse = memoryUpload.single(field);
+    return (req, res, next) => {
+        parse(req, res, (error) => {
+            if (error) return next(error);
+            cleanupOnFailure(req, res);
+            persist(req).then(() => next(), next);
+        });
+    };
+}
+
+module.exports = { single, FORMAT_ERROR };

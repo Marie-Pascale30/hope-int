@@ -5,18 +5,15 @@ const paymentService = require("../services/paymentService");
 const messageService = require("../services/messageService");
 const applicationService = require("../services/applicationService");
 const eventService = require("../services/eventService");
-const { ROLE_LABELS } = require("@hope/shared/rbac");
+const { INTEREST_AREAS } = require("@hope/shared/applications");
 const { REGIONS, XAF_PER_EUR, DONATION_LIMITS, PROJECT_STATUSES } = require("@hope/shared/constants");
 
 exports.getMeta = async (_req, res) => {
     res.json({
         regions: REGIONS,
         projectStatuses: PROJECT_STATUSES,
-        // Roles proposables dans une candidature (l'admin n'est jamais candidat).
-        applicationRoles: Object.entries(ROLE_LABELS)
-            .filter(([key]) => key !== "admin")
-            .sort(([a], [b]) => (a === "membre" ? -1 : b === "membre" ? 1 : 0))
-            .map(([value, label]) => ({ value, label })),
+        // Poles d'interet proposes dans une candidature (preferences indicatives, sans valeur de droit).
+        interestAreas: INTEREST_AREAS.map(({ value, label }) => ({ value, label })),
         providers: paymentService.getProviders(),
         donationLimits: DONATION_LIMITS,
         xafPerEur: XAF_PER_EUR,
@@ -51,7 +48,8 @@ exports.createMessage = async (req, res) => {
 };
 
 exports.createApplication = async (req, res) => {
-    const id = await applicationService.submit(req.body);
+    const { name, email, phone, region, motivation, interests } = req.body;
+    const id = await applicationService.submit({ name, email, phone, region, motivation, interests });
     res.status(201).json({ message: "Candidature envoyée", id });
 };
 

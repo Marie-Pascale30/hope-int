@@ -8,6 +8,16 @@
   "exports": {
     ".": "./src/index.js",
     "./constants": "./src/constants.js",
-    "./rbac": "./src/rbac.js"
+    "./rbac": "./src/rbac.js",
+    "./applications": "./src/applications.js"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "globals": "^17.13.0"
   }
 }

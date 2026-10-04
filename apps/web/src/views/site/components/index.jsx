@@ -1,42 +1,23 @@
-"use client";
-
 // Composants propres au site public (cartes, visuels, blocs de date).
-import { useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, ArrowRight, CalendarDays, CheckCircle2, Clock, MapPin } from "lucide-react";
-import { Badge, Button, ProgressBar, StatusBadge } from "../../../components/ui";
-import { formatDate, truncate } from "../../../utils/format";
-import { PROJECT_STATUS, statusOf } from "../../../utils/labels";
-import {
-  PLACEHOLDER,
-  campaignPercent,
-  cx,
-  euros,
-  eventTimeRange,
-  hasCampaign,
-  imageSrc,
-  plural,
-  spotsStatus,
-} from "./helpers";
+// Sans "use client" : rendus cote serveur par les pages, ou cote client dans les ilots interactifs.
+import { ArrowLeft, ArrowRight, CalendarDays, Clock, MapPin } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Badge, ProgressBar, StatusBadge } from "../../../components/ui";
+import { useFormat } from "../../../i18n/format";
+import { Link, useLocalePath } from "../../../i18n/navigation";
+import { truncate } from "../../../utils/format";
+import { TONES } from "../../../utils/labels";
+import CoverImage, { IMAGE_SIZES } from "./CoverImage";
+import RegisteredBadge from "./RegisteredBadge";
+import { Empty, LinkButton, Stat } from "./ui";
+import { campaignPercent, cx, euros, eventTimeRange, hasCampaign, spotsStatus } from "./helpers";
 
-// ---------- Visuels ----------
+export { CoverImage, Empty, IMAGE_SIZES, LinkButton, RegisteredBadge, Stat };
 
-// variant : undefined (3/2) | "wide" (21/9) | "square"
-export function CoverImage({ src, alt = "", variant, className, priority }) {
-  const [failedSrc, setFailedSrc] = useState(null);
-  const url = failedSrc === src ? PLACEHOLDER : imageSrc(src);
-  return (
-    <div className={cx("cover pub-cover", variant && `pub-cover--${variant}`, className)}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={url}
-        alt={alt}
-        loading={priority ? "eager" : "lazy"}
-        decoding="async"
-        onError={() => setFailedSrc(src)}
-      />
-    </div>
-  );
+// Statut de projet traduit ({ label, tone } pour StatusBadge).
+export function useProjectStatus() {
+  const t = useTranslations("site.status");
+  return (status) => (status in TONES.projectStatus ? { label: t(status), tone: TONES.projectStatus[status] } : null);
 }
 
 // ---------- En-tetes ----------
@@ -65,8 +46,9 @@ export function BackLink({ href, children }) {
 // ---------- Squelettes ----------
 
 export function CardsSkeleton({ count = 3 }) {
+  const t = useTranslations("common");
   return (
-    <div className="grid grid--3" aria-busy="true" aria-label="Chargement">
+    <div className="grid grid--3" aria-busy="true" aria-label={t("loading")}>
       {Array.from({ length: count }, (_, index) => (
         <div key={index} className="card pub-skeleton-card">
           <div className="skeleton pub-skeleton-card__media" />
@@ -85,17 +67,23 @@ export function CardsSkeleton({ count = 3 }) {
 // ---------- Campagne ----------
 
 export function CampaignProgress({ project, large }) {
+  const t = useTranslations("site.campaign");
+  const f = useFormat();
   const percent = campaignPercent(project);
-  const donors = plural(project.donors_count, "donateur");
+  const donors = t("donors", { count: Number(project.donors_count) || 0 });
   return (
     <div className={cx("pub-campaign", large && "pub-campaign--large")}>
       <p className="pub-campaign__figures">
-        <strong>{euros(project.raised_eur)}</strong> collectés sur {euros(project.goal_amount)}
+        {t.rich("raised", {
+          raised: euros(f, project.raised_eur),
+          goal: euros(f, project.goal_amount),
+          strong: (chunks) => <strong>{chunks}</strong>,
+        })}
         {!large && <> · {donors}</>}
       </p>
-      <ProgressBar value={percent} accent label={`Collecte : ${percent} % de l'objectif atteint`} />
+      <ProgressBar value={percent} accent label={t("progressLabel", { percent })} />
       <div className="progress-meta">
-        <span className="pub-campaign__pct">{percent} % de l&apos;objectif</span>
+        <span className="pub-campaign__pct">{t("percent", { percent })}</span>
         {large && <span>{donors}</span>}
       </div>
     </div>
@@ -105,11 +93,14 @@ export function CampaignProgress({ project, large }) {
 // ---------- Cartes ----------
 
 export function ProjectCard({ project }) {
+  const t = useTranslations("site.cards");
+  const lp = useLocalePath();
+  const statusOf = useProjectStatus();
   const campaign = hasCampaign(project);
   return (
     <article className="card pub-card card--hover">
       <div className="pub-card__badge">
-        <StatusBadge status={statusOf(PROJECT_STATUS, project.status)} />
+        <StatusBadge status={statusOf(project.status)} />
       </div>
       <CoverImage src={project.image_url} />
       <div className="pub-card__body">
@@ -125,12 +116,12 @@ export function ProjectCard({ project }) {
         {campaign && <CampaignProgress project={project} />}
         <div className="pub-card__foot">
           <span className="pub-card__more" aria-hidden="true">
-            Découvrir <ArrowRight />
+            {t("discover")} <ArrowRight />
           </span>
           {campaign && (
-            <Button href={`/don?projet=${project.id}`} variant="accent" size="sm" aria-label={`Soutenir le projet ${project.title}`}>
-              Soutenir
-            </Button>
+            <LinkButton href={lp(`/don?projet=${project.id}`)} variant="accent" size="sm" aria-label={t("supportProject", { title: project.title })}>
+              {t("support")}
+            </LinkButton>
           )}
         </div>
       </div>
@@ -139,13 +130,15 @@ export function ProjectCard({ project }) {
 }
 
 export function NewsCard({ item, featured }) {
+  const t = useTranslations("site.cards");
+  const f = useFormat();
   return (
     <article className={cx("card pub-card card--hover", featured && "pub-card--featured")}>
-      <CoverImage src={item.image_url} priority={featured} />
+      <CoverImage src={item.image_url} priority={featured} sizes={featured ? "featured" : "card"} />
       <div className="pub-card__body">
         <div className="pub-card__meta">
-          <span><CalendarDays aria-hidden="true" /> {formatDate(item.created_at)}</span>
-          {featured && <Badge tone="accent" plain>À la une</Badge>}
+          <span><CalendarDays aria-hidden="true" /> <time dateTime={item.created_at}>{f.date(item.created_at)}</time></span>
+          {featured && <Badge tone="accent" plain>{t("featured")}</Badge>}
         </div>
         <h3 className="pub-card__title">
           <Link href={`/actualites/${item.id}`}>{item.title}</Link>
@@ -153,7 +146,7 @@ export function NewsCard({ item, featured }) {
         <p className="pub-card__text">{item.summary || truncate(item.content, featured ? 220 : 140)}</p>
         <div className="pub-card__foot">
           <span className="pub-card__more" aria-hidden="true">
-            Lire l&apos;article <ArrowRight />
+            {t("readArticle")} <ArrowRight />
           </span>
         </div>
       </div>
@@ -162,36 +155,39 @@ export function NewsCard({ item, featured }) {
 }
 
 export function EventDate({ value }) {
+  const f = useFormat();
   return (
     <div className="pub-date" aria-hidden="true">
-      <span className="pub-date__month">{formatDate(value, { month: "short" }).replace(".", "")}</span>
-      <span className="pub-date__day">{formatDate(value, { day: "2-digit" })}</span>
-      <span className="pub-date__weekday">{formatDate(value, { weekday: "short" })}</span>
+      <span className="pub-date__month">{f.date(value, { month: "short" }).replace(".", "")}</span>
+      <span className="pub-date__day">{f.date(value, { day: "2-digit" })}</span>
+      <span className="pub-date__weekday">{f.date(value, { weekday: "short" })}</span>
     </div>
   );
 }
 
 export function EventCard({ event, compact }) {
-  const spots = spotsStatus(event);
+  const tSpots = useTranslations("site.spots");
+  const f = useFormat();
+  const spots = spotsStatus(event, tSpots);
   return (
     <article className="card pub-event card--hover">
       <EventDate value={event.start_at} />
       <div className="pub-event__main">
         <h3 className="pub-event__title">
           <Link href={`/evenements/${event.id}`}>
-            <span className="visually-hidden">{formatDate(event.start_at)} : </span>
+            <span className="visually-hidden">{f.date(event.start_at)} : </span>
             {event.title}
           </Link>
         </h3>
         <div className="pub-card__meta">
-          <span><Clock aria-hidden="true" /> {eventTimeRange(event)}</span>
+          <span><Clock aria-hidden="true" /> {eventTimeRange(event, f)}</span>
           {event.location && <span><MapPin aria-hidden="true" /> {event.location}</span>}
         </div>
         {!compact && event.description && <p className="pub-event__desc">{truncate(event.description, 150)}</p>}
         {compact && (
           <div className="chip-list">
             <Badge tone={spots.tone}>{spots.label}</Badge>
-            {event.is_registered && <Badge tone="success">Vous êtes inscrit(e)</Badge>}
+            <RegisteredBadge eventId={event.id} />
           </div>
         )}
       </div>
@@ -199,11 +195,7 @@ export function EventCard({ event, compact }) {
         <div className="pub-event__side">
           {event.region && <Badge plain>{event.region}</Badge>}
           <Badge tone={spots.tone}>{spots.label}</Badge>
-          {event.is_registered && (
-            <Badge tone="success" plain>
-              <CheckCircle2 size={14} aria-hidden="true" /> Vous êtes inscrit(e)
-            </Badge>
-          )}
+          <RegisteredBadge eventId={event.id} plain />
         </div>
       )}
     </article>

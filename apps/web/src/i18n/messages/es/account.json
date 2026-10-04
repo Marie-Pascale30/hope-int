@@ -1,0 +1,503 @@
+{
+  "account": {
+    "fields": {
+      "fullName": "Nombre completo",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirma la contraseña",
+      "nameMin": "Indica tu nombre (mínimo {min} caracteres)",
+      "emailInvalid": "Correo electrónico no válido",
+      "passwordRequired": "Indica tu contraseña",
+      "passwordRules": "La contraseña todavía no cumple las reglas de abajo",
+      "passwordMismatch": "Las contraseñas no coinciden"
+    },
+    "password": {
+      "show": "Mostrar la contraseña",
+      "hide": "Ocultar la contraseña",
+      "strength": {
+        "weak": "Seguridad: demasiado débil",
+        "good": "Seguridad: correcta",
+        "strong": "Seguridad: excelente"
+      },
+      "rules": {
+        "length": "Mínimo 8 caracteres",
+        "letter": "Al menos una letra",
+        "digit": "Al menos un número"
+      },
+      "ruleOk": " (cumplida)",
+      "ruleMissing": " (pendiente)",
+      "current": "Contraseña actual",
+      "new": "Nueva contraseña",
+      "confirmNew": "Confirma la nueva contraseña",
+      "update": "Actualizar la contraseña",
+      "changed": "Contraseña modificada",
+      "errors": {
+        "weakNew": "La nueva contraseña debe tener al menos 8 caracteres, con una letra y un número.",
+        "newMismatch": "Las dos nuevas contraseñas no coinciden.",
+        "currentRequired": "Indica tu contraseña actual",
+        "mismatch": "Las contraseñas no coinciden"
+      }
+    },
+    "login": {
+      "title": "Qué alegría verte de nuevo",
+      "description": "Inicia sesión para consultar tus donativos, tus recibos y tus inscripciones a eventos.",
+      "noAccount": "¿Todavía no tienes cuenta? <link>Crear una cuenta</link>",
+      "expiredTitle": "Sesión caducada",
+      "expiredText": "Por tu seguridad, se ha cerrado tu sesión. Vuelve a iniciar sesión para continuar.",
+      "forgot": "¿Has olvidado tu contraseña?",
+      "submit": "Iniciar sesión",
+      "redirecting": "Te llevamos a tu espacio…"
+    },
+    "register": {
+      "title": "Crea tu cuenta",
+      "description": "Sigue tus donativos, descarga tus recibos e inscríbete en nuestros eventos solidarios.",
+      "hasAccount": "¿Ya tienes cuenta? <link>Iniciar sesión</link>",
+      "submit": "Crear mi cuenta",
+      "teamNote": "¿Quieres unirte al equipo de HOPE International (como voluntario, empleado o responsable regional)? La cuenta de miembro no basta: <link>envía tu candidatura</link> y nos pondremos en contacto contigo.",
+      "welcome": "¡Te damos la bienvenida a HOPE International!",
+      "opening": "Abriendo tu espacio…"
+    },
+    "forgot": {
+      "title": "Contraseña olvidada",
+      "description": "Indica el correo electrónico de tu cuenta: te enviaremos un enlace para elegir una nueva contraseña.",
+      "submit": "Recibir el enlace",
+      "sent": "Si existe una cuenta con este correo, acabamos de enviar un enlace para restablecer la contraseña.",
+      "sentTitle": "Revisa tu correo",
+      "sentHelp": "El enlace es válido durante 1 hora. No olvides mirar en la carpeta de correo no deseado. ¿No has recibido nada? <button>Hacer una nueva solicitud</button>",
+      "remember": "¿Ya la recuerdas? <link>Volver al inicio de sesión</link>"
+    },
+    "reset": {
+      "title": "Elige una nueva contraseña",
+      "description": "Para proteger tu cuenta, elige una contraseña que no uses en ningún otro sitio.",
+      "submit": "Guardar mi contraseña",
+      "backToLogin": "Volver al inicio de sesión",
+      "invalidTitle": "Enlace no válido o caducado",
+      "invalidText": "Este enlace de restablecimiento está incompleto, ya se ha utilizado o ha caducado (es válido durante 1 hora).",
+      "newRequest": "Hacer una nueva solicitud",
+      "doneTitle": "Contraseña restablecida",
+      "doneText": "Tu nueva contraseña se ha guardado. Ya puedes iniciar sesión con ella.",
+      "login": "Iniciar sesión"
+    },
+    "changePassword": {
+      "title": "Cambiar mi contraseña",
+      "description": "Tu nueva contraseña sustituirá a la actual en todos tus dispositivos.",
+      "requiredTitle": "Elige tu contraseña",
+      "requiredDescription": "Para proteger tu cuenta, elige tu propia contraseña. La contraseña provisional que recibiste por correo dejará de funcionar.",
+      "welcome": "Te damos la bienvenida, {name}",
+      "mandatory": "Este paso es obligatorio antes de acceder a tu espacio.",
+      "saveAndContinue": "Guardar y continuar",
+      "backToAccount": "Volver a mi espacio"
+    },
+    "space": {
+      "eyebrow": "Mi espacio",
+      "hello": "Hola, {name}",
+      "admin": "Ir a la administración",
+      "logout": "Cerrar sesión",
+      "tabsLabel": "Secciones de mi espacio",
+      "tabs": {
+        "dons": "Mis donativos",
+        "evenements": "Mis eventos",
+        "profil": "Mi perfil",
+        "securite": "Seguridad"
+      },
+      "security": {
+        "title": "Cambiar mi contraseña",
+        "tipsTitle": "Buenas prácticas",
+        "tip1": "Elige una contraseña única, idealmente de al menos 12 caracteres.",
+        "tip2": "Tras un cambio, tus otras sesiones se cierran automáticamente.",
+        "tip3": "HOPE International nunca te pedirá tu contraseña por correo electrónico ni por teléfono."
+      }
+    },
+    "profile": {
+      "title": "Mis datos",
+      "phone": "Teléfono",
+      "phonePlaceholder": "Ej.: +237 6 77 12 34 56",
+      "phoneHint": "Útil para los donativos por Mobile Money y los eventos.",
+      "save": "Guardar",
+      "saved": "Perfil actualizado",
+      "saveError": "No se ha podido guardar",
+      "accountTitle": "Cuenta",
+      "email": "Correo electrónico",
+      "region": "Región",
+      "regionEmpty": "Sin indicar",
+      "roles": "Roles",
+      "managedNote": "Para modificar tu correo, tu región o tus roles, escríbenos desde la página de Contacto: nuestro equipo gestiona estos datos."
+    },
+    "events": {
+      "loading": "Cargando tus eventos…",
+      "emptyTitle": "Todavía no tienes inscripciones",
+      "emptyText": "Talleres, jornadas de recaudación, encuentros: acompáñanos sobre el terreno en nuestros próximos eventos.",
+      "agenda": "Ver la agenda",
+      "upcoming": "Próximos",
+      "past": "Pasados",
+      "pastBadge": "Pasado",
+      "noUpcoming": "No hay eventos próximos. <link>Descubre la agenda</link> para inscribirte.",
+      "timeRange": "{start} – {end}",
+      "details": "Detalles",
+      "leaveTitle": "¿Cancelar tu inscripción?",
+      "leaveText": "Tu plaza en «{title}» quedará libre para otra persona.",
+      "leaveConfirm": "Cancelar mi inscripción",
+      "left": "Inscripción cancelada",
+      "leaveError": "No se ha podido cancelar la inscripción"
+    },
+    "donations": {
+      "loading": "Cargando tus donativos…",
+      "emptyTitle": "Todavía no has hecho ningún donativo desde esta cuenta",
+      "emptyText": "Tu primer donativo aparecerá aquí con su recibo descargable. Con {amount} basta para formar a una comerciante en gestión.",
+      "donate": "Donar",
+      "general": "Donde más se necesite",
+      "stats": {
+        "total": "Total donado",
+        "totalEquivalent": "{breakdown} (equivalente en euros)",
+        "totalThanks": "Gracias por tu fidelidad",
+        "succeeded": "Donativos realizados",
+        "overall": "{count, plural, one {# en total} other {# en total}}",
+        "projects": "Proyectos apoyados",
+        "last": "Último donativo"
+      },
+      "monthlyTitle": "Donativos mensuales",
+      "unknownStatus": "Por el momento no podemos comprobar con nuestro proveedor de pagos el estado de algunos donativos mensuales.",
+      "historyTitle": "Historial",
+      "newDonation": "Nuevo donativo",
+      "emptyTable": "Ningún donativo",
+      "columns": {
+        "date": "Fecha",
+        "amount": "Importe",
+        "project": "Destino",
+        "method": "Medio",
+        "status": "Estado",
+        "receipt": "Recibo"
+      },
+      "partialRefund": "de los cuales {amount} reembolsados",
+      "receiptLabel": "Descargar el recibo {number} (PDF)",
+      "receiptUnavailable": {
+        "refunded": { "label": "Recibo anulado", "hint": "Donativo reembolsado" },
+        "disputed": { "label": "Recibo suspendido", "hint": "Reclamación bancaria en curso" },
+        "review": { "label": "Recibo pendiente", "hint": "Disponible tras la verificación" }
+      },
+      "perMonth": "{amount} / mes",
+      "since": "Desde el {date}",
+      "stop": "Detener",
+      "stopTitle": "¿Detener este donativo mensual?",
+      "stopText": "No se realizará ningún otro cargo de {amount}. Los donativos ya realizados siguen destinados al proyecto.",
+      "stopConfirm": "Detener el donativo mensual",
+      "stopped": "Donativo mensual detenido",
+      "stopError": "No se ha podido detener el donativo",
+      "annual": {
+        "title": "Resúmenes anuales",
+        "description": "Un documento por año natural con todos tus donativos confirmados y sus números de recibo.",
+        "button": "Resumen {year} (PDF)",
+        "label": "Descargar el resumen anual {year} de tus donativos (PDF)",
+        "file": "resumen-donativos-{year}.pdf",
+        "notFound": "No hay ningún donativo confirmado registrado en {year}: no existe resumen para ese año.",
+        "errorTitle": "No se ha podido descargar"
+      }
+    },
+    "campaigns": {
+      "label": "Destino de tu donativo",
+      "general": "Donde más se necesite",
+      "recommended": "Recomendado",
+      "generalText": "Nuestro equipo destina tu donativo a las necesidades más urgentes: microcréditos, formación, ayuda mutua.",
+      "country": "Camerún",
+      "regionDonors": "{region} · {count, plural, one {# donante} other {# donantes}}",
+      "progressLabel": "Progreso de la campaña {title}",
+      "raised": "<strong>{amount}</strong> recaudados",
+      "progress": "{percent} % de {goal}",
+      "errorTitle": "Campañas no disponibles",
+      "errorText": "No se ha podido cargar la lista de campañas. Aun así, tu donativo puede destinarse donde más se necesite.",
+      "retry": "Reintentar"
+    },
+    "card": {
+      "group": "Tarjeta bancaria",
+      "number": "Número de tarjeta",
+      "expiry": "Fecha de caducidad",
+      "expiryPlaceholder": "MM / AA",
+      "cvc": "CVC",
+      "country": "País o región",
+      "holder": "Nombre completo del titular",
+      "holderPlaceholder": "Tal como aparece en la tarjeta",
+      "secure": "Tus datos bancarios se envían directamente a Stripe, nunca a nuestros servidores."
+    },
+    "stripe": {
+      "card_declined": "Tu tarjeta ha sido rechazada. Comprueba los datos o prueba con otra tarjeta.",
+      "generic_decline": "Tu tarjeta ha sido rechazada. Contacta con tu banco o prueba con otra tarjeta.",
+      "insufficient_funds": "El saldo de esta tarjeta no es suficiente para este importe.",
+      "lost_card": "Esta tarjeta se ha declarado perdida: usa otra tarjeta.",
+      "stolen_card": "Esta tarjeta se ha declarado robada: usa otra tarjeta.",
+      "expired_card": "Tu tarjeta ha caducado. Usa una tarjeta vigente.",
+      "incorrect_cvc": "El código de seguridad (CVC) es incorrecto.",
+      "invalid_cvc": "El código de seguridad (CVC) no es válido.",
+      "incomplete_cvc": "El código de seguridad (CVC) está incompleto.",
+      "incorrect_number": "El número de tarjeta es incorrecto.",
+      "invalid_number": "El número de tarjeta no es válido.",
+      "incomplete_number": "El número de tarjeta está incompleto.",
+      "invalid_expiry_month": "El mes de caducidad no es válido.",
+      "invalid_expiry_year": "El año de caducidad no es válido.",
+      "invalid_expiry_year_past": "La fecha de caducidad ya ha pasado.",
+      "incomplete_expiry": "La fecha de caducidad está incompleta.",
+      "processing_error": "Se ha producido un error al procesar la tarjeta. Inténtalo de nuevo en unos instantes.",
+      "authentication_required": "Tu banco solicita una autenticación: vuelve a intentarlo y valida la solicitud de tu banco.",
+      "payment_intent_authentication_failure": "La autenticación solicitada por tu banco (3D Secure) ha fallado o se ha cancelado.",
+      "card_not_supported": "Esta tarjeta no admite este tipo de pago. Prueba con otra tarjeta.",
+      "currency_not_supported": "Esta tarjeta no acepta pagos en euros.",
+      "do_not_honor": "Tu banco ha rechazado el pago. Contacta con tu banco o prueba con otra tarjeta.",
+      "rate_limit": "Demasiados intentos en poco tiempo: espera unos instantes antes de volver a intentarlo.",
+      "fallback": "El pago no se ha completado. Inténtalo de nuevo o usa otra tarjeta."
+    },
+    "donate": {
+      "hero": {
+        "eyebrow": "Donar",
+        "title": "Dales a las familias los medios para salir adelante",
+        "lead": "Cada donativo financia microcréditos solidarios, formación y un acompañamiento cercano en Camerún. Tú eliges adónde va tu generosidad y nosotros te mostramos lo que hace posible."
+      },
+      "general": "Donde más se necesite",
+      "perMonthShort": "/ mes",
+      "noProvider": {
+        "title": "El pago en línea llegará muy pronto",
+        "text": "Estamos activando nuestros medios de pago seguros. Mientras tanto, puedes donar por transferencia o Mobile Money escribiéndonos a <strong>{email}</strong> o a través de la <link>página de Contacto</link>: te respondemos en 48 horas.",
+        "emailFallback": "nuestra dirección de contacto"
+      },
+      "steps": {
+        "support": {
+          "title": "Tu apoyo",
+          "description": "Un donativo mensual nos permite planificar a largo plazo el acompañamiento de las familias."
+        },
+        "amount": {
+          "title": "Importe",
+          "description": "Importes en {currency, select, eur {euros} other {francos CFA}}{frequency, select, monthly {, cargados cada mes} other {}}."
+        },
+        "project": {
+          "title": "Destino",
+          "description": "Elige una campaña o deja que orientemos tu donativo."
+        },
+        "donor": {
+          "title": "Tus datos",
+          "description": "Sirven para emitir tu recibo y enviártelo por correo electrónico."
+        },
+        "payment": {
+          "title": "Pago"
+        }
+      },
+      "frequency": {
+        "label": "Frecuencia del donativo",
+        "once": "Una vez",
+        "monthly": "Cada mes"
+      },
+      "methods": {
+        "label": "Medio de pago",
+        "onceOnly": "Solo donativos puntuales",
+        "soon": "Próximamente",
+        "card": {
+          "title": "Tarjeta bancaria",
+          "detail": "En euros · Visa, Mastercard, CB",
+          "soonTitle": "Tarjeta bancaria: próximamente",
+          "soonText": "Estamos activando este medio de pago. Ya puedes donar por Mobile Money."
+        },
+        "mobile_money": {
+          "title": "Mobile Money",
+          "detail": "En FCFA · Orange Money, MTN MoMo",
+          "soonTitle": "Mobile Money: próximamente",
+          "soonText": "Estamos activando este medio de pago. Ya puedes donar con tarjeta bancaria."
+        }
+      },
+      "notices": {
+        "monthlyCard": "El donativo mensual se hace con tarjeta bancaria: hemos seleccionado este medio de pago.",
+        "mobileOnce": "Mobile Money solo permite donativos puntuales: tu donativo ha pasado a ser puntual."
+      },
+      "amount": {
+        "suggested": "Importe sugerido",
+        "other": "Otro importe",
+        "placeholder": "Ej.: {amount}",
+        "range": "De {min} a {max}"
+      },
+      "impact": {
+        "sentence": "<strong>{amount}{frequency, select, monthly { al mes} other {}}</strong>{currency, select, xaf { (≈ {equivalent})} other {}} equivale, por ejemplo, a {impact}",
+        "cooperative": "las existencias iniciales de una cooperativa agrícola: semillas mejoradas y pequeñas herramientas para cinco familias.",
+        "fieldAgent": "tres meses de seguimiento por parte de un agente de campo para un grupo de diez mujeres, con formación incluida.",
+        "microcredit": "un primer microcrédito solidario de {loan} para emprender una actividad: buñuelos, costura o pequeña ganadería.",
+        "training": "una formación completa en gestión para una comerciante: llevar la caja, calcular su margen, fijar sus precios.",
+        "education": "una sesión de educación financiera para un grupo de 20 mujeres: ahorrar, presupuestar, devolver.",
+        "savingsBook": "una libreta de ahorro y un libro de caja para una nueva integrante de un grupo solidario.",
+        "fund": "una contribución al fondo solidario que financia los préstamos de las familias acompañadas."
+      },
+      "requestedClosed": "El proyecto solicitado ya no recibe donativos o ya no está en línea: puedes apoyar otra campaña a continuación.",
+      "donor": {
+        "as": "Donas como <strong>{name}</strong> ({email}).",
+        "inAccount": "Este donativo aparecerá en tu espacio, con su recibo.",
+        "name": "Nombre completo",
+        "email": "Correo electrónico",
+        "emailHint": "Te enviaremos ahí tu recibo.",
+        "loginHint": "¿Ya tienes cuenta? <link>Inicia sesión</link> para encontrar todos tus donativos y recibos en tu espacio.",
+        "phone": "Número de Mobile Money",
+        "phonePlaceholder": "Ej.: 6 77 12 34 56",
+        "phoneHint": "Número de Orange Money o MTN MoMo con el que validarás el pago."
+      },
+      "errors": {
+        "amount": "Indica un importe entre {min} y {max}.",
+        "name": "Indica tu nombre (mínimo {min} caracteres)",
+        "email": "Correo electrónico no válido",
+        "phone": "Indica el número de Mobile Money al que se cargará el pago",
+        "card": "Completa los datos de tu tarjeta"
+      },
+      "payment": {
+        "redirectPartner": "Tras la validación, te redirigiremos a la página segura de nuestro socio {partner} para confirmar el pago en tu teléfono.",
+        "redirect": "Tras la validación, te redirigiremos a la página segura de nuestro socio de pagos para confirmar el pago en tu teléfono.",
+        "notOpen": "Este medio de pago todavía no está disponible. Gracias por tu paciencia: se activará muy pronto.",
+        "checking": "Comprobando los medios de pago disponibles…",
+        "failedTitle": "El pago no se ha completado"
+      },
+      "receiptNote": "Una vez confirmado el pago, te enviaremos por correo electrónico un recibo de donativo numerado. También podrás descargarlo en PDF desde la página de confirmación y, si tienes cuenta, desde tu espacio.",
+      "summary": {
+        "label": "Resumen de tu donativo",
+        "eyebrow": "Resumen",
+        "yearly": "Es decir, {amount} al año, y puedes detenerlo en cualquier momento.",
+        "frequency": "Frecuencia",
+        "frequencyValue": {
+          "once": "Puntual",
+          "monthly": "Mensual"
+        },
+        "project": "Destino",
+        "method": "Medio",
+        "methodValue": {
+          "card": "Tarjeta bancaria (EUR)",
+          "mobile_money": "Mobile Money (FCFA)"
+        },
+        "donor": "Donante",
+        "donorEmpty": "Por completar",
+        "checkFields": "Revisa los campos señalados antes de confirmar tu donativo."
+      },
+      "submit": {
+        "pending": "Cargando…",
+        "unavailable": "Pago disponible próximamente",
+        "invalid": "Confirmar mi donativo",
+        "donate": "{frequency, select, monthly {Donar {amount} al mes (≈ {equivalent})} other {Donar {amount} (≈ {equivalent})}}"
+      },
+      "reassure": {
+        "secureVia": "Pago seguro y cifrado a través de {partner}",
+        "secureMobile": "Pago seguro y cifrado a través de nuestro socio de Mobile Money",
+        "receipt": "Recibo enviado por correo electrónico y descargable en PDF",
+        "stop": "Puedes detener el donativo mensual en cualquier momento desde tu espacio o el enlace de tu recibo"
+      },
+      "sticky": {
+        "label": "Tu donativo",
+        "submit": "Donar"
+      }
+    },
+    "thanks": {
+      "checking": "Comprobando tu pago…",
+      "checkError": "No se ha podido comprobar el pago",
+      "invalid": {
+        "title": "Falta la referencia del donativo",
+        "text": "Este enlace no contiene una referencia de donativo válida. Si acabas de realizar un pago, consulta el correo de confirmación o tu espacio de donante."
+      },
+      "notFound": {
+        "title": "Donativo no encontrado",
+        "text": "Ningún donativo corresponde a esta referencia."
+      },
+      "donate": "Donar",
+      "account": "Mi espacio",
+      "live": {
+        "pendingPolling": "Pago pendiente de confirmación. Comprobación automática en curso.",
+        "pendingIdle": "Pago pendiente de confirmación.",
+        "pendingExhausted": "La confirmación todavía no ha llegado. Puedes volver a comprobarlo.",
+        "succeeded": "Pago confirmado. ¡Gracias por tu donativo!",
+        "review": "Nuestro equipo está verificando el pago.",
+        "disputed": "Pago reclamado.",
+        "refunded": "Donativo reembolsado.",
+        "canceled": "Pago cancelado.",
+        "failed": "Pago rechazado."
+      },
+      "details": {
+        "amount": "Importe",
+        "perMonth": "{amount} al mes",
+        "refunded": "Reembolsado",
+        "project": "Destino",
+        "general": "Donde más se necesite",
+        "method": "Medio",
+        "methodValue": "{method} · {frequency}",
+        "subscription": "Donativo mensual",
+        "date": "Fecha",
+        "receiptNumber": "N.º de recibo"
+      },
+      "share": {
+        "text": "Acabo de apoyar a HOPE International, que acompaña a las familias cameruneses hacia la autonomía. ¡Súmate!",
+        "copied": "Enlace copiado: ya solo falta compartirlo"
+      },
+      "monthly": {
+        "stopped": "Este donativo mensual está detenido: no se realizará ningún otro cargo.",
+        "fromAccount": "Puedes detener tu donativo mensual en cualquier momento desde tu espacio.",
+        "accountLink": "Gestionar mis donativos mensuales",
+        "stopHint": "Puedes detener tu donativo mensual en cualquier momento, sin cuenta, desde esta página o el enlace de tu recibo.",
+        "stopButton": "Detener mi donativo mensual",
+        "confirmTitle": "¿Detener este donativo mensual?",
+        "confirmText": "No se realizará ningún otro cargo de {amount}. Los donativos ya realizados siguen destinados al proyecto.",
+        "confirmButton": "Detener el donativo mensual",
+        "done": "Donativo mensual detenido",
+        "errorTitle": "No se ha podido detener el donativo"
+      },
+      "success": {
+        "eyebrow": "Donativo confirmado",
+        "title": "¡Gracias!",
+        "titleNamed": "¡Gracias, {name}!",
+        "lead": "Tu donativo de <strong>{amount}</strong>{frequency, select, monthly { al mes} other {}} ayudará directamente a familias a construir su futuro. Todo el equipo de HOPE International te da las gracias de corazón.",
+        "partialRefund": "Se ha realizado un reembolso parcial de {amount} sobre este donativo. El resto sigue destinado al proyecto.",
+        "download": "Descargar mi recibo (PDF)",
+        "receiptSent": "También te hemos enviado un recibo por correo electrónico.",
+        "next": {
+          "projectsTitle": "Descubre nuestros proyectos",
+          "projectsText": "Microcrédito, formación, cooperativas: sigue las acciones que haces posibles.",
+          "projectsButton": "Ver los proyectos",
+          "shareTitle": "Da a conocer HOPE",
+          "shareText": "Compartir puede inspirar a alguien cercano a unirse al movimiento.",
+          "shareButton": "Compartir",
+          "accountTitle": "Mis donativos",
+          "accountText": "Consulta el historial de tus donativos y todos tus recibos.",
+          "accountButton": "Mi espacio",
+          "registerTitle": "Crear una cuenta",
+          "registerText": "Para seguir tus próximos donativos y encontrar tus recibos con un clic.",
+          "registerButton": "Crear mi cuenta"
+        }
+      },
+      "pending": {
+        "eyebrow": "Confirmación en curso",
+        "title": "Tu pago se está validando",
+        "lead": "Según el medio de pago, sobre todo con Mobile Money, la confirmación puede tardar unos minutos. En cuanto la recibamos, te enviaremos tu recibo por correo electrónico.",
+        "pollingNote": "Comprobación automática en curso: esta página se actualizará en cuanto tu operador confirme el pago.",
+        "pollingPaused": "La confirmación todavía no ha llegado. Valida la solicitud en tu teléfono y vuelve a comprobarlo.",
+        "checkAgain": "Volver a comprobar",
+        "home": "Volver al inicio"
+      },
+      "outcomes": {
+        "retry": "Reintentar",
+        "contact": "Contactar con nosotros",
+        "home": "Volver al inicio",
+        "review": {
+          "eyebrow": "Verificación en curso",
+          "title": "Nuestro equipo está verificando tu pago",
+          "lead": "Revisamos este pago antes de confirmarlo. Te enviaremos el recibo por correo electrónico en cuanto se valide: mientras tanto, no tienes que hacer nada."
+        },
+        "disputed": {
+          "eyebrow": "Pago reclamado",
+          "title": "Este donativo es objeto de una reclamación",
+          "lead": "Tu banco nos ha notificado una reclamación sobre este pago: el recibo queda suspendido hasta que se resuelva. Si no has iniciado tú esta reclamación, contacta con nosotros."
+        },
+        "refunded": {
+          "eyebrow": "Donativo reembolsado",
+          "title": "Este donativo ha sido reembolsado",
+          "lead": "Te hemos devuelto el importe de este donativo y su recibo ha sido anulado. Si tienes cualquier pregunta, no dudes en contactarnos."
+        },
+        "canceled": {
+          "eyebrow": "Pago cancelado",
+          "title": "El pago no se ha completado",
+          "lead": "El pago se canceló antes de validarse: no se ha cobrado ningún importe."
+        },
+        "failed": {
+          "eyebrow": "Pago rechazado",
+          "title": "El pago no se ha completado",
+          "lead": "Tu banco o tu operador ha rechazado el pago: no se ha cobrado ningún importe. Puedes volver a intentarlo, si quieres con otro medio de pago."
+        }
+      }
+    }
+  }
+}

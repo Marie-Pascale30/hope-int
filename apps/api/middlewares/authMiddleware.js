@@ -1,10 +1,13 @@
 const jwt = require("jsonwebtoken");
 const userRepo = require("../repositories/userRepository");
+const { SESSION_COOKIE } = require("../config/session");
 
 // Routes encore accessibles tant que le mot de passe provisoire n'a pas ete change.
 const PASSWORD_CHANGE_ALLOWED = ["/api/auth/me", "/api/auth/change-password"];
 
+// Le site s'authentifie par cookie httpOnly ; l'en-tete Bearer reste accepte pour les scripts et outils.
 function readToken(req) {
+    if (req.cookies?.[SESSION_COOKIE]) return req.cookies[SESSION_COOKIE];
     const authHeader = req.headers.authorization || "";
     return authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
 }

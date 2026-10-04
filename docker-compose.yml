@@ -1,3 +1,4 @@
+# Identifiants lus dans le fichier .env a la racine (modele : .env.example).
 services:
   mysql:
     image: mysql:8
@@ -5,31 +6,35 @@ services:
     restart: unless-stopped
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Definir MYSQL_ROOT_PASSWORD dans .env}
       MYSQL_DATABASE: hope_platform
+      MYSQL_USER: ${MYSQL_USER:-hope}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Definir MYSQL_PASSWORD dans .env}
+    # Accessible uniquement depuis la machine hote (jamais depuis le reseau).
     ports:
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./infra/mysql/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
       timeout: 5s
       retries: 10
 
+  # Outil de developpement uniquement : demarre avec `docker compose --profile dev up`.
   phpmyadmin:
     image: phpmyadmin:5
     container_name: hope_phpmyadmin
     restart: unless-stopped
+    profiles: ["dev"]
     environment:
       PMA_HOST: mysql
-      PMA_USER: root
-      PMA_PASSWORD: ""
     depends_on:
       mysql:
         condition: service_healthy
     ports:
-      - "8080:80"
+      - "127.0.0.1:8080:80"
 
   backend:
     build:
@@ -40,8 +45,8 @@ services:
       - ./apps/api/.env
     environment:
       DB_HOST: mysql
-      DB_USER: root
-      DB_PASSWORD: ""
+      DB_USER: ${MYSQL_USER:-hope}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
       DB_NAME: hope_platform
       CORS_ORIGIN: http://localhost:3001
       FRONTEND_URL: http://localhost:3001
@@ -60,8 +65,11 @@ services:
       dockerfile: apps/web/Dockerfile
       args:
         NEXT_PUBLIC_API_BASE_URL: http://localhost:5000/api
-        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_51UHqjSDTdd6YH3TmAChhB3YGE5w3YMQBL1VA7n9lcrGVMq7HvxTfRN01Wx3RU1jYR2Q4vRJXZuBH0jJQ5keZTkJ800Z3A1HJZR
+        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
     restart: unless-stopped
+    environment:
+      # Rendu serveur des pages publiques : l'API est jointe par le reseau interne Docker.
+      API_INTERNAL_URL: http://backend:5000/api
     depends_on:
       - backend
     ports:

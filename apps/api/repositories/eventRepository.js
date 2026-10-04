@@ -10,6 +10,10 @@ const SELECT = `
   LEFT JOIN projects pr ON pr.id = e.project_id
   LEFT JOIN event_registrations r ON r.event_id = e.id`;
 
+// Un champ absent ou undefined n'est jamais ecrit (evite d'ecraser une valeur par NULL).
+const presentFields = (payload) =>
+    FIELDS.filter((field) => Object.prototype.hasOwnProperty.call(payload, field) && payload[field] !== undefined);
+
 function mapEvent(row) {
     if (!row) return row;
     const registered = Number(row.registered_count || 0);
@@ -43,7 +47,7 @@ exports.findById = async (id, { publishedOnly = false } = {}) => {
 };
 
 exports.create = async (payload, createdBy) => {
-    const present = FIELDS.filter((field) => Object.prototype.hasOwnProperty.call(payload, field));
+    const present = presentFields(payload);
     const [result] = await db.query(
         `INSERT INTO events (${[...present, "created_by"].join(", ")}) VALUES (${[...present, "created_by"].map(() => "?").join(", ")})`,
         [...present.map((field) => payload[field]), createdBy]
@@ -52,7 +56,7 @@ exports.create = async (payload, createdBy) => {
 };
 
 exports.update = async (id, payload) => {
-    const present = FIELDS.filter((field) => Object.prototype.hasOwnProperty.call(payload, field));
+    const present = presentFields(payload);
     if (!present.length) return;
     await db.query(
         `UPDATE events SET ${present.map((field) => `${field} = ?`).join(", ")} WHERE id = ?`,
@@ -112,12 +116,19 @@ exports.register = async (eventId, userId) => {
     }
 };
 
+// Desinscription impossible une fois l'evenement termine (la presence fait foi).
 exports.unregister = async (eventId, userId) => {
+    const [[event]] = await db.query(
+        "SELECT id, COALESCE(end_at, start_at) < NOW() AS ended FROM events WHERE id = ?",
+        [eventId]
+    );
+    if (!event) return { error: "not_found" };
+    if (Number(event.ended)) return { error: "ended" };
     const [result] = await db.query(
         "DELETE FROM event_registrations WHERE event_id = ? AND user_id = ?",
         [eventId, userId]
     );
-    return result.affectedRows;
+    return result.affectedRows ? { ok: true } : { error: "not_registered" };
 };
 
 exports.getRegistrations = async (eventId) => {

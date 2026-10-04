@@ -1,6 +1,7 @@
+import { adminPageMetadata } from "../_lib/metadata";
 import Members from "@/src/views/admin/Members";
 
-export const metadata = { title: "Membres" };
+export const generateMetadata = adminPageMetadata("members");
 
 export default function Page() {
   return <Members />;

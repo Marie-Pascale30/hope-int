@@ -1,21 +1,21 @@
 "use client";
 
-import "../../styles/admin-a.css";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import {
-  CalendarDays, ChevronRight, ClipboardCheck, Clock, FileText, HandCoins, HeartHandshake, Inbox, Newspaper,
+  CalendarDays, ChevronRight, ClipboardCheck, Clock, FileText, HandCoins, HeartHandshake, Inbox, MapPinned, Newspaper,
   ScrollText, Server, UserPlus, Users, Wallet,
 } from "lucide-react";
-import { ErrorState, LoadingState, PageHeader, StatCard } from "../../components/ui";
+import { useTranslations } from "next-intl";
+import { ErrorState, PageSkeleton, PageHeader, StatCard } from "../../components/ui";
 import RequireAuth from "../../components/RequireAuth";
 import { useAuth } from "../../context/AuthContext";
 import { useAsync } from "../../hooks/useAsync";
+import { useFormat } from "../../i18n/format";
 import { adminApi } from "../../services";
-import { getErrorMessage } from "../../services/api";
-import { formatMoney, formatMonth, formatNumber } from "../../utils/format";
 import { can, PERMISSIONS as P } from "../../utils/rbac";
-import { alignMonthly, lastMonths } from "./parts-a/months";
+import { useErrorMessage } from "../../i18n/errors";
+import { alignMonthly, lastMonths, monthLabel } from "./parts-a/months";
 
 const chartFallback = () => <div className="chart-box skeleton" aria-hidden="true" />;
 const DonationsChart = dynamic(() => import("./parts-a/OverviewCharts").then((mod) => mod.DonationsChart), {
@@ -27,50 +27,52 @@ const MembersChart = dynamic(() => import("./parts-a/OverviewCharts").then((mod)
   loading: chartFallback,
 });
 
+// label : cle des messages "admin.overview.shortcuts".
 const SHORTCUTS = [
-  { href: "/admin/membres", label: "Créer un compte", icon: UserPlus, permission: P.MANAGE_USER_ROLES },
-  { href: "/admin/actualites", label: "Publier une actualité", icon: Newspaper, permission: P.MANAGE_CONTENT },
-  { href: "/admin/evenements", label: "Programmer un événement", icon: CalendarDays, permission: P.MANAGE_ORGANIZATION },
-  { href: "/admin/dons", label: "Consulter les dons", icon: HandCoins, permission: P.VIEW_DONATIONS },
-  { href: "/admin/finance", label: "Exporter la comptabilité", icon: Wallet, permission: P.MANAGE_FINANCE },
-  { href: "/admin/rapport", label: "Rapport annuel", icon: FileText, permission: P.VIEW_STATS },
-  { href: "/admin/journal", label: "Journal d'activité", icon: ScrollText, permission: P.VIEW_LOGS },
-  { href: "/admin/systeme", label: "État du système", icon: Server, permission: P.MANAGE_IT },
+  { href: "/admin/membres", label: "createAccount", icon: UserPlus, permission: P.MANAGE_USER_ROLES },
+  { href: "/admin/actualites", label: "publishNews", icon: Newspaper, permission: P.MANAGE_CONTENT },
+  { href: "/admin/evenements", label: "scheduleEvent", icon: CalendarDays, permission: P.MANAGE_ORGANIZATION },
+  { href: "/admin/dons", label: "viewDonations", icon: HandCoins, permission: P.VIEW_DONATIONS },
+  { href: "/admin/finance", label: "exportAccounting", icon: Wallet, permission: P.MANAGE_FINANCE },
+  { href: "/admin/rapport", label: "annualReport", icon: FileText, permission: P.VIEW_STATS },
+  { href: "/admin/journal", label: "activityLog", icon: ScrollText, permission: P.VIEW_LOGS },
+  { href: "/admin/systeme", label: "systemStatus", icon: Server, permission: P.MANAGE_IT },
 ];
 
-function greeting(name) {
+function greeting(t, name) {
   const hour = new Date().getHours();
   const first = String(name || "").split(/\s+/)[0];
-  return `${hour >= 18 || hour < 5 ? "Bonsoir" : "Bonjour"}${first ? ` ${first}` : ""}`;
+  const evening = hour >= 18 || hour < 5;
+  if (!first) return t(evening ? "greetingEveningAnonymous" : "greetingDayAnonymous");
+  return t(evening ? "greetingEvening" : "greetingDay", { name: first });
 }
 
-const plural = (count, singular, pluralForm) => `${formatNumber(count)} ${count > 1 ? pluralForm : singular}`;
-
 function TodoList({ stats, user }) {
+  const t = useTranslations("admin.overview.todo");
   const items = [
     {
       permission: P.MANAGE_APPLICATIONS,
       count: stats.pendingApplications,
       href: "/admin/candidatures",
       icon: ClipboardCheck,
-      label: plural(stats.pendingApplications, "candidature à traiter", "candidatures à traiter"),
-      hint: "Nouvelles ou en cours d'étude",
+      label: t("applications", { count: stats.pendingApplications }),
+      hint: t("applicationsHint"),
     },
     {
       permission: P.VIEW_MESSAGES,
       count: stats.unreadMessages,
       href: "/admin/messages",
       icon: Inbox,
-      label: plural(stats.unreadMessages, "message non lu", "messages non lus"),
-      hint: "Reçus via le formulaire de contact",
+      label: t("messages", { count: stats.unreadMessages }),
+      hint: t("messagesHint"),
     },
     {
       permission: P.VIEW_DONATIONS,
       count: stats.pendingPayments,
       href: "/admin/dons",
       icon: Clock,
-      label: plural(stats.pendingPayments, "paiement en attente", "paiements en attente"),
-      hint: "À vérifier ou rapprocher avec le prestataire",
+      label: t("payments", { count: stats.pendingPayments }),
+      hint: t("paymentsHint"),
     },
   ].filter((item) => can(user, item.permission));
 
@@ -81,12 +83,12 @@ function TodoList({ stats, user }) {
     <section className="panel" aria-labelledby="adm-todo-title">
       <div className="panel__head">
         <div>
-          <h2 className="panel__title" id="adm-todo-title">À traiter</h2>
-          <p className="panel__desc">Les demandes qui attendent une réponse de l&apos;équipe.</p>
+          <h2 className="panel__title" id="adm-todo-title">{t("title")}</h2>
+          <p className="panel__desc">{t("description")}</p>
         </div>
       </div>
       {pending.length === 0 ? (
-        <p className="adm-allclear">Tout est à jour : aucune demande en attente. Merci pour votre réactivité !</p>
+        <p className="adm-allclear">{t("allClear")}</p>
       ) : (
         <ul className="adm-todo">
           {pending.map((item) => {
@@ -111,14 +113,15 @@ function TodoList({ stats, user }) {
 }
 
 function Shortcuts({ user }) {
+  const t = useTranslations("admin.overview.shortcuts");
   const items = SHORTCUTS.filter((item) => can(user, item.permission));
   if (!items.length) return null;
   return (
     <section className="panel" aria-labelledby="adm-shortcuts-title">
       <div className="panel__head">
         <div>
-          <h2 className="panel__title" id="adm-shortcuts-title">Raccourcis</h2>
-          <p className="panel__desc">Les actions courantes accessibles avec vos droits.</p>
+          <h2 className="panel__title" id="adm-shortcuts-title">{t("title")}</h2>
+          <p className="panel__desc">{t("description")}</p>
         </div>
       </div>
       <div className="adm-shortcuts">
@@ -127,7 +130,7 @@ function Shortcuts({ user }) {
           return (
             <Link key={item.href + item.label} href={item.href} className="adm-shortcut">
               <Icon size={18} aria-hidden="true" />
-              <span>{item.label}</span>
+              <span>{t(item.label)}</span>
             </Link>
           );
         })}
@@ -137,72 +140,92 @@ function Shortcuts({ user }) {
 }
 
 function Dashboard() {
+  const t = useTranslations("admin.overview");
+  const f = useFormat();
+  const errorText = useErrorMessage();
   const { user } = useAuth();
   const { data: stats, loading, error, reload } = useAsync(() => adminApi.stats(), []);
 
   const header = (
     <PageHeader
-      eyebrow="Vue d'ensemble"
-      title={greeting(user?.name)}
-      description="Voici où en est HOPE International aujourd'hui : dons, communauté et demandes à traiter."
+      eyebrow={t("eyebrow")}
+      title={greeting(t, user?.name)}
+      description={t("description")}
     />
   );
 
-  if (loading) return <>{header}<LoadingState label="Chargement des indicateurs…" /></>;
-  if (error) return <>{header}<ErrorState message={getErrorMessage(error)} onRetry={reload} /></>;
+  if (loading) return <>{header}<PageSkeleton variant="dashboard" label={t("loading")} /></>;
+  if (error) return <>{header}<ErrorState message={errorText(error)} onRetry={reload} /></>;
 
   const months = lastMonths();
-  const labels = months.map(formatMonth);
+  const labels = months.map((month) => monthLabel(f, month));
   const donations = alignMonthly(stats.monthlyDonations, "amount", months);
   const members = alignMonthly(stats.monthlyGrowth, "users", months);
   const donationsTotal = donations.reduce((sum, value) => sum + value, 0);
   const membersTotal = members.reduce((sum, value) => sum + value, 0);
-  const lastLabel = formatMonth(months[months.length - 1]);
+  const lastLabel = monthLabel(f, months[months.length - 1]);
 
   return (
     <>
       {header}
 
+      {/* Portee regionale (stats.region non nul) : indicateurs filtres sur la region de la fiche. */}
+      {stats.region && (
+        <div className="adm-scope" role="note">
+          <MapPinned size={16} aria-hidden="true" />
+          <span>
+            <strong>{t("scopeRegion", { region: stats.region })}</strong>
+            {" — "}
+            {t("scopeRegionHint")}
+          </span>
+        </div>
+      )}
+
       <div className="admin-grid-stats">
         <StatCard
-          label="Dons collectés"
-          value={formatMoney(stats.totalDonations)}
-          hint={`${formatMoney(stats.donationsLast30)} ces 30 derniers jours`}
+          label={t("stats.donations")}
+          value={f.money(stats.totalDonations)}
+          hint={t("stats.donationsHint", { amount: f.money(stats.donationsLast30) })}
           icon={HandCoins}
           tone="accent"
         />
         <StatCard
-          label="Donateurs"
-          value={formatNumber(stats.donorsCount)}
-          hint={plural(stats.donationsCount, "don confirmé", "dons confirmés")}
+          label={t("stats.donors")}
+          value={f.number(stats.donorsCount)}
+          hint={t("stats.donorsHint", { count: stats.donationsCount })}
           icon={HeartHandshake}
         />
         <StatCard
-          label="Membres actifs"
-          value={formatNumber(stats.activeMembers)}
-          hint={`+${formatNumber(stats.newMembers30)} en 30 jours`}
+          label={t("stats.activeMembers")}
+          value={f.number(stats.activeMembers)}
+          hint={t("stats.activeMembersHint", { count: stats.newMembers30 })}
           icon={Users}
           tone="info"
         />
         <StatCard
-          label="Candidatures à traiter"
-          value={formatNumber(stats.pendingApplications)}
-          hint="Nouvelles ou en étude"
+          label={t("stats.pendingApplications")}
+          value={f.number(stats.pendingApplications)}
+          hint={t("stats.pendingApplicationsHint")}
           icon={ClipboardCheck}
           tone={stats.pendingApplications > 0 ? "warning" : undefined}
         />
         <StatCard
-          label="Messages non lus"
-          value={formatNumber(stats.unreadMessages)}
-          hint="Formulaire de contact"
+          label={t("stats.unreadMessages")}
+          value={f.number(stats.unreadMessages)}
+          hint={t("stats.unreadMessagesHint")}
           icon={Inbox}
           tone={stats.unreadMessages > 0 ? "warning" : undefined}
         />
-        <StatCard label="Événements à venir" value={formatNumber(stats.upcomingEvents)} hint="Publiés sur le site" icon={CalendarDays} />
         <StatCard
-          label="Paiements en attente"
-          value={formatNumber(stats.pendingPayments)}
-          hint="Non confirmés par le prestataire"
+          label={t("stats.upcomingEvents")}
+          value={f.number(stats.upcomingEvents)}
+          hint={t("stats.upcomingEventsHint")}
+          icon={CalendarDays}
+        />
+        <StatCard
+          label={t("stats.pendingPayments")}
+          value={f.number(stats.pendingPayments)}
+          hint={t("stats.pendingPaymentsHint")}
           icon={Clock}
           tone={stats.pendingPayments > 0 ? "warning" : undefined}
         />
@@ -212,13 +235,13 @@ function Dashboard() {
         <section className="panel" aria-labelledby="adm-chart-dons">
           <div className="panel__head">
             <div>
-              <h2 className="panel__title" id="adm-chart-dons">Dons mensuels (12 mois, EUR)</h2>
-              <p className="panel__desc">Dons confirmés, toutes devises converties en euros.</p>
+              <h2 className="panel__title" id="adm-chart-dons">{t("donationsChart.title")}</h2>
+              <p className="panel__desc">{t("donationsChart.description")}</p>
             </div>
           </div>
           <div className="adm-figures">
-            <div><span>Total sur 12 mois</span><strong>{formatMoney(donationsTotal)}</strong></div>
-            <div><span>{lastLabel}</span><strong>{formatMoney(donations[donations.length - 1])}</strong></div>
+            <div><span>{t("total12")}</span><strong>{f.money(donationsTotal)}</strong></div>
+            <div><span>{lastLabel}</span><strong>{f.money(donations[donations.length - 1])}</strong></div>
           </div>
           <DonationsChart labels={labels} values={donations} />
         </section>
@@ -226,13 +249,13 @@ function Dashboard() {
         <section className="panel" aria-labelledby="adm-chart-membres">
           <div className="panel__head">
             <div>
-              <h2 className="panel__title" id="adm-chart-membres">Nouveaux membres par mois</h2>
-              <p className="panel__desc">Comptes créés sur la plateforme (inscriptions et candidatures acceptées).</p>
+              <h2 className="panel__title" id="adm-chart-membres">{t("membersChart.title")}</h2>
+              <p className="panel__desc">{t("membersChart.description")}</p>
             </div>
           </div>
           <div className="adm-figures">
-            <div><span>Total sur 12 mois</span><strong>{formatNumber(membersTotal)}</strong></div>
-            <div><span>{lastLabel}</span><strong>{formatNumber(members[members.length - 1])}</strong></div>
+            <div><span>{t("total12")}</span><strong>{f.number(membersTotal)}</strong></div>
+            <div><span>{lastLabel}</span><strong>{f.number(members[members.length - 1])}</strong></div>
           </div>
           <MembersChart labels={labels} values={members} />
         </section>

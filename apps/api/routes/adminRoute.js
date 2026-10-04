@@ -7,8 +7,9 @@ const validate = require("../middlewares/validateRequest");
 const upload = require("../middlewares/uploadMiddleware");
 const { ORG_ROLES, PERMISSIONS: P } = require("@hope/shared/rbac");
 const {
-    REGIONS, MESSAGE_STATUSES, USER_STATUSES, PAYMENT_STATUSES, PROJECT_STATUSES,
+    REGIONS, MESSAGE_STATUSES, USER_STATUSES, PAYMENT_STATUSES, PROJECT_STATUSES, APPLICATION_STATUSES,
 } = require("@hope/shared/constants");
+const { MAX_PAGE_SIZE } = require("../utils/pagination");
 const { CONTENT_TYPES } = require("../repositories/contentRepository");
 
 const router = express.Router();
@@ -19,6 +20,12 @@ const optionalText = (field, max) => body(field).optional({ values: "null" }).is
 const rolesPayload = [
     body("roles").isArray({ min: 1, max: ORG_ROLES.length }).withMessage("Au moins un rôle est requis"),
     body("roles.*").isIn(ORG_ROLES),
+];
+
+// Pagination optionnelle : sans "page", la reponse reste un tableau complet.
+const paginationQuery = [
+    query("page").optional().isInt({ min: 1, max: 100000 }),
+    query("pageSize").optional().isInt({ min: 1, max: MAX_PAGE_SIZE }),
 ];
 
 const donationFilters = [
@@ -90,7 +97,19 @@ router.get(
 );
 
 // Membres
-router.get("/users", can(P.VIEW_USERS), [query("region").optional().isIn(REGIONS), validate], adminController.getUsers);
+router.get(
+    "/users",
+    can(P.VIEW_USERS),
+    [
+        query("region").optional().isIn(REGIONS),
+        query("status").optional().isIn(USER_STATUSES),
+        query("role").optional().isIn(ORG_ROLES),
+        query("q").optional().isString().trim().isLength({ max: 100 }),
+        ...paginationQuery,
+        validate,
+    ],
+    adminController.getUsers
+);
 router.get("/staff", adminController.getStaff);
 router.post(
     "/users",
@@ -123,7 +142,12 @@ router.patch(
 router.delete("/users/:id", can(P.DELETE_USERS), [idParam, validate], adminController.deleteUser);
 
 // Messages
-router.get("/messages", can(P.VIEW_MESSAGES), [query("status").optional().isIn(MESSAGE_STATUSES), validate], adminController.getMessages);
+router.get(
+    "/messages",
+    can(P.VIEW_MESSAGES),
+    [query("status").optional().isIn(MESSAGE_STATUSES), ...paginationQuery, validate],
+    adminController.getMessages
+);
 router.patch(
     "/messages/:id",
     can(P.VIEW_MESSAGES),
@@ -139,7 +163,12 @@ router.patch(
 router.delete("/messages/:id", can(P.VIEW_MESSAGES), [idParam, validate], adminController.deleteMessage);
 
 // Candidatures
-router.get("/applications", can(P.MANAGE_APPLICATIONS), adminController.getApplications);
+router.get(
+    "/applications",
+    can(P.MANAGE_APPLICATIONS),
+    [query("status").optional().isIn(APPLICATION_STATUSES), ...paginationQuery, validate],
+    adminController.getApplications
+);
 router.post(
     "/applications/:id/review",
     can(P.MANAGE_APPLICATIONS),
@@ -155,7 +184,14 @@ router.post(
 router.post(
     "/applications/:id/accept",
     can(P.MANAGE_APPLICATIONS, P.MANAGE_USER_ROLES),
-    [idParam, body("roles").optional().isArray({ max: ORG_ROLES.length }), body("roles.*").isIn(ORG_ROLES), optionalText("reviewNote", 2000), validate],
+    // Roles obligatoires : ils ne sont jamais deduits de la candidature (poles d'interet indicatifs).
+    [
+        idParam,
+        ...rolesPayload,
+        body("linkExisting").optional().isBoolean({ strict: true }),
+        optionalText("reviewNote", 2000),
+        validate,
+    ],
     adminController.acceptApplication
 );
 
@@ -169,6 +205,13 @@ router.get(
 );
 router.get("/finance/export", can(P.MANAGE_FINANCE), [...donationFilters, validate], adminController.exportDonations);
 router.post("/finance/reconcile", can(P.MANAGE_FINANCE), adminController.reconcile);
+router.post(
+    "/donations/:id/review",
+    can(P.MANAGE_FINANCE),
+    [idParam, body("decision").isIn(["approve", "reject"]), optionalText("note", 500), validate],
+    adminController.resolveDonationReview
+);
+router.post("/donations/:id/resend-receipt", can(P.MANAGE_FINANCE), [idParam, validate], adminController.resendDonationReceipt);
 
 // Contenus (projets / campagnes, actualites, temoignages)
 router.get("/content/:type", can(P.MANAGE_CONTENT), [param("type").isIn(CONTENT_TYPES), validate], adminController.getContent);

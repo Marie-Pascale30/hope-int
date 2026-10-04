@@ -1,0 +1,157 @@
+{
+  "common": {
+    "siteName": "HOPE International",
+    "loading": "Cargando…"
+  },
+  "nav": {
+    "home": "HOPE International — inicio",
+    "main": "Navegación principal",
+    "projects": "Proyectos",
+    "news": "Noticias",
+    "events": "Agenda",
+    "join": "Únete",
+    "contact": "Contacto",
+    "donate": "Donar",
+    "login": "Iniciar sesión",
+    "account": "Mi espacio",
+    "admin": "Administración",
+    "logout": "Cerrar sesión",
+    "menu": "Menú",
+    "menuOpen": "Abrir el menú",
+    "menuClose": "Cerrar el menú",
+    "donateShort": "Donar",
+    "skip": "Ir al contenido"
+  },
+  "theme": {
+    "label": "Tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
+  },
+  "footer": {
+    "tagline": "Microfinanzas solidarias, formación y ayuda mutua para las familias cameruneses.",
+    "explore": "Descubrir",
+    "act": "Actuar",
+    "contact": "Contacto",
+    "rights": "Todos los derechos reservados.",
+    "language": "Idioma"
+  },
+  "language": {
+    "label": "Idioma",
+    "current": "Idioma: {language}. Cambiar de idioma"
+  },
+  "errors": {
+    "loadTitle": "No se pudo cargar",
+    "loadText": "No hemos podido cargar esta información. Inténtalo de nuevo en unos instantes.",
+    "retry": "Reintentar",
+    "generic": "Se ha producido un error. Inténtalo de nuevo en unos instantes.",
+    "network": "No se puede conectar con el servidor. Comprueba tu conexión.",
+    "timeout": "El servidor tarda demasiado en responder.",
+    "invalidField": "Campo no válido: {field}.",
+    "close": "Cerrar",
+    "pageTitle": "No se ha podido mostrar esta página",
+    "pageText": "Un problema técnico impide mostrar esta página. Inténtalo de nuevo o vuelve al inicio.",
+    "backHome": "Volver al inicio",
+    "notFoundTitle": "Página no encontrada",
+    "notFoundText": "Esta dirección no corresponde a ninguna página.",
+    "backAdmin": "Volver a la administración"
+  },
+  "labels": {
+    "role": {
+      "admin": "Administrador del sistema",
+      "directrice_generale": "Directora general",
+      "conseiller": "Asesor estratégico",
+      "responsable_rh": "Responsable de RR. HH.",
+      "responsable_finance": "Responsable financiero",
+      "organisatrice": "Organizadora",
+      "responsable_it": "Responsable de TI",
+      "directrice_regionale": "Directora regional",
+      "secretaire_generale": "Secretaria general",
+      "membre": "Miembro"
+    },
+    "projectStatus": {
+      "planifie": "Próximamente",
+      "en_cours": "En curso",
+      "termine": "Finalizado"
+    },
+    "messageStatus": {
+      "nouveau": "Nuevo",
+      "lu": "Leído",
+      "traite": "Tramitado",
+      "archive": "Archivado"
+    },
+    "applicationStatus": {
+      "nouvelle": "Nueva",
+      "en_etude": "En estudio",
+      "acceptee": "Aceptada",
+      "refusee": "Rechazada"
+    },
+    "paymentStatus": {
+      "pending": "Pendiente",
+      "succeeded": "Completado",
+      "failed": "Fallido",
+      "canceled": "Cancelado",
+      "refunded": "Reembolsado",
+      "disputed": "En disputa",
+      "review": "En verificación"
+    },
+    "userStatus": {
+      "active": "Activo",
+      "inactive": "Desactivado"
+    },
+    "subscriptionStatus": {
+      "active": "Activa",
+      "trialing": "Activa",
+      "past_due": "Pago atrasado",
+      "incomplete": "Pendiente",
+      "canceled": "Detenida",
+      "unpaid": "Impagada",
+      "unknown": "Estado no disponible"
+    },
+    "paymentMethod": {
+      "card": "Tarjeta bancaria",
+      "mobile_money": "Mobile Money"
+    },
+    "frequency": {
+      "once": "Puntual",
+      "monthly": "Mensual"
+    }
+  },
+  "ui": {
+    "loading": "Cargando…",
+    "loadingShort": "Cargando",
+    "loadingStats": "Cargando indicadores…",
+    "loadingTable": "Cargando la tabla…",
+    "empty": "Nada que mostrar",
+    "errorTitle": "No se ha podido cargar",
+    "retry": "Reintentar",
+    "progress": "Progreso",
+    "tabs": "Pestañas",
+    "close": "Cerrar",
+    "search": "Buscar…",
+    "noResults": "Ningún resultado",
+    "pagination": "Paginación de la tabla",
+    "range": "{from}–{to} de {total}",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "auth": {
+      "checking": "Comprobando tu sesión…",
+      "deniedTitle": "Acceso restringido",
+      "deniedText": "Tu rol no da acceso a esta página. Si crees que se trata de un error, contacta con un administrador.",
+      "backHome": "Volver al inicio"
+    },
+    "alerts": {
+      "ok": "Aceptar",
+      "close": "Cerrar",
+      "understood": "Entendido",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar"
+    },
+    "logout": {
+      "title": "¿Cerrar sesión?",
+      "text": "Vas a cerrar la sesión de tu cuenta de HOPE International. Podrás volver a iniciarla en cualquier momento.",
+      "confirm": "Cerrar sesión",
+      "done": "Has cerrado sesión. ¡Hasta pronto!"
+    }
+  }
+}

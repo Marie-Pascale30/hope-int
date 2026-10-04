@@ -42,6 +42,21 @@ router.post(
     paymentController.confirmReceipt
 );
 router.get("/receipts/:token/pdf", [tokenParam, validate], paymentController.downloadReceipt);
+// Arret d'un don mensuel depuis le lien du recu (sans compte) ; CSRF : protection globale.
+router.post(
+    "/receipts/:token/cancel-subscription",
+    donationLimiter,
+    [tokenParam, validate],
+    paymentController.cancelSubscriptionByReceipt
+);
+
+// Recapitulatif annuel des dons confirmes du compte connecte.
+router.get(
+    "/receipts/annual/:year/pdf",
+    auth,
+    [param("year").isInt({ min: 2000, max: 2100 }), validate],
+    paymentController.downloadAnnualReceipt
+);
 
 router.get("/mine", auth, paymentController.getMine);
 router.delete(

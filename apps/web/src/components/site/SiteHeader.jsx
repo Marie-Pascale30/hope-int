@@ -1,21 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Heart, LayoutDashboard, LogOut, Menu, UserRound, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Logo from "./Logo";
+import LocaleSwitcher from "./LocaleSwitcher";
 import { Button, Avatar } from "../ui";
 import { useAuth } from "../../context/AuthContext";
-import { useI18n } from "../../i18n";
+import { Link, useLocalePath, usePathname } from "../../i18n/navigation";
 import { isStaff } from "../../utils/rbac";
 
 const NAV = [
-  { href: "/projets", key: "nav.projects" },
-  { href: "/actualites", key: "nav.news" },
-  { href: "/evenements", key: "nav.events" },
-  { href: "/rejoindre", key: "nav.join" },
-  { href: "/contact", key: "nav.contact" },
+  { href: "/projets", key: "projects" },
+  { href: "/actualites", key: "news" },
+  { href: "/evenements", key: "events" },
+  { href: "/rejoindre", key: "join" },
+  { href: "/contact", key: "contact" },
 ];
 
 function UserMenu({ user, onLogout, t }) {
@@ -53,15 +53,16 @@ function UserMenu({ user, onLogout, t }) {
             <span>{user.email}</span>
           </div>
           <Link href="/espace" role="menuitem" onClick={() => setOpen(false)}>
-            <UserRound size={17} aria-hidden="true" /> {t("nav.account")}
+            <UserRound size={17} aria-hidden="true" /> {t("account")}
           </Link>
           {isStaff(user) && (
-            <Link href="/admin" role="menuitem" onClick={() => setOpen(false)}>
-              <LayoutDashboard size={17} aria-hidden="true" /> {t("nav.admin")}
-            </Link>
+            // Back-office sans prefixe de langue (langue lue dans le cookie) : lien hors next-intl.
+            <a href="/admin" role="menuitem" onClick={() => setOpen(false)}>
+              <LayoutDashboard size={17} aria-hidden="true" /> {t("admin")}
+            </a>
           )}
           <button type="button" role="menuitem" onClick={onLogout}>
-            <LogOut size={17} aria-hidden="true" /> {t("nav.logout")}
+            <LogOut size={17} aria-hidden="true" /> {t("logout")}
           </button>
         </div>
       )}
@@ -72,13 +73,40 @@ function UserMenu({ user, onLogout, t }) {
 export default function SiteHeader() {
   const pathname = usePathname();
   const { user, status, logout } = useAuth();
-  const { t } = useI18n();
+  const t = useTranslations("nav");
+  const lp = useLocalePath();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const burgerRef = useRef(null);
+  const navRef = useRef(null);
 
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
+
+  const closeMenu = useCallback(({ restoreFocus = true } = {}) => {
+    setMobileOpen(false);
+    if (restoreFocus) burgerRef.current?.focus();
+  }, []);
+
+  // Menu mobile ouvert : Echap ferme, la page ne defile plus, le focus va au premier lien.
+  useEffect(() => {
+    if (!mobileOpen) return undefined;
+    const root = document.documentElement;
+    root.classList.add("has-mobile-nav");
+    navRef.current?.querySelector("a")?.focus();
+    const onKey = (event) => event.key === "Escape" && closeMenu();
+    // Retour en affichage bureau : le menu se referme.
+    const media = window.matchMedia("(min-width: 961px)");
+    const onMedia = () => media.matches && closeMenu({ restoreFocus: false });
+    document.addEventListener("keydown", onKey);
+    media.addEventListener("change", onMedia);
+    return () => {
+      root.classList.remove("has-mobile-nav");
+      document.removeEventListener("keydown", onKey);
+      media.removeEventListener("change", onMedia);
+    };
+  }, [mobileOpen, closeMenu]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -92,9 +120,9 @@ export default function SiteHeader() {
   return (
     <header className={`site-header${scrolled ? " is-scrolled" : ""}`}>
       <div className="container site-header__inner">
-        <Logo />
+        <Logo href={lp("/")} label={t("home")} />
 
-        <nav className={`site-nav${mobileOpen ? " is-open" : ""}`} aria-label="Navigation principale">
+        <nav id="site-nav" ref={navRef} className={`site-nav${mobileOpen ? " is-open" : ""}`} aria-label={t("main")}>
           <ul>
             {NAV.map((item) => (
               <li key={item.href}>
@@ -107,33 +135,38 @@ export default function SiteHeader() {
           <div className="site-nav__mobile-actions">
             {status === "authenticated" ? (
               <>
-                <Button href="/espace" variant="secondary" block icon={UserRound}>{t("nav.account")}</Button>
-                {isStaff(user) && <Button href="/admin" variant="secondary" block icon={LayoutDashboard}>{t("nav.admin")}</Button>}
-                <Button variant="ghost" block icon={LogOut} onClick={logout}>{t("nav.logout")}</Button>
+                <Button href={lp("/espace")} variant="secondary" block icon={UserRound}>{t("account")}</Button>
+                {isStaff(user) && <Button href="/admin" variant="secondary" block icon={LayoutDashboard}>{t("admin")}</Button>}
+                <Button variant="ghost" block icon={LogOut} onClick={logout}>{t("logout")}</Button>
               </>
             ) : (
-              <Button href="/connexion" variant="secondary" block>{t("nav.login")}</Button>
+              <Button href={lp("/connexion")} variant="secondary" block>{t("login")}</Button>
             )}
+            <LocaleSwitcher className="site-nav__locale" />
           </div>
         </nav>
 
         <div className="site-header__actions">
-          <Button href="/don" variant="accent" size="sm" icon={Heart} className="site-header__donate">
-            {t("nav.donate")}
+          <LocaleSwitcher variant="menu" className="site-header__locale" />
+          <Button href={lp("/don")} variant="accent" size="sm" icon={Heart} className="site-header__donate">
+            <span className="site-header__donate-long">{t("donate")}</span>
+            <span className="site-header__donate-short" aria-hidden="true">{t("donateShort")}</span>
           </Button>
           <div className="site-header__account">
             {status === "authenticated" && user ? (
               <UserMenu user={user} onLogout={logout} t={t} />
             ) : status === "anonymous" ? (
-              <Link href="/connexion" className="site-header__login">{t("nav.login")}</Link>
+              <Link href="/connexion" className="site-header__login">{t("login")}</Link>
             ) : null}
           </div>
           <button
             type="button"
+            ref={burgerRef}
             className="site-header__burger"
-            aria-label={t("nav.menu")}
+            aria-label={mobileOpen ? t("menuClose") : t("menuOpen")}
             aria-expanded={mobileOpen}
-            onClick={() => setMobileOpen((value) => !value)}
+            aria-controls="site-nav"
+            onClick={() => (mobileOpen ? closeMenu() : setMobileOpen(true))}
           >
             {mobileOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
           </button>

@@ -2,26 +2,33 @@
 
 import "../../styles/account.css";
 import { useState } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, KeyRound, LinkIcon } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { Alert, Button } from "../../components/ui";
 import { authApi } from "../../services";
-import { getErrorMessage } from "../../services/api";
+import { localizePath } from "../../i18n/config";
+import { Link } from "../../i18n/navigation";
 import AuthCard from "./components/AuthCard";
 import { PasswordInput, PasswordStrength } from "./components/PasswordFields";
 import { isStrongPassword } from "./components/authHelpers";
+import { useErrorMessage } from "../../i18n/errors";
 
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{32,128}$/;
 
+// Code renvoye par l'API pour un jeton invalide, expire ou deja utilise.
+const LINK_INVALID_CODE = "RESET_LINK_INVALID";
+
 function InvalidLink({ message }) {
+  const t = useTranslations("account.reset");
+  const locale = useLocale();
   return (
-    <AuthCard title="Lien invalide ou expiré">
+    <AuthCard title={t("invalidTitle")}>
       <div className="acc-auth__done">
         <span className="acc-auth__done-icon acc-auth__done-icon--warning"><LinkIcon size={26} aria-hidden="true" /></span>
-        <p>{message || "Ce lien de réinitialisation est incomplet, a déjà été utilisé ou a expiré (il est valable 1 heure)."}</p>
-        <Button href="/mot-de-passe-oublie" block>Faire une nouvelle demande</Button>
-        <Link href="/connexion" className="acc-auth__secondary-link">Retour à la connexion</Link>
+        <p>{message || t("invalidText")}</p>
+        <Button href={localizePath(locale, "/mot-de-passe-oublie")} block>{t("newRequest")}</Button>
+        <Link href="/connexion" className="acc-auth__secondary-link">{t("backToLogin")}</Link>
       </div>
     </AuthCard>
   );
@@ -29,6 +36,10 @@ function InvalidLink({ message }) {
 
 export default function ResetPasswordView() {
   const token = useSearchParams().get("token") || "";
+  const t = useTranslations("account.reset");
+  const tf = useTranslations("account.fields");
+  const locale = useLocale();
+  const errorText = useErrorMessage();
   const [form, setForm] = useState({ password: "", confirm: "" });
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
@@ -41,11 +52,11 @@ export default function ResetPasswordView() {
 
   if (done) {
     return (
-      <AuthCard title="Mot de passe réinitialisé">
+      <AuthCard title={t("doneTitle")}>
         <div className="acc-auth__done">
           <span className="acc-auth__done-icon"><CheckCircle2 size={28} aria-hidden="true" /></span>
-          <p>Votre nouveau mot de passe est enregistré. Vous pouvez dès maintenant vous connecter avec celui-ci.</p>
-          <Button href="/connexion" size="lg" block>Se connecter</Button>
+          <p>{t("doneText")}</p>
+          <Button href={localizePath(locale, "/connexion")} size="lg" block>{t("login")}</Button>
         </div>
       </AuthCard>
     );
@@ -64,9 +75,8 @@ export default function ResetPasswordView() {
       await authApi.resetPassword({ token, password: form.password });
       setDone(true);
     } catch (err) {
-      const message = getErrorMessage(err);
-      // 400 sur le jeton : lien expire ou deja utilise.
-      if (err?.response?.status === 400 && /lien/i.test(message)) setInvalid(message);
+      const message = errorText(err);
+      if (err?.response?.data?.code === LINK_INVALID_CODE) setInvalid(message);
       else setError(message);
     } finally {
       setLoading(false);
@@ -75,31 +85,31 @@ export default function ResetPasswordView() {
 
   return (
     <AuthCard
-      title="Choisir un nouveau mot de passe"
-      description="Pour sécuriser votre compte, choisissez un mot de passe que vous n’utilisez nulle part ailleurs."
-      footer={<Link href="/connexion">Retour à la connexion</Link>}
+      title={t("title")}
+      description={t("description")}
+      footer={<Link href="/connexion">{t("backToLogin")}</Link>}
     >
       <form className="stack" onSubmit={submit} noValidate>
         {error && <Alert tone="danger">{error}</Alert>}
         <PasswordInput
-          label="Nouveau mot de passe"
+          label={tf("newPassword")}
           autoComplete="new-password"
           required
           value={form.password}
           onChange={set("password")}
-          error={submitted && !isStrongPassword(form.password) ? "Le mot de passe ne respecte pas encore les règles ci-dessous" : undefined}
+          error={submitted && !isStrongPassword(form.password) ? tf("passwordRules") : undefined}
         />
         <PasswordStrength password={form.password} />
         <PasswordInput
-          label="Confirmez le mot de passe"
+          label={tf("confirmPassword")}
           autoComplete="new-password"
           required
           value={form.confirm}
           onChange={set("confirm")}
-          error={mismatch || (submitted && !form.confirm) ? "Les mots de passe ne correspondent pas" : undefined}
+          error={mismatch || (submitted && !form.confirm) ? tf("passwordMismatch") : undefined}
         />
         <Button type="submit" size="lg" block icon={KeyRound} loading={loading}>
-          Enregistrer mon mot de passe
+          {t("submit")}
         </Button>
       </form>
     </AuthCard>

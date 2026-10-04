@@ -154,6 +154,13 @@ function hasGlobalScope(roles) {
     return normalizeRoles(roles).some((role) => GLOBAL_SCOPE_ROLES.includes(role));
 }
 
+// Restreint a sa region : dispose du tableau de bord regional sans portee globale
+// (concretement la directrice regionale, meme cumulee avec d'autres roles non globaux).
+// Ses droits (contenus, statistiques...) ne s'exercent alors que sur sa region.
+function isRegionScoped(roles) {
+    return hasPermission(roles, PERMISSIONS.MANAGE_REGIONAL) && !hasGlobalScope(roles);
+}
+
 // Un acteur ne peut attribuer (ou retirer) que des roles dont toutes les permissions
 // sont deja les siennes ; seul un admin peut attribuer le role admin.
 function canGrantRoles(actorRoles, roles) {
@@ -187,6 +194,7 @@ module.exports = {
     getPermissionsForRoles,
     hasPermission,
     hasGlobalScope,
+    isRegionScoped,
     canGrantRoles,
     getRoleMatrix,
 };

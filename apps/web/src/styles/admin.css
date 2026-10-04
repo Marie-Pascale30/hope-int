@@ -1,5 +1,7 @@
 /* =========================================================
-   Administration : cadre (barre latérale, contenu)
+   Administration : cadre, blocs communs et utilitaires
+   Charge uniquement par app/admin/layout.jsx. Prefixes : admin- (cadre),
+   adm- (blocs et pages), panel / cell-main / chart-box (blocs communs).
    ========================================================= */
 
 .admin-layout {
@@ -13,8 +15,8 @@
   position: sticky;
   top: 0;
   height: 100dvh;
-  background: #14261f;
-  color: rgba(255, 255, 255, 0.78);
+  background: var(--surface-dark);
+  color: var(--on-dark-2);
   overflow-y: auto;
   z-index: 60;
 }
@@ -31,18 +33,18 @@
   align-items: center;
   gap: 10px;
   padding: 4px 10px 20px;
-  color: #fff;
+  color: var(--on-dark);
 }
 
 .admin-brand:hover {
-  color: #fff;
+  color: var(--on-dark);
 }
 
 .admin-brand span {
   display: flex;
   flex-direction: column;
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   font-weight: 700;
   line-height: 1;
 }
@@ -54,7 +56,7 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--on-dark-3);
 }
 
 .admin-nav {
@@ -76,29 +78,29 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.42);
+  color: var(--on-dark-3);
 }
 
 .admin-nav__link {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   padding: 9px 12px;
   border-radius: 10px;
-  font-size: 0.92rem;
+  font-size: var(--text-md);
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--on-dark-2);
   transition: background 0.15s ease, color 0.15s ease;
 }
 
 .admin-nav__link:hover {
-  background: rgba(255, 255, 255, 0.07);
-  color: #fff;
+  background: var(--on-dark-hover);
+  color: var(--on-dark);
 }
 
 .admin-nav__link.is-active {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+  background: var(--on-dark-active);
+  color: var(--on-dark);
 }
 
 .admin-nav__link.is-active svg {
@@ -112,9 +114,9 @@
 .admin-nav__badge {
   min-width: 22px;
   padding: 1px 7px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: #fff;
+  border-radius: var(--radius-pill);
+  background: var(--accent-solid);
+  color: var(--on-accent);
   font-size: 0.74rem;
   font-weight: 700;
   text-align: center;
@@ -123,7 +125,7 @@
 .admin-sidebar__foot {
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--on-dark-line);
 }
 
 .admin-user {
@@ -134,27 +136,27 @@
 }
 
 .admin-user .avatar {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+  background: var(--on-dark-active);
+  color: var(--on-dark);
 }
 
 .admin-user div {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  font-size: 0.86rem;
+  font-size: var(--text-sm);
 }
 
 .admin-user strong {
-  color: #fff;
+  color: var(--on-dark);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .admin-user span {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.55);
+  font-size: var(--text-xs);
+  color: var(--on-dark-3);
 }
 
 .admin-sidebar__links {
@@ -172,16 +174,16 @@
   border-radius: 8px;
   background: none;
   font: inherit;
-  font-size: 0.86rem;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--text-sm);
+  color: var(--on-dark-2);
   cursor: pointer;
   text-align: left;
 }
 
 .admin-sidebar__links a:hover,
 .admin-sidebar__links button:hover {
-  background: rgba(255, 255, 255, 0.07);
-  color: #fff;
+  background: var(--on-dark-hover);
+  color: var(--on-dark);
 }
 
 .admin-main {
@@ -205,22 +207,57 @@
   display: none;
 }
 
+.admin-sidebar__close {
+  display: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  border: 1px solid var(--on-dark-line);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--on-dark);
+  cursor: pointer;
+}
+
+.admin-sidebar__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.admin-sidebar__theme {
+  padding: 12px 12px 4px;
+}
+
+.admin-content:focus {
+  outline: none;
+}
+
 @media (max-width: 960px) {
   .admin-layout {
     grid-template-columns: 1fr;
   }
 
+  /* Tiroir ferme : hors ecran et hors de l'ordre de tabulation (visibility + inert cote JS) */
   .admin-sidebar {
     position: fixed;
     inset: 0 auto 0 0;
     width: min(300px, 86vw);
     transform: translateX(-100%);
-    transition: transform 0.2s ease;
+    visibility: hidden;
+    transition: transform 0.2s ease, visibility 0s linear 0.2s;
   }
 
   .admin-sidebar.is-open {
     transform: none;
+    visibility: visible;
     box-shadow: var(--shadow-lg);
+    transition: transform 0.2s ease, visibility 0s;
+  }
+
+  .admin-sidebar__close {
+    display: grid;
   }
 
   .admin-overlay {
@@ -228,7 +265,7 @@
     position: fixed;
     inset: 0;
     z-index: 55;
-    background: rgba(20, 30, 26, 0.45);
+    background: var(--backdrop);
   }
 
   .admin-topbar {
@@ -237,10 +274,10 @@
     z-index: 40;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
     height: 60px;
     padding: 0 16px;
-    background: rgba(250, 247, 242, 0.92);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--line);
   }
@@ -258,24 +295,24 @@
   }
 
   .admin-topbar__title {
+    flex: 1;
     font-family: var(--font-display);
     font-weight: 600;
   }
 }
-
 /* ---------- Blocs réutilisables dans les pages d'admin ---------- */
 
 .admin-grid-stats {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
-  gap: 16px;
+  gap: var(--space-4);
   margin-bottom: 24px;
 }
 
 .admin-panels {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
-  gap: 20px;
+  gap: var(--space-5);
   margin-bottom: 24px;
 }
 
@@ -303,7 +340,7 @@
 
 .panel__desc {
   margin: 4px 0 0;
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   color: var(--ink-3);
 }
 
@@ -324,12 +361,341 @@
 }
 
 .cell-main span {
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
   color: var(--ink-3);
 }
 
-.row-actions {
+/* Tableaux de repartition : assez larges pour ne jamais defiler horizontalement. */
+.adm-panels-wide {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 560px), 1fr));
+}
+
+/* ---------- Utilitaires ---------- */
+
+.adm-small {
+  font-size: var(--text-sm);
+}
+
+.adm-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  word-break: break-all;
+}
+
+.adm-nowrap {
+  white-space: nowrap;
+}
+
+.adm-grow {
+  flex: 1;
+}
+
+.adm-hint {
+  margin: 10px 0 0;
+}
+
+.adm-summary {
+  margin: -12px 0 14px;
+}
+
+.adm-note {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-size: var(--text-md);
+  white-space: pre-wrap;
+}
+
+.adm-subtitle {
+  margin: 0 0 8px;
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.adm-quote {
+  margin: 0;
+  padding: 14px 18px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--accent-50);
+  color: var(--ink);
+  white-space: pre-wrap;
+}
+
+.adm-box {
   display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.adm-clip {
+  display: block;
+  max-width: 320px;
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+}
+
+.btn.adm-danger-text {
+  color: var(--danger);
+}
+
+.btn.adm-danger-text:hover {
+  background: var(--danger-50);
+}
+
+.adm-block {
+  margin-bottom: 24px;
+}
+
+.adm-toolbar-note {
+  align-self: flex-end;
+  padding-bottom: 12px;
+}
+
+/* ---------- Filtres ---------- */
+
+.adm-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr));
+  gap: 12px 16px;
+  align-items: end;
+  margin-bottom: 20px;
+  padding: 16px clamp(14px, 2vw, 20px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.adm-filters .field {
+  gap: var(--space-1);
+}
+
+.adm-filters .field__label {
+  font-size: var(--text-xs);
+}
+
+.adm-filters__actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  min-height: 46px;
+}
+
+.adm-inline-select {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-md);
+  color: var(--ink-2);
+}
+
+.adm-inline-select .select {
+  width: auto;
+  min-width: 150px;
+}
+
+/* ---------- Cellules de tableau ---------- */
+
+.adm-title-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 220px;
+}
+
+.adm-thumb {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+
+.adm-thumb--round {
+  border-radius: 50%;
+}
+
+.adm-campaign {
+  min-width: 170px;
+}
+
+.adm-campaign .progress-meta {
+  margin-top: 6px;
+  font-size: var(--text-xs);
+}
+
+.adm-muted-small {
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+}
+
+.adm-actions {
+  display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 6px;
+  gap: var(--space-1);
+}
+
+/* ---------- Répartitions (table avec barre de part) ---------- */
+
+.adm-share td {
+  vertical-align: middle;
+}
+
+.adm-share__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 140px;
+}
+
+.adm-share__track {
+  flex: 1;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.adm-share__fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--brand);
+}
+
+.adm-share__pct {
+  min-width: 48px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.adm-details {
+  margin-top: 14px;
+  font-size: var(--text-md);
+}
+
+.adm-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--brand);
+}
+
+.adm-details .table-wrap {
+  margin-top: 10px;
+}
+
+/* ---------- Formulaires en modale ---------- */
+
+.adm-form-section {
+  margin: 24px 0 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.adm-form-section:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.adm-counter {
+  float: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.adm-image-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.adm-image-field__preview {
+  width: 160px;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius);
+  object-fit: cover;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+
+.adm-image-field__empty {
+  display: grid;
+  place-items: center;
+  width: 160px;
+  aspect-ratio: 16 / 10;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+  text-align: center;
+  padding: 8px;
+}
+
+.adm-image-field__controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.adm-file {
+  position: relative;
+}
+
+.adm-file input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  cursor: pointer;
+}
+
+.adm-file:has(input:focus-visible) .btn {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: var(--focus-offset);
+}
+
+/* ---------- Mot de passe provisoire ---------- */
+
+.adm-secret {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 14px 16px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.adm-secret code {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  user-select: all;
+  word-break: break-all;
 }

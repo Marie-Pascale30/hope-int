@@ -1,95 +1,136 @@
 "use client";
 
-import "../../styles/admin-a.css";
 import { useMemo, useState } from "react";
-import { Check, ClipboardCheck, Search, X } from "lucide-react";
+import { Check, ClipboardCheck, Link2, Search, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
-  Alert, Badge, Button, DataTable, EmptyState, ErrorState, LoadingState, Modal, PageHeader, StatusBadge, Tabs, Textarea,
+  Alert, Badge, Button, DataTable, EmptyState, ErrorState, PageSkeleton, Modal, PageHeader, StatusBadge, TabPanel, Tabs, Textarea,
 } from "../../components/ui";
 import RequireAuth from "../../components/RequireAuth";
 import { useAuth } from "../../context/AuthContext";
 import { useAsync } from "../../hooks/useAsync";
+import { useFormat } from "../../i18n/format";
 import { adminApi } from "../../services";
-import { getErrorMessage } from "../../services/api";
-import { confirmAction, showError, toast } from "../../utils/alerts";
-import { formatDateTime, formatRelative, truncate } from "../../utils/format";
-import { APPLICATION_STATUS, roleLabel, statusOf } from "../../utils/labels";
+import { toast, useAlerts } from "../../utils/alerts";
+import { truncate } from "../../utils/format";
+import { STATUS_KEYS, useLabels } from "../../utils/labels";
 import { can, PERMISSIONS as P } from "../../utils/rbac";
 import RolePicker from "./parts-a/RolePicker";
 import TempPasswordModal from "./parts-a/TempPasswordModal";
-import { canGrantRole, useRoleMatrix } from "./parts-a/roles";
+import { useErrorMessage } from "../../i18n/errors";
+import { PAGE_SIZE, ServerPagination, countOf, toPage } from "./parts-a/paging";
+import { useRoleMatrix } from "./parts-a/roles";
 
-const TABS = [
-  { value: "nouvelle", label: "Nouvelles" },
-  { value: "en_etude", label: "En étude" },
-  { value: "acceptee", label: "Acceptées" },
-  { value: "refusee", label: "Refusées" },
-  { value: "all", label: "Toutes" },
-];
+const STATUSES = STATUS_KEYS.applicationStatus; // nouvelle, en_etude, acceptee, refusee
+const TABS = [...STATUSES, "all"];
 
 const isOpen = (application) => ["nouvelle", "en_etude"].includes(application.status);
 
-function RoleBadges({ roles }) {
+// Poles d'interet (referentiel INTEREST_AREAS de @hope/shared/applications) : libelles dans "admin.interests".
+function InterestBadges({ interests }) {
+  const t = useTranslations("admin");
+  if (!interests?.length) return <span className="muted">{t("applications.interestsNone")}</span>;
   return (
     <div className="chip-list">
-      {(roles || []).map((role) => <Badge key={role} tone="brand" plain>{roleLabel(role)}</Badge>)}
+      {interests.map((value) => (
+        <Badge key={value} tone="brand" plain>{t.has(`interests.${value}`) ? t(`interests.${value}`) : value}</Badge>
+      ))}
     </div>
   );
 }
 
-function ApplicationDetail({ application, user, matrix, onClose, onUpdated, onAccepted }) {
+// Anciennes candidatures : roles demandes (historique, sans valeur de droit), en liste lisible.
+function useRoleList() {
+  const labels = useLabels();
+  const f = useFormat();
+  return (roles = []) => new Intl.ListFormat(f.locale, { type: "conjunction" }).format(roles.map((role) => labels.role(role)));
+}
+
+function ApplicationDetail({ application, user, matrix, onClose, onUpdated, onAccepted, onStale }) {
+  const t = useTranslations("admin.applications");
+  const tc = useTranslations("admin.common");
+  const f = useFormat();
+  const labels = useLabels();
+  const errorText = useErrorMessage();
+  const { confirmAction, showError } = useAlerts();
+  const roleList = useRoleList();
   const canAccept = can(user, P.MANAGE_USER_ROLES);
-  const grantable = (role) => canGrantRole(user, matrix?.roles.find((entry) => entry.role === role));
-  const desired = application.desired_roles?.length ? application.desired_roles : ["membre"];
   const [note, setNote] = useState(application.review_note || "");
-  const [roles, setRoles] = useState(() => desired.filter(grantable));
+  // Aucun role pre-coche : la personne qui accepte choisit explicitement.
+  const [roles, setRoles] = useState([]);
+  const [rolesError, setRolesError] = useState("");
+  const [accountExists, setAccountExists] = useState(null);
   const [busy, setBusy] = useState(null);
   const open = isOpen(application);
-  const excluded = desired.filter((role) => !grantable(role));
+  const legacyRoles = application.desired_roles || [];
+
+  // Erreurs de decision : candidature deja cloturee (409, ou 400 renvoye avant la decision) -> liste rafraichie.
+  const handleError = (err) => {
+    const status = err?.response?.status;
+    const data = err?.response?.data;
+    if (status === 409 || (status === 400 && data?.error && !data?.errors)) {
+      toast(data?.error || t("toasts.closed"), "warning");
+      onStale();
+      return;
+    }
+    showError(tc("actionFailed"), errorText(err));
+  };
 
   const run = async (action, handler) => {
     setBusy(action);
     try {
       await handler();
     } catch (err) {
-      showError("Action impossible", getErrorMessage(err));
+      handleError(err);
     } finally {
       setBusy(null);
     }
   };
 
   const review = () => run("review", async () => {
-    const updated = await adminApi.reviewApplication(application.id, note.trim() || null);
-    onUpdated(updated);
-    toast("Candidature mise en étude");
+    onUpdated(await adminApi.reviewApplication(application.id, note.trim() || null));
+    toast(t("toasts.reviewing"));
   });
 
   const reject = async () => {
     const ok = await confirmAction(
-      "Refuser cette candidature ?",
+      t("rejectConfirm.title"),
       note.trim()
-        ? `${application.name} sera prévenu(e) par email, avec votre note.`
-        : `${application.name} sera prévenu(e) par email. Vous pouvez ajouter une note explicative avant de refuser.`,
-      "Refuser",
+        ? t("rejectConfirm.textWithNote", { name: application.name })
+        : t("rejectConfirm.textNoNote", { name: application.name }),
+      t("rejectConfirm.button"),
       { danger: true }
     );
     if (!ok) return;
     run("reject", async () => {
-      const updated = await adminApi.rejectApplication(application.id, note.trim() || null);
-      onUpdated(updated);
-      toast("Candidature refusée");
+      onUpdated(await adminApi.rejectApplication(application.id, note.trim() || null));
+      toast(t("toasts.rejected"));
     });
   };
 
-  const accept = () => {
+  // POST /admin/applications/:id/accept { roles: [>=1], reviewNote?, linkExisting? }
+  const accept = (linkExisting = false) => {
     if (!roles.length) {
-      showError("Choisissez au moins un rôle", "Le compte doit recevoir au moins un rôle (par exemple Membre).");
+      setRolesError(t("detail.rolesRequired"));
       return;
     }
-    run("accept", async () => {
-      const result = await adminApi.acceptApplication(application.id, { roles, reviewNote: note.trim() || undefined });
-      onAccepted(result);
-    });
+    setRolesError("");
+    setBusy(linkExisting ? "link" : "accept");
+    adminApi.acceptApplication(application.id, {
+      roles,
+      reviewNote: note.trim() || undefined,
+      ...(linkExisting ? { linkExisting: true } : {}),
+    })
+      .then((result) => onAccepted(result))
+      .catch((err) => {
+        const data = err?.response?.data;
+        if (err?.response?.status === 409 && data?.code === "ACCOUNT_EXISTS") {
+          setAccountExists({ email: data.email || application.email });
+          return;
+        }
+        handleError(err);
+      })
+      .finally(() => setBusy(null));
   };
 
   return (
@@ -102,53 +143,66 @@ function ApplicationDetail({ application, user, matrix, onClose, onUpdated, onAc
         <>
           {application.status === "nouvelle" && (
             <Button variant="secondary" icon={Search} loading={busy === "review"} disabled={Boolean(busy)} onClick={review}>
-              Mettre en étude
+              {t("detail.review")}
             </Button>
           )}
-          <Button variant="danger" icon={X} loading={busy === "reject"} disabled={Boolean(busy)} onClick={reject}>Refuser</Button>
-          {canAccept && (
-            <Button icon={Check} loading={busy === "accept"} disabled={Boolean(busy)} onClick={accept}>
-              Accepter et créer le compte
+          <Button variant="danger" icon={X} loading={busy === "reject"} disabled={Boolean(busy)} onClick={reject}>
+            {t("detail.reject")}
+          </Button>
+          {canAccept && !accountExists && (
+            <Button icon={Check} loading={busy === "accept"} disabled={Boolean(busy)} onClick={() => accept(false)}>
+              {t("detail.accept")}
             </Button>
           )}
         </>
       ) : (
-        <Button variant="secondary" onClick={onClose}>Fermer</Button>
+        <Button variant="secondary" onClick={onClose}>{tc("close")}</Button>
       )}
     >
       <div className="stack">
         <div className="row">
-          <StatusBadge status={statusOf(APPLICATION_STATUS, application.status)} />
-          <span className="muted adm-small">Reçue {formatRelative(application.created_at)} · {formatDateTime(application.created_at)}</span>
+          <StatusBadge status={labels.status("applicationStatus", application.status)} />
+          <span className="muted adm-small">
+            {t("detail.received", { relative: f.relative(application.created_at), date: f.dateTime(application.created_at) })}
+          </span>
         </div>
 
         <dl className="dl">
-          <dt>Email</dt>
+          <dt>{tc("email")}</dt>
           <dd><a href={`mailto:${application.email}`}>{application.email}</a></dd>
-          <dt>Téléphone</dt>
+          <dt>{tc("phone")}</dt>
           <dd>{application.phone || "—"}</dd>
-          <dt>Région</dt>
+          <dt>{tc("region")}</dt>
           <dd>{application.region || "—"}</dd>
-          <dt>Rôles souhaités</dt>
-          <dd><RoleBadges roles={application.desired_roles} /></dd>
+          <dt>{t("detail.interests")}</dt>
+          <dd>
+            <InterestBadges interests={application.interests} />
+            {application.interests?.length > 0 && <span className="muted adm-small">{t("detail.interestsHint")}</span>}
+          </dd>
+          {legacyRoles.length > 0 && (
+            <>
+              <dt className="muted">{t("detail.legacyRoles")}</dt>
+              <dd className="muted adm-small">{roleList(legacyRoles)}</dd>
+            </>
+          )}
           {application.reviewer_name && (
             <>
-              <dt>Examinée par</dt>
+              <dt>{t("detail.reviewer")}</dt>
               <dd>{application.reviewer_name}</dd>
             </>
           )}
         </dl>
 
         <div>
-          <h3 className="adm-subtitle">Motivation</h3>
+          <h3 className="adm-subtitle">{t("detail.motivation")}</h3>
           <blockquote className="adm-quote">{application.motivation}</blockquote>
         </div>
 
         {open ? (
           <>
             <Textarea
-              label="Note d'examen"
-              hint="En cas de refus, cette note est transmise au candidat dans l'email de réponse."
+              label={t("detail.note")}
+              hint={t("detail.noteHint")}
               rows={3}
               maxLength={2000}
               value={note}
@@ -160,26 +214,38 @@ function ApplicationDetail({ application, user, matrix, onClose, onUpdated, onAc
                   user={user}
                   matrix={matrix}
                   value={roles}
-                  onChange={setRoles}
-                  label="Rôles du compte à créer"
-                  hint="Pré-rempli avec les rôles souhaités. Le rôle Administrateur système ne se combine avec aucun autre."
+                  onChange={(next) => {
+                    setRoles(next);
+                    if (next.length) setRolesError("");
+                  }}
+                  label={t("detail.rolesLabel")}
+                  hint={t("detail.rolesHint")}
+                  error={rolesError}
                 />
-                {excluded.length > 0 && (
-                  <Alert tone="info">
-                    Rôle souhaité non attribuable avec vos droits : {excluded.map(roleLabel).join(", ")}. Une personne disposant de ces droits pourra l&apos;ajouter ensuite.
-                  </Alert>
+                {accountExists && (
+                  <div role="alert">
+                    <Alert tone="warning" title={t("accountExists.title")}>
+                      <p>{t("accountExists.text", { email: accountExists.email })}</p>
+                      <div className="row">
+                        <Button icon={Link2} loading={busy === "link"} disabled={Boolean(busy)} onClick={() => accept(true)}>
+                          {t("accountExists.link")}
+                        </Button>
+                        <Button variant="ghost" disabled={Boolean(busy)} onClick={() => setAccountExists(null)}>
+                          {t("accountExists.cancel")}
+                        </Button>
+                      </div>
+                    </Alert>
+                  </div>
                 )}
               </div>
             ) : (
-              <Alert tone="info">
-                L&apos;acceptation crée un compte : elle est réservée aux personnes qui gèrent les rôles (RH, direction, IT).
-              </Alert>
+              <Alert tone="info">{t("detail.acceptReserved")}</Alert>
             )}
           </>
         ) : (
           application.review_note && (
             <div>
-              <h3 className="adm-subtitle">Note d&apos;examen</h3>
+              <h3 className="adm-subtitle">{t("detail.note")}</h3>
               <p className="adm-note">{application.review_note}</p>
             </div>
           )
@@ -189,42 +255,79 @@ function ApplicationDetail({ application, user, matrix, onClose, onUpdated, onAc
   );
 }
 
+// Pagination serveur : GET /admin/applications?status&page&pageSize -> { rows, total, page, pageSize }.
 function ApplicationsInbox() {
+  const t = useTranslations("admin.applications");
+  const tc = useTranslations("admin.common");
+  const f = useFormat();
+  const labels = useLabels();
+  const errorText = useErrorMessage();
+  const roleList = useRoleList();
   const { user } = useAuth();
-  const { data, loading, error, reload, setData } = useAsync(() => adminApi.applications(), []);
-  const { data: matrix } = useRoleMatrix();
   const [tab, setTab] = useState("nouvelle");
+  const [page, setPage] = useState(1);
+  const { data, loading, error, reload, setData } = useAsync(
+    async () => toPage(await adminApi.applications({ status: tab === "all" ? undefined : tab, page, pageSize: PAGE_SIZE })),
+    [tab, page]
+  );
+  // Compteurs des onglets : total de chaque statut (pages d'une ligne).
+  const { data: counts, reload: reloadCounts } = useAsync(async () => {
+    const totals = await Promise.all(STATUSES.map((status) => countOf(adminApi.applications, { status })));
+    const result = Object.fromEntries(STATUSES.map((status, index) => [status, totals[index]]));
+    return { ...result, all: totals.reduce((sum, value) => sum + value, 0) };
+  }, []);
+  const { data: matrix } = useRoleMatrix();
   const [selectedId, setSelectedId] = useState(null);
   const [credentials, setCredentials] = useState(null);
 
-  const applications = useMemo(() => data || [], [data]);
-  const counts = useMemo(
-    () => applications.reduce((acc, item) => ({ ...acc, [item.status]: (acc[item.status] || 0) + 1 }), {}),
-    [applications]
-  );
-  const rows = tab === "all" ? applications : applications.filter((item) => item.status === tab);
+  const applications = useMemo(() => data?.rows || [], [data]);
+  const total = data?.total || 0;
   const selected = applications.find((item) => item.id === selectedId);
 
-  // findById ne renvoie pas le nom de l'examinateur : c'est l'utilisateur courant qui vient d'agir.
-  const replace = (updated) => setData((list) => list.map((item) => (
-    item.id === updated.id ? { ...item, ...updated, reviewer_name: updated.reviewer_name || user.name } : item
-  )));
+  const changeTab = (value) => {
+    setTab(value);
+    setPage(1);
+  };
+
+  const refresh = () => {
+    reload();
+    reloadCounts();
+  };
+
+  // Mise en etude / refus : ligne mise a jour sur place (la fiche reste ouverte), compteurs recharges.
+  // La reponse (findById) ne porte pas le nom de l'examinateur : c'est l'utilisateur courant.
+  const replace = (updated) => {
+    setData((current) => ({
+      ...current,
+      rows: current.rows.map((item) => (
+        item.id === updated.id ? { ...item, ...updated, reviewer_name: updated.reviewer_name || user.name } : item
+      )),
+    }));
+    reloadCounts();
+  };
+
+  // Decision prise ailleurs : on ferme et on recharge.
+  const handleStale = () => {
+    setSelectedId(null);
+    refresh();
+  };
 
   const handleAccepted = (result) => {
-    replace(result.application);
     setSelectedId(null);
-    if (result.tempPassword) {
+    refresh();
+    if (result.linkedExisting) {
+      toast(t("toasts.linked"));
+    } else if (result.tempPassword) {
       setCredentials({ name: result.user.name, email: result.user.email, password: result.tempPassword });
     } else {
-      toast("Compte créé : les identifiants ont été envoyés par email");
+      toast(t("toasts.createdEmail"));
     }
   };
 
   const columns = [
     {
       key: "name",
-      header: "Candidat",
-      sortable: true,
+      header: t("columns.candidate"),
       render: (row) => (
         <div className="cell-main">
           <strong>{row.name}</strong>
@@ -232,65 +335,73 @@ function ApplicationsInbox() {
         </div>
       ),
     },
-    { key: "region", header: "Région", sortable: true, render: (row) => row.region || "—" },
-    { key: "desired_roles", header: "Rôles souhaités", render: (row) => <RoleBadges roles={row.desired_roles} /> },
+    { key: "region", header: t("columns.region"), render: (row) => row.region || "—" },
+    {
+      key: "interests",
+      header: t("columns.interests"),
+      render: (row) => (row.interests?.length || !row.desired_roles?.length
+        ? <InterestBadges interests={row.interests} />
+        : (
+          <span className="muted adm-small">{t("legacyRolesShort", { roles: roleList(row.desired_roles) })}</span>
+        )),
+    },
     {
       key: "motivation",
-      header: "Motivation",
+      header: t("columns.motivation"),
       render: (row) => <span className="adm-clip">{truncate(row.motivation, 90)}</span>,
     },
     {
       key: "created_at",
-      header: "Reçue",
-      sortable: true,
-      sortValue: (row) => new Date(row.created_at).getTime(),
-      render: (row) => <span title={formatDateTime(row.created_at)}>{formatRelative(row.created_at)}</span>,
+      header: t("columns.received"),
+      render: (row) => <span title={f.dateTime(row.created_at)}>{f.relative(row.created_at)}</span>,
     },
-    { key: "status", header: "Statut", render: (row) => <StatusBadge status={statusOf(APPLICATION_STATUS, row.status)} /> },
+    {
+      key: "status",
+      header: t("columns.status"),
+      render: (row) => <StatusBadge status={labels.status("applicationStatus", row.status)} />,
+    },
   ];
 
   let body;
-  if (loading) body = <LoadingState label="Chargement des candidatures…" />;
-  else if (error) body = <ErrorState message={getErrorMessage(error)} onRetry={reload} />;
-  else if (!applications.length) {
-    body = (
-      <EmptyState
-        icon={ClipboardCheck}
-        title="Aucune candidature pour le moment"
-        description="Les candidatures envoyées depuis la page « Nous rejoindre » du site apparaîtront ici."
-      />
-    );
+  if (loading && !data) body = <PageSkeleton variant="table" columns={5} label={t("loading")} />;
+  else if (error && !data) body = <ErrorState message={errorText(error)} onRetry={reload} />;
+  else if (counts && counts.all === 0) {
+    body = <EmptyState icon={ClipboardCheck} title={t("emptyTitle")} description={t("emptyText")} />;
   } else {
     body = (
       <>
         <Tabs
-          label="Statut des candidatures"
+          id="applications-tabs"
+          label={t("tabsLabel")}
           value={tab}
-          onChange={setTab}
-          tabs={TABS.map((item) => ({ ...item, count: item.value === "all" ? applications.length : counts[item.value] || 0 }))}
+          onChange={changeTab}
+          tabs={TABS.map((value) => ({ value, label: t(`tabs.${value}`), count: counts ? counts[value] : undefined }))}
         />
-        <DataTable
-          columns={columns}
-          rows={rows}
-          searchKeys={["name", "email", "region"]}
-          searchPlaceholder="Rechercher un candidat…"
-          onRowClick={(row) => setSelectedId(row.id)}
-          initialSort={{ key: "created_at", dir: "desc" }}
-          emptyTitle="Aucune candidature dans cet onglet"
-          emptyDescription={tab === "nouvelle" ? "Toutes les nouvelles candidatures ont été prises en charge." : undefined}
-        />
-        <p className="muted adm-small adm-hint">Cliquez sur une ligne pour lire la candidature et y répondre.</p>
+        <TabPanel tabsId="applications-tabs" value={tab}>
+          <div aria-busy={loading}>
+            {error && <ErrorState message={errorText(error)} onRetry={reload} />}
+            <DataTable
+              columns={columns}
+              rows={applications}
+              pageSize={Math.max(PAGE_SIZE, applications.length)}
+              searchKeys={["name", "email", "region"]}
+              searchPlaceholder={t("searchPlaceholder")}
+              onRowClick={(row) => setSelectedId(row.id)}
+              rowLabel={(row) => t("openRow", { name: row.name })}
+              emptyTitle={t("emptyTab")}
+              emptyDescription={tab === "nouvelle" && !total ? t("emptyTabNew") : undefined}
+            />
+            <ServerPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} disabled={loading} />
+          </div>
+        </TabPanel>
+        <p className="muted adm-small adm-hint">{t("rowHint")} {tc("pageSearchHint")}</p>
       </>
     );
   }
 
   return (
     <>
-      <PageHeader
-        eyebrow="Relations"
-        title="Candidatures"
-        description="Étudiez les demandes d'engagement, répondez aux candidats et créez leur compte en un clic."
-      />
+      <PageHeader eyebrow={t("eyebrow")} title={t("title")} description={t("description")} />
       {body}
       {selected && (
         <ApplicationDetail
@@ -300,7 +411,9 @@ function ApplicationsInbox() {
           matrix={matrix}
           onClose={() => setSelectedId(null)}
           onUpdated={replace}
+
           onAccepted={handleAccepted}
+          onStale={handleStale}
         />
       )}
       <TempPasswordModal credentials={credentials} onClose={() => setCredentials(null)} />

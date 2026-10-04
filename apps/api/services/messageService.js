@@ -9,7 +9,11 @@ exports.createMessage = async (payload) => {
     return id;
 };
 
-exports.list = async (filters) => messageRepo.getAll(filters);
+// Les messages n'ont pas de region : liste commune a tous les roles qui les traitent.
+exports.list = async (filters, pagination = null) => {
+    const result = await messageRepo.getAll(filters, pagination);
+    return pagination ? { ...result, page: pagination.page, pageSize: pagination.pageSize } : result;
+};
 
 exports.update = async (actor, id, { status, assignedTo, notes }) => {
     const message = await messageRepo.findById(id);
@@ -26,8 +30,7 @@ exports.update = async (actor, id, { status, assignedTo, notes }) => {
         action: "message.updated",
         meta: { messageId: id, status, assignedTo },
     });
-    const [updated] = (await messageRepo.getAll()).filter((row) => row.id === Number(id));
-    return updated;
+    return messageRepo.findDetailedById(id);
 };
 
 exports.remove = async (actor, id) => {

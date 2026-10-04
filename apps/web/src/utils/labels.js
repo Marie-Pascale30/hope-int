@@ -1,76 +1,64 @@
-// Libelles et tonalites (couleur de badge) des statuts metier.
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
+
+// Libelles traduits (messages "labels" de common.json) et tonalites de badge des statuts metier.
 // Tonalites disponibles : success | warning | danger | info | brand | accent | (vide = neutre)
 
-export const ROLE_LABELS = {
-  admin: "Administrateur système",
-  directrice_generale: "Directrice générale",
-  conseiller: "Conseiller stratégique",
-  responsable_rh: "Responsable RH",
-  responsable_finance: "Responsable financier",
-  organisatrice: "Organisatrice",
-  responsable_it: "Responsable IT",
-  directrice_regionale: "Directrice régionale",
-  secretaire_generale: "Secrétaire générale",
-  membre: "Membre",
+export const TONES = {
+  projectStatus: { planifie: "info", en_cours: "success", termine: "" },
+  messageStatus: { nouveau: "accent", lu: "info", traite: "success", archive: "" },
+  applicationStatus: { nouvelle: "accent", en_etude: "info", acceptee: "success", refusee: "danger" },
+  paymentStatus: {
+    pending: "warning",
+    succeeded: "success",
+    failed: "danger",
+    canceled: "",
+    refunded: "info",
+    disputed: "danger",
+    review: "warning",
+  },
+  userStatus: { active: "success", inactive: "danger" },
+  subscriptionStatus: {
+    active: "success",
+    trialing: "success",
+    past_due: "warning",
+    incomplete: "warning",
+    canceled: "",
+    unpaid: "danger",
+    unknown: "",
+  },
 };
 
-export const PROJECT_STATUS = {
-  planifie: { label: "Bientôt", tone: "info" },
-  en_cours: { label: "En cours", tone: "success" },
-  termine: { label: "Terminé", tone: "" },
-};
+// Cles connues (listes d'options, filtres) : l'ordre est celui de l'affichage.
+export const ROLE_KEYS = [
+  "admin",
+  "directrice_generale",
+  "conseiller",
+  "responsable_rh",
+  "responsable_finance",
+  "organisatrice",
+  "responsable_it",
+  "directrice_regionale",
+  "secretaire_generale",
+  "membre",
+];
+export const STATUS_KEYS = Object.fromEntries(Object.entries(TONES).map(([group, tones]) => [group, Object.keys(tones)]));
+export const PAYMENT_METHOD_KEYS = ["card", "mobile_money"];
+export const FREQUENCY_KEYS = ["once", "monthly"];
 
-export const MESSAGE_STATUS = {
-  nouveau: { label: "Nouveau", tone: "accent" },
-  lu: { label: "Lu", tone: "info" },
-  traite: { label: "Traité", tone: "success" },
-  archive: { label: "Archivé", tone: "" },
-};
-
-export const APPLICATION_STATUS = {
-  nouvelle: { label: "Nouvelle", tone: "accent" },
-  en_etude: { label: "En étude", tone: "info" },
-  acceptee: { label: "Acceptée", tone: "success" },
-  refusee: { label: "Refusée", tone: "danger" },
-};
-
-export const PAYMENT_STATUS = {
-  pending: { label: "En attente", tone: "warning" },
-  succeeded: { label: "Réussi", tone: "success" },
-  failed: { label: "Échoué", tone: "danger" },
-  canceled: { label: "Annulé", tone: "" },
-  refunded: { label: "Remboursé", tone: "info" },
-};
-
-export const USER_STATUS = {
-  active: { label: "Actif", tone: "success" },
-  inactive: { label: "Désactivé", tone: "danger" },
-};
-
-export const SUBSCRIPTION_STATUS = {
-  active: { label: "Actif", tone: "success" },
-  trialing: { label: "Actif", tone: "success" },
-  past_due: { label: "Paiement en retard", tone: "warning" },
-  incomplete: { label: "En attente", tone: "warning" },
-  canceled: { label: "Arrêté", tone: "" },
-  unpaid: { label: "Impayé", tone: "danger" },
-  unknown: { label: "Statut indisponible", tone: "" },
-};
-
-export const PAYMENT_METHOD = {
-  card: "Carte bancaire",
-  mobile_money: "Mobile Money",
-};
-
-export const FREQUENCY = {
-  once: "Ponctuel",
-  monthly: "Mensuel",
-};
-
-export function statusOf(map, key) {
-  return map[key] || { label: key || "—", tone: "" };
+// t : traducteur de l'espace "labels" (useTranslations("labels") ou getTranslations cote serveur).
+export function makeLabels(t) {
+  const text = (group, key, fallback = "—") => (key && t.has(`${group}.${key}`) ? t(`${group}.${key}`) : key || fallback);
+  return {
+    // status("paymentStatus", "succeeded") -> { label, tone }
+    status: (group, key) => ({ label: text(group, key), tone: TONES[group]?.[key] ?? "" }),
+    role: (role) => (role ? text("role", role) : t("role.membre")),
+    method: (key) => text("paymentMethod", key),
+    frequency: (key) => text("frequency", key),
+  };
 }
 
-export function roleLabel(role) {
-  return ROLE_LABELS[role] || role || "Membre";
+export function useLabels() {
+  const t = useTranslations("labels");
+  return useMemo(() => makeLabels(t), [t]);
 }
