@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { hl } from "../../components/motion/hl";
 import { Card } from "../../components/ui";
 import { useLocalePath } from "../../i18n/navigation";
+import PageBanner from "../../components/site/PageBanner";
 import { LinkButton, PublicHero } from "./components";
 import ContactForm from "./components/ContactForm";
 
@@ -14,6 +15,7 @@ export default function ContactView({ organization = {} }) {
 
   return (
     <>
+      <PageBanner name="contact" />
       <PublicHero eyebrow={t("eyebrow")} title={t.rich("title", { hl })} lead={t("lead")} />
 
       <section className="section section--tight">

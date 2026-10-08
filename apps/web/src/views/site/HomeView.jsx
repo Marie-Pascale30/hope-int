@@ -8,6 +8,7 @@ import { Avatar, Card } from "../../components/ui";
 import { hl } from "../../components/motion/hl";
 import Marquee from "../../components/motion/Marquee";
 import NumberTicker from "../../components/motion/NumberTicker";
+import PageBanner from "../../components/site/PageBanner";
 import WordRotate from "../../components/motion/WordRotate";
 import { useFormat } from "../../i18n/format";
 import { useLocalePath } from "../../i18n/navigation";
@@ -56,9 +57,6 @@ function ImpactBand({ impact }) {
   );
 }
 
-// Bandeau photo de l'accueil (fichier de public/images, remplacable sans toucher au code).
-const HERO_BANNER = "/images/hero-banner.jpg";
-
 export default function HomeView({ impact, projects, testimonials, news, events, failed }) {
   const t = useTranslations("site.home");
   const f = useFormat();
@@ -71,10 +69,7 @@ export default function HomeView({ impact, projects, testimonials, news, events,
 
   return (
     <>
-      {/* Passe sous l'en-tete transparent (qui y est en clair : data-header-overlay) et se fond dans le hero. */}
-      <div className="home-banner" aria-hidden="true" data-header-overlay>
-        <Image src={HERO_BANNER} alt="" fill preload sizes="100vw" />
-      </div>
+      <PageBanner name="home" />
 
       <section className="home-hero">
         <div className="container home-hero__grid">

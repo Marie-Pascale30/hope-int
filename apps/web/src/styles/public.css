@@ -1034,40 +1034,7 @@
   color: var(--accent-700);
 }
 
-/* ---------- Bandeau photo au-dessus du hero ---------- */
-
-.site-main > .home-banner {
-  margin-top: calc(-1 * var(--header-offset));
-}
-
-/* Fondu sans couture : le bas de la bande (photo + voile) devient transparent et laisse voir
-   le fond de la page, sur lequel le hero qui suit est pose sans fond propre. */
-.home-banner {
-  position: relative;
-  height: calc(var(--header-offset) + clamp(150px, 20vw, 290px));
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 45%, rgba(0, 0, 0, 0.6) 68%, rgba(0, 0, 0, 0.2) 86%, transparent 100%);
-  mask-image: linear-gradient(180deg, #000 0%, #000 45%, rgba(0, 0, 0, 0.6) 68%, rgba(0, 0, 0, 0.2) 86%, transparent 100%);
-}
-
-.home-banner img {
-  object-fit: cover;
-  object-position: center 58%;
-}
-
-/* Voile en haut pour la lisibilite de l'en-tete */
-.home-banner::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(8, 14, 11, 0.6) 0%, rgba(8, 14, 11, 0) 60%);
-}
-
-.site-main > .home-banner + .home-hero {
-  margin-top: 0;
-  border-top: 0;
-  padding-top: clamp(8px, 2vw, 24px);
-  background: none;
-}
+/* Bandeau photo au-dessus du hero : .page-banner (site.css) */
 
 @media (max-width: 960px) {
   .home-hero__grid {

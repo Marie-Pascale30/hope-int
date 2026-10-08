@@ -5,6 +5,7 @@ import { BadgeCheck, HandHeart, Sparkles, UsersRound } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { hl } from "../../components/motion/hl";
 import { Card } from "../../components/ui";
+import PageBanner from "../../components/site/PageBanner";
 import { PublicHero } from "./components";
 import JoinForm from "./components/JoinForm";
 import { GuestOnly, MemberWelcome } from "./components/JoinMemberGate";
@@ -20,6 +21,7 @@ export default function JoinView({ regions = [], interestAreas = [] }) {
 
   return (
     <>
+      <PageBanner name="join" />
       <PublicHero eyebrow={t("eyebrow")} title={t.rich("title", { hl })} lead={t("lead")} />
 
       <MemberWelcome />

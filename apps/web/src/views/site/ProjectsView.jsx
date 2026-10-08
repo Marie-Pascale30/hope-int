@@ -4,6 +4,7 @@ import { FolderSearch } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { hl } from "../../components/motion/hl";
 import { useLocalePath } from "../../i18n/navigation";
+import PageBanner from "../../components/site/PageBanner";
 import { Empty, LinkButton, PublicHero } from "./components";
 import LoadError from "./components/LoadError";
 import ProjectsBrowser from "./components/ProjectsBrowser";
@@ -18,6 +19,7 @@ export default function ProjectsView({ projects, error }) {
 
   return (
     <>
+      <PageBanner name="projects" />
       <PublicHero eyebrow={t("eyebrow")} title={t.rich("title", { hl })} lead={t("lead")} />
       <section className="section section--tight">
         <div className="container">

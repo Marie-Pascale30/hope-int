@@ -28,6 +28,7 @@ import {
   toEur,
 } from "./components/donationData";
 import { useErrorMessage } from "../../i18n/errors";
+import PageBanner from "../../components/site/PageBanner";
 import { STRIPE_PUBLISHABLE_KEY, getStripe } from "./components/stripe";
 
 // Nom affiche du prestataire Mobile Money actif (choisi par le serveur).
@@ -560,6 +561,7 @@ export default function DonateView() {
 
   return (
     <>
+      <PageBanner name="donate" />
       <section className="don-hero">
         <div className="container">
           <span className="eyebrow">{t("eyebrow")}</span>

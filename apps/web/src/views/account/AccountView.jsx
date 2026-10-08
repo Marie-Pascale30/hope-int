@@ -10,6 +10,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useLabels } from "../../utils/labels";
 import { isStaff } from "../../utils/rbac";
 import ChangePasswordForm from "./components/ChangePasswordForm";
+import PageBanner from "../../components/site/PageBanner";
 import DonationsTab from "./components/DonationsTab";
 import EventsTab from "./components/EventsTab";
 import ProfileTab from "./components/ProfileTab";
@@ -54,6 +55,7 @@ function AccountContent() {
 
   return (
     <>
+      <PageBanner name="account" />
       <section className="acc-hero">
         <div className="container acc-hero__inner">
           <Avatar name={user.name} large />

@@ -23,6 +23,40 @@
   background-origin: border-box;
 }
 
+/* ---------- Bandeau photo d'ouverture (PageBanner) ----------
+   Remonte sous l'en-tete ; fondu sans couture : le bas de la bande (photo + voile) devient transparent
+   et laisse voir le fond de la page, sur lequel le hero qui suit est pose sans fond propre. */
+
+.site-main > .page-banner {
+  margin-top: calc(-1 * var(--header-offset));
+}
+
+.page-banner {
+  position: relative;
+  height: calc(var(--header-offset) + clamp(150px, 20vw, 290px));
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 45%, rgba(0, 0, 0, 0.6) 68%, rgba(0, 0, 0, 0.2) 86%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 45%, rgba(0, 0, 0, 0.6) 68%, rgba(0, 0, 0, 0.2) 86%, transparent 100%);
+}
+
+.page-banner img {
+  object-fit: cover;
+}
+
+/* Voile en haut pour la lisibilite de l'en-tete */
+.page-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 14, 11, 0.6) 0%, rgba(8, 14, 11, 0) 60%);
+}
+
+.site-main > .page-banner + :is(.home-hero, .pub-hero, .don-hero, .acc-hero) {
+  margin-top: 0;
+  border-top: 0;
+  padding-top: clamp(8px, 2vw, 24px);
+  background: none;
+}
+
 /* Cible du lien d'evitement (tabIndex -1) : pas de contour sur le conteneur entier */
 .site-main:focus {
   outline: none;

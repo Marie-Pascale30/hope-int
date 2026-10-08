@@ -4,6 +4,7 @@ import { Newspaper } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { hl } from "../../components/motion/hl";
 import { useLocalePath } from "../../i18n/navigation";
+import PageBanner from "../../components/site/PageBanner";
 import { Empty, LinkButton, NewsCard, PublicHero } from "./components";
 import LoadError from "./components/LoadError";
 
@@ -16,6 +17,7 @@ export default function NewsView({ news, error }) {
 
   return (
     <>
+      <PageBanner name="news" />
       <PublicHero eyebrow={t("eyebrow")} title={t.rich("title", { hl })} lead={t("lead")} />
       <section className="section section--tight">
         <div className="container">
