@@ -6,7 +6,6 @@ import { useRef, useState } from "react";
 import { CheckCircle2, Send } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Alert, Button, Card, ChoiceGroup, Input, Select, Textarea, focusFirstInvalid } from "../../../components/ui";
-import { useAuth } from "../../../context/AuthContext";
 import { useLocalePath } from "../../../i18n/navigation";
 import { publicApi } from "../../../services";
 import { errorMessage } from "../../../i18n/errors";
@@ -48,7 +47,6 @@ export default function JoinForm({ regions = [], interestAreas = [] }) {
   const t = useTranslations("site.join.form");
   const tAreas = useTranslations("site.join.interests");
   const tErrors = useTranslations("errors");
-  const { isAuthenticated } = useAuth();
   const [form, setForm] = useState(EMPTY);
   const [interests, setInterests] = useState([]);
   const [errors, setErrors] = useState({});
@@ -111,7 +109,6 @@ export default function JoinForm({ regions = [], interestAreas = [] }) {
           <h3 className="pub-form__title">{t("title")}</h3>
           <p className="pub-form__intro">{t("required")}</p>
         </div>
-        {isAuthenticated && <Alert tone="info">{t("alreadyMember")}</Alert>}
         <div className="form-grid">
           <Input label={t("name")} required autoComplete="name" value={form.name} onChange={update("name")} error={errors.name} />
           <Input label={t("email")} type="email" required autoComplete="email" value={form.email} onChange={update("email")} error={errors.email} />

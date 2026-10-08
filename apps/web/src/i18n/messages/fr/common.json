@@ -26,7 +26,9 @@
     "label": "Thème",
     "light": "Clair",
     "dark": "Sombre",
-    "system": "Système"
+    "system": "Système",
+    "switchToDark": "Passer au thème sombre",
+    "switchToLight": "Passer au thème clair"
   },
   "footer": {
     "tagline": "Microfinance solidaire, formation et entraide au service des familles camerounaises.",

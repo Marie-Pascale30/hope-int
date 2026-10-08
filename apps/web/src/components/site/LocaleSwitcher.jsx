@@ -107,11 +107,11 @@ function LocaleMenu({ className = "" }) {
   );
 }
 
-export default function LocaleSwitcher({ variant = "list", onDark, className = "" }) {
+export default function LocaleSwitcher({ variant = "list", className = "" }) {
   const t = useTranslations("language");
   if (variant === "menu") return <LocaleMenu className={className} />;
   return (
-    <nav className={`locale-switch${onDark ? " locale-switch--on-dark" : ""} ${className}`.trim()} aria-label={t("label")}>
+    <nav className={`locale-switch ${className}`.trim()} aria-label={t("label")}>
       <span className="locale-switch__label" aria-hidden="true">{t("label")}</span>
       <Links className="locale-switch__list" />
     </nav>

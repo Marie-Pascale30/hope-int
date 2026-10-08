@@ -98,17 +98,24 @@
     "home": {
       "eyebrow": "Association de solidarité internationale",
       "title": "Investir dans les rêves des familles",
+      "titleLead": "Investir dans les rêves des",
+      "titleWords": [
+        "familles",
+        "femmes",
+        "jeunes",
+        "communautés"
+      ],
       "lead": "Au Cameroun, nous accompagnons les femmes, les jeunes et les communautés rurales vers l'autonomie grâce à la microfinance solidaire, la formation et l'entraide.",
       "ctaDonate": "Faire un don",
       "ctaDiscover": "Découvrir nos projets",
-      "ctaTitle": "Changeons des vies, ensemble",
+      "ctaTitle": "Changeons des vies, <hl>ensemble</hl>",
       "ctaText": "Chaque contribution renforce une famille, un quartier et une génération. Donnez une fois ou chaque mois, par carte ou Mobile Money.",
       "ctaJoin": "Devenir bénévole",
       "heroFloat": "{count, plural, one {<strong>{value}</strong> personne accompagnée vers l’autonomie} other {<strong>{value}</strong> personnes accompagnées vers l’autonomie}}",
       "partialError": "Certaines informations n’ont pas pu être chargées",
       "impact": {
         "eyebrow": "Notre impact",
-        "title": "Des résultats concrets, sur le terrain",
+        "title": "Des résultats <hl>concrets</hl>, sur le terrain",
         "text": "Chiffres consolidés de l’ensemble de nos programmes au Cameroun, mis à jour en continu.",
         "beneficiaries": "Bénéficiaires accompagnés",
         "trainees": "Personnes formées",
@@ -119,7 +126,7 @@
       },
       "approach": {
         "eyebrow": "Notre approche",
-        "title": "Donner les moyens d’avancer, pas seulement de l’aide",
+        "title": "Donner les moyens d’<hl>avancer</hl>, pas seulement de l’aide",
         "text": "Trois leviers complémentaires, pensés avec les communautés, pour des changements qui durent au-delà de nos programmes.",
         "training": {
           "title": "Formation",
@@ -142,7 +149,7 @@
       },
       "quotes": {
         "eyebrow": "Témoignages",
-        "title": "Ils et elles racontent leur parcours",
+        "title": "Ils et elles racontent leur <hl>parcours</hl>",
         "quoted": "« {text} »"
       },
       "news": {
@@ -155,11 +162,15 @@
         "title": "Prochains rendez-vous",
         "text": "Ateliers, journées de collecte, visites de terrain : venez nous rencontrer.",
         "all": "Tout l’agenda"
+      },
+      "partners": {
+        "eyebrow": "Partenaires",
+        "title": "Ils nous font confiance"
       }
     },
     "projects": {
       "eyebrow": "Nos projets",
-      "title": "Des projets ancrés dans les communautés",
+      "title": "Des projets <hl>ancrés</hl> dans les communautés",
       "lead": "Microcrédit, formation, agriculture, accès à l’eau, épargne santé : découvrez nos actions dans les régions du Cameroun et choisissez celle que vous souhaitez soutenir.",
       "emptyTitle": "Aucun projet publié pour le moment",
       "emptyText": "Nos équipes préparent de nouvelles actions. Revenez bientôt ou soutenez dès maintenant l’ensemble de nos programmes.",
@@ -210,7 +221,7 @@
     },
     "news": {
       "eyebrow": "Actualités",
-      "title": "Nouvelles du terrain",
+      "title": "Nouvelles du <hl>terrain</hl>",
       "lead": "Lancements de projets, retours d’expérience, vie de l’association : suivez ce que vos dons et votre engagement rendent possible.",
       "emptyTitle": "Aucune actualité pour le moment",
       "emptyText": "Nos équipes publieront bientôt des nouvelles des projets. En attendant, découvrez nos actions en cours.",
@@ -224,7 +235,7 @@
     },
     "events": {
       "eyebrow": "Agenda",
-      "title": "Nos prochains rendez-vous",
+      "title": "Nos prochains <hl>rendez-vous</hl>",
       "lead": "Ateliers de formation, journées de collecte, visites de terrain, assemblée générale : inscrivez-vous et venez agir à nos côtés.",
       "emptyTitle": "Aucun événement programmé",
       "emptyText": "De nouveaux rendez-vous seront bientôt annoncés. Suivez nos actualités ou rejoignez l’association pour être informé(e) en priorité.",
@@ -285,9 +296,20 @@
     },
     "join": {
       "eyebrow": "Nous rejoindre",
-      "title": "Engagez-vous à nos côtés",
+      "title": "<hl>Engagez-vous</hl> à nos côtés",
       "lead": "Bénévoles, membres, professionnels : chacun peut contribuer à l’autonomie des familles camerounaises, selon son temps et ses compétences.",
+      "welcome": {
+        "eyebrow": "Membre de la communauté",
+        "title": "Super {name}, vous faites déjà partie de la grande <hl>famille HOPE</hl> !",
+        "titleNoName": "Super, vous faites déjà partie de la grande <hl>famille HOPE</hl> !",
+        "text": "Merci pour votre engagement à nos côtés. Retrouvez vos dons, vos inscriptions aux événements et vos informations dans votre espace, et rejoignez-nous lors de nos prochains rendez-vous.",
+        "account": "Mon espace",
+        "events": "Voir l’agenda"
+      },
       "ways": {
+        "eyebrow": "Comment s’engager",
+        "title": "Trois façons d’<hl>agir</hl> à nos côtés",
+        "text": "Quelques heures à donner, l’envie de participer aux décisions ou des compétences à partager : chacun trouve sa place dans l’association.",
         "volunteer": {
           "title": "Bénévole",
           "text": "Donnez quelques heures : accueil lors des collectes, appui aux ateliers, logistique, communication."
@@ -332,7 +354,6 @@
       "form": {
         "title": "Votre candidature",
         "required": "Les champs marqués d’un astérisque sont obligatoires.",
-        "alreadyMember": "Vous êtes déjà connecté(e) : si vous souhaitez un nouveau rôle, contactez plutôt l’équipe via la page Contact.",
         "name": "Nom complet",
         "email": "Email",
         "phone": "Téléphone",
@@ -374,7 +395,7 @@
     },
     "contact": {
       "eyebrow": "Contact",
-      "title": "Parlons-en",
+      "title": "<hl>Parlons-en</hl>",
       "lead": "Une question sur nos projets, un partenariat, une demande de presse ? Écrivez-nous : notre équipe vous répond dans les meilleurs délais.",
       "details": "Nos coordonnées",
       "email": "Email",

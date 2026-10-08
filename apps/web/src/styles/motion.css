@@ -1,0 +1,222 @@
+/* =========================================================
+   Animations du site public (inspirees de 21st.dev, sans dependance).
+   Composants : src/components/motion/. Charge par le layout de [locale].
+   Animations reduites (preference systeme) : etat final direct.
+   ========================================================= */
+
+/* Effacement instantane avant de rejouer une animation (useClassReplay) */
+.is-resetting,
+.is-resetting * {
+  transition: none !important;
+}
+
+/* ---------- Chiffres qui defilent (NumberTicker) ---------- */
+
+/* Largeur fixe des chiffres : pas de tremblement pendant le defilement */
+.number-ticker {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Mot qui change (WordRotate) ---------- */
+
+/* Sur sa propre ligne : la hauteur du titre ne saute pas d'un mot a l'autre */
+.word-rotate {
+  display: block;
+}
+
+.word-rotate__word {
+  display: inline-block;
+  animation: word-rotate-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes word-rotate-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+    filter: blur(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* ---------- Coup de surligneur (Highlight) ---------- */
+
+.text-highlight {
+  --hl-color: color-mix(in srgb, var(--accent) 38%, transparent);
+  --hl-size: 0.36em;
+  --hl-position: 88%;
+  padding-inline: 0.06em;
+  background: linear-gradient(var(--hl-color), var(--hl-color)) no-repeat 0 var(--hl-position) / 0% var(--hl-size);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-size 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.15s;
+}
+
+/* Sur fond sombre, le marqueur translucide vire au kaki : trait plein et fin a la place */
+:is(.home-impact, .home-cta) .text-highlight {
+  --hl-color: var(--accent);
+  --hl-size: 0.1em;
+  --hl-position: 96%;
+}
+
+.text-highlight.is-visible {
+  background-size: 100% var(--hl-size);
+}
+
+/* ---------- Barre de collecte qui se remplit (Reveal) ---------- */
+
+/* Vide tant que l'animation n'a pas demarre (is-armed : JS actif ; sans JS, barre pleine) */
+.progress-reveal.is-armed .progress__bar {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.progress-reveal.is-armed.is-visible .progress__bar {
+  transform: none;
+  transition: transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Bande defilante (Marquee) ---------- */
+
+/* Deux pistes identiques qui avancent ensemble, bords en fondu */
+.marquee {
+  --marquee-gap: 24px;
+  display: flex;
+  gap: var(--marquee-gap);
+  overflow: hidden;
+  padding-block: 8px 16px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
+.marquee__track {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: space-around;
+  gap: var(--marquee-gap);
+  min-width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  animation: marquee-scroll var(--marquee-duration, 40s) linear infinite;
+}
+
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track {
+  animation-play-state: paused;
+}
+
+.marquee__item {
+  display: flex;
+}
+
+@keyframes marquee-scroll {
+  to {
+    transform: translateX(calc(-100% - var(--marquee-gap)));
+  }
+}
+
+/* ---------- Cartes qui s'empilent au defilement (Stacking Cards) ---------- */
+
+/* <ol class="stack-cards"> > <li class="stack-cards__step" style="--step: n"> > carte */
+.stack-cards {
+  display: grid;
+  /* Distance de defilement entre deux etapes : chacune vient se poser sur la precedente */
+  gap: clamp(32px, 22vh, 200px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stack-cards__step {
+  position: sticky;
+  top: calc(var(--header-offset) + 40px + var(--step) * 28px);
+}
+
+.stack-cards__step > .card {
+  min-height: 230px;
+  box-shadow: var(--shadow-lg);
+}
+
+/* ---------- Reflet dore qui fait le tour d'un cadre (Shine Border) ---------- */
+
+/* L'element doit avoir un border-radius ; position: relative ajoutee ici */
+@property --shine-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.shine-border {
+  position: relative;
+}
+
+.shine-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 2px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--shine-angle),
+    transparent 0deg 240deg,
+    rgba(246, 189, 133, 0.85) 295deg,
+    #fff 320deg,
+    rgba(246, 189, 133, 0.85) 345deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+  animation: shine-rotate 7s linear infinite;
+}
+
+@keyframes shine-rotate {
+  to {
+    --shine-angle: 360deg;
+  }
+}
+
+@media (max-width: 900px) {
+  .stack-cards {
+    gap: 24px;
+  }
+
+  .stack-cards__step {
+    top: calc(var(--header-offset) + 16px + var(--step) * 16px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .marquee__track {
+    animation: none;
+  }
+
+  .marquee__track--copy {
+    display: none;
+  }
+
+  .shine-border::before {
+    animation: none;
+  }
+
+  .stack-cards {
+    gap: 24px;
+  }
+
+  .stack-cards__step {
+    position: static;
+  }
+}

@@ -3,6 +3,7 @@ import "../../styles/public.css";
 import { CalendarCheck, CalendarDays, GraduationCap, HandCoins, Heart, MapPin, Users, Wallet } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Alert, Badge, Card, StatusBadge } from "../../components/ui";
+import NumberTicker from "../../components/motion/NumberTicker";
 import { useFormat } from "../../i18n/format";
 import { useLocalePath } from "../../i18n/navigation";
 import { BackLink, CampaignProgress, CoverImage, LinkButton, NewsCard, Stat, useProjectStatus } from "./components";
@@ -47,7 +48,8 @@ export default function ProjectDetailView({ project, related = [] }) {
   const f = useFormat();
   const statusOf = useProjectStatus();
   const planned = project.status === "planifie";
-  const indicator = (value) => (planned && !Number(value) ? t("upcoming") : f.number(value));
+  // Chiffres d'impact animes (defilent a l'arrivee a l'ecran) ; "a venir" pour un projet planifie sans resultat.
+  const indicator = (value) => (planned && !Number(value) ? t("upcoming") : <NumberTicker value={value} />);
 
   return (
     <>

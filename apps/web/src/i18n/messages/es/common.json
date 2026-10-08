@@ -26,7 +26,9 @@
     "label": "Tema",
     "light": "Claro",
     "dark": "Oscuro",
-    "system": "Sistema"
+    "system": "Sistema",
+    "switchToDark": "Cambiar al tema oscuro",
+    "switchToLight": "Cambiar al tema claro"
   },
   "footer": {
     "tagline": "Microfinanzas solidarias, formación y ayuda mutua para las familias cameruneses.",

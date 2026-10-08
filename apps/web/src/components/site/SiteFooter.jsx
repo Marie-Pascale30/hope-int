@@ -1,10 +1,7 @@
 // Pied de page (composant serveur) : les coordonnees viennent de GET /meta, chargees par le layout.
-// Selecteurs de langue et de theme : ilots client.
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Logo from "./Logo";
-import LocaleSwitcher from "./LocaleSwitcher";
-import ThemeSwitcher from "../ThemeSwitcher";
 import { Link, useLocalePath } from "../../i18n/navigation";
 
 const DEFAULT_ORGANIZATION = { name: "HOPE International", email: "", phone: "", address: "" };
@@ -20,10 +17,6 @@ export default function SiteFooter({ organization }) {
         <div className="site-footer__brand">
           <Logo href={lp("/")} label={t("nav.home")} light />
           <p>{t("footer.tagline")}</p>
-          <div className="site-footer__prefs">
-            <LocaleSwitcher onDark />
-            <ThemeSwitcher onDark />
-          </div>
         </div>
 
         <div>

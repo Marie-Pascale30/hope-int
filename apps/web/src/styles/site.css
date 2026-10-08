@@ -3,6 +3,7 @@
    ========================================================= */
 
 .site-shell {
+  --header-offset: calc(var(--header-h) + env(safe-area-inset-top, 0px));
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
@@ -10,6 +11,16 @@
 
 .site-main {
   flex: 1;
+  /* L'en-tete transparent se superpose au contenu : on reserve sa hauteur */
+  padding-top: var(--header-offset);
+}
+
+/* Les bandeaux d'ouverture remontent sous l'en-tete pour que leur fond apparaisse a travers.
+   La bordure transparente reprend la hauteur reservee ; background-origin evite de repeter le degrade. */
+.site-main > :is(.home-hero, .pub-hero, .don-hero, .acc-hero, .acc-auth, .don-thanks) {
+  margin-top: calc(-1 * var(--header-offset));
+  border-top: var(--header-offset) solid transparent;
+  background-origin: border-box;
 }
 
 /* Cible du lien d'evitement (tabIndex -1) : pas de contour sur le conteneur entier */
@@ -66,20 +77,69 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: color-mix(in srgb, var(--bg) 86%, transparent);
-  backdrop-filter: saturate(1.4) blur(12px);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  /* Transparent en haut de page, superpose au contenu (voir .site-main) */
+  margin-bottom: calc(-1 * var(--header-offset));
+  background: transparent;
+  transition: backdrop-filter 0.2s ease, background-color 0.2s ease;
   /* viewport-fit=cover : l'en-tete collant ne passe pas sous l'encoche / la barre d'etat (PWA) */
   padding-top: env(safe-area-inset-top, 0px);
 }
 
+/* Des qu'on defile : toujours transparent, juste un leger flou du contenu qui passe dessous */
 .site-header.is-scrolled {
-  border-bottom-color: var(--line);
-  box-shadow: var(--shadow-sm);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
+/* En-tete au-dessus d'une zone sombre ([data-header-overlay] : photo du hero, bandeau d'impact) : textes en clair.
+   Actif des le rendu serveur grace a :has (la page doit commencer par une telle zone) ;
+   SiteHeader ajoute is-past-media quand aucune zone sombre n'est sous l'en-tete.
+   Les panneaux deroulants (langue, compte) gardent leurs couleurs. */
+html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) {
+  --header-hover: rgba(255, 255, 255, 0.14);
+}
+
+html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) :is(.logo, .logo:hover, .site-header__login, .site-header__login:hover, .theme-toggle, .theme-toggle:hover, .locale-menu__trigger, .locale-menu__trigger:hover) {
+  color: #fff;
+}
+
+html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) .logo__text small {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) :is(.site-header__login:hover, .theme-toggle:hover, .locale-menu__trigger:hover) {
+  background: var(--header-hover);
+}
+
+html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) .site-header__tools {
+  border-right-color: rgba(255, 255, 255, 0.3);
+}
+
+html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) :is(.site-header__burger, .user-menu__trigger) {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+@media (min-width: 961px) {
+  html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) .site-nav a {
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) .site-nav a:hover {
+    background: var(--header-hover);
+    color: #fff;
+  }
+}
+
+/* Menu mobile ouvert : fond plein, le panneau de navigation s'y raccroche */
+html.has-mobile-nav .site-header {
+  background: var(--bg);
+}
+
+/* Toute la largeur de l'ecran : logo a gauche, actions a droite (pas de colonne centrale) */
 .site-header__inner {
+  max-width: none;
   display: flex;
   align-items: center;
   gap: var(--space-6);
@@ -104,7 +164,7 @@
   padding: 8px 14px;
   border-radius: var(--radius-pill);
   font-size: var(--text-md);
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink-2);
   transition: background 0.15s ease, color 0.15s ease;
 }
@@ -115,6 +175,7 @@
 }
 
 .site-nav a.is-active {
+  font-weight: 600;
   color: var(--brand-700);
   background: var(--brand-50);
 }
@@ -126,14 +187,35 @@
 .site-header__actions {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
   margin-left: auto;
 }
 
+/* Outils discrets (langue, theme), separes du compte et du don par un filet vertical */
+.site-header__tools {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: var(--space-2);
+  margin-right: var(--space-1);
+  border-right: 1px solid var(--line);
+}
+
 .site-header__login {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: var(--radius-pill);
   font-size: var(--text-md);
   font-weight: 600;
-  color: var(--ink-2);
+  color: var(--ink);
+  transition: background 0.15s ease;
+}
+
+.site-header__login:hover {
+  color: var(--ink);
+  background: var(--surface-2);
 }
 
 .site-header__burger {
@@ -148,6 +230,49 @@
   cursor: pointer;
 }
 
+/* Bascule clair / sombre dans l'en-tete */
+.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.theme-toggle:hover {
+  color: var(--ink);
+  background: var(--surface-2);
+}
+
+/* Lune en clair, soleil en sombre (memes conditions que les tokens de globals.css) */
+.theme-toggle__sun {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle__moon {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle__sun {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle__moon {
+    display: none;
+  }
+
+  :root:not([data-theme="light"]) .theme-toggle__sun {
+    display: block;
+  }
+}
+
 /* Langue dans l'en-tete (bureau) */
 .locale-menu {
   position: relative;
@@ -159,14 +284,15 @@
   gap: 4px;
   min-height: 38px;
   padding: 0 10px;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: var(--radius-pill);
-  background: var(--surface);
+  background: none;
   font: inherit;
   font-size: var(--text-sm);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--ink-2);
   cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .locale-menu__trigger:hover {
@@ -327,6 +453,13 @@
     display: none;
   }
 
+  /* Seul le theme reste a cote du don : pas de filet */
+  .site-header__tools {
+    padding-right: 0;
+    margin-right: 0;
+    border-right: 0;
+  }
+
   .site-nav__locale {
     display: inline-flex;
     padding-top: 8px;
@@ -420,7 +553,7 @@ html.has-mobile-nav body {
 
 .site-footer__brand p {
   max-width: 320px;
-  margin: 16px 0 20px;
+  margin: 16px 0 0;
 }
 
 .site-footer__title {
@@ -462,14 +595,7 @@ html.has-mobile-nav body {
   color: var(--accent);
 }
 
-.site-footer__prefs {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px 20px;
-}
-
-/* Selecteur de langue : liste de liens (pied de page, menu mobile) */
+/* Selecteur de langue : liste de liens (menu mobile) */
 .locale-switch {
   display: inline-flex;
   flex-wrap: wrap;
@@ -508,27 +634,6 @@ html.has-mobile-nav body {
   border-color: var(--brand);
   color: var(--brand-700);
   background: var(--brand-50);
-}
-
-.locale-switch--on-dark .locale-switch__label {
-  color: var(--on-dark-2);
-}
-
-.locale-switch--on-dark .locale-switch__list a {
-  border-color: var(--on-dark-3);
-  color: var(--on-dark);
-  background: none;
-}
-
-.locale-switch--on-dark .locale-switch__list a:hover {
-  background: var(--on-dark-hover);
-  color: var(--on-dark);
-}
-
-.locale-switch--on-dark .locale-switch__list a.is-current {
-  border-color: var(--on-dark);
-  background: var(--on-dark-active);
-  color: var(--on-dark);
 }
 
 .site-footer__bottom {

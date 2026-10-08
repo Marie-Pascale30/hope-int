@@ -2,6 +2,7 @@
 import "../../styles/public.css";
 import { CalendarX } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { hl } from "../../components/motion/hl";
 import { useLocalePath } from "../../i18n/navigation";
 import { Empty, LinkButton, PublicHero } from "./components";
 import EventsAgenda from "./components/EventsAgenda";
@@ -14,7 +15,7 @@ export default function EventsView({ events, error }) {
 
   return (
     <>
-      <PublicHero eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
+      <PublicHero eyebrow={t("eyebrow")} title={t.rich("title", { hl })} lead={t("lead")} />
       <section className="section section--tight">
         <div className="container">
           {error ? (

@@ -2,6 +2,7 @@
 import "../../styles/public.css";
 import { FolderSearch } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { hl } from "../../components/motion/hl";
 import { useLocalePath } from "../../i18n/navigation";
 import { Empty, LinkButton, PublicHero } from "./components";
 import LoadError from "./components/LoadError";
@@ -17,7 +18,7 @@ export default function ProjectsView({ projects, error }) {
 
   return (
     <>
-      <PublicHero eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
+      <PublicHero eyebrow={t("eyebrow")} title={t.rich("title", { hl })} lead={t("lead")} />
       <section className="section section--tight">
         <div className="container">
           {error ? (

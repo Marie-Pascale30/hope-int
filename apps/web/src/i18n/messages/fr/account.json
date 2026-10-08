@@ -248,7 +248,7 @@
     "donate": {
       "hero": {
         "eyebrow": "Faire un don",
-        "title": "Donnez aux familles les moyens de réussir",
+        "title": "Donnez aux familles les moyens de <hl>réussir</hl>",
         "lead": "Chaque don finance des microcrédits solidaires, des formations et un accompagnement de proximité au Cameroun. Vous choisissez où va votre générosité, nous vous montrons ce qu’elle permet."
       },
       "general": "Là où c’est le plus utile",
