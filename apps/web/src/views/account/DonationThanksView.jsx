@@ -26,6 +26,7 @@ import { paymentApi } from "../../services";
 import { useFormat } from "../../i18n/format";
 import { useLocalePath } from "../../i18n/navigation";
 import { toast, useAlerts } from "../../utils/alerts";
+import { shareContent } from "../../utils/native";
 import { useLabels } from "../../utils/labels";
 import { useErrorMessage } from "../../i18n/errors";
 
@@ -101,12 +102,8 @@ async function share(t, path) {
   const url = `${window.location.origin}${path}`;
   const text = t("text");
   try {
-    if (navigator.share) {
-      await navigator.share({ title: "HOPE International", text, url });
-    } else {
-      await navigator.clipboard.writeText(`${text} ${url}`);
-      toast(t("copied"));
-    }
+    const result = await shareContent({ title: "HOPE International", text, url });
+    if (result === "copied") toast(t("copied"));
   } catch {
     // Partage annule par l'utilisateur : rien a signaler.
   }

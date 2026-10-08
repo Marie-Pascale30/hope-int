@@ -5,6 +5,7 @@
 //   d'installation native au clic.
 // - iPhone / iPad (Safari) : pas d'evenement, l'installation passe par Partager > Sur l'ecran d'accueil.
 import { useSyncExternalStore } from "react";
+import { isNativeApp } from "../../utils/native";
 
 let deferredPrompt = null;
 const listeners = new Set();
@@ -34,7 +35,7 @@ function isIos() {
 
 // "native" : fenetre d'installation disponible ; "ios" : instructions manuelles ; null : rien a proposer.
 function getMode() {
-  if (isStandalone()) return null;
+  if (isStandalone() || isNativeApp()) return null;
   if (deferredPrompt) return "native";
   return isIos() ? "ios" : null;
 }

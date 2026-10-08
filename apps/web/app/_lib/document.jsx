@@ -1,4 +1,5 @@
 import { THEME_INIT_SCRIPT } from "@/src/utils/themeScript";
+import NativeBridge from "@/src/components/native/NativeBridge";
 import ServiceWorkerRegister from "@/src/components/pwa/ServiceWorkerRegister";
 import { fontVariables } from "./fonts";
 
@@ -13,6 +14,7 @@ export default function RootDocument({ locale, children }) {
       <body>
         {children}
         <ServiceWorkerRegister />
+        <NativeBridge />
       </body>
     </html>
   );

@@ -713,3 +713,15 @@ html.has-mobile-nav body {
   display: inline;
   vertical-align: -2px;
 }
+
+/* Application mobile (Capacitor) : bande unie sous la barre d'etat du telephone, aux couleurs du
+   theme, pour que l'heure et les icones restent lisibles au-dessus des photos (Android bord a bord). */
+.is-native-app body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--bg);
+  z-index: 1000;
+  pointer-events: none;
+}
