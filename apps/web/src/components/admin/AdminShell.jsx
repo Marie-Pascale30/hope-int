@@ -67,8 +67,8 @@ export const ADMIN_NAV = [
   },
 ];
 
-// Tiroir de navigation sous 960 px (meme valeur que admin.css).
-const DRAWER_QUERY = "(max-width: 960px)";
+// Tiroir de navigation jusqu'a 1100 px (meme valeur que admin.css).
+const DRAWER_QUERY = "(max-width: 1100px)";
 
 function useIsDrawer() {
   const [isDrawer, setIsDrawer] = useState(false);

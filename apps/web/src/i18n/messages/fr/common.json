@@ -154,6 +154,7 @@
       "text": "Vous allez être déconnecté(e) de votre compte HOPE International. Vous pourrez vous reconnecter à tout moment.",
       "confirm": "Se déconnecter",
       "done": "Vous êtes déconnecté(e). À bientôt !"
-    }
+    },
+    "filters": "Filtres"
   }
 }

@@ -296,7 +296,7 @@
   padding: 5px 0;
   background: var(--accent-solid);
   color: var(--on-accent);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -1740,5 +1740,36 @@
     width: 52px;
     height: 52px;
     border-radius: 16px;
+  }
+}
+
+/* Detail d'un projet, telephone : les trois chiffres d'impact cote a cote */
+@media (max-width: 600px) {
+  .pub-indicators {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .pub-indicators .stat {
+    padding: 12px;
+  }
+
+  .pub-indicators .stat__icon {
+    display: none;
+  }
+
+  .pub-indicators .stat__label {
+    font-size: var(--text-xs);
+  }
+
+  .pub-indicators .stat__value {
+    font-size: 1.35rem;
+  }
+}
+
+/* Agenda, telephone : le bouton "Calendrier et mois" n'ajoute pas de marge dans la colonne */
+@media (max-width: 768px) {
+  .pub-agenda__collapse {
+    margin-bottom: 0;
   }
 }

@@ -5,7 +5,7 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  AlertCircle, AlertTriangle, CheckCircle2, ChevronDown, ChevronsUpDown, ChevronUp, Info, Inbox, Search, X,
+  AlertCircle, AlertTriangle, CheckCircle2, ChevronDown, ChevronsUpDown, ChevronUp, Info, Inbox, Search, SlidersHorizontal, X,
 } from "lucide-react";
 import { initials as toInitials } from "../../utils/format";
 
@@ -455,11 +455,55 @@ export function Avatar({ name, large }) {
 const tabDomId = (base, value) => `${base}-tab-${String(value).replace(/[^\w-]/g, "_")}`;
 const panelDomId = (base) => `${base}-panel`;
 
+// Bloc replie derriere un bouton sur telephone (<= 768 px) et affiche normalement au-dela :
+// filtres de l'admin, calendrier de l'agenda... Sur grand ecran, le conteneur est transparent
+// (display: contents) et ses enfants gardent la mise en page de leur parent.
+// count : nombre de filtres actifs, affiche dans le bouton.
+export function MobileCollapse({ label, count = 0, className, children }) {
+  const [open, setOpen] = useState(false);
+  const bodyId = useId();
+  return (
+    <div className={cx("mobile-collapse", open && "is-open", className)}>
+      <button
+        type="button"
+        className="mobile-collapse__toggle"
+        aria-expanded={open}
+        aria-controls={bodyId}
+        onClick={() => setOpen((value) => !value)}
+      >
+        <SlidersHorizontal size={16} aria-hidden="true" />
+        <span>{label}</span>
+        {count > 0 && <span className="tab__count">{count}</span>}
+        <ChevronDown size={16} className="mobile-collapse__chevron" aria-hidden="true" />
+      </button>
+      <div id={bodyId} className="mobile-collapse__body">{children}</div>
+    </div>
+  );
+}
+
 export function Tabs({ tabs, value, onChange, label, id }) {
   const t = useTranslations("ui");
   const generated = useId();
   const base = id || generated;
   const listRef = useRef(null);
+
+  // Liste plus large que l'ecran : fondu sur le bord ou il reste des onglets a faire defiler.
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return undefined;
+    const update = () => {
+      list.toggleAttribute("data-more-start", list.scrollLeft > 2);
+      list.toggleAttribute("data-more-end", list.scrollLeft + list.clientWidth < list.scrollWidth - 2);
+    };
+    update();
+    list.addEventListener("scroll", update, { passive: true });
+    const observer = new ResizeObserver(update);
+    observer.observe(list);
+    return () => {
+      list.removeEventListener("scroll", update);
+      observer.disconnect();
+    };
+  }, [tabs.length]);
 
   const onKeyDown = (event) => {
     const index = tabs.findIndex((tab) => tab.value === value);

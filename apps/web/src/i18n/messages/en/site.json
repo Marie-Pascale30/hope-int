@@ -251,7 +251,8 @@
       "noneOnDate": "No events on this date",
       "noneText": "Choose another date in the calendar or browse all events.",
       "filterDay": "On {day}",
-      "filterMonth": "In {month}"
+      "filterMonth": "In {month}",
+      "calendarToggle": "Calendar and months"
     },
     "calendar": {
       "previousMonth": "Previous month",

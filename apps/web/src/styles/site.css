@@ -55,7 +55,7 @@
 .logo__text small {
   margin-top: 3px;
   font-family: var(--font-sans);
-  font-size: 0.62rem;
+  font-size: 0.62rem; /* sous-titre du logo : logotype, exempte de la taille minimale de texte */
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -89,6 +89,18 @@
 .site-header.is-scrolled {
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
+}
+
+/* Telephone et tablette : sur un petit ecran, le contenu qui passe sous le logo et les boutons
+   les rend illisibles ; une fois la page defilee, l'en-tete prend un fond leger (couleurs normales :
+   SiteHeader pose aussi is-past-media). En haut de page, il reste transparent. */
+@media (max-width: 960px) {
+  .site-header.is-scrolled {
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    -webkit-backdrop-filter: saturate(1.4) blur(12px);
+    backdrop-filter: saturate(1.4) blur(12px);
+    box-shadow: 0 1px 0 var(--line);
+  }
 }
 
 /* En-tete au-dessus d'une zone sombre ([data-header-overlay] : photo du hero, bandeau d'impact) : textes en clair.
@@ -569,7 +581,7 @@ html.has-mobile-nav body {
 .site-footer ul {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 4px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -577,6 +589,12 @@ html.has-mobile-nav body {
 
 .site-footer a {
   color: var(--on-dark-2);
+}
+
+/* Liens des colonnes : 3 px de marge verticale -> zone tactile de 24 px (meme espacement visuel) */
+.site-footer ul a {
+  display: inline-block;
+  padding-block: 3px;
 }
 
 .site-footer a:hover {
@@ -658,4 +676,13 @@ html.has-mobile-nav body {
   .site-footer__grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Colonne contact : lignes (adresse, email) espacees comme les liens, sans double marge */
+.site-footer__contact > li {
+  padding-block: 3px;
+}
+
+.site-footer__contact a {
+  padding-block: 0;
 }

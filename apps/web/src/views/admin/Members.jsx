@@ -4,8 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Save, Trash2, UserPlus, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
-  Alert, Avatar, Badge, Button, DataTable, EmptyState, ErrorState, Input, PageSkeleton, Modal, PageHeader, Select, tabPanelProps,
-  StatusBadge, Switch, Tabs, Textarea,
+  Alert, Avatar, Badge, Button, DataTable, EmptyState, ErrorState, Input, MobileCollapse, PageSkeleton, Modal, PageHeader, Select,
+  tabPanelProps, StatusBadge, Switch, Tabs, Textarea,
 } from "../../components/ui";
 import RequireAuth from "../../components/RequireAuth";
 import { useAuth } from "../../context/AuthContext";
@@ -334,6 +334,7 @@ const SEARCH_DELAY = 300;
 
 function MembersDirectory() {
   const t = useTranslations("admin.members");
+  const tUi = useTranslations("ui");
   const tc = useTranslations("admin.common");
   const f = useFormat();
   const labels = useLabels();
@@ -443,23 +444,26 @@ function MembersDirectory() {
         onChange={changeSearch}
         maxLength={100}
       />
-      <select className="select" aria-label={t("filters.region")} value={region} onChange={setFilter("region")}>
-        <option value="">{t("filters.allRegions")}</option>
-        {regions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-      </select>
-      <select className="select" aria-label={t("filters.role")} value={filters.role} onChange={setFilter("role")}>
-        <option value="">{t("filters.allRoles")}</option>
-        {ROLE_KEYS.map((role) => <option key={role} value={role}>{labels.role(role)}</option>)}
-      </select>
-      <select className="select" aria-label={t("filters.status")} value={filters.status} onChange={setFilter("status")}>
-        <option value="">{t("filters.allStatuses")}</option>
-        {STATUS_KEYS.userStatus.map((key) => <option key={key} value={key}>{labels.status("userStatus", key).label}</option>)}
-      </select>
-      {hasFilters && (
-        <Button variant="ghost" size="sm" onClick={clearFilters}>
-          {t("filters.clear")}
-        </Button>
-      )}
+      {/* Telephone : la recherche reste visible, les autres filtres se replient */}
+      <MobileCollapse label={tUi("filters")} count={[region, filters.role, filters.status].filter(Boolean).length}>
+        <select className="select" aria-label={t("filters.region")} value={region} onChange={setFilter("region")}>
+          <option value="">{t("filters.allRegions")}</option>
+          {regions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+        </select>
+        <select className="select" aria-label={t("filters.role")} value={filters.role} onChange={setFilter("role")}>
+          <option value="">{t("filters.allRoles")}</option>
+          {ROLE_KEYS.map((role) => <option key={role} value={role}>{labels.role(role)}</option>)}
+        </select>
+        <select className="select" aria-label={t("filters.status")} value={filters.status} onChange={setFilter("status")}>
+          <option value="">{t("filters.allStatuses")}</option>
+          {STATUS_KEYS.userStatus.map((key) => <option key={key} value={key}>{labels.status("userStatus", key).label}</option>)}
+        </select>
+        {hasFilters && (
+          <Button variant="ghost" size="sm" onClick={clearFilters}>
+            {t("filters.clear")}
+          </Button>
+        )}
+      </MobileCollapse>
     </>
   );
 

@@ -4,7 +4,7 @@
 import { useMemo, useState } from "react";
 import { CalendarDays, CalendarX, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { Button, EmptyState } from "../../../components/ui";
+import { Button, EmptyState, MobileCollapse } from "../../../components/ui";
 import { useFormat } from "../../../i18n/format";
 import { EventCard } from ".";
 import EventsCalendar, { indexEventsByDay, keyToDate } from "./EventsCalendar";
@@ -62,34 +62,37 @@ export default function EventsAgenda({ events }) {
   return (
     <div className="pub-agenda">
       <aside className="pub-agenda__side" aria-label={t("calendarLabel")}>
-        <div className="card pub-agenda__panel">
-          <EventsCalendar
-            viewMonth={shownMonth}
-            onViewMonthChange={setViewMonth}
-            eventsByDay={eventsByDay}
-            selectedDay={filter?.type === "day" ? filter.key : null}
-            onSelectDay={selectDay}
-          />
-        </div>
-
-        {months.length > 0 && (
+        {/* Telephone : calendrier et mois replies, la liste des evenements remonte */}
+        <MobileCollapse label={t("calendarToggle")} className="pub-agenda__collapse">
           <div className="card pub-agenda__panel">
-            <h2 className="pub-agenda__subtitle">{t("upcomingMonths")}</h2>
-            <ul className="pub-agenda__months">
-              {months.map(([key, items]) => {
-                const active = filter?.type === "month" && filter.key === key;
-                return (
-                  <li key={key}>
-                    <button type="button" className={active ? "is-active" : undefined} aria-pressed={active} onClick={() => selectMonth(key)}>
-                      <span className="pub-agenda__month-name">{monthName(key)}</span>
-                      <span className="pub-agenda__month-count">{items.length}</span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+            <EventsCalendar
+              viewMonth={shownMonth}
+              onViewMonthChange={setViewMonth}
+              eventsByDay={eventsByDay}
+              selectedDay={filter?.type === "day" ? filter.key : null}
+              onSelectDay={selectDay}
+            />
           </div>
-        )}
+
+          {months.length > 0 && (
+            <div className="card pub-agenda__panel">
+              <h2 className="pub-agenda__subtitle">{t("upcomingMonths")}</h2>
+              <ul className="pub-agenda__months">
+                {months.map(([key, items]) => {
+                  const active = filter?.type === "month" && filter.key === key;
+                  return (
+                    <li key={key}>
+                      <button type="button" className={active ? "is-active" : undefined} aria-pressed={active} onClick={() => selectMonth(key)}>
+                        <span className="pub-agenda__month-name">{monthName(key)}</span>
+                        <span className="pub-agenda__month-count">{items.length}</span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+        </MobileCollapse>
 
         {regions.length > 1 && (
           <div className="card pub-agenda__panel">

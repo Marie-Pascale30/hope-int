@@ -154,6 +154,7 @@
       "text": "Vas a cerrar la sesión de tu cuenta de HOPE International. Podrás volver a iniciarla en cualquier momento.",
       "confirm": "Cerrar sesión",
       "done": "Has cerrado sesión. ¡Hasta pronto!"
-    }
+    },
+    "filters": "Filtros"
   }
 }

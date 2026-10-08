@@ -52,9 +52,9 @@
 .admin-brand small {
   margin-top: 4px;
   font-family: var(--font-sans);
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--on-dark-3);
 }
@@ -74,7 +74,7 @@
 
 .admin-nav__title {
   padding: 0 12px 6px;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -117,7 +117,7 @@
   border-radius: var(--radius-pill);
   background: var(--accent-solid);
   color: var(--on-accent);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-align: center;
 }
@@ -234,7 +234,8 @@
   outline: none;
 }
 
-@media (max-width: 960px) {
+/* Tiroir jusqu'a 1100 px : sur un portable de 1024 px, les tableaux ont toute la largeur */
+@media (max-width: 1100px) {
   .admin-layout {
     grid-template-columns: 1fr;
   }
@@ -296,8 +297,12 @@
 
   .admin-topbar__title {
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
     font-family: var(--font-display);
     font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
 /* ---------- Blocs réutilisables dans les pages d'admin ---------- */
@@ -698,4 +703,36 @@
   color: var(--ink);
   user-select: all;
   word-break: break-all;
+}
+
+/* Telephone : chiffres cles sur 2 colonnes compactes (au lieu d'une carte par ligne) */
+@media (max-width: 600px) {
+  .admin-grid-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .admin-grid-stats .stat {
+    min-width: 0;
+    padding: 14px;
+  }
+
+  .admin-grid-stats .stat__icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* Valeurs textuelles longues ("Operationnelle") : taille reduite pour tenir sur la carte ;
+     coupure en dernier recours plutot que debordement */
+  .admin-grid-stats .stat__value {
+    font-size: clamp(1rem, 4.6vw, 1.35rem);
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+}
+
+/* En-tete de panneau : un bouton au libelle long passe a la ligne au lieu de deborder */
+.panel__head > * {
+  min-width: 0;
+  max-width: 100%;
 }

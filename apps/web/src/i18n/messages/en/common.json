@@ -154,6 +154,7 @@
       "text": "You are about to sign out of your HOPE International account. You can sign back in at any time.",
       "confirm": "Sign out",
       "done": "You have been signed out. See you soon!"
-    }
+    },
+    "filters": "Filters"
   }
 }

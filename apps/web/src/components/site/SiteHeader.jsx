@@ -115,7 +115,13 @@ export default function SiteHeader() {
   // en clair ; is-past-media le ramene aux couleurs normales quand aucune n'est sous l'en-tete.
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 8);
+      const isScrolled = window.scrollY > 8;
+      setScrolled(isScrolled);
+      // Telephone : une fois la page defilee, l'en-tete a un fond (site.css) et garde ses couleurs normales.
+      if (isScrolled && compact.matches) {
+        setPastMedia(true);
+        return;
+      }
       const middle = (headerRef.current?.offsetHeight || 0) / 2;
       const overlays = [...document.querySelectorAll("[data-header-overlay]")];
       const underHeader = overlays.some((element) => {
@@ -124,6 +130,7 @@ export default function SiteHeader() {
       });
       setPastMedia(overlays.length > 0 && !underHeader);
     };
+    const compact = window.matchMedia("(max-width: 960px)");
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
