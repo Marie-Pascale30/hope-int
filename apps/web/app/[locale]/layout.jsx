@@ -1,6 +1,7 @@
 import "@/src/styles/globals.css";
 import "@/src/styles/site.css";
 import "@/src/styles/motion.css";
+import "@/src/styles/glass.css";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";

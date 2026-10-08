@@ -2,6 +2,7 @@ import "@/src/styles/globals.css";
 import "@/src/styles/site.css";
 import "@/src/styles/admin.css";
 import "@/src/styles/admin-pages.css";
+import "@/src/styles/glass.css";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import AdminShell from "@/src/components/admin/AdminShell";
