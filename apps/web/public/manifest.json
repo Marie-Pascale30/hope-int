@@ -1,15 +1,26 @@
 {
-  "short_name": "HOPE",
-  "name": "HOPE International",
-  "icons": [
-    {
-      "src": "/icon.svg",
-      "type": "image/svg+xml",
-      "sizes": "any"
-    }
-  ],
-  "start_url": "/",
+  "id": "/",
+  "name": "Hope International",
+  "short_name": "Hope",
+  "description": "Projets, actualités, événements et dons de Hope International.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "theme_color": "#1f5f4a",
-  "background_color": "#faf7f2"
+  "background_color": "#faf7f2",
+  "categories": ["social", "lifestyle"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Faire un don", "short_name": "Don", "url": "/don?source=pwa", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Mon espace", "short_name": "Espace", "url": "/espace?source=pwa", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Événements", "short_name": "Agenda", "url": "/evenements?source=pwa", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
 }

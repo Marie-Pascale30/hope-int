@@ -22,6 +22,10 @@
     "donateShort": "Give",
     "skip": "Skip to content"
   },
+  "pwa": {
+    "install": "Install the app",
+    "iosHint": "In Safari, tap <share>Share</share>, then <add>Add to Home Screen</add>."
+  },
   "theme": {
     "label": "Theme",
     "light": "Light",

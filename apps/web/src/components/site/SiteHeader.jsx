@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import Logo from "./Logo";
 import LocaleSwitcher from "./LocaleSwitcher";
 import ThemeToggle from "../ThemeToggle";
+import InstallAppButton from "../pwa/InstallAppButton";
 import { Button, Avatar } from "../ui";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useLocalePath, usePathname } from "../../i18n/navigation";
@@ -167,6 +168,7 @@ export default function SiteHeader() {
             ) : (
               <Button href={lp("/connexion")} variant="secondary" block>{t("login")}</Button>
             )}
+            <InstallAppButton />
             <LocaleSwitcher className="site-nav__locale" />
           </div>
         </nav>

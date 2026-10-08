@@ -686,3 +686,30 @@ html.has-mobile-nav body {
 .site-footer__contact a {
   padding-block: 0;
 }
+
+/* Installation de l'application (menu mobile) : marche a suivre sur iPhone / iPad */
+.install-app {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.install-app__hint {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.install-app__hint strong {
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.install-app__hint svg {
+  display: inline;
+  vertical-align: -2px;
+}

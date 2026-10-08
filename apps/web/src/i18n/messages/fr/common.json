@@ -22,6 +22,10 @@
     "donateShort": "Don",
     "skip": "Aller au contenu"
   },
+  "pwa": {
+    "install": "Installer l'application",
+    "iosHint": "Dans Safari, touchez <share>Partager</share>, puis <add>Sur l'écran d'accueil</add>."
+  },
   "theme": {
     "label": "Thème",
     "light": "Clair",

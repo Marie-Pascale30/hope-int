@@ -11,7 +11,7 @@ import { loadMessages } from "@/src/i18n/messages";
 import { routing } from "@/src/i18n/routing";
 import { serverApi, settle } from "@/src/services/server";
 import { SITE_NAME, SITE_URL, languageAlternates } from "@/src/views/site/seo";
-import RootDocument, { rootViewport } from "../_lib/document";
+import RootDocument, { appMetadata, rootViewport } from "../_lib/document";
 
 // Layout racine du site public (et des pages de compte / don) : une arborescence par langue.
 export function generateStaticParams() {
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }) {
     title: { default: t("home.absoluteTitle"), template: `%s · ${SITE_NAME}` },
     description: t("home.description"),
     applicationName: SITE_NAME,
-    manifest: "/manifest.json",
+    ...appMetadata,
     alternates: { languages: languageAlternates("/") },
   };
 }

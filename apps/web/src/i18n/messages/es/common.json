@@ -22,6 +22,10 @@
     "donateShort": "Donar",
     "skip": "Ir al contenido"
   },
+  "pwa": {
+    "install": "Instalar la aplicación",
+    "iosHint": "En Safari, toca <share>Compartir</share> y luego <add>Agregar a inicio</add>."
+  },
   "theme": {
     "label": "Tema",
     "light": "Claro",
