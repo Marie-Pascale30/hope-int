@@ -59,6 +59,7 @@ services:
       - "5000:5000"
     volumes:
       - backend_uploads:/app/apps/api/uploads
+      - backend_private_uploads:/app/apps/api/private-uploads
     # Meme sonde que le HEALTHCHECK de l'image (apps/api/Dockerfile) ; /api/health interroge MySQL.
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
@@ -120,4 +121,5 @@ services:
 volumes:
   mysql_data:
   backend_uploads:
+  backend_private_uploads:
   backups:

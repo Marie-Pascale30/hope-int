@@ -104,7 +104,11 @@
         "dons": "My donations",
         "evenements": "My events",
         "profil": "My profile",
-        "securite": "Security"
+        "securite": "Security",
+        "engagements": "My pledges",
+        "projets": "Supported projects",
+        "collectes": "My fundraisers",
+        "benevolat": "My volunteering"
       },
       "security": {
         "title": "Change my password",

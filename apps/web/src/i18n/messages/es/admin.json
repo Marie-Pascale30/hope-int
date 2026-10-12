@@ -41,7 +41,17 @@
       "testimonials": "Testimonios",
       "events": "Eventos",
       "logs": "Registro de actividad",
-      "system": "Estado del sistema"
+      "system": "Estado del sistema",
+      "donors": "Donantes",
+      "campaigns": "Campañas",
+      "volunteers": "Voluntariado",
+      "teamPortraits": "Retratos del equipo",
+      "offlineDonations": "Donativos fuera de línea",
+      "pledges": "Compromisos mensuales",
+      "budget": "Presupuesto y gastos",
+      "publication": "Publicación de cuentas",
+      "validation": "Por validar",
+      "fundraisers": "Colectas"
     },
     "common": {
       "you": "(tú)",

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import Logo from "./Logo";
 import LocaleSwitcher from "./LocaleSwitcher";
 import ThemeSwitcher from "../ThemeSwitcher";
+import { DataSaverToggle } from "../eco/DataSaver";
 import { Link, useLocalePath } from "../../i18n/navigation";
 import NewsletterSignup from "../../views/engagement/NewsletterSignup";
 import SocialLinks from "../../views/engagement/SocialLinks";
@@ -26,6 +27,7 @@ export default function SiteFooter({ organization }) {
           <div className="site-footer__prefs">
             <LocaleSwitcher onDark />
             <ThemeSwitcher onDark />
+            <DataSaverToggle />
           </div>
         </div>
 
@@ -35,6 +37,8 @@ export default function SiteFooter({ organization }) {
             <li><Link href="/projets">{t("nav.projects")}</Link></li>
             <li><Link href="/actualites">{t("nav.news")}</Link></li>
             <li><Link href="/evenements">{t("nav.events")}</Link></li>
+            <li><Link href="/transparence">{t("nav.transparency")}</Link></li>
+            <li><Link href="/equipe">{t("nav.team")}</Link></li>
           </ul>
         </div>
 

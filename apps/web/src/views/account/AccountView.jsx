@@ -16,9 +16,14 @@ import ChangePasswordForm from "./components/ChangePasswordForm";
 import DonationsTab from "./components/DonationsTab";
 import EventsTab from "./components/EventsTab";
 import ProfileTab from "./components/ProfileTab";
+import FundraisersPanel from "./components/FundraisersPanel";
+import PledgesPanel from "./components/PledgesPanel";
+import SupportedProjectsTab from "../engagement/SupportedProjectsTab";
+import MyVolunteeringTab from "../volunteering/MyVolunteeringTab";
+import { MyPublicProfile } from "../transparency/admin/TeamProfileForm";
 
 // Valeurs des onglets (parametre ?onglet=, garde en francais pour les URL existantes).
-const TAB_VALUES = ["dons", "evenements", "profil", "securite"];
+const TAB_VALUES = ["dons", "engagements", "projets", "collectes", "evenements", "benevolat", "profil", "securite"];
 
 // Deconnexion de tous les appareils (POST /auth/logout-all) : revoque aussi la session courante.
 function SessionsCard() {
@@ -118,8 +123,18 @@ function AccountContent() {
         <Tabs id="account-tabs" tabs={tabs} value={tab} onChange={changeTab} label={t("tabsLabel")} />
         <TabPanel tabsId="account-tabs" value={tab}>
           {tab === "dons" && <DonationsTab />}
+          {tab === "engagements" && <PledgesPanel />}
+          {tab === "projets" && <SupportedProjectsTab />}
+          {tab === "collectes" && <FundraisersPanel />}
           {tab === "evenements" && <EventsTab />}
-          {tab === "profil" && <ProfileTab />}
+          {tab === "benevolat" && <MyVolunteeringTab />}
+          {tab === "profil" && (
+            <>
+              <ProfileTab />
+              {/* Portrait public (page Equipe) : reserve aux membres de l'equipe. */}
+              {isStaff(user) && <MyPublicProfile />}
+            </>
+          )}
           {tab === "securite" && <SecurityTab />}
         </TabPanel>
       </div>

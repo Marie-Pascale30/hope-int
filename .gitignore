@@ -18,6 +18,8 @@ coverage/
 # Fichiers televerses par l'API
 apps/api/uploads/*
 !apps/api/uploads/.gitkeep
+# Justificatifs prives (depenses, dons hors ligne) : jamais servis publiquement
+apps/api/private-uploads/
 
 # Journaux et systeme
 *.log

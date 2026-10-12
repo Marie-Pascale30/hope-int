@@ -31,7 +31,9 @@
     "menuOpen": "Abrir el menú",
     "menuClose": "Cerrar el menú",
     "donateShort": "Donar",
-    "skip": "Ir al contenido"
+    "skip": "Ir al contenido",
+    "transparency": "Transparencia",
+    "team": "El equipo"
   },
   "theme": {
     "label": "Tema",

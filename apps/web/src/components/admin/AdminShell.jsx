@@ -5,8 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
-  BarChart3, CalendarDays, ClipboardCheck, ExternalLink, FileText, HandCoins, Inbox, KeyRound, LayoutDashboard,
-  LogOut, MapPinned, Menu, MessageSquareQuote, Newspaper, ScrollText, Server, Sprout, Users, Wallet, X,
+  Banknote, BarChart3, BookOpenCheck, CalendarDays, CalendarHeart, ClipboardCheck, ExternalLink, FileText, Flag,
+  HandCoins, HandHeart, HeartHandshake, Inbox, KeyRound, LayoutDashboard, ListChecks, LogOut, MapPinned, Megaphone,
+  Menu, MessageSquareQuote, Newspaper, PiggyBank, ScrollText, Server, Sprout, UserRound, Users, Wallet, X,
 } from "lucide-react";
 import { LogoMark } from "../site/Logo";
 import { Avatar } from "../ui";
@@ -34,6 +35,8 @@ export const ADMIN_NAV = [
     items: [
       { href: "/admin/candidatures", label: "applications", icon: ClipboardCheck, permission: P.MANAGE_APPLICATIONS, badge: "pendingApplications" },
       { href: "/admin/messages", label: "messages", icon: Inbox, permission: P.VIEW_MESSAGES, badge: "unreadMessages" },
+      { href: "/admin/donateurs", label: "donors", icon: HeartHandshake, permission: P.MANAGE_DONORS },
+      { href: "/admin/campagnes", label: "campaigns", icon: Megaphone, permission: P.MANAGE_CAMPAIGNS },
     ],
   },
   {
@@ -41,6 +44,8 @@ export const ADMIN_NAV = [
     items: [
       { href: "/admin/membres", label: "members", icon: Users, permission: P.VIEW_USERS },
       { href: "/admin/roles", label: "roles", icon: KeyRound, permission: P.ACCESS_ADMIN_DASHBOARD },
+      { href: "/admin/benevolat", label: "volunteers", icon: HandHeart, permission: P.MANAGE_VOLUNTEERS },
+      { href: "/admin/budget/equipe", label: "teamPortraits", icon: UserRound, permission: P.MANAGE_HR },
     ],
   },
   {
@@ -48,6 +53,10 @@ export const ADMIN_NAV = [
     items: [
       { href: "/admin/dons", label: "donations", icon: HandCoins, permission: P.VIEW_DONATIONS },
       { href: "/admin/finance", label: "finance", icon: Wallet, permission: P.MANAGE_FINANCE },
+      { href: "/admin/dons-hors-ligne", label: "offlineDonations", icon: Banknote, permission: P.MANAGE_FINANCE },
+      { href: "/admin/dons-engagements", label: "pledges", icon: CalendarHeart, permission: P.VIEW_DONATIONS },
+      { href: "/admin/budget", label: "budget", icon: PiggyBank, permission: P.MANAGE_FINANCE, exact: true },
+      { href: "/admin/budget/publication", label: "publication", icon: BookOpenCheck, permission: P.MANAGE_FINANCE },
     ],
   },
   {
@@ -57,6 +66,8 @@ export const ADMIN_NAV = [
       { href: "/admin/actualites", label: "news", icon: Newspaper, permission: P.MANAGE_CONTENT },
       { href: "/admin/temoignages", label: "testimonials", icon: MessageSquareQuote, permission: P.MANAGE_CONTENT },
       { href: "/admin/evenements", label: "events", icon: CalendarDays, permission: P.MANAGE_ORGANIZATION },
+      { href: "/admin/validation", label: "validation", icon: ListChecks, permission: P.APPROVE_CONTENT },
+      { href: "/admin/collectes", label: "fundraisers", icon: Flag, permission: P.MANAGE_CONTENT },
     ],
   },
   {

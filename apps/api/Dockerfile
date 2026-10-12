@@ -13,7 +13,7 @@ COPY apps/api apps/api
 
 # Utilisateur non privilegie (fourni par l'image node) ; seul le dossier des images
 # televersees lui appartient (le volume backend_uploads herite de ces droits a sa creation).
-RUN mkdir -p apps/api/uploads && chown -R node:node apps/api/uploads
+RUN mkdir -p apps/api/uploads apps/api/private-uploads && chown -R node:node apps/api/uploads apps/api/private-uploads
 
 WORKDIR /app/apps/api
 ENV NODE_ENV=production

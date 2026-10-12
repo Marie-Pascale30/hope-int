@@ -104,7 +104,11 @@
         "dons": "Mes dons",
         "evenements": "Mes événements",
         "profil": "Mon profil",
-        "securite": "Sécurité"
+        "securite": "Sécurité",
+        "engagements": "Mes engagements",
+        "projets": "Projets soutenus",
+        "collectes": "Mes collectes",
+        "benevolat": "Mon bénévolat"
       },
       "security": {
         "title": "Changer mon mot de passe",

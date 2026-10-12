@@ -3,7 +3,9 @@ import "@/src/styles/site.css";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Suspense } from "react";
 import { AuthProvider } from "@/src/context/AuthContext";
+import SourceTracker from "@/src/views/fundraising/components/SourceTracker";
 import SiteFooter from "@/src/components/site/SiteFooter";
 import SiteHeader from "@/src/components/site/SiteHeader";
 import { FEATURE_FILES, loadMessages } from "@/src/i18n/messages";
@@ -46,6 +48,10 @@ export default async function LocaleLayout({ children, params }) {
     <RootDocument locale={locale}>
       <NextIntlClientProvider locale={locale} messages={messages}>
         <AuthProvider>
+          {/* Conserve la source d'un don (?ref=) depuis la page d'arrivee jusqu'au formulaire de don. */}
+          <Suspense fallback={null}>
+            <SourceTracker />
+          </Suspense>
           <div className="site-shell">
             <a href="#contenu" className="skip-link">{t("skip")}</a>
             <SiteHeader />
