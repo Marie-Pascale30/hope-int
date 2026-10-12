@@ -8,7 +8,6 @@ const MESSAGES = {
     "Email ou mot de passe incorrect": ["Incorrect email or password", "Correo electrónico o contraseña incorrectos"],
     "Ce compte est désactivé. Contactez l'administration.": ["This account is disabled. Please contact the administration.", "Esta cuenta está desactivada. Contacta con la administración."],
     "Vous devez choisir un nouveau mot de passe avant de continuer": ["You must choose a new password before continuing", "Debes elegir una nueva contraseña antes de continuar"],
-    "Compte créé : vous pouvez vous connecter": ["Account created: you can now sign in", "Cuenta creada: ya puedes iniciar sesión"],
     "Un compte existe déjà avec cet email": ["An account already exists with this email", "Ya existe una cuenta con este correo electrónico"],
     "Mot de passe de 8 à 100 caractères": ["Password must be 8 to 100 characters long", "La contraseña debe tener entre 8 y 100 caracteres"],
     "Le mot de passe doit contenir au moins 8 caractères, dont une lettre et un chiffre": ["The password must be at least 8 characters long and include a letter and a number", "La contraseña debe tener al menos 8 caracteres, con una letra y un número"],
@@ -19,6 +18,9 @@ const MESSAGES = {
     "Ce lien est invalide ou a expiré. Faites une nouvelle demande.": ["This link is invalid or has expired. Please make a new request.", "Este enlace no es válido o ha caducado. Haz una nueva solicitud."],
     "Mot de passe réinitialisé : vous pouvez vous connecter": ["Password reset: you can now sign in", "Contraseña restablecida: ya puedes iniciar sesión"],
     "Déconnecté": ["Signed out", "Sesión cerrada"],
+    "Déconnecté de toutes les sessions": ["Signed out of all sessions", "Sesión cerrada en todos los dispositivos"],
+    "Inscription enregistrée : vous pouvez vous connecter. Si un compte existait déjà avec cet email, son titulaire vient d'être prévenu.": ["Registration recorded: you can now sign in. If an account already existed with this email, its owner has just been notified.", "Registro completado: ya puedes iniciar sesión. Si ya existía una cuenta con este correo, su titular acaba de ser avisado."],
+    "Trop de tentatives sur ce compte : réessayez dans 15 minutes.": ["Too many attempts on this account: try again in 15 minutes.", "Demasiados intentos en esta cuenta: vuelve a intentarlo en 15 minutos."],
     "Requête refusée (protection CSRF)": ["Request rejected (CSRF protection)", "Solicitud rechazada (protección CSRF)"],
 
     // Droits
@@ -33,6 +35,8 @@ const MESSAGES = {
     "Vous ne pouvez pas désactiver votre propre compte": ["You cannot disable your own account", "No puedes desactivar tu propia cuenta"],
     "Vous ne pouvez pas supprimer votre propre compte": ["You cannot delete your own account", "No puedes eliminar tu propia cuenta"],
     "Impossible : c'est le dernier administrateur actif de la plateforme": ["Not possible: this is the last active administrator of the platform", "Imposible: es el último administrador activo de la plataforma"],
+    "Vous ne pouvez pas modifier votre propre région": ["You cannot change your own region", "No puedes modificar tu propia región"],
+    "Sélectionnez entre 1 et 100 éléments": ["Select between 1 and 100 items", "Selecciona entre 1 y 100 elementos"],
     "Aucune région n'est associée à votre fiche : demandez aux RH de la renseigner": ["No region is set on your profile: ask HR to fill it in", "Tu ficha no tiene ninguna región asociada: pide a RR. HH. que la indique"],
     "Ce contenu ne relève pas de votre région": ["This content is outside your region", "Este contenido no pertenece a tu región"],
     "Le projet rattaché ne relève pas de votre région": ["The linked project is outside your region", "El proyecto vinculado no pertenece a tu región"],
@@ -51,8 +55,7 @@ const MESSAGES = {
     "Candidature acceptée : compte créé": ["Application accepted: account created", "Candidatura aceptada: cuenta creada"],
     "Candidature acceptée : rattachée au compte existant": ["Application accepted: linked to the existing account", "Candidatura aceptada: vinculada a la cuenta existente"],
     "Cette candidature a déjà été clôturée": ["This application has already been closed", "Esta candidatura ya se ha cerrado"],
-    "Une candidature est déjà en cours d'étude pour cet email": ["An application is already under review for this email", "Ya hay una candidatura en estudio para este correo electrónico"],
-    "Un compte existe déjà avec cet email : connectez-vous à votre espace": ["An account already exists with this email: sign in to your space", "Ya existe una cuenta con este correo: inicia sesión en tu espacio"],
+    "Ce compte est désactivé : réactivez-le avant d'y rattacher la candidature": ["This account is disabled: reactivate it before linking the application to it", "Esta cuenta está desactivada: reactívala antes de vincularle la candidatura"],
     "Un compte existe déjà avec cet email : vous pouvez y rattacher la candidature": ["An account already exists with this email: you can link the application to it", "Ya existe una cuenta con este correo: puedes vincularle la candidatura"],
 
     // Messages et contenus
@@ -108,6 +111,8 @@ const MESSAGES = {
     "Ce don vient d'être traité par ailleurs": ["This donation has just been handled by someone else", "Otra persona acaba de tramitar esta donación"],
     "Don validé": ["Donation approved", "Donación validada"],
     "Don rejeté": ["Donation rejected", "Donación rechazada"],
+    "Indiquez le montant réellement reçu": ["Enter the amount actually received", "Indica el importe realmente recibido"],
+    "Un rapprochement est déjà en cours : réessayez dans quelques minutes": ["A reconciliation is already running: try again in a few minutes", "Ya hay una conciliación en curso: vuelve a intentarlo en unos minutos"],
 
     // Limites et erreurs generiques
     "Trop de requêtes, veuillez réessayer dans quelques instants.": ["Too many requests, please try again in a moment.", "Demasiadas solicitudes, inténtalo de nuevo en unos instantes."],

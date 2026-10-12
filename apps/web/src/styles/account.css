@@ -989,14 +989,27 @@
 
 .acc-sub__amount {
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: var(--text-xl);
   font-weight: 600;
 }
 
+.acc-sub__next {
+  margin-top: var(--space-1);
+  color: var(--ink-2);
+}
+
+/* Libelles longs (espagnol) : retour a la ligne autorise plutot qu'un debordement. */
 .acc-sub__side {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
+  min-width: 0;
+}
+
+.acc-sub__side .btn {
+  white-space: normal;
+  text-align: center;
 }
 
 /* Evenements */

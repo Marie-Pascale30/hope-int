@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Alert, Button, Modal } from "../../../components/ui";
-import { toast } from "../../../utils/alerts";
+import { Alert, Button, Modal } from "@/src/components/ui";
+import { toast } from "@/src/utils/alerts";
 
 // Mot de passe provisoire renvoye quand l'email n'a pas pu partir (SMTP absent) : affiche une seule fois.
 export default function TempPasswordModal({ credentials, onClose }) {

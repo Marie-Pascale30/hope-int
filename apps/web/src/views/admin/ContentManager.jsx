@@ -18,8 +18,8 @@ import { truncate } from "../../utils/format";
 import { useLabels } from "../../utils/labels";
 import { useAlerts } from "../../utils/alerts";
 import { PERMISSIONS as P } from "../../utils/rbac";
-import ContentForm, { toFormValues } from "./parts-b/ContentForm";
-import { Thumb } from "./parts-b/widgets";
+import ContentForm, { toFormValues } from "./components/ContentForm";
+import { Thumb } from "./components/widgets";
 
 // Parametrage par type de contenu (libelles : adminOps.content.<type>).
 const TYPES = {

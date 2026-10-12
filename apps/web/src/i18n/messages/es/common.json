@@ -119,8 +119,6 @@
   },
   "ui": {
     "loading": "Cargando…",
-    "loadingShort": "Cargando",
-    "loadingStats": "Cargando indicadores…",
     "loadingTable": "Cargando la tabla…",
     "empty": "Nada que mostrar",
     "errorTitle": "No se ha podido cargar",
@@ -148,10 +146,31 @@
       "cancel": "Cancelar"
     },
     "logout": {
-      "title": "¿Cerrar sesión?",
-      "text": "Vas a cerrar la sesión de tu cuenta de HOPE International. Podrás volver a iniciarla en cualquier momento.",
-      "confirm": "Cerrar sesión",
-      "done": "Has cerrado sesión. ¡Hasta pronto!"
+      "done": "Has cerrado sesión. ¡Hasta pronto!",
+      "doneAll": "Se ha cerrado la sesión en todos sus dispositivos."
+    },
+    "phone": {
+      "label": "Teléfono",
+      "placeholder": "6 77 12 34 56",
+      "hint": "Número camerunés (+237) o internacional con el prefijo del país.",
+      "hintMobileMoney": "Número Mobile Money camerunés: 9 dígitos que empiezan por 6.",
+      "operators": {
+        "mtn": "Operador probable: MTN Mobile Money",
+        "orange": "Operador probable: Orange Money"
+      },
+      "errors": {
+        "required": "Indique un número de teléfono.",
+        "cm": "Número camerunés incompleto: 9 dígitos que empiezan por 6 (p. ej. 6 77 12 34 56).",
+        "mobileMoney": "Mobile Money solo acepta números cameruneses (+237 6…). Para un número extranjero, elija la tarjeta bancaria.",
+        "invalid": "Número no válido: introduzca 9 dígitos (Camerún) o el prefijo del país precedido de +."
+      }
+    },
+    "bulk": {
+      "label": "Acciones sobre la selección",
+      "selected": "{count, plural, one {# elemento seleccionado} other {# elementos seleccionados}}",
+      "clear": "Quitar selección",
+      "selectPage": "Seleccionar todas las filas de la página",
+      "selectRow": "Seleccionar: {label}"
     }
   }
 }

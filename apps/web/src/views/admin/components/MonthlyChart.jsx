@@ -3,9 +3,9 @@
 // Graphique en barres (une seule serie) des montants mensuels en EUR.
 // Charge uniquement cote client : importer ce fichier via next/dynamic ({ ssr: false }).
 import { useTranslations } from "next-intl";
-import { Bar, barDataset, baseOptions, useChartTheme } from "../../../components/AdminCharts";
-import { useFormat } from "../../../i18n/format";
-import { formatEur, formatEurCompact, formatMonthKey } from "./finance";
+import { Bar, barDataset, baseOptions, useChartTheme } from "@/src/components/AdminCharts";
+import { useFormat } from "@/src/i18n/format";
+import { formatEur, formatEurCompact, formatMonthKey } from "../lib/finance";
 
 export default function MonthlyChart({ months = [], label }) {
   const t = useTranslations("adminOps.charts");

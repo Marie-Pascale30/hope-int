@@ -5,11 +5,11 @@ import { useId, useState } from "react";
 import dynamic from "next/dynamic";
 import { ImagePlus, Trash2, Undo2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Button, Field } from "../../../components/ui";
-import { useFormat } from "../../../i18n/format";
-import { resolveImage } from "../../../utils/format";
-import { showError } from "../../../utils/alerts";
-import { formatEur, formatMonthKey, percent } from "./finance";
+import { Button, Field, Input } from "@/src/components/ui";
+import { useFormat } from "@/src/i18n/format";
+import { resolveImage } from "@/src/utils/format";
+import { showError } from "@/src/utils/alerts";
+import { formatEur, formatMonthKey, percent } from "../lib/finance";
 
 const PLACEHOLDER = "/images/placeholder.svg";
 
@@ -125,7 +125,11 @@ const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
 // Choix d'une image avec apercu. `currentUrl` : image deja enregistree ;
 // `removed` : l'utilisateur a demande de la retirer (envoye comme remove_image: "1").
-export function ImageField({ currentUrl, file, onFile, removed, onRemovedChange }) {
+// `alt` / `onAltChange` : texte alternatif (champ image_alt, 255 caracteres max), propose des
+// qu'une image est presente ; vide, l'image est traitee comme decorative sur le site.
+export const IMAGE_ALT_MAX = 255;
+
+export function ImageField({ currentUrl, file, onFile, removed, onRemovedChange, alt, onAltChange }) {
   const t = useTranslations("adminOps.image");
   const inputId = useId();
   const [preview, setPreview] = useState(null);
@@ -151,6 +155,7 @@ export function ImageField({ currentUrl, file, onFile, removed, onRemovedChange 
   };
 
   return (
+    <>
     <Field label={t("label")} hint={t("hint", { max: 5 })} full>
       <div className="adm-image-field">
         {shown ? (
@@ -192,5 +197,18 @@ export function ImageField({ currentUrl, file, onFile, removed, onRemovedChange 
         </div>
       </div>
     </Field>
+    {onAltChange && shown && (
+      <Input
+        label={t("altLabel")}
+        full
+        maxLength={IMAGE_ALT_MAX}
+        value={alt || ""}
+        onChange={(event) => onAltChange(event.target.value)}
+        placeholder={t("altPlaceholder")}
+        hint={t("altHint", { max: IMAGE_ALT_MAX })}
+        enterKeyHint="done"
+      />
+    )}
+    </>
   );
 }

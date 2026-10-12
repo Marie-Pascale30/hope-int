@@ -3,14 +3,14 @@
 // Liste des inscrits a un evenement : copie des emails et export CSV local.
 import { ClipboardCopy, Download, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Button, DataTable, EmptyState, ErrorState, SkeletonTable, Modal } from "../../../components/ui";
-import { useAsync } from "../../../hooks/useAsync";
-import { useFormat } from "../../../i18n/format";
-import { adminApi } from "../../../services";
-import { useErrorMessage } from "../../../i18n/errors";
-import { saveBlob } from "../../../utils/format";
-import { useAlerts } from "../../../utils/alerts";
-import { todayStamp } from "./finance";
+import { Button, DataTable, EmptyState, ErrorState, SkeletonTable, Modal } from "@/src/components/ui";
+import { useAsync } from "@/src/hooks/useAsync";
+import { useFormat } from "@/src/i18n/format";
+import { adminApi } from "@/src/services";
+import { useErrorMessage } from "@/src/i18n/errors";
+import { saveBlob } from "@/src/utils/format";
+import { useAlerts } from "@/src/utils/alerts";
+import { todayStamp } from "../lib/finance";
 
 // Cellule CSV : separateur ";", guillemets echappes, formules neutralisees (Excel).
 function csvCell(value) {

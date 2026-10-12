@@ -24,7 +24,7 @@ export default function LoginView() {
   const next = safeNext(params.get("next"));
   const expired = params.get("expired") === "1";
 
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState(() => ({ email: params.get("email") || "", password: "" }));
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -72,8 +72,9 @@ export default function LoginView() {
         <Input
           label={tf("email")}
           type="email"
-          autoComplete="email"
+          autoComplete="username"
           inputMode="email"
+          enterKeyHint="next"
           required
           value={form.email}
           onChange={set("email")}

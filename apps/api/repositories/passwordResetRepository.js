@@ -17,6 +17,8 @@ exports.findValid = async (tokenHash) => {
     return rows[0];
 };
 
+// Consommation atomique : renvoie true pour la seule requete qui marque le lien comme utilise.
 exports.markUsed = async (id) => {
-    await db.query("UPDATE password_resets SET used_at = NOW() WHERE id = ?", [id]);
+    const [result] = await db.query("UPDATE password_resets SET used_at = NOW() WHERE id = ? AND used_at IS NULL", [id]);
+    return result.affectedRows > 0;
 };

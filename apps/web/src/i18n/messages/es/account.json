@@ -55,8 +55,13 @@
       "hasAccount": "¿Ya tienes cuenta? <link>Iniciar sesión</link>",
       "submit": "Crear mi cuenta",
       "teamNote": "¿Quieres unirte al equipo de HOPE International (como voluntario, empleado o responsable regional)? La cuenta de miembro no basta: <link>envía tu candidatura</link> y nos pondremos en contacto contigo.",
-      "welcome": "¡Te damos la bienvenida a HOPE International!",
-      "opening": "Abriendo tu espacio…"
+      "opening": "Abriendo tu espacio…",
+      "sentTitle": "Revise su correo",
+      "sentDescription": "Hemos recibido su solicitud de registro.",
+      "sentAlertTitle": "Solicitud registrada",
+      "sentText": "Si este correo no está ya en uso, su cuenta ha sido creada: acabamos de enviar un mensaje a <strong>{email}</strong>. Revise su correo para completar el registro.",
+      "sentHelp": "¿No ha recibido nada tras unos minutos? Revise la carpeta de correo no deseado. Si ya tenía una cuenta, inicie sesión o use «¿Olvidó su contraseña?».",
+      "sentLogin": "Ir a iniciar sesión"
     },
     "forgot": {
       "title": "Contraseña olvidada",
@@ -106,7 +111,16 @@
         "tipsTitle": "Buenas prácticas",
         "tip1": "Elige una contraseña única, idealmente de al menos 12 caracteres.",
         "tip2": "Tras un cambio, tus otras sesiones se cierran automáticamente.",
-        "tip3": "HOPE International nunca te pedirá tu contraseña por correo electrónico ni por teléfono."
+        "tip3": "HOPE International nunca te pedirá tu contraseña por correo electrónico ni por teléfono.",
+        "sessions": {
+          "title": "Dispositivos conectados",
+          "text": "¿Teléfono perdido, ordenador compartido? Cierre la sesión en todos los lugares donde esté abierta, incluido este. Tendrá que volver a iniciar sesión en cada dispositivo.",
+          "button": "Cerrar sesión en todos los dispositivos",
+          "confirmTitle": "¿Cerrar sesión en todas partes?",
+          "confirmText": "Se cerrarán todas sus sesiones, incluida la de este dispositivo.",
+          "confirm": "Cerrar todas",
+          "failed": "No se pudo cerrar la sesión"
+        }
       }
     },
     "profile": {
@@ -149,12 +163,12 @@
       "general": "Donde más se necesite",
       "stats": {
         "total": "Total donado",
-        "totalEquivalent": "{breakdown} (equivalente en euros)",
         "totalThanks": "Gracias por tu fidelidad",
         "succeeded": "Donativos realizados",
         "overall": "{count, plural, one {# en total} other {# en total}}",
         "projects": "Proyectos apoyados",
-        "last": "Último donativo"
+        "last": "Último donativo",
+        "totalAlso": "y {amount}"
       },
       "monthlyTitle": "Donativos mensuales",
       "unknownStatus": "Por el momento no podemos comprobar con nuestro proveedor de pagos el estado de algunos donativos mensuales.",
@@ -172,9 +186,18 @@
       "partialRefund": "de los cuales {amount} reembolsados",
       "receiptLabel": "Descargar el recibo {number} (PDF)",
       "receiptUnavailable": {
-        "refunded": { "label": "Recibo anulado", "hint": "Donativo reembolsado" },
-        "disputed": { "label": "Recibo suspendido", "hint": "Reclamación bancaria en curso" },
-        "review": { "label": "Recibo pendiente", "hint": "Disponible tras la verificación" }
+        "refunded": {
+          "label": "Recibo anulado",
+          "hint": "Donativo reembolsado"
+        },
+        "disputed": {
+          "label": "Recibo suspendido",
+          "hint": "Reclamación bancaria en curso"
+        },
+        "review": {
+          "label": "Recibo pendiente",
+          "hint": "Disponible tras la verificación"
+        }
       },
       "perMonth": "{amount} / mes",
       "since": "Desde el {date}",
@@ -192,6 +215,14 @@
         "file": "resumen-donativos-{year}.pdf",
         "notFound": "No hay ningún donativo confirmado registrado en {year}: no existe resumen para ese año.",
         "errorTitle": "No se ha podido descargar"
+      },
+      "receiptButton": "Recibo (PDF)",
+      "nextPayment": "Próximo cargo: <strong>{date}</strong>",
+      "years": {
+        "label": "Filtrar el historial por año",
+        "all": "Todos",
+        "totalAll": "Total de donaciones confirmadas: {amount}",
+        "totalYear": "Donaciones confirmadas en {year}: {amount}"
       }
     },
     "campaigns": {

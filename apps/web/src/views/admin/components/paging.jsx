@@ -3,7 +3,7 @@
 // Pagination serveur des listes du back-office (?page=N&pageSize=M, M <= 100) :
 // l'API renvoie alors { rows, total, page, pageSize } (sans "page" : tableau complet, forme historique).
 import { useTranslations } from "next-intl";
-import { Button } from "../../../components/ui";
+import { Button } from "@/src/components/ui";
 
 export const PAGE_SIZE = 20;
 

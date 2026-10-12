@@ -4,7 +4,7 @@
 import { useMemo, useState } from "react";
 import { FolderSearch } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { Button, EmptyState, Tabs } from "../../../components/ui";
+import { Button, EmptyState, Tabs } from "@/src/components/ui";
 import { ProjectCard } from ".";
 
 const STATUSES = ["all", "en_cours", "planifie", "termine"];
@@ -56,7 +56,7 @@ export default function ProjectsBrowser({ projects }) {
         />
       ) : (
         <div className="grid grid--3">
-          {visible.map((project) => <ProjectCard key={project.id} project={project} />)}
+          {visible.map((project) => <ProjectCard key={project.id} project={project} headingLevel={2} />)}
         </div>
       )}
     </>

@@ -3,16 +3,16 @@
 import { useMemo, useState } from "react";
 import { CalendarHeart, Download, FileText, FolderHeart, HandHeart, Heart, Receipt } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Alert, Button, Card, DataTable, EmptyState, ErrorState, LoadingState, StatCard, StatusBadge } from "../../../components/ui";
-import { useAsync } from "../../../hooks/useAsync";
-import { useMeta } from "../../../hooks/useMeta";
-import { useFormat } from "../../../i18n/format";
-import { useLocalePath } from "../../../i18n/navigation";
-import { paymentApi } from "../../../services";
-import { useAlerts } from "../../../utils/alerts";
-import { saveBlob } from "../../../utils/format";
-import { useLabels } from "../../../utils/labels";
-import { useErrorMessage } from "../../../i18n/errors";
+import { Alert, Button, Card, DataTable, EmptyState, ErrorState, LoadingState, StatCard, StatusBadge, Tabs, tabPanelProps } from "@/src/components/ui";
+import { useAsync } from "@/src/hooks/useAsync";
+import { useMeta } from "@/src/hooks/useMeta";
+import { useFormat } from "@/src/i18n/format";
+import { Link, useLocalePath } from "@/src/i18n/navigation";
+import { paymentApi } from "@/src/services";
+import { useAlerts } from "@/src/utils/alerts";
+import { saveBlob } from "@/src/utils/format";
+import { useLabels } from "@/src/utils/labels";
+import { useErrorMessage } from "@/src/i18n/errors";
 
 const ENDED = ["canceled"];
 
@@ -66,7 +66,9 @@ function useColumns() {
     {
       key: "project_title",
       header: t("columns.project"),
-      render: (row) => row.project_title || t("general"),
+      render: (row) => (row.project_id && row.project_title
+        ? <Link href={`/projets/${row.project_id}`}>{row.project_title}</Link>
+        : row.project_title || t("general")),
     },
     {
       key: "method",
@@ -98,7 +100,7 @@ function useColumns() {
             icon={Download}
             aria-label={t("receiptLabel", { number: row.receipt_number || "" })}
           >
-            PDF
+            {t("receiptButton")}
           </Button>
         ) : (
           <span className="muted">—</span>
@@ -140,6 +142,14 @@ function SubscriptionCard({ subscription, onStopped }) {
         <strong className="acc-sub__amount">{t("perMonth", { amount })}</strong>
         <span>{subscription.project_title || t("general")}</span>
         <span className="muted">{t("since", { date: f.date(subscription.started_at) })}</span>
+        {!ended && subscription.next_payment_at && (
+          <span className="acc-sub__next">
+            {t.rich("nextPayment", {
+              date: f.date(subscription.next_payment_at),
+              strong: (chunks) => <strong>{chunks}</strong>,
+            })}
+          </span>
+        )}
       </div>
       <div className="acc-sub__side">
         <StatusBadge status={status} />
@@ -205,8 +215,17 @@ function AnnualReceipts({ years }) {
   );
 }
 
+// Total en devise dominante (la plus importante en equivalent euros), l'autre en second.
+function splitTotals(totals, rate) {
+  const inEur = (currency, amount) => (currency === "xaf" ? amount / rate : amount);
+  const entries = Object.entries(totals).filter(([, amount]) => amount > 0)
+    .sort(([ca, a], [cb, b]) => inEur(cb, b) - inEur(ca, a));
+  return { main: entries[0] || null, others: entries.slice(1) };
+}
+
 export default function DonationsTab() {
   const t = useTranslations("account.donations");
+  const [year, setYear] = useState("all");
   const f = useFormat();
   const lp = useLocalePath();
   const errorText = useErrorMessage();
@@ -237,19 +256,38 @@ export default function DonationsTab() {
     acc[payment.currency] = (acc[payment.currency] || 0) + Number(payment.amount) - refundedOf(payment);
     return acc;
   }, {});
-  const totalEur = (totals.eur || 0) + (totals.xaf || 0) / meta.xafPerEur;
-  const breakdown = Object.entries(totals).map(([currency, amount]) => f.money(amount, currency)).join(" + ");
+  const { main, others } = splitTotals(totals, meta.xafPerEur);
+  const secondary = others.map(([currency, amount]) => f.money(amount, currency)).join(" + ");
   const projects = new Set(succeeded.map((payment) => payment.project_id || "general"));
   const last = succeeded[0];
   const years = [...new Set(succeeded.map(yearOf))].filter(Number.isFinite).sort((a, b) => b - a);
+  const historyYears = [...new Set(payments.map(yearOf))].filter(Number.isFinite).sort((a, b) => b - a);
+  const yearTabs = [
+    { value: "all", label: t("years.all"), count: payments.length },
+    ...historyYears.map((value) => ({
+      value: String(value),
+      label: String(value),
+      count: payments.filter((payment) => yearOf(payment) === value).length,
+    })),
+  ];
+  const activeYear = yearTabs.some((tab) => tab.value === year) ? year : "all";
+  const visiblePayments = activeYear === "all" ? payments : payments.filter((payment) => String(yearOf(payment)) === activeYear);
+  const yearTotals = visiblePayments.filter((payment) => payment.status === "succeeded").reduce((acc, payment) => {
+    acc[payment.currency] = (acc[payment.currency] || 0) + Number(payment.amount) - refundedOf(payment);
+    return acc;
+  }, {});
+  const yearSplit = splitTotals(yearTotals, meta.xafPerEur);
+  const yearTotalLabel = yearSplit.main
+    ? [yearSplit.main, ...yearSplit.others].map(([currency, amount]) => f.money(amount, currency)).join(" + ")
+    : f.money(0);
 
   return (
     <div className="stack acc-tab">
       <div className="grid grid--4">
         <StatCard
           label={t("stats.total")}
-          value={f.money(Math.round(totalEur))}
-          hint={totals.xaf ? t("stats.totalEquivalent", { breakdown }) : t("stats.totalThanks")}
+          value={main ? f.money(main[1], main[0]) : f.money(0)}
+          hint={secondary ? t("stats.totalAlso", { amount: secondary }) : t("stats.totalThanks")}
           icon={HandHeart}
           tone="accent"
         />
@@ -282,13 +320,25 @@ export default function DonationsTab() {
           <h2 id="acc-history-title" className="acc-section-title">{t("historyTitle")}</h2>
           <Button href={lp("/don")} size="sm" variant="accent" icon={Heart}>{t("newDonation")}</Button>
         </div>
-        <DataTable
-          columns={columns}
-          rows={payments}
-          pageSize={10}
-          initialSort={{ key: "created_at", dir: "desc" }}
-          emptyTitle={t("emptyTable")}
-        />
+        {yearTabs.length > 2 && (
+          <Tabs id="acc-history-years" tabs={yearTabs} value={activeYear} onChange={setYear} label={t("years.label")} />
+        )}
+        <div className="stack" {...(yearTabs.length > 2 ? tabPanelProps("acc-history-years", activeYear) : {})}>
+          <p className="muted acc-small" aria-live="polite">
+            {activeYear === "all"
+              ? t("years.totalAll", { amount: yearTotalLabel })
+              : t("years.totalYear", { year: activeYear, amount: yearTotalLabel })}
+          </p>
+          <DataTable
+            key={activeYear}
+            columns={columns}
+            rows={visiblePayments}
+            pageSize={10}
+            initialSort={{ key: "created_at", dir: "desc" }}
+            emptyTitle={t("emptyTable")}
+            caption={t("historyTitle")}
+          />
+        </div>
       </section>
 
       {years.length > 0 && <AnnualReceipts years={years} />}

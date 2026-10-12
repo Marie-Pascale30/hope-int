@@ -5,20 +5,23 @@
 import { useRef, useState } from "react";
 import { CheckCircle2, Send } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Alert, Button, Card, ChoiceGroup, Input, Select, Textarea, focusFirstInvalid } from "../../../components/ui";
-import { useAuth } from "../../../context/AuthContext";
-import { useLocalePath } from "../../../i18n/navigation";
-import { publicApi } from "../../../services";
-import { errorMessage } from "../../../i18n/errors";
+import { Alert, Button, Card, ChoiceGroup, Input, PhoneField, Select, Textarea, focusFirstInvalid, usePhoneErrorMessage } from "@/src/components/ui";
+import { formatPhone, phoneError } from "@/src/utils/phone";
+import { useAuth } from "@/src/context/AuthContext";
+import { useLocalePath } from "@/src/i18n/navigation";
+import { publicApi } from "@/src/services";
+import { errorMessage } from "@/src/i18n/errors";
 
 const MIN_MOTIVATION = 30;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const EMPTY = { name: "", email: "", phone: "", region: "", motivation: "" };
 
-function validate(form, t) {
+function validate(form, t, phoneMessage) {
   const errors = {};
   if (form.name.trim().length < 2) errors.name = t("errors.name");
   if (!EMAIL_RE.test(form.email.trim())) errors.email = t("errors.email");
+  const phone = phoneMessage(phoneError(form.phone));
+  if (phone) errors.phone = phone;
   if (form.motivation.trim().length < MIN_MOTIVATION) errors.motivation = t("errors.motivation", { min: MIN_MOTIVATION });
   return errors;
 }
@@ -48,6 +51,7 @@ export default function JoinForm({ regions = [], interestAreas = [] }) {
   const t = useTranslations("site.join.form");
   const tAreas = useTranslations("site.join.interests");
   const tErrors = useTranslations("errors");
+  const phoneMessage = usePhoneErrorMessage();
   const { isAuthenticated } = useAuth();
   const [form, setForm] = useState(EMPTY);
   const [interests, setInterests] = useState([]);
@@ -57,10 +61,11 @@ export default function JoinForm({ regions = [], interestAreas = [] }) {
   const [sentTo, setSentTo] = useState("");
   const alertRef = useRef(null);
 
-  const update = (key) => (event) => {
-    setForm((prev) => ({ ...prev, [key]: event.target.value }));
+  const setField = (key, value) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
     if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
   };
+  const update = (key) => (event) => setField(key, event.target.value);
 
   // Libelles traduits par valeur ; repli sur le libelle (francais) fourni par l'API.
   const interestOptions = interestAreas.map((area) => ({
@@ -73,7 +78,7 @@ export default function JoinForm({ regions = [], interestAreas = [] }) {
   const submit = async (event) => {
     event.preventDefault();
     setServerError("");
-    const found = validate(form, t);
+    const found = validate(form, t, phoneMessage);
     setErrors(found);
     if (Object.keys(found).length) {
       focusFirstInvalid(event.currentTarget);
@@ -84,7 +89,7 @@ export default function JoinForm({ regions = [], interestAreas = [] }) {
       await publicApi.sendApplication({
         name: form.name.trim(),
         email: form.email.trim(),
-        phone: form.phone.trim() || undefined,
+        phone: formatPhone(form.phone) || undefined,
         region: form.region || undefined,
         motivation: form.motivation.trim(),
         interests: interests.length ? interests : undefined,
@@ -113,9 +118,9 @@ export default function JoinForm({ regions = [], interestAreas = [] }) {
         </div>
         {isAuthenticated && <Alert tone="info">{t("alreadyMember")}</Alert>}
         <div className="form-grid">
-          <Input label={t("name")} required autoComplete="name" value={form.name} onChange={update("name")} error={errors.name} />
-          <Input label={t("email")} type="email" required autoComplete="email" value={form.email} onChange={update("email")} error={errors.email} />
-          <Input label={t("phone")} type="tel" autoComplete="tel" placeholder="+237 6XX XX XX XX" value={form.phone} onChange={update("phone")} />
+          <Input label={t("name")} required autoComplete="name" enterKeyHint="next" value={form.name} onChange={update("name")} error={errors.name} />
+          <Input label={t("email")} type="email" inputMode="email" required autoComplete="email" enterKeyHint="next" value={form.email} onChange={update("email")} error={errors.email} />
+          <PhoneField label={t("phone")} value={form.phone} onChange={(value) => setField("phone", value)} error={errors.phone} />
           <Select label={t("region")} options={regionOptions} placeholder={t("regionPlaceholder")} value={form.region} onChange={update("region")} />
           {interestOptions.length > 0 && (
             <ChoiceGroup

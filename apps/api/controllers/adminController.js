@@ -5,7 +5,6 @@ const applicationService = require("../services/applicationService");
 const paymentService = require("../services/paymentService");
 const contentService = require("../services/contentService");
 const eventService = require("../services/eventService");
-const userRepo = require("../repositories/userRepository");
 const { parsePagination } = require("../utils/pagination");
 
 const pick = (source, keys) =>
@@ -26,12 +25,7 @@ exports.getUsers = async (req, res) => {
 };
 
 // Personnes a qui l'on peut assigner un message (equipe, hors simples membres).
-exports.getStaff = async (_req, res) => {
-    const users = await userRepo.getAll();
-    res.json(users
-        .filter((user) => user.status === "active" && user.roles.some((role) => role !== "membre"))
-        .map(({ id, name, roles }) => ({ id, name, roles })));
-};
+exports.getStaff = async (_req, res) => res.json(await userService.listStaff());
 
 exports.createUser = async (req, res) => {
     const result = await userService.createWithGeneratedPassword(req.user, req.body);
@@ -67,6 +61,11 @@ exports.updateMessage = async (req, res) => {
     res.json(await messageService.update(req.user, req.params.id, { status, assignedTo, notes }));
 };
 
+// Changement de statut groupe : { ids, status } -> { updated }.
+exports.bulkUpdateMessages = async (req, res) => {
+    res.json(await messageService.bulkUpdateStatus(req.user, req.body.ids, req.body.status));
+};
+
 exports.deleteMessage = async (req, res) => {
     await messageService.remove(req.user, req.params.id);
     res.json({ message: "Message supprimé" });
@@ -85,6 +84,11 @@ exports.rejectApplication = async (req, res) => {
     res.json(await applicationService.reject(req.user, req.params.id, req.body.reviewNote));
 };
 
+// Refus groupe : { ids, reviewNote? } -> { rejected, skipped } (memes conditions qu'un refus unitaire).
+exports.bulkRejectApplications = async (req, res) => {
+    res.json(await applicationService.bulkReject(req.user, req.body.ids, req.body.reviewNote));
+};
+
 exports.acceptApplication = async (req, res) => {
     const { roles, reviewNote, linkExisting } = req.body;
     const result = await applicationService.accept(req.user, req.params.id, { roles, reviewNote, linkExisting: linkExisting === true });
@@ -97,7 +101,15 @@ exports.acceptApplication = async (req, res) => {
 // --- Dons et finance ---
 const DONATION_FILTERS = ["status", "from", "to", "projectId", "provider"];
 
-exports.getDonations = async (req, res) => res.json(await adminService.getDonations(req.user, pick(req.query, DONATION_FILTERS)));
+// ?page=N (&pageSize<=100) : { rows, total, page, pageSize } comme /admin/users. Sans page : tableau
+// des dons les plus recents (plafonne), total reel dans l'en-tete X-Total-Count.
+exports.getDonations = async (req, res) => {
+    const pagination = parsePagination(req.query);
+    const { rows, total } = await adminService.getDonations(req.user, pick(req.query, DONATION_FILTERS), pagination);
+    if (pagination) return res.json({ rows, total, page: pagination.page, pageSize: pagination.pageSize });
+    res.setHeader("X-Total-Count", String(total));
+    res.json(rows);
+};
 exports.getFinanceSummary = async (req, res) => res.json(await adminService.getFinanceSummary(req.user, pick(req.query, ["year"])));
 exports.reconcile = async (req, res) => res.json(await paymentService.reconcile(req.user));
 

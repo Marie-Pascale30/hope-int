@@ -1,5 +1,5 @@
-import { resolveImage } from "../../../utils/format";
-import { API_ORIGIN } from "../../../services/api";
+import { resolveImage } from "@/src/utils/format";
+import { API_ORIGIN } from "@/src/services/api";
 
 export const PLACEHOLDER = "/images/placeholder.svg";
 
@@ -23,8 +23,6 @@ export function isUnoptimizedImage(url) {
 }
 
 export const cx = (...classes) => classes.filter(Boolean).join(" ");
-
-export const isNotFound = (error) => error?.response?.status === 404;
 
 // Un projet a une campagne active s'il a un objectif de collecte et n'est pas termine.
 export const hasCampaign = (project) => Number(project?.goal_amount) > 0 && project?.status !== "termine";

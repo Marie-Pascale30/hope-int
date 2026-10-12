@@ -75,16 +75,23 @@ exports.createMonthlySubscription = async ({ amount, currency, paymentId, projec
     };
 };
 
-exports.retrieveIntentStatus = async (paymentIntentId) => {
-    const intent = await client().paymentIntents.retrieve(paymentIntentId);
-    return intent.status;
+// Horodatage Stripe (secondes) -> Date.
+const fromSeconds = (value) => (value ? new Date(Number(value) * 1000) : null);
+
+// Statut d'un PaymentIntent et date reelle du paiement (creation de la charge reussie).
+exports.retrieveIntent = async (paymentIntentId) => {
+    const intent = await client().paymentIntents.retrieve(paymentIntentId, { expand: ["latest_charge"] });
+    const charge = intent.latest_charge && typeof intent.latest_charge === "object" ? intent.latest_charge : null;
+    return { status: intent.status, paidAt: intent.status === "succeeded" ? fromSeconds(charge?.created) : null };
 };
 
 // Echeance d'abonnement enregistree sous l'id de facture (in_...) : draft | open | paid | uncollectible | void.
-exports.retrieveInvoiceStatus = async (invoiceId) => {
+exports.retrieveInvoice = async (invoiceId) => {
     const invoice = await client().invoices.retrieve(invoiceId);
-    return invoice.status;
+    return { status: invoice.status, paidAt: fromSeconds(invoice.status_transitions?.paid_at) };
 };
+
+exports.fromSeconds = fromSeconds;
 
 // Avec STRIPE_WEBHOOK_SECRET : verification de signature. Sans : l'evenement est relu
 // directement aupres de l'API Stripe, donc un appel forge ne peut rien valider.
@@ -103,7 +110,8 @@ exports.parseWebhookEvent = async (signature, payloadBuffer) => {
 
 exports.getSubscriptionStatus = async (subscriptionId) => {
     const subscription = await client().subscriptions.retrieve(subscriptionId);
-    return { status: subscription.status, currentPeriodEnd: subscription.items?.data?.[0]?.current_period_end || null };
+    const periodEnd = subscription.items?.data?.[0]?.current_period_end || subscription.current_period_end;
+    return { status: subscription.status, currentPeriodEnd: fromSeconds(periodEnd) };
 };
 
 exports.cancelSubscription = async (subscriptionId) => {

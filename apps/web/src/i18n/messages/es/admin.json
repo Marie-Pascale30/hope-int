@@ -307,6 +307,18 @@
         "textWithNote": "{name} recibirá un aviso por correo electrónico, con tu nota.",
         "textNoNote": "{name} recibirá un aviso por correo electrónico. Puedes añadir una nota explicativa antes de rechazar.",
         "button": "Rechazar"
+      },
+      "bulk": {
+        "reject": "Rechazar la selección",
+        "title": "{count, plural, one {¿Rechazar # candidatura?} other {¿Rechazar # candidaturas?}}",
+        "text": "Las candidaturas aún abiertas serán rechazadas; las ya tramitadas mientras tanto se ignorarán.",
+        "more": "… y {count} más",
+        "noteLabel": "Nota de decisión (opcional)",
+        "noteHint": "Se guarda en cada candidatura rechazada.",
+        "confirm": "{count, plural, one {Rechazar # candidatura} other {Rechazar # candidaturas}}",
+        "done": "{count, plural, one {# candidatura rechazada} other {# candidaturas rechazadas}}",
+        "doneSkipped": "{count, plural, one {# candidatura rechazada} other {# candidaturas rechazadas}}, {skipped} ignorada(s) (ya tramitadas)",
+        "failed": "No se pudo rechazar en bloque"
       }
     },
     "interests": {
@@ -360,6 +372,14 @@
         "deleteConfirmText": "El mensaje de {name} se eliminará definitivamente. Mejor archívalo para conservar un registro.",
         "deleted": "Mensaje eliminado",
         "deleteFailed": "No se ha podido eliminar"
+      },
+      "bulk": {
+        "statusLabel": "Nuevo estado de los mensajes seleccionados",
+        "apply": "Aplicar",
+        "done": "{count, plural, one {# mensaje pasado} other {# mensajes pasados}} a «{status}»",
+        "failed": "No se pudo aplicar el cambio en bloque",
+        "selectPage": "Seleccionar todo en la página",
+        "selectOne": "Seleccionar el mensaje de {name}: {subject}"
       }
     },
     "roles": {

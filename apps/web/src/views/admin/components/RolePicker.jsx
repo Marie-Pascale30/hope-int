@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ChoiceGroup } from "../../../components/ui";
-import { useLabels } from "../../../utils/labels";
-import { canGrantRole } from "./roles";
+import { ChoiceGroup } from "@/src/components/ui";
+import { useLabels } from "@/src/utils/labels";
+import { canGrantRole } from "../lib/roles";
 
 // Selection des roles : admin exclusif, roles au-dessus des droits de l'utilisateur desactives.
 export default function RolePicker({ user, matrix, value, onChange, label, hint, error }) {

@@ -14,8 +14,8 @@ import { saveBlob } from "../../utils/format";
 import { useLabels } from "../../utils/labels";
 import { useAlerts } from "../../utils/alerts";
 import { PERMISSIONS as P } from "../../utils/rbac";
-import { fillMonths, formatEur, providerLabel, recentYears, todayStamp, toEur } from "./parts-b/finance";
-import { InlineSelect, MonthlyChart, MonthTable, ShareTable } from "./parts-b/widgets";
+import { fillMonths, formatEur, providerLabel, recentYears, todayStamp, toEur } from "./lib/finance";
+import { InlineSelect, MonthlyChart, MonthTable, ShareTable } from "./components/widgets";
 
 const CURRENCIES = ["eur", "xaf"];
 

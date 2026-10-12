@@ -2,8 +2,8 @@
 
 // Matrice des roles (GET /admin/roles) et regles d'attribution, miroir de canGrantRoles cote backend.
 // Le backend reste l'autorite : ces regles servent seulement a guider l'interface.
-import { adminApi } from "../../../services";
-import { useAsync } from "../../../hooks/useAsync";
+import { adminApi } from "@/src/services";
+import { useAsync } from "@/src/hooks/useAsync";
 
 let cache = null;
 

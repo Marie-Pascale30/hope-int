@@ -16,6 +16,11 @@ const router = express.Router();
 
 const idParam = param("id").isInt({ min: 1 });
 const optionalText = (field, max) => body(field).optional({ values: "null" }).isString().trim().isLength({ max });
+// Actions groupees : 1 a 100 identifiants.
+const bulkIds = [
+    body("ids").isArray({ min: 1, max: 100 }).withMessage("Sélectionnez entre 1 et 100 éléments"),
+    body("ids.*").isInt({ min: 1 }).toInt(),
+];
 
 const rolesPayload = [
     body("roles").isArray({ min: 1, max: ORG_ROLES.length }).withMessage("Au moins un rôle est requis"),
@@ -61,6 +66,7 @@ const contentValidation = (isCreate) => [
     optionalText("summary", 500),
     optionalText("author", 150),
     optionalText("role_label", 150),
+    optionalText("image_alt", 255),
     validate,
 ];
 
@@ -73,6 +79,7 @@ const eventValidation = (isCreate) => [
     body("capacity").optional({ values: "falsy" }).isInt({ min: 1, max: 100000 }),
     body("region").optional({ values: "falsy" }).isIn(REGIONS),
     body("project_id").optional({ values: "falsy" }).isInt({ min: 1 }),
+    optionalText("image_alt", 255),
     validate,
 ];
 
@@ -149,6 +156,12 @@ router.get(
     adminController.getMessages
 );
 router.patch(
+    "/messages/bulk",
+    can(P.VIEW_MESSAGES),
+    [...bulkIds, body("status").isIn(MESSAGE_STATUSES), validate],
+    adminController.bulkUpdateMessages
+);
+router.patch(
     "/messages/:id",
     can(P.VIEW_MESSAGES),
     [
@@ -168,6 +181,12 @@ router.get(
     can(P.MANAGE_APPLICATIONS),
     [query("status").optional().isIn(APPLICATION_STATUSES), ...paginationQuery, validate],
     adminController.getApplications
+);
+router.post(
+    "/applications/bulk-reject",
+    can(P.MANAGE_APPLICATIONS),
+    [...bulkIds, optionalText("reviewNote", 2000), validate],
+    adminController.bulkRejectApplications
 );
 router.post(
     "/applications/:id/review",
@@ -196,7 +215,7 @@ router.post(
 );
 
 // Dons et finance
-router.get("/donations", can(P.VIEW_DONATIONS), [...donationFilters, validate], adminController.getDonations);
+router.get("/donations", can(P.VIEW_DONATIONS), [...donationFilters, ...paginationQuery, validate], adminController.getDonations);
 router.get(
     "/finance/summary",
     can(P.MANAGE_FINANCE),
@@ -208,7 +227,17 @@ router.post("/finance/reconcile", can(P.MANAGE_FINANCE), adminController.reconci
 router.post(
     "/donations/:id/review",
     can(P.MANAGE_FINANCE),
-    [idParam, body("decision").isIn(["approve", "reject"]), optionalText("note", 500), validate],
+    [
+        idParam,
+        body("decision").isIn(["approve", "reject"]),
+        // Validation : montant reellement encaisse, confirme chez le prestataire (obligatoire).
+        body("receivedAmount")
+            .if(body("decision").equals("approve"))
+            .isFloat({ gt: 0, max: 100000000 })
+            .withMessage("Indiquez le montant réellement reçu"),
+        optionalText("note", 500),
+        validate,
+    ],
     adminController.resolveDonationReview
 );
 router.post("/donations/:id/resend-receipt", can(P.MANAGE_FINANCE), [idParam, validate], adminController.resendDonationReceipt);

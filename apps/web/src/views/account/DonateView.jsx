@@ -1,12 +1,13 @@
 "use client";
 
 import "../../styles/account.css";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { CardNumberElement, Elements, useElements, useStripe } from "@stripe/react-stripe-js";
 import { CalendarHeart, CreditCard, Heart, Lock, Mail, Receipt, RefreshCcw, Smartphone, Sprout } from "lucide-react";
-import { Alert, Badge, Button, Input, focusFirstInvalid } from "../../components/ui";
+import { Alert, Badge, Button, Input, PhoneField, focusFirstInvalid, usePhoneErrorMessage } from "../../components/ui";
+import { phoneError, toE164 } from "../../utils/phone";
 import { useAuth } from "../../context/AuthContext";
 import { useAsync } from "../../hooks/useAsync";
 import { useMeta } from "../../hooks/useMeta";
@@ -68,12 +69,13 @@ function Step({ number, title, description, children }) {
   );
 }
 
-function DonateForm({ meta, metaLoaded, stripeReady }) {
+function DonateForm({ meta, metaLoaded, stripeReady, onCardSelected }) {
   const t = useTranslations("account.donate");
   const tStripe = useTranslations("account.stripe");
   const f = useFormat();
   const lp = useLocalePath();
   const errorText = useErrorMessage();
+  const phoneMessage = usePhoneErrorMessage();
   const router = useRouter();
   const params = useSearchParams();
   const stripe = useStripe();
@@ -108,6 +110,11 @@ function DonateForm({ meta, metaLoaded, stripeReady }) {
     frequency,
   });
   const rate = meta.xafPerEur;
+
+  // Stripe.js n'est telecharge qu'une fois la carte choisie (ou preselectionnee).
+  useEffect(() => {
+    if (method === "card" && stripeReady) onCardSelected();
+  }, [method, stripeReady, onCardSelected]);
   const currency = method === "card" ? "eur" : "xaf";
   const limits = meta.donationLimits[currency];
   const presets = PRESET_AMOUNTS[currency];
@@ -137,8 +144,9 @@ function DonateForm({ meta, metaLoaded, stripeReady }) {
   }
   if (!isAuthenticated && donorName.length < 2) errors.name = t("errors.name", { min: 2 });
   if (!isAuthenticated && !EMAIL_PATTERN.test(donorEmail)) errors.email = t("errors.email");
-  if (method === "mobile_money" && phoneValue.replace(/\D/g, "").length < 8) {
-    errors.phone = t("errors.phone");
+  if (method === "mobile_money") {
+    const phoneCode = phoneError(phoneValue, { required: true, mobileMoney: true });
+    if (phoneCode) errors.phone = phoneMessage(phoneCode);
   }
   if (method === "card" && stripeReady && !card.complete) errors.card = card.error || t("errors.card");
   const shown = submitted ? errors : {};
@@ -193,7 +201,7 @@ function DonateForm({ meta, metaLoaded, stripeReady }) {
         projectId: projectId ? Number(projectId) : undefined,
         donorName: isAuthenticated ? undefined : donorName,
         donorEmail: isAuthenticated ? undefined : donorEmail,
-        phone: method === "mobile_money" ? phoneValue.trim() : undefined,
+        phone: method === "mobile_money" ? toE164(phoneValue) : undefined,
       });
 
       if (result.redirectUrl) {
@@ -340,6 +348,8 @@ function DonateForm({ meta, metaLoaded, stripeReady }) {
             <Input
               label={t("amount.other")}
               inputMode={currency === "xaf" ? "numeric" : "decimal"}
+              autoComplete="off"
+              enterKeyHint="next"
               placeholder={t("amount.placeholder", { amount: f.number(currency === "eur" ? 40 : 15000) })}
               value={customAmount}
               onFocus={() => setPresetIndex(null)}
@@ -399,6 +409,7 @@ function DonateForm({ meta, metaLoaded, stripeReady }) {
                 <Input
                   label={t("donor.name")}
                   autoComplete="name"
+                  enterKeyHint="next"
                   required
                   value={donor.name}
                   onChange={(event) => setDonor((prev) => ({ ...prev, name: event.target.value }))}
@@ -409,6 +420,7 @@ function DonateForm({ meta, metaLoaded, stripeReady }) {
                   type="email"
                   inputMode="email"
                   autoComplete="email"
+                  enterKeyHint="next"
                   required
                   value={donor.email}
                   onChange={(event) => setDonor((prev) => ({ ...prev, email: event.target.value }))}
@@ -428,14 +440,12 @@ function DonateForm({ meta, metaLoaded, stripeReady }) {
             </>
           )}
           {method === "mobile_money" && (
-            <Input
+            <PhoneField
               label={t("donor.phone")}
-              type="tel"
-              autoComplete="tel"
-              placeholder={t("donor.phonePlaceholder")}
+              mobileMoney
               required
               value={phoneValue}
-              onChange={(event) => setPhone(event.target.value)}
+              onChange={setPhone}
               error={shown.phone}
               hint={t("donor.phoneHint")}
             />
@@ -553,8 +563,13 @@ export default function DonateView() {
   const locale = useLocale();
   const { meta, loaded } = useMeta();
   const stripeReady = Boolean(meta.providers.stripe && STRIPE_PUBLISHABLE_KEY);
-  // Langue de Stripe (champs de carte, messages d'erreur) : celle de la page.
-  const stripePromise = stripeReady ? getStripe(locale) : null;
+  // Langue de Stripe (champs de carte, messages d'erreur) : celle de la page. Elements accepte
+  // stripe={null} puis la promesse : le script n'est charge qu'au premier choix "carte".
+  const [stripeState, setStripeState] = useState(null); // { locale, promise }
+  const stripePromise = stripeState?.locale === locale ? stripeState.promise : null;
+  const loadCard = useCallback(() => {
+    setStripeState((current) => (current?.locale === locale ? current : { locale, promise: getStripe(locale) }));
+  }, [locale]);
 
   return (
     <>
@@ -567,7 +582,7 @@ export default function DonateView() {
       </section>
       <div className="container don-wrap">
         <Elements key={locale} stripe={stripePromise} options={{ locale }}>
-          <DonateForm meta={meta} metaLoaded={loaded} stripeReady={stripeReady} />
+          <DonateForm meta={meta} metaLoaded={loaded} stripeReady={stripeReady} onCardSelected={loadCard} />
         </Elements>
       </div>
     </>

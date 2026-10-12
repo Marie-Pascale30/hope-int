@@ -26,11 +26,15 @@
       "choose": "Elegir una imagen",
       "undoNew": "Descartar la nueva imagen",
       "remove": "Quitar la imagen",
-      "keep": "Conservar la imagen actual"
+      "keep": "Conservar la imagen actual",
+      "altLabel": "Texto alternativo de la imagen",
+      "altPlaceholder": "Ej.: Mujeres cosechando maíz en un campo de Bafoussam",
+      "altHint": "Describa lo que muestra la imagen para quienes no pueden verla (máx. {max} caracteres). Déjelo vacío si es puramente decorativa."
     },
     "common": {
       "exported": "Exportación CSV descargada",
-      "exportFailed": "No se ha podido exportar"
+      "exportFailed": "No se ha podido exportar",
+      "csvDonations": "donaciones-hope-{date}.csv"
     },
     "donations": {
       "eyebrow": "Donativos",
@@ -44,7 +48,6 @@
       "rowLabel": "Detalle del donativo de {name}",
       "rowLabelAnonymous": "Detalle del donativo de un donante anónimo",
       "rateNote": "Los donativos en francos CFA se convierten al tipo fijo de 1 € = {rate} FCFA.",
-      "limitNote": "Solo se muestran los {limit} donativos más recientes: afina los filtros.",
       "columns": {
         "date": "Fecha",
         "donor": "Donante",
@@ -78,7 +81,8 @@
         "donorsHint": "Entre los donativos completados",
         "pending": "Pendientes",
         "pendingHint": "Es decir, {amount} por confirmar",
-        "pendingNone": "Ningún pago por confirmar"
+        "pendingNone": "Ningún pago por confirmar",
+        "pageOnly": "en la página mostrada"
       },
       "reviewBanner": {
         "title": "{count, plural, one {# donativo por verificar} other {# donativos por verificar}}",
@@ -140,7 +144,11 @@
         "confirmRejectText": "El donativo se cancelará y no se emitirá ningún recibo. Cualquier reembolso se realiza desde el panel del proveedor.",
         "approved": "Donativo validado",
         "rejected": "Donativo rechazado",
-        "failed": "No se ha podido registrar la decisión"
+        "failed": "No se ha podido registrar la decisión",
+        "receivedLabel": "Importe realmente recibido ({currency})",
+        "receivedHint": "Prellenado con el importe esperado ({amount}): introduzca el importe cobrado según el proveedor de pago. Figurará en el recibo fiscal.",
+        "receivedInvalid": "Indique el importe recibido (número mayor que 0) para validar la donación.",
+        "confirmDiffers": "Atención: el importe esperado era {expected}."
       }
     },
     "finance": {

@@ -925,3 +925,62 @@
     -webkit-print-color-adjust: exact;
   }
 }
+
+/* Validation d'un don en verification */
+.adm-review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.adm-review__actions {
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Boite de reception : selection groupee */
+.adm-inbox__list .bulk-bar {
+  position: static;
+  margin: 6px 6px 0;
+}
+
+.adm-mail-selectall {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 10px 20px 0;
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.adm-mail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.adm-mail-item__check,
+.adm-mail-selectall input {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand);
+  cursor: pointer;
+}
+
+.adm-mail-item__check {
+  margin: 14px 0 0 8px;
+}
+
+.adm-mail-item .adm-mail {
+  flex: 1;
+  min-width: 0;
+}
+
+.adm-bulk-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: var(--text-md);
+}

@@ -1,7 +1,7 @@
 const db = require("../config/db");
 
 const FIELDS = [
-    "title", "description", "location", "region", "start_at", "end_at", "capacity", "image_url", "project_id", "published",
+    "title", "description", "location", "region", "start_at", "end_at", "capacity", "image_url", "image_alt", "project_id", "published",
 ];
 
 const SELECT = `
@@ -69,51 +69,29 @@ exports.remove = async (id) => {
     return result.affectedRows;
 };
 
-// Inscription atomique : verrouille l'evenement pour ne jamais depasser la capacite.
-exports.register = async (eventId, userId) => {
-    const connection = await db.getConnection();
-    try {
-        await connection.beginTransaction();
-        const [events] = await connection.query(
-            "SELECT id, capacity, start_at, published FROM events WHERE id = ? FOR UPDATE",
-            [eventId]
-        );
-        const event = events[0];
-        if (!event || !event.published) {
-            await connection.rollback();
-            return { error: "not_found" };
-        }
-        if (new Date(event.start_at) < new Date()) {
-            await connection.rollback();
-            return { error: "past" };
-        }
-        const [[existing]] = await connection.query(
-            "SELECT id FROM event_registrations WHERE event_id = ? AND user_id = ?",
-            [eventId, userId]
-        );
-        if (existing) {
-            await connection.rollback();
-            return { error: "already" };
-        }
-        if (event.capacity !== null) {
-            const [[count]] = await connection.query(
-                "SELECT COUNT(*) AS total FROM event_registrations WHERE event_id = ?",
-                [eventId]
-            );
-            if (Number(count.total) >= Number(event.capacity)) {
-                await connection.rollback();
-                return { error: "full" };
-            }
-        }
-        await connection.query("INSERT INTO event_registrations (event_id, user_id) VALUES (?, ?)", [eventId, userId]);
-        await connection.commit();
-        return { ok: true };
-    } catch (error) {
-        await connection.rollback();
-        throw error;
-    } finally {
-        connection.release();
-    }
+// Inscription : l'evenement est verrouille (FOR UPDATE) dans la transaction de l'appelant, avec
+// les compteurs utiles aux regles metier (appliquees par eventService). null si introuvable.
+exports.lockForRegistration = async (connection, eventId, userId) => {
+    const [[event]] = await connection.query(
+        "SELECT id, capacity, start_at, published FROM events WHERE id = ? FOR UPDATE",
+        [eventId]
+    );
+    if (!event) return null;
+    const [[counts]] = await connection.query(
+        `SELECT COUNT(*) AS registered, COALESCE(SUM(user_id = ?), 0) AS mine
+         FROM event_registrations WHERE event_id = ?`,
+        [userId, eventId]
+    );
+    return {
+        ...event,
+        published: Boolean(event.published),
+        registered: Number(counts.registered),
+        alreadyRegistered: Number(counts.mine) > 0,
+    };
+};
+
+exports.insertRegistration = async (connection, eventId, userId) => {
+    await connection.query("INSERT INTO event_registrations (event_id, user_id) VALUES (?, ?)", [eventId, userId]);
 };
 
 // Desinscription impossible une fois l'evenement termine (la presence fait foi).

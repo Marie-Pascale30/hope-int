@@ -1,12 +1,15 @@
 "use client";
 
 import "../../styles/account.css";
+import { useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { LayoutDashboard, LogOut, MapPin, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, LogOut, MapPin, MonitorSmartphone, ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Avatar, Badge, Button, Card, TabPanel, Tabs } from "../../components/ui";
 import RequireAuth from "../../components/RequireAuth";
 import { useAuth } from "../../context/AuthContext";
+import { useAlerts } from "../../utils/alerts";
+import { useErrorMessage } from "../../i18n/errors";
 import { useLabels } from "../../utils/labels";
 import { isStaff } from "../../utils/rbac";
 import ChangePasswordForm from "./components/ChangePasswordForm";
@@ -17,14 +20,48 @@ import ProfileTab from "./components/ProfileTab";
 // Valeurs des onglets (parametre ?onglet=, garde en francais pour les URL existantes).
 const TAB_VALUES = ["dons", "evenements", "profil", "securite"];
 
+// Deconnexion de tous les appareils (POST /auth/logout-all) : revoque aussi la session courante.
+function SessionsCard() {
+  const t = useTranslations("account.space.security.sessions");
+  const { logout } = useAuth();
+  const { confirmAction, showError } = useAlerts();
+  const errorText = useErrorMessage();
+  const [busy, setBusy] = useState(false);
+
+  const logoutAll = async () => {
+    const ok = await confirmAction(t("confirmTitle"), t("confirmText"), t("confirm"), { danger: true });
+    if (!ok) return;
+    setBusy(true);
+    try {
+      await logout({ allDevices: true });
+    } catch (err) {
+      setBusy(false);
+      showError(t("failed"), errorText(err));
+    }
+  };
+
+  return (
+    <Card>
+      <h2 className="acc-section-title">{t("title")}</h2>
+      <p className="muted">{t("text")}</p>
+      <Button variant="secondary" icon={MonitorSmartphone} loading={busy} onClick={logoutAll}>
+        {t("button")}
+      </Button>
+    </Card>
+  );
+}
+
 function SecurityTab() {
   const t = useTranslations("account.space.security");
   return (
     <div className="acc-columns acc-tab">
-      <Card>
-        <h2 className="acc-section-title">{t("title")}</h2>
-        <ChangePasswordForm />
-      </Card>
+      <div className="stack">
+        <Card>
+          <h2 className="acc-section-title">{t("title")}</h2>
+          <ChangePasswordForm />
+        </Card>
+        <SessionsCard />
+      </div>
       <Card className="acc-security-tips">
         <span className="acc-sub__icon"><ShieldCheck aria-hidden="true" /></span>
         <h2 className="acc-section-title">{t("tipsTitle")}</h2>

@@ -307,6 +307,18 @@
         "textWithNote": "{name} will be notified by email, with your note.",
         "textNoNote": "{name} will be notified by email. You can add an explanatory note before rejecting.",
         "button": "Reject"
+      },
+      "bulk": {
+        "reject": "Reject selection",
+        "title": "{count, plural, one {Reject # application?} other {Reject # applications?}}",
+        "text": "Applications that are still open will be rejected; those already processed in the meantime will be skipped.",
+        "more": "… and {count} more",
+        "noteLabel": "Decision note (optional)",
+        "noteHint": "Saved on each rejected application.",
+        "confirm": "{count, plural, one {Reject # application} other {Reject # applications}}",
+        "done": "{count, plural, one {# application rejected} other {# applications rejected}}",
+        "doneSkipped": "{count, plural, one {# application rejected} other {# applications rejected}}, {skipped} skipped (already processed)",
+        "failed": "Bulk rejection failed"
       }
     },
     "interests": {
@@ -360,6 +372,14 @@
         "deleteConfirmText": "The message from {name} will be permanently deleted. Archive it instead to keep a record.",
         "deleted": "Message deleted",
         "deleteFailed": "Could not delete"
+      },
+      "bulk": {
+        "statusLabel": "New status for selected messages",
+        "apply": "Apply",
+        "done": "{count, plural, one {# message moved} other {# messages moved}} to “{status}”",
+        "failed": "Bulk update failed",
+        "selectPage": "Select all on this page",
+        "selectOne": "Select message from {name}: {subject}"
       }
     },
     "roles": {

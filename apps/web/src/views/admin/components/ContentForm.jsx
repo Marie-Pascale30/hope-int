@@ -4,25 +4,30 @@
 import { useState } from "react";
 import { Save } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Alert, Button, Input, Modal, Select, Switch, Textarea, focusFirstInvalid } from "../../../components/ui";
-import { useMeta, regionOptions } from "../../../hooks/useMeta";
-import { adminApi } from "../../../services";
-import { useErrorMessage } from "../../../i18n/errors";
-import { STATUS_KEYS } from "../../../utils/labels";
-import { useAlerts } from "../../../utils/alerts";
+import { Alert, Button, Input, Modal, Select, Switch, Textarea, focusFirstInvalid } from "@/src/components/ui";
+import { useMeta, regionOptions } from "@/src/hooks/useMeta";
+import { adminApi } from "@/src/services";
+import { useErrorMessage } from "@/src/i18n/errors";
+import { STATUS_KEYS } from "@/src/utils/labels";
+import { useAlerts } from "@/src/utils/alerts";
 import { ImageField } from "./widgets";
 
 const FORM_ID = "adm-content-form";
 const SUMMARY_MAX = 500;
 
+// Champs numeriques en texte (pas de type=number : la molette modifie la valeur par megarde).
+const INTEGER_PROPS = { inputMode: "numeric", pattern: "[0-9]*", autoComplete: "off" };
+const DECIMAL_PROPS = { inputMode: "decimal", pattern: "[0-9]+([.,][0-9]{1,2})?", autoComplete: "off" };
+const DECIMAL_FIELDS = ["budget"];
+
 // Champs editables par type (valeurs vides par defaut).
 export const CONTENT_FIELDS = {
   projects: {
     title: "", summary: "", description: "", status: "planifie", region: "", start_date: "", end_date: "",
-    budget: "", goal_amount: "", beneficiaries: "", trainees: "", credits_granted: "",
+    budget: "", goal_amount: "", beneficiaries: "", trainees: "", credits_granted: "", image_alt: "",
   },
-  news: { title: "", summary: "", content: "", project_id: "" },
-  testimonials: { author: "", role_label: "", content: "", project_id: "" },
+  news: { title: "", summary: "", content: "", project_id: "", image_alt: "" },
+  testimonials: { author: "", role_label: "", content: "", project_id: "", image_alt: "" },
 };
 
 // Valeurs du formulaire a partir d'un contenu existant (null -> "").
@@ -90,7 +95,11 @@ export default function ContentForm({ type, item, projects = [], scopedRegion = 
     }
     setSaving(true);
     setServerError("");
-    const payload = { ...values, published };
+    const payload = { ...values, image_alt: values.image_alt.trim(), published };
+    // Virgule decimale acceptee a la saisie, point envoye a l'API.
+    DECIMAL_FIELDS.forEach((key) => {
+      if (key in payload) payload[key] = payload[key].replace(",", ".");
+    });
     if (file) payload.image = file;
     else if (removeImage) payload.remove_image = "1";
     try {
@@ -219,12 +228,10 @@ export default function ContentForm({ type, item, projects = [], scopedRegion = 
                 min={values.start_date || undefined}
                 error={datesInvalid ? t("errors.dates") : undefined}
               />
-              <Input label={t("fields.budget")} type="number" min={0} step="0.01" value={values.budget} onChange={set("budget")} />
+              <Input label={t("fields.budget")} {...DECIMAL_PROPS} value={values.budget} onChange={set("budget")} />
               <Input
                 label={t("fields.goal")}
-                type="number"
-                min={0}
-                step="1"
+                {...INTEGER_PROPS}
                 value={values.goal_amount}
                 onChange={set("goal_amount")}
                 hint={t("hints.goal")}
@@ -233,9 +240,9 @@ export default function ContentForm({ type, item, projects = [], scopedRegion = 
 
             <h3 className="adm-form-section">{t("sections.impact")}</h3>
             <div className="form-grid">
-              <Input label={t("fields.beneficiaries")} type="number" min={0} step="1" value={values.beneficiaries} onChange={set("beneficiaries")} />
-              <Input label={t("fields.trainees")} type="number" min={0} step="1" value={values.trainees} onChange={set("trainees")} />
-              <Input label={t("fields.credits")} type="number" min={0} step="1" value={values.credits_granted} onChange={set("credits_granted")} />
+              <Input label={t("fields.beneficiaries")} {...INTEGER_PROPS} value={values.beneficiaries} onChange={set("beneficiaries")} />
+              <Input label={t("fields.trainees")} {...INTEGER_PROPS} value={values.trainees} onChange={set("trainees")} />
+              <Input label={t("fields.credits")} {...INTEGER_PROPS} value={values.credits_granted} onChange={set("credits_granted")} />
             </div>
           </>
         )}
@@ -248,6 +255,8 @@ export default function ContentForm({ type, item, projects = [], scopedRegion = 
             onFile={setFile}
             removed={removeImage}
             onRemovedChange={setRemoveImage}
+            alt={values.image_alt}
+            onAltChange={(text) => setValues((prev) => ({ ...prev, image_alt: text }))}
           />
           <div className="field field--full">
             <Switch

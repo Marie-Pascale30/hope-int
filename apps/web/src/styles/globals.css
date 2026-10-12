@@ -1063,6 +1063,15 @@ p {
   color: var(--ink);
 }
 
+.state__text {
+  max-width: 440px;
+  margin: 0;
+}
+
+.state__action {
+  margin-top: var(--space-2);
+}
+
 .state--error .state__icon {
   background: var(--danger-50);
   color: var(--danger);
@@ -1124,6 +1133,11 @@ p {
 
 .alert p:last-child {
   margin-bottom: 0;
+}
+
+.alert__title {
+  display: block;
+  margin-bottom: 2px;
 }
 
 .alert--info {
@@ -1701,6 +1715,56 @@ p {
   opacity: 0.55;
 }
 
+/* Selection de lignes et barre d'actions groupees */
+.table .table__select {
+  width: 44px;
+  padding-right: 0;
+}
+
+.table__select input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand);
+  cursor: pointer;
+}
+
+.table tbody tr.is-selected td {
+  background: var(--brand-50);
+}
+
+.bulk-bar {
+  position: sticky;
+  top: calc(var(--header-h) + var(--space-2));
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--brand-100);
+  border-radius: var(--radius);
+  background: var(--brand-50);
+  color: var(--ink);
+}
+
+.bulk-bar__count {
+  font-weight: 600;
+}
+
+.bulk-bar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bulk-bar__actions .select {
+  width: auto;
+  min-width: 160px;
+}
+
 .table tr.is-clickable:focus-visible {
   outline: var(--focus-width) solid var(--focus-color);
   outline-offset: -2px;
@@ -1787,6 +1851,12 @@ p {
 
   .table--stack .num {
     text-align: left;
+  }
+
+  .table--stack td.table__select {
+    display: block;
+    width: auto;
+    padding: var(--space-2) 0;
   }
 
   .table--stack tbody tr:hover td {

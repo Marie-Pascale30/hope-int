@@ -12,8 +12,8 @@ import { adminApi } from "../../services";
 import { useErrorMessage } from "../../i18n/errors";
 import { useLabels } from "../../utils/labels";
 import { PERMISSIONS as P } from "../../utils/rbac";
-import { fillMonths, formatEur, providerLabel, toEur } from "./parts-b/finance";
-import { InlineSelect, MonthlyChart, MonthTable, ShareTable } from "./parts-b/widgets";
+import { fillMonths, formatEur, providerLabel, toEur } from "./lib/finance";
+import { InlineSelect, MonthlyChart, MonthTable, ShareTable } from "./components/widgets";
 
 function Figure({ value, label, detail }) {
   return (

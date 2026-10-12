@@ -3,8 +3,9 @@ import "../../styles/public.css";
 import { Newspaper } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useLocalePath } from "../../i18n/navigation";
-import { Empty, LinkButton, NewsCard, PublicHero } from "./components";
+import { NewsCard, PublicHero } from "./components";
 import LoadError from "./components/LoadError";
+import { Button, EmptyState } from "../../components/ui";
 
 const byDateDesc = (a, b) => new Date(b.created_at) - new Date(a.created_at);
 
@@ -21,18 +22,18 @@ export default function NewsView({ news, error }) {
           {error ? (
             <LoadError />
           ) : !featured ? (
-            <Empty
+            <EmptyState
               icon={Newspaper}
               title={t("emptyTitle")}
               description={t("emptyText")}
-              action={<LinkButton href={lp("/projets")}>{t("emptyCta")}</LinkButton>}
+              action={<Button href={lp("/projets")}>{t("emptyCta")}</Button>}
             />
           ) : (
-            <div className="stack" style={{ gap: "clamp(20px, 3vw, 32px)" }}>
-              <NewsCard item={featured} featured />
+            <div className="stack pub-news-stack">
+              <NewsCard item={featured} featured headingLevel={2} />
               {others.length > 0 && (
                 <div className={others.length === 2 ? "grid grid--2" : "grid grid--3"}>
-                  {others.map((item) => <NewsCard key={item.id} item={item} />)}
+                  {others.map((item) => <NewsCard key={item.id} item={item} headingLevel={2} />)}
                 </div>
               )}
             </div>

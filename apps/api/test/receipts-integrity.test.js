@@ -1,11 +1,12 @@
 const { db, request, app, resetDatabase, createUser, createPayment, loginAs } = require("./helpers");
 const { describe, it, before, after } = require("node:test");
 const assert = require("node:assert/strict");
-const paymentService = require("../services/paymentService");
 const paymentRepo = require("../repositories/paymentRepository");
 const receiptService = require("../services/receiptService");
 
-const succeed = async (id) => paymentService._applyStatus(await paymentRepo.findById(id), "succeeded", "test");
+const { applyStatus } = require("../services/payments/statusService");
+
+const succeed = async (id) => applyStatus(await paymentRepo.findById(id), "succeeded", "test");
 const tick = () => new Promise((resolve) => setTimeout(resolve, 50));
 
 describe("recus de don", () => {

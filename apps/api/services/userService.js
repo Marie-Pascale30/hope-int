@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const userRepo = require("../repositories/userRepository");
 const logService = require("./activityLogService");
 const { sendNewCredentialsEmail } = require("./emailService");
-const { normalizeRoles, canGrantRoles } = require("@hope/shared/rbac");
+const { normalizeRoles, canGrantRoles, isRegionScoped } = require("@hope/shared/rbac");
 const { badRequest, conflict, forbidden, notFound } = require("../utils/httpError");
 const { FRONTEND_URL, generateTempPassword } = require("../utils/security");
 
@@ -40,6 +40,10 @@ exports.list = async (filters, pagination = null) => {
 };
 
 exports.assertValidRoleSet = assertValidRoleSet;
+exports.assertCanManage = assertCanManage;
+
+// Personnes a qui l'on peut assigner un message (equipe, hors simples membres).
+exports.listStaff = async () => userRepo.getStaff();
 
 exports.updateRoles = async (actor, targetId, rawRoles) => {
     const roles = normalizeRoles(rawRoles);
@@ -118,13 +122,18 @@ exports.createWithGeneratedPassword = async (actor, data) => {
     return exports.finalizeNewAccount(actor, id, prepared);
 };
 
+// Fiche RH : toute modification d'un compte tiers exige d'en posseder tous les droits ; un acteur
+// restreint a sa region ne peut pas changer sa propre region (il etendrait sa portee).
 exports.updateProfile = async (actor, targetId, payload) => {
     const target = await getTarget(targetId);
     const isSelf = Number(target.id) === Number(actor.id);
 
+    if (!isSelf) assertCanManage(actor, target);
+    if (isSelf && payload.region !== undefined && (payload.region || null) !== (target.region || null) && isRegionScoped(actor.roles)) {
+        throw forbidden("Vous ne pouvez pas modifier votre propre région");
+    }
     if (payload.status !== undefined && payload.status !== target.status) {
         if (isSelf) throw forbidden("Vous ne pouvez pas désactiver votre propre compte");
-        assertCanManage(actor, target);
         await assertNotLastAdmin(target, { removingAdmin: payload.status !== "active" });
     }
 

@@ -1,6 +1,7 @@
 const db = require("../config/db");
 const { DONOR_KEY_SQL, NET_EUR_SQL: EUR_SQL } = require("../utils/sql");
 const { ACTIVE_IN_YEAR_SQL, activeInYearParams } = require("./contentRepository");
+const { BUCKET_SQL, groupByMonth, monthStartAgo, yearBounds } = require("../utils/timezone");
 
 const round = (value) => Math.round(Number(value || 0) * 100) / 100;
 
@@ -48,22 +49,25 @@ exports.getDashboard = async ({ region } = {}) => {
         payRegion.params
     );
 
-    // 12 derniers mois glissants.
-    const [monthlyDonations] = await db.query(
-        `SELECT DATE_FORMAT(COALESCE(p.paid_at, p.created_at), '%Y-%m') AS month, COALESCE(SUM(${EUR_SQL}), 0) AS amount
+    // 12 derniers mois glissants, mois du fuseau des recus (bornes calculees en JS, regroupement
+    // par quart d'heure UTC en SQL puis par mois local) ; paid_at seul pour utiliser l'index.
+    const since = monthStartAgo(11);
+    const [donationBuckets] = await db.query(
+        `SELECT ${BUCKET_SQL("p.paid_at")} AS bucket, COALESCE(SUM(${EUR_SQL}), 0) AS amount
          ${PAYMENT_FROM}
-         WHERE p.status = 'succeeded' AND COALESCE(p.paid_at, p.created_at) >= DATE_SUB(DATE_FORMAT(NOW(), '%Y-%m-01'), INTERVAL 11 MONTH)
-         ${payRegion.sql}
-         GROUP BY month ORDER BY month ASC`,
-        payRegion.params
+         WHERE p.status = 'succeeded' AND p.paid_at >= ?${payRegion.sql}
+         GROUP BY bucket`,
+        [since, ...payRegion.params]
     );
-    const [monthlyGrowth] = await db.query(
-        `SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS users
+    const [userBuckets] = await db.query(
+        `SELECT ${BUCKET_SQL("created_at")} AS bucket, COUNT(*) AS users
          FROM users
-         WHERE created_at >= DATE_SUB(DATE_FORMAT(NOW(), '%Y-%m-01'), INTERVAL 11 MONTH)${userRegion.sql}
-         GROUP BY month ORDER BY month ASC`,
-        userRegion.params
+         WHERE created_at >= ?${userRegion.sql}
+         GROUP BY bucket`,
+        [since, ...userRegion.params]
     );
+    const monthlyDonations = groupByMonth(donationBuckets, ["amount"]);
+    const monthlyGrowth = groupByMonth(userBuckets, ["users"]);
 
     return {
         region: region || null,
@@ -92,27 +96,31 @@ exports.getPublicDonationTotals = async () => {
     return { totalRaisedEur: round(row.total_eur), donors: Number(row.donors) };
 };
 
+// Activite d'une annee civile du fuseau des recus : bornes [from, to[ plutot que YEAR() en UTC.
 exports.getYearActivity = async (year, { region } = {}) => {
     const userRegion = regionClause("region", region);
     const eventRegion = regionClause("e.region", region);
+    const { from, to } = yearBounds(Number(year));
     const [[members]] = await db.query(
-        `SELECT COUNT(*) AS total FROM users WHERE YEAR(created_at) = ?${userRegion.sql}`,
-        [year, ...userRegion.params]
+        `SELECT COUNT(*) AS total FROM users WHERE created_at >= ? AND created_at < ?${userRegion.sql}`,
+        [from, to, ...userRegion.params]
     );
     const [[events]] = await db.query(
         `SELECT COUNT(DISTINCT e.id) AS total, COUNT(r.id) AS registrations
          FROM events e LEFT JOIN event_registrations r ON r.event_id = e.id
-         WHERE YEAR(e.start_at) = ?${eventRegion.sql}`,
-        [year, ...eventRegion.params]
+         WHERE e.start_at >= ? AND e.start_at < ?${eventRegion.sql}`,
+        [from, to, ...eventRegion.params]
     );
     const [applications] = await db.query(
-        `SELECT status, COUNT(*) AS total FROM applications WHERE YEAR(created_at) = ?${userRegion.sql} GROUP BY status`,
-        [year, ...userRegion.params]
+        `SELECT status, COUNT(*) AS total FROM applications
+         WHERE created_at >= ? AND created_at < ?${userRegion.sql} GROUP BY status`,
+        [from, to, ...userRegion.params]
     );
     // Les messages n'ont pas de region : compteur global, y compris pour un acteur restreint.
     const [[messages]] = await db.query(
-        "SELECT COUNT(*) AS total, SUM(status IN ('traite', 'archive')) AS handled FROM messages WHERE YEAR(created_at) = ?",
-        [year]
+        `SELECT COUNT(*) AS total, SUM(status IN ('traite', 'archive')) AS handled FROM messages
+         WHERE created_at >= ? AND created_at < ?`,
+        [from, to]
     );
     // Projets actifs pendant l'annee (meme definition que l'impact du rapport annuel).
     const [projects] = await db.query(
@@ -142,6 +150,13 @@ exports.getAvailableYears = async () => {
          ) years WHERE y IS NOT NULL ORDER BY y DESC`
     );
     return rows.map((row) => Number(row.y));
+};
+
+// Version du serveur MySQL et latence d'un aller-retour.
+exports.getDatabaseInfo = async () => {
+    const started = Date.now();
+    const [[row]] = await db.query("SELECT VERSION() AS version");
+    return { version: row.version, latencyMs: Date.now() - started };
 };
 
 exports.getTableCounts = async () => {

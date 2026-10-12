@@ -25,7 +25,7 @@ export default function JoinView({ regions = [], interestAreas = [] }) {
             {WAYS.map(({ icon: Icon, key, accent }) => (
               <Card key={key} className={`pub-feature${accent ? " pub-feature--accent" : ""}`}>
                 <span className="pub-feature__icon"><Icon aria-hidden="true" /></span>
-                <h3>{t(`ways.${key}.title`)}</h3>
+                <h2>{t(`ways.${key}.title`)}</h2>
                 <p>{t(`ways.${key}.text`)}</p>
               </Card>
             ))}

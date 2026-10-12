@@ -25,7 +25,7 @@ export default function NewsDetailView({ item, linked }) {
         </div>
         <h1>{item.title}</h1>
         {item.summary && <p className="lead">{item.summary}</p>}
-        <CoverImage src={item.image_url} priority sizes="article" />
+        <CoverImage src={item.image_url} alt={item.image_alt} priority sizes="article" />
         <div className="prose">
           {paragraphs(item.content).map((text, index) => <p key={index}>{text}</p>)}
         </div>

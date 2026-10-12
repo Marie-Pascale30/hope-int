@@ -59,6 +59,13 @@ exports.update = async (id, { status, assignedTo, notes }) => {
     await db.query(`UPDATE messages SET ${updates.join(", ")} WHERE id = ?`, values);
 };
 
+// Changement de statut groupe ; renvoie le nombre de messages trouves.
+exports.bulkUpdateStatus = async (ids, status) => {
+    const handled = status === "traite" ? ", handled_at = COALESCE(handled_at, NOW())" : "";
+    const [result] = await db.query(`UPDATE messages SET status = ?${handled} WHERE id IN (?)`, [status, ids]);
+    return result.affectedRows;
+};
+
 exports.remove = async (id) => {
     await db.query("DELETE FROM messages WHERE id = ?", [id]);
 };

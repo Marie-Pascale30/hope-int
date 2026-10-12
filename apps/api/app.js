@@ -6,10 +6,15 @@ const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
 const multer = require("multer");
 const cookieParser = require("cookie-parser");
+const crypto = require("crypto");
 const db = require("./config/db");
 const paymentController = require("./controllers/paymentController");
+const healthService = require("./services/healthService");
+const requireAuth = require("./middlewares/authMiddleware");
+const can = require("./middlewares/permissionMiddleware");
 const { csrfGuard } = require("./config/session");
 const { localizeResponses } = require("./i18n");
+const { PERMISSIONS } = require("@hope/shared/rbac");
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
@@ -25,6 +30,9 @@ const corsOrigins = (process.env.CORS_ORIGIN || "http://localhost:3001")
   .filter(Boolean);
 const rateLimitMax = Number(process.env.API_RATE_LIMIT_MAX || (isProduction ? 500 : 5000));
 const bypassLocalRateLimit = process.env.BYPASS_LOCAL_RATE_LIMIT !== "false";
+// Webhooks des prestataires : hors limiteur global (rafales legitimes, adresses partagees) ;
+// ils sont authentifies par signature.
+const WEBHOOK_PATHS = new Set(["/api/payment/webhook", "/api/payment/notchpay/webhook", "/api/payment/flutterwave/webhook"]);
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: rateLimitMax,
@@ -32,6 +40,7 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: "Trop de requêtes, veuillez réessayer dans quelques instants." },
   skip: (req) => {
+    if (WEBHOOK_PATHS.has(req.path)) return true;
     if (isProduction || !bypassLocalRateLimit) return false;
     return req.ip === "::1" || req.ip === "127.0.0.1" || req.ip === "::ffff:127.0.0.1";
   },
@@ -45,7 +54,8 @@ if (process.env.TRUST_PROXY) {
 // Images uploadees affichees par le frontend (autre origine) : ressource cross-origin autorisee.
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 // credentials : le navigateur envoie le cookie de session aux origines autorisees.
-app.use(cors({ origin: corsOrigins, credentials: true }));
+// exposedHeaders : en-tetes lisibles par le site (total des dons, nom du fichier exporte).
+app.use(cors({ origin: corsOrigins, credentials: true, exposedHeaders: ["X-Total-Count", "Content-Disposition"] }));
 if (process.env.NODE_ENV !== "test") app.use(morgan(isProduction ? "combined" : "dev"));
 // Messages traduits selon Accept-Language (avant le limiteur pour traduire aussi ses refus).
 app.use(localizeResponses);
@@ -83,6 +93,24 @@ app.get("/api/health", async (_req, res) => {
   }
 });
 
+// Etat detaille (supervision) : jeton HEALTH_TOKEN (en-tete X-Health-Token) ou session avec la
+// permission MANAGE_IT. /api/health reste minimal pour le healthcheck Docker.
+function healthAccess(req, res, next) {
+  const expected = process.env.HEALTH_TOKEN || "";
+  const given = req.get("x-health-token") || "";
+  if (expected && given) {
+    const a = Buffer.from(given);
+    const b = Buffer.from(expected);
+    if (a.length === b.length && crypto.timingSafeEqual(a, b)) return next();
+  }
+  return requireAuth(req, res, () => can(PERMISSIONS.MANAGE_IT)(req, res, next));
+}
+
+app.get("/api/health/details", healthAccess, async (_req, res) => {
+  const details = await healthService.getDetails();
+  res.status(details.database.ok ? 200 : 503).json(details);
+});
+
 // Routes principales
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/payment", require("./routes/paymentRoute"));
@@ -116,3 +144,4 @@ app.use((err, _req, res, _next) => {
 });
 
 module.exports = app;
+module.exports.WEBHOOK_PATHS = WEBHOOK_PATHS;

@@ -49,6 +49,7 @@ router.post(
 );
 
 router.post("/logout", authController.logout);
+router.post("/logout-all", auth, authController.logoutAll);
 
 router.get("/me", auth, authController.me);
 

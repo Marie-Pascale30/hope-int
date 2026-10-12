@@ -8,7 +8,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useLabels } from "../../utils/labels";
 import { PERMISSIONS as P } from "../../utils/rbac";
 import { useErrorMessage } from "../../i18n/errors";
-import { canGrantRole, useRoleMatrix } from "./parts-a/roles";
+import { canGrantRole, useRoleMatrix } from "./lib/roles";
 
 // Cles des messages "admin.roles.rules" (titre + texte).
 const RULES = ["own", "admin", "self", "lastAdmin"];

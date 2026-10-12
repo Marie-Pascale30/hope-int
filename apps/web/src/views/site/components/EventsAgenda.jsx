@@ -4,8 +4,8 @@
 import { useMemo, useState } from "react";
 import { CalendarDays, CalendarX, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { Button, EmptyState } from "../../../components/ui";
-import { useFormat } from "../../../i18n/format";
+import { Button, EmptyState } from "@/src/components/ui";
+import { useFormat } from "@/src/i18n/format";
 import { EventCard } from ".";
 import EventsCalendar, { indexEventsByDay, keyToDate } from "./EventsCalendar";
 

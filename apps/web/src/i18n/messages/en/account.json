@@ -55,8 +55,13 @@
       "hasAccount": "Already registered? <link>Sign in</link>",
       "submit": "Create my account",
       "teamNote": "Would you like to join the HOPE International team (as a volunteer, employee or regional coordinator)? A member account is not enough: <link>submit your application</link> and we will get back to you.",
-      "welcome": "Welcome to HOPE International!",
-      "opening": "Opening your account…"
+      "opening": "Opening your account…",
+      "sentTitle": "Check your inbox",
+      "sentDescription": "Your sign-up request has been received.",
+      "sentAlertTitle": "Request received",
+      "sentText": "If this email is not already in use, your account has been created: a message has just been sent to <strong>{email}</strong>. Check your inbox to complete your sign-up.",
+      "sentHelp": "Nothing after a few minutes? Check your spam folder. If you already had an account, sign in or use “Forgot password”.",
+      "sentLogin": "Go to sign in"
     },
     "forgot": {
       "title": "Forgot your password",
@@ -106,7 +111,16 @@
         "tipsTitle": "Good practice",
         "tip1": "Choose a unique password, ideally at least 12 characters long.",
         "tip2": "After a change, your other sessions are signed out automatically.",
-        "tip3": "HOPE International will never ask for your password by email or phone."
+        "tip3": "HOPE International will never ask for your password by email or phone.",
+        "sessions": {
+          "title": "Signed-in devices",
+          "text": "Lost phone, shared computer? Sign out everywhere your account is open, including here. You will need to sign in again on each device.",
+          "button": "Sign out of all devices",
+          "confirmTitle": "Sign out everywhere?",
+          "confirmText": "All your sessions will be closed, including on this device.",
+          "confirm": "Sign out everywhere",
+          "failed": "Could not sign out"
+        }
       }
     },
     "profile": {
@@ -149,12 +163,12 @@
       "general": "Where it’s needed most",
       "stats": {
         "total": "Total given",
-        "totalEquivalent": "{breakdown} (euro equivalent)",
         "totalThanks": "Thank you for your loyalty",
         "succeeded": "Successful donations",
         "overall": "{count, plural, one {# in total} other {# in total}}",
         "projects": "Projects supported",
-        "last": "Latest donation"
+        "last": "Latest donation",
+        "totalAlso": "and {amount}"
       },
       "monthlyTitle": "Monthly donations",
       "unknownStatus": "The status of some monthly donations cannot be checked with our payment provider at the moment.",
@@ -172,9 +186,18 @@
       "partialRefund": "including {amount} refunded",
       "receiptLabel": "Download receipt {number} (PDF)",
       "receiptUnavailable": {
-        "refunded": { "label": "Receipt cancelled", "hint": "Donation refunded" },
-        "disputed": { "label": "Receipt suspended", "hint": "Bank dispute in progress" },
-        "review": { "label": "Receipt pending", "hint": "Available after review" }
+        "refunded": {
+          "label": "Receipt cancelled",
+          "hint": "Donation refunded"
+        },
+        "disputed": {
+          "label": "Receipt suspended",
+          "hint": "Bank dispute in progress"
+        },
+        "review": {
+          "label": "Receipt pending",
+          "hint": "Available after review"
+        }
       },
       "perMonth": "{amount} / month",
       "since": "Since {date}",
@@ -192,6 +215,14 @@
         "file": "donation-summary-{year}.pdf",
         "notFound": "No confirmed donation is recorded for {year}, so there is no summary for that year.",
         "errorTitle": "Download failed"
+      },
+      "receiptButton": "Receipt (PDF)",
+      "nextPayment": "Next payment: <strong>{date}</strong>",
+      "years": {
+        "label": "Filter history by year",
+        "all": "All",
+        "totalAll": "Total confirmed donations: {amount}",
+        "totalYear": "Confirmed donations in {year}: {amount}"
       }
     },
     "campaigns": {

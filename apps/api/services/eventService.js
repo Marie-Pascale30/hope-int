@@ -1,3 +1,4 @@
+const { withTransaction } = require("../config/db");
 const eventRepo = require("../repositories/eventRepository");
 const logService = require("./activityLogService");
 const emailService = require("./emailService");
@@ -25,6 +26,7 @@ function normalizePayload(body, file) {
     if ("capacity" in payload) payload.capacity = payload.capacity === "" || payload.capacity === null ? null : parseInt(payload.capacity, 10);
     if ("project_id" in payload) payload.project_id = payload.project_id ? parseInt(payload.project_id, 10) : null;
     if ("region" in payload) payload.region = payload.region || null;
+    if ("image_alt" in payload) payload.image_alt = String(payload.image_alt ?? "").trim() || null;
     if ("published" in payload) payload.published = ["1", "true", "on", true, 1].includes(payload.published) ? 1 : 0;
     if (file) payload.image_url = `/uploads/${file.filename}`;
     if (payload.remove_image === "1" || payload.remove_image === true) payload.image_url = null;
@@ -71,6 +73,51 @@ function notifyCancellation(event, registrations) {
     }
 }
 
+// Champs dont la modification concerne les inscrits.
+const NOTIFIED_FIELDS = { title: "intitulé", start_at: "date de début", end_at: "date de fin", location: "lieu" };
+
+// Valeurs relues en base avant et apres la mise a jour (dates : objets Date).
+function sameValue(field, before, after) {
+    if (field === "start_at" || field === "end_at") {
+        const time = (value) => (value ? new Date(value).getTime() : null);
+        return time(before) === time(after);
+    }
+    return String(before ?? "") === String(after ?? "");
+}
+
+// Evenement a venir modifie (intitule, dates, lieu) ou depublie : les inscrits sont prevenus par
+// email, sans bloquer la reponse.
+function notifyChange(before, after, registrations) {
+    const unpublished = before.published && !after.published;
+    const changed = Object.keys(NOTIFIED_FIELDS).filter((field) => !sameValue(field, before[field], after[field]));
+    if (!unpublished && !changed.length) return 0;
+
+    const subject = unpublished
+        ? `${ORG_NAME} - Événement retiré de l'agenda : ${before.title}`
+        : `${ORG_NAME} - Événement modifié : ${after.title}`;
+    const lines = unpublished
+        ? [
+            `L'événement « ${before.title} » prévu le ${formatDate(before.start_at)} a été retiré de l'agenda.`,
+            "Nous reviendrons vers vous si une nouvelle date est fixée.",
+        ]
+        : [
+            `L'événement « ${after.title} » auquel vous êtes inscrit(e) a été modifié (${changed.map((field) => NOTIFIED_FIELDS[field]).join(", ")}).`,
+            `Date : ${formatDate(after.start_at)}${after.end_at ? ` - fin : ${formatDate(after.end_at)}` : ""}`,
+            `Lieu : ${after.location}`,
+        ];
+    for (const person of registrations) {
+        if (!person.email) continue;
+        Promise.resolve()
+            .then(() => emailService.send({
+                to: person.email,
+                subject,
+                text: [`Bonjour ${person.name || ""},`.trim(), "", ...lines, "", `L'équipe ${ORG_NAME}`].join("\n"),
+            }))
+            .catch((error) => console.error("event-update-email-error:", error.message));
+    }
+    return registrations.length;
+}
+
 exports.listPublic = async ({ region, userId } = {}) => {
     const events = await eventRepo.getAll({ publishedOnly: true, upcomingOnly: true, region });
     if (!userId) return events;
@@ -108,8 +155,16 @@ exports.update = async (actor, id, body, file) => {
     }
     await eventRepo.update(id, payload);
     if ("image_url" in payload) await removeReplacedUpload(existing.image_url, payload.image_url);
-    await logService.log({ userId: actor.id, action: "event.update", meta: { id } });
-    return eventRepo.findById(id);
+    const updated = await eventRepo.findById(id);
+
+    // Seul un evenement a venir (avant comme apres) justifie de prevenir les inscrits.
+    let notified = 0;
+    const upcoming = (event) => new Date(event.end_at || event.start_at) >= new Date();
+    if (upcoming(existing) && existing.registered_count > 0) {
+        notified = notifyChange(existing, updated, await eventRepo.getRegistrations(id));
+    }
+    await logService.log({ userId: actor.id, action: "event.update", meta: { id, ...(notified ? { notified } : {}) } });
+    return updated;
 };
 
 exports.remove = async (actor, id) => {
@@ -144,9 +199,17 @@ const REGISTRATION_ERRORS = {
     full: () => conflict("Cet événement est complet"),
 };
 
+// Inscription atomique : evenement verrouille le temps de verifier les regles (publie, pas encore
+// commence, pas deja inscrit, places restantes) puis d'inserer l'inscription.
 exports.register = async (user, id) => {
-    const result = await eventRepo.register(id, user.id);
-    if (result.error) throw REGISTRATION_ERRORS[result.error]();
+    await withTransaction(async (connection) => {
+        const event = await eventRepo.lockForRegistration(connection, id, user.id);
+        if (!event || !event.published) throw REGISTRATION_ERRORS.not_found();
+        if (new Date(event.start_at) < new Date()) throw REGISTRATION_ERRORS.past();
+        if (event.alreadyRegistered) throw REGISTRATION_ERRORS.already();
+        if (event.capacity !== null && event.registered >= Number(event.capacity)) throw REGISTRATION_ERRORS.full();
+        await eventRepo.insertRegistration(connection, id, user.id);
+    });
     await logService.log({ userId: user.id, action: "event.register", meta: { eventId: Number(id) } });
     return eventRepo.findById(id);
 };

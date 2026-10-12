@@ -97,6 +97,24 @@ exports.sendPasswordResetEmail = ({ to, fullName, resetUrl }) =>
         ].join("\n"),
     }, { kind: "password_reset", sensitive: true, expiresInMinutes: 55 });
 
+// Inscription tentee avec l'email d'un compte existant : le titulaire est prevenu (la reponse de
+// l'API reste neutre).
+exports.sendRegistrationAttemptEmail = ({ to, fullName, loginUrl, resetUrl }) =>
+    send({
+        to,
+        subject: `${ORG_NAME} - Tentative de création de compte`,
+        text: [
+            `Bonjour ${fullName || ""},`.trim(),
+            "",
+            `Quelqu'un a tenté de créer un compte sur la plateforme ${ORG_NAME} avec votre adresse email, qui correspond déjà à votre compte.`,
+            "Aucune modification n'a été faite.",
+            loginUrl ? `Pour vous connecter : ${loginUrl}` : "",
+            resetUrl ? `Mot de passe oublié : ${resetUrl}` : "",
+            "",
+            "Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer ce message.",
+        ].join("\n"),
+    }, { kind: "registration_attempt" });
+
 exports.sendApplicationReceivedEmail = ({ to, fullName }) =>
     send({
         to,

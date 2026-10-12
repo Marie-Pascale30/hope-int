@@ -1,5 +1,5 @@
-import { DEFAULT_LOCALE, LOCALES, localizePath } from "../../../i18n/config";
-import { isStaff } from "../../../utils/rbac";
+import { DEFAULT_LOCALE, LOCALES, localizePath } from "@/src/i18n/config";
+import { isStaff } from "@/src/utils/rbac";
 
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

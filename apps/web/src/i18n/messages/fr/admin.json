@@ -307,6 +307,18 @@
         "textWithNote": "{name} sera prévenu(e) par email, avec votre note.",
         "textNoNote": "{name} sera prévenu(e) par email. Vous pouvez ajouter une note explicative avant de refuser.",
         "button": "Refuser"
+      },
+      "bulk": {
+        "reject": "Refuser la sélection",
+        "title": "{count, plural, one {Refuser # candidature ?} other {Refuser # candidatures ?}}",
+        "text": "Les candidatures encore ouvertes seront refusées ; celles déjà traitées entre-temps seront ignorées.",
+        "more": "… et {count} autre(s)",
+        "noteLabel": "Note de décision (facultative)",
+        "noteHint": "Enregistrée sur chaque candidature refusée.",
+        "confirm": "{count, plural, one {Refuser # candidature} other {Refuser # candidatures}}",
+        "done": "{count, plural, one {# candidature refusée} other {# candidatures refusées}}",
+        "doneSkipped": "{count, plural, one {# candidature refusée} other {# candidatures refusées}}, {skipped} ignorée(s) (déjà traitées)",
+        "failed": "Refus groupé impossible"
       }
     },
     "interests": {
@@ -360,6 +372,14 @@
         "deleteConfirmText": "Le message de {name} sera définitivement supprimé. Préférez l’archivage pour en garder une trace.",
         "deleted": "Message supprimé",
         "deleteFailed": "Suppression impossible"
+      },
+      "bulk": {
+        "statusLabel": "Nouveau statut des messages sélectionnés",
+        "apply": "Appliquer",
+        "done": "{count, plural, one {# message passé} other {# messages passés}} en « {status} »",
+        "failed": "Modification groupée impossible",
+        "selectPage": "Tout sélectionner sur la page",
+        "selectOne": "Sélectionner le message de {name} : {subject}"
       }
     },
     "roles": {

@@ -4,10 +4,10 @@
 import { useState } from "react";
 import { CheckCircle2, Send } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Alert, Button, Card, Input, Textarea, focusFirstInvalid } from "../../../components/ui";
-import { useAuth } from "../../../context/AuthContext";
-import { publicApi } from "../../../services";
-import { errorMessage } from "../../../i18n/errors";
+import { Alert, Button, Card, Input, Textarea, focusFirstInvalid } from "@/src/components/ui";
+import { useAuth } from "@/src/context/AuthContext";
+import { publicApi } from "@/src/services";
+import { errorMessage } from "@/src/i18n/errors";
 
 const MIN_MESSAGE = 10;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -88,9 +88,9 @@ export default function ContactForm() {
           <p className="pub-form__intro">{t("required")}</p>
         </div>
         <div className="form-grid">
-          <Input label={t("name")} required autoComplete="name" value={value("name")} onChange={update("name")} error={errors.name} />
-          <Input label={t("email")} type="email" required autoComplete="email" value={value("email")} onChange={update("email")} error={errors.email} />
-          <Input full label={t("subject")} required value={form.subject} onChange={update("subject")} error={errors.subject} />
+          <Input label={t("name")} required autoComplete="name" enterKeyHint="next" value={value("name")} onChange={update("name")} error={errors.name} />
+          <Input label={t("email")} type="email" inputMode="email" required autoComplete="email" enterKeyHint="next" value={value("email")} onChange={update("email")} error={errors.email} />
+          <Input full label={t("subject")} required autoComplete="off" enterKeyHint="next" value={form.subject} onChange={update("subject")} error={errors.subject} />
           <Textarea
             full
             label={t("message")}

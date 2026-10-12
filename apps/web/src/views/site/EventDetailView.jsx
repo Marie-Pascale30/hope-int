@@ -16,7 +16,7 @@ export default function EventDetailView({ event }) {
     <>
       <div className="container pub-detail-head">
         <BackLink href="/evenements">{t("back")}</BackLink>
-        <CoverImage src={event.image_url} variant="wide" priority sizes="wide" />
+        <CoverImage src={event.image_url} alt={event.image_alt} variant="wide" priority sizes="wide" />
         <div className="pub-detail-title">
           <div className="pub-event-when">
             <EventDate value={event.start_at} />

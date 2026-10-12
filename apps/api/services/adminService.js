@@ -1,4 +1,3 @@
-const db = require("../config/db");
 const statsRepo = require("../repositories/statsRepository");
 const activityRepo = require("../repositories/activityLogRepository");
 const contentRepo = require("../repositories/contentRepository");
@@ -8,7 +7,8 @@ const paymentService = require("./paymentService");
 const logService = require("./activityLogService");
 const { hasMailConfig } = require("./emailService");
 const { getRoleMatrix, hasGlobalScope, PERMISSION_LABELS, ROLE_LABELS } = require("@hope/shared/rbac");
-const { REGIONS } = require("@hope/shared/constants");
+const { REGIONS, XAF_PER_EUR } = require("@hope/shared/constants");
+const { receiptYear } = require("../utils/timezone");
 const { badRequest, forbidden } = require("../utils/httpError");
 const { getScopeRegion, NO_REGION_MESSAGE } = require("../utils/scope");
 
@@ -67,7 +67,8 @@ exports.getRegional = async (actor, requestedRegion) => {
 // ceux des projets actifs pendant l'annee (periode qui recoupe l'annee), ce qui est signale
 // dans impactScope pour que le rapport ne le presente pas comme un impact strictement annuel.
 exports.getAnnualReport = async (actor, year) => {
-    const targetYear = Number(year) || new Date().getFullYear();
+    // Annee civile du fuseau des recus (meme reference que les bornes du bilan).
+    const targetYear = Number(year) || receiptYear(new Date());
     const region = getScopeRegion(actor);
     const [finance, activity, impact, years] = await Promise.all([
         paymentService.getSummary({ year: targetYear, ...(region ? { region } : {}) }),
@@ -97,17 +98,16 @@ exports.getFinanceSummary = async (actor, filters = {}) => {
 };
 
 // Liste des dons : limitee a la region (dons affectes a un projet de la region) pour un acteur restreint.
-exports.getDonations = async (actor, filters = {}) => {
+// Renvoie { rows, total } (page demandee, ou les dons les plus recents sans pagination).
+exports.getDonations = async (actor, filters = {}, pagination = null) => {
     const region = getScopeRegion(actor);
-    return paymentService.getAll({ ...filters, ...(region ? { region } : {}) });
+    return paymentService.getAll({ ...filters, ...(region ? { region } : {}) }, pagination);
 };
 
 exports.getSystemStatus = async () => {
-    const started = Date.now();
-    let database = { ok: true };
+    let database;
     try {
-        const [[row]] = await db.query("SELECT VERSION() AS version");
-        database = { ok: true, version: row.version, latencyMs: Date.now() - started };
+        database = { ok: true, ...(await statsRepo.getDatabaseInfo()) };
     } catch (error) {
         database = { ok: false, error: error.message };
     }
@@ -174,6 +174,7 @@ exports.getSystemStatus = async () => {
         memoryMb: Math.round(process.memoryUsage().rss / 1024 / 1024),
         database,
         tables: database.ok ? await statsRepo.getTableCounts() : {},
+        reconcile: database.ok ? { lastRun: await paymentService.getLastReconcile() } : null,
         checks,
     };
 };
@@ -185,7 +186,10 @@ const CSV_COLUMNS = [
     ["created_at", "Date de création"],
     ["status", "Statut"],
     ["amount", "Montant"],
+    ["refunded_amount", "Remboursé"],
+    ["net_amount", "Net"],
     ["currency", "Devise"],
+    ["net_eur", "Équivalent EUR"],
     ["method", "Moyen"],
     ["provider", "Prestataire"],
     ["frequency", "Fréquence"],
@@ -199,10 +203,26 @@ const CSV_COLUMNS = [
 function csvCell(value) {
     if (value === null || value === undefined) return "";
     const text = value instanceof Date ? value.toISOString() : String(value);
-    // Neutralise les formules (injection CSV dans Excel).
-    const safe = /^[=+\-@]/.test(text) ? `'${text}` : text;
+    // Neutralise les formules (injection CSV dans Excel), y compris derriere une tabulation ou un retour chariot.
+    const safe = /^[=+\-@\t\r]/.test(text) ? `'${text}` : text;
     return /[";\n\r]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
 }
+
+// Montants avec virgule decimale (Excel en francais) : brut, rembourse, net et net converti en euros.
+function csvAmounts(row) {
+    const decimal = (value, digits) => Number(value).toFixed(digits).replace(".", ",");
+    const digits = row.currency === "xaf" ? 0 : 2;
+    const refunded = Number(row.refunded_amount || 0);
+    const net = Number(row.amount) - refunded;
+    return {
+        amount: decimal(row.amount, digits),
+        refunded_amount: decimal(refunded, digits),
+        net_amount: decimal(net, digits),
+        net_eur: decimal(row.currency === "xaf" ? net / XAF_PER_EUR : net, 2),
+    };
+}
+
+exports.csvCell = csvCell;
 
 // Separateur ";" et BOM UTF-8 : ouverture directe dans Excel en francais.
 // Export complet (sans limite de lignes) et journalise : il contient des donnees personnelles.
@@ -217,10 +237,10 @@ exports.exportDonationsCsv = async (actor, filters = {}) => {
     });
     const lines = [
         CSV_COLUMNS.map(([, label]) => label).join(";"),
-        ...rows.map((row) => CSV_COLUMNS.map(([key]) => {
-            if (key === "amount") return String(row.amount).replace(".", ",");
-            return csvCell(row[key]);
-        }).join(";")),
+        ...rows.map((row) => {
+            const amounts = csvAmounts(row);
+            return CSV_COLUMNS.map(([key]) => (key in amounts ? amounts[key] : csvCell(row[key]))).join(";");
+        }),
     ];
     // BOM UTF-8 : Excel detecte l'encodage et affiche correctement les accents.
     return `\uFEFF${lines.join("\r\n")}`;

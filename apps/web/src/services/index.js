@@ -34,6 +34,8 @@ export const publicApi = {
 export const authApi = {
   login: (payload) => data(API.post("/auth/login", payload)),
   logout: () => data(API.post("/auth/logout")),
+  // Revoque toutes les sessions du compte (tous les appareils), y compris la session courante.
+  logoutAll: () => data(API.post("/auth/logout-all")),
   register: (payload) => data(API.post("/auth/register", payload)),
   me: () => data(API.get("/auth/me")),
   updateMe: (payload) => data(API.patch("/auth/me", payload)),
@@ -75,19 +77,30 @@ export const adminApi = {
 
   messages: (params) => data(API.get("/admin/messages", { params })),
   updateMessage: (id, payload) => data(API.patch(`/admin/messages/${id}`, payload)),
+  // Changement de statut groupe (100 identifiants max) -> { updated }.
+  bulkUpdateMessages: (ids, status) => data(API.patch("/admin/messages/bulk", { ids, status })),
   deleteMessage: (id) => data(API.delete(`/admin/messages/${id}`)),
 
   applications: (params) => data(API.get("/admin/applications", { params })),
   reviewApplication: (id, reviewNote) => data(API.post(`/admin/applications/${id}/review`, { reviewNote })),
   rejectApplication: (id, reviewNote) => data(API.post(`/admin/applications/${id}/reject`, { reviewNote })),
   acceptApplication: (id, payload) => data(API.post(`/admin/applications/${id}/accept`, payload)),
+  // Refus groupe (100 identifiants max) -> { rejected, skipped }.
+  bulkRejectApplications: (ids, reviewNote) =>
+    data(API.post("/admin/applications/bulk-reject", { ids, ...(reviewNote ? { reviewNote } : {}) })),
 
   donations: (params) => data(API.get("/admin/donations", { params })),
   financeSummary: (year) => data(API.get("/admin/finance/summary", { params: year ? { year } : {} })),
   reconcile: () => data(API.post("/admin/finance/reconcile")),
-  // Don en verification : decision "approve" | "reject", note facultative (500 caracteres max).
-  reviewDonation: (id, decision, note) =>
-    data(API.post(`/admin/donations/${id}/review`, { decision, ...(note ? { note } : {}) })),
+  // Liste paginee cote serveur : params { page, pageSize, ...filtres } -> { rows, total, page, pageSize }.
+  // Don en verification : decision "approve" (receivedAmount obligatoire : montant reellement recu)
+  // ou "reject" ; note facultative (500 caracteres max).
+  reviewDonation: (id, decision, { note, receivedAmount } = {}) =>
+    data(API.post(`/admin/donations/${id}/review`, {
+      decision,
+      ...(decision === "approve" ? { receivedAmount } : {}),
+      ...(note ? { note } : {}),
+    })),
   resendReceipt: (id) => data(API.post(`/admin/donations/${id}/resend-receipt`)),
   // Telechargement authentifie : renvoie un Blob a enregistrer cote navigateur.
   exportDonations: (params) => data(API.get("/admin/finance/export", { params, responseType: "blob" })),

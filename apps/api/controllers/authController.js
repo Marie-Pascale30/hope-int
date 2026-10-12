@@ -2,9 +2,10 @@ const authService = require("../services/authService");
 const { resolveLocale } = require("../i18n");
 const { setSessionCookie, clearSessionCookie } = require("../config/session");
 
+// Reponse identique que l'email soit deja inscrit ou non (voir authService.register).
 exports.register = async (req, res) => {
-    await authService.register(req.body);
-    res.status(201).json({ message: "Compte créé : vous pouvez vous connecter" });
+    await authService.register(req.body, resolveLocale(req));
+    res.status(201).json({ message: "Inscription enregistrée : vous pouvez vous connecter. Si un compte existait déjà avec cet email, son titulaire vient d'être prévenu." });
 };
 
 exports.login = async (req, res) => {
@@ -16,6 +17,13 @@ exports.login = async (req, res) => {
 exports.logout = async (_req, res) => {
     clearSessionCookie(res);
     res.json({ message: "Déconnecté" });
+};
+
+// Ferme toutes les sessions du compte, y compris celle-ci.
+exports.logoutAll = async (req, res) => {
+    await authService.logoutAll(req.user.id);
+    clearSessionCookie(res);
+    res.json({ message: "Déconnecté de toutes les sessions" });
 };
 
 exports.me = async (req, res) => {

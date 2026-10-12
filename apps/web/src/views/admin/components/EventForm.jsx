@@ -4,12 +4,12 @@
 import { useState } from "react";
 import { Save } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Alert, Button, Input, Modal, Select, Switch, Textarea } from "../../../components/ui";
-import { regionOptions, useMeta } from "../../../hooks/useMeta";
-import { adminApi } from "../../../services";
-import { useErrorMessage } from "../../../i18n/errors";
-import { fromDateTimeLocalValue, toDateTimeLocalValue } from "../../../utils/format";
-import { useAlerts } from "../../../utils/alerts";
+import { Alert, Button, Input, Modal, Select, Switch, Textarea } from "@/src/components/ui";
+import { regionOptions, useMeta } from "@/src/hooks/useMeta";
+import { adminApi } from "@/src/services";
+import { useErrorMessage } from "@/src/i18n/errors";
+import { fromDateTimeLocalValue, toDateTimeLocalValue } from "@/src/utils/format";
+import { useAlerts } from "@/src/utils/alerts";
 import { ImageField } from "./widgets";
 
 const FORM_ID = "adm-event-form";
@@ -25,6 +25,7 @@ function initialValues(event) {
     end_at: toDateTimeLocalValue(event?.end_at),
     capacity: event?.capacity ? String(event.capacity) : "",
     project_id: event?.project_id ? String(event.project_id) : "",
+    image_alt: event?.image_alt || "",
   };
 }
 
@@ -55,6 +56,7 @@ export default function EventForm({ event, projects = [], onClose, onSaved }) {
       ...values,
       start_at: fromDateTimeLocalValue(values.start_at),
       end_at: fromDateTimeLocalValue(values.end_at),
+      image_alt: values.image_alt.trim(),
       published,
     };
     if (file) payload.image = file;
@@ -139,9 +141,9 @@ export default function EventForm({ event, projects = [], onClose, onSaved }) {
           />
           <Input
             label={t("fields.capacity")}
-            type="number"
-            min={minCapacity}
-            step="1"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            autoComplete="off"
             value={values.capacity}
             onChange={set("capacity")}
             error={capacityInvalid ? t("errors.capacity", { min: minCapacity, count: registered }) : undefined}
@@ -151,7 +153,15 @@ export default function EventForm({ event, projects = [], onClose, onSaved }) {
 
         <h3 className="adm-form-section">{t("sections.publication")}</h3>
         <div className="form-grid">
-          <ImageField currentUrl={event?.image_url} file={file} onFile={setFile} removed={removeImage} onRemovedChange={setRemoveImage} />
+          <ImageField
+            currentUrl={event?.image_url}
+            file={file}
+            onFile={setFile}
+            removed={removeImage}
+            onRemovedChange={setRemoveImage}
+            alt={values.image_alt}
+            onAltChange={(text) => setValues((prev) => ({ ...prev, image_alt: text }))}
+          />
           <div className="field field--full">
             <Switch
               label={published ? t("publishedOn") : t("publishedOff")}

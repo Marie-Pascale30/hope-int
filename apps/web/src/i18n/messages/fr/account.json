@@ -55,8 +55,13 @@
       "hasAccount": "Déjà inscrit(e) ? <link>Se connecter</link>",
       "submit": "Créer mon compte",
       "teamNote": "Vous souhaitez rejoindre l’équipe de HOPE International (bénévole, salarié, responsable régional) ? Le compte membre ne suffit pas : <link>déposez votre candidature</link>, nous vous recontacterons.",
-      "welcome": "Bienvenue chez HOPE International !",
-      "opening": "Ouverture de votre espace…"
+      "opening": "Ouverture de votre espace…",
+      "sentTitle": "Vérifiez vos emails",
+      "sentDescription": "Votre demande d’inscription a bien été reçue.",
+      "sentAlertTitle": "Demande enregistrée",
+      "sentText": "Si cet email n’est pas déjà utilisé, votre compte est créé : un message vient d’être envoyé à <strong>{email}</strong>. Vérifiez vos emails pour finaliser l’inscription.",
+      "sentHelp": "Rien reçu après quelques minutes ? Regardez dans les courriers indésirables. Si vous aviez déjà un compte, connectez-vous ou utilisez « Mot de passe oublié ».",
+      "sentLogin": "Aller à la connexion"
     },
     "forgot": {
       "title": "Mot de passe oublié",
@@ -106,7 +111,16 @@
         "tipsTitle": "Bonnes pratiques",
         "tip1": "Choisissez un mot de passe unique, d’au moins 12 caractères idéalement.",
         "tip2": "Après un changement, vos autres sessions sont automatiquement déconnectées.",
-        "tip3": "HOPE International ne vous demandera jamais votre mot de passe par email ou par téléphone."
+        "tip3": "HOPE International ne vous demandera jamais votre mot de passe par email ou par téléphone.",
+        "sessions": {
+          "title": "Appareils connectés",
+          "text": "Un téléphone perdu, un ordinateur partagé ? Fermez votre session partout où elle est ouverte, y compris ici. Il faudra vous reconnecter sur chaque appareil.",
+          "button": "Se déconnecter de tous les appareils",
+          "confirmTitle": "Se déconnecter partout ?",
+          "confirmText": "Toutes vos sessions seront fermées, y compris sur cet appareil.",
+          "confirm": "Tout déconnecter",
+          "failed": "Déconnexion impossible"
+        }
       }
     },
     "profile": {
@@ -149,12 +163,12 @@
       "general": "Là où c’est le plus utile",
       "stats": {
         "total": "Total donné",
-        "totalEquivalent": "{breakdown} (équivalent en euros)",
         "totalThanks": "Merci pour votre fidélité",
         "succeeded": "Dons réussis",
         "overall": "{count, plural, one {# au total} other {# au total}}",
         "projects": "Projets soutenus",
-        "last": "Dernier don"
+        "last": "Dernier don",
+        "totalAlso": "et {amount}"
       },
       "monthlyTitle": "Dons mensuels",
       "unknownStatus": "Le statut de certains dons mensuels ne peut pas être vérifié pour le moment auprès de notre prestataire de paiement.",
@@ -172,9 +186,18 @@
       "partialRefund": "dont {amount} remboursés",
       "receiptLabel": "Télécharger le reçu {number} (PDF)",
       "receiptUnavailable": {
-        "refunded": { "label": "Reçu annulé", "hint": "Don remboursé" },
-        "disputed": { "label": "Reçu suspendu", "hint": "Contestation bancaire en cours" },
-        "review": { "label": "Reçu en attente", "hint": "Disponible après vérification" }
+        "refunded": {
+          "label": "Reçu annulé",
+          "hint": "Don remboursé"
+        },
+        "disputed": {
+          "label": "Reçu suspendu",
+          "hint": "Contestation bancaire en cours"
+        },
+        "review": {
+          "label": "Reçu en attente",
+          "hint": "Disponible après vérification"
+        }
       },
       "perMonth": "{amount} / mois",
       "since": "Depuis le {date}",
@@ -192,6 +215,14 @@
         "file": "recapitulatif-dons-{year}.pdf",
         "notFound": "Aucun don confirmé n’est enregistré pour {year} : il n’y a pas de récapitulatif pour cette année.",
         "errorTitle": "Téléchargement impossible"
+      },
+      "receiptButton": "Reçu (PDF)",
+      "nextPayment": "Prochaine échéance : <strong>{date}</strong>",
+      "years": {
+        "label": "Filtrer l’historique par année",
+        "all": "Toutes",
+        "totalAll": "Total des dons confirmés : {amount}",
+        "totalYear": "Dons confirmés en {year} : {amount}"
       }
     },
     "campaigns": {

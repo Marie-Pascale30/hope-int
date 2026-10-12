@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useFormat } from "../../../i18n/format";
+import { useFormat } from "@/src/i18n/format";
 
 const pad = (n) => String(n).padStart(2, "0");
 

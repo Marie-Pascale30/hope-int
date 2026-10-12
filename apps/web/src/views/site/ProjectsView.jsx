@@ -3,9 +3,10 @@ import "../../styles/public.css";
 import { FolderSearch } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useLocalePath } from "../../i18n/navigation";
-import { Empty, LinkButton, PublicHero } from "./components";
+import { PublicHero } from "./components";
 import LoadError from "./components/LoadError";
 import ProjectsBrowser from "./components/ProjectsBrowser";
+import { Button, EmptyState } from "../../components/ui";
 
 // Ordre d'affichage : en cours, puis a venir, puis termines.
 const STATUS_ORDER = { en_cours: 0, planifie: 1, termine: 2 };
@@ -23,11 +24,11 @@ export default function ProjectsView({ projects, error }) {
           {error ? (
             <LoadError />
           ) : sorted.length === 0 ? (
-            <Empty
+            <EmptyState
               icon={FolderSearch}
               title={t("emptyTitle")}
               description={t("emptyText")}
-              action={<LinkButton href={lp("/don")} variant="accent">{t("donate")}</LinkButton>}
+              action={<Button href={lp("/don")} variant="accent">{t("donate")}</Button>}
             />
           ) : (
             <ProjectsBrowser projects={sorted} />

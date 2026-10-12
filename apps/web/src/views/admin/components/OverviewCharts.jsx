@@ -2,8 +2,8 @@
 
 // Graphiques de la vue d'ensemble (charge via next/dynamic, ssr: false).
 import { useTranslations } from "next-intl";
-import { Bar, Line, baseOptions, barDataset, lineDataset, useChartTheme } from "../../../components/AdminCharts";
-import { useFormat } from "../../../i18n/format";
+import { Bar, Line, baseOptions, barDataset, lineDataset, useChartTheme } from "@/src/components/AdminCharts";
+import { useFormat } from "@/src/i18n/format";
 
 export function DonationsChart({ labels, values }) {
   const t = useTranslations("admin.charts");

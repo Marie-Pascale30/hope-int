@@ -5,22 +5,24 @@ import { Save, Trash2, UserPlus, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   Alert, Avatar, Badge, Button, DataTable, EmptyState, ErrorState, Input, PageSkeleton, Modal, PageHeader, Select, tabPanelProps,
-  StatusBadge, Switch, Tabs, Textarea,
+  PhoneField, StatusBadge, Switch, Tabs, Textarea, focusFirstInvalid, usePhoneErrorMessage,
 } from "../../components/ui";
 import RequireAuth from "../../components/RequireAuth";
 import { useAuth } from "../../context/AuthContext";
 import { useAsync } from "../../hooks/useAsync";
+import { useUrlFilters } from "../../hooks/useUrlFilters";
 import { regionOptions, useMeta } from "../../hooks/useMeta";
 import { useFormat } from "../../i18n/format";
 import { adminApi } from "../../services";
 import { toast, useAlerts } from "../../utils/alerts";
 import { ROLE_KEYS, STATUS_KEYS, useLabels } from "../../utils/labels";
 import { can, PERMISSIONS as P } from "../../utils/rbac";
-import RolePicker from "./parts-a/RolePicker";
-import TempPasswordModal from "./parts-a/TempPasswordModal";
+import { formatPhone, phoneError } from "../../utils/phone";
+import RolePicker from "./components/RolePicker";
+import TempPasswordModal from "./components/TempPasswordModal";
 import { useErrorMessage } from "../../i18n/errors";
-import { PAGE_SIZE, ServerPagination, toPage } from "./parts-a/paging";
-import { canGrantAll, useRoleMatrix } from "./parts-a/roles";
+import { PAGE_SIZE, ServerPagination, toPage } from "./components/paging";
+import { canGrantAll, useRoleMatrix } from "./lib/roles";
 
 function RoleBadges({ roles }) {
   const labels = useLabels();
@@ -40,12 +42,20 @@ function CreateUserModal({ user, matrix, regions, onClose, onCreated }) {
   const tc = useTranslations("admin.common");
   const errorText = useErrorMessage();
   const { showError } = useAlerts();
+  const phoneMessage = usePhoneErrorMessage();
   const [form, setForm] = useState({ name: "", email: "", phone: "", region: "", roles: ["membre"] });
+  const [phoneErr, setPhoneErr] = useState("");
   const [saving, setSaving] = useState(false);
   const set = (key) => (event) => setForm({ ...form, [key]: event.target.value });
 
   const submit = async (event) => {
     event.preventDefault();
+    const phoneCode = phoneError(form.phone);
+    setPhoneErr(phoneMessage(phoneCode) || "");
+    if (phoneCode) {
+      focusFirstInvalid(event.currentTarget);
+      return;
+    }
     if (!form.roles.length) {
       showError(t("create.noRoleTitle"), t("create.noRoleText"));
       return;
@@ -55,7 +65,7 @@ function CreateUserModal({ user, matrix, regions, onClose, onCreated }) {
       const result = await adminApi.createUser({
         name: form.name.trim(),
         email: form.email.trim(),
-        phone: form.phone.trim() || undefined,
+        phone: formatPhone(form.phone) || undefined,
         region: form.region || undefined,
         roles: form.roles,
       });
@@ -81,8 +91,17 @@ function CreateUserModal({ user, matrix, regions, onClose, onCreated }) {
     >
       <form id="adm-create-user" className="form-grid" onSubmit={submit}>
         <Input label={t("create.name")} required minLength={2} maxLength={150} value={form.name} onChange={set("name")} autoComplete="off" />
-        <Input label={tc("email")} type="email" required value={form.email} onChange={set("email")} autoComplete="off" />
-        <Input label={tc("phone")} type="tel" maxLength={40} value={form.phone} onChange={set("phone")} placeholder={t("create.phonePlaceholder")} />
+        <Input label={tc("email")} type="email" inputMode="email" required value={form.email} onChange={set("email")} autoComplete="off" />
+        <PhoneField
+          label={tc("phone")}
+          value={form.phone}
+          onChange={(value) => {
+            setForm((prev) => ({ ...prev, phone: value }));
+            setPhoneErr("");
+          }}
+          error={phoneErr || undefined}
+          autoComplete="off"
+        />
         <Select label={tc("region")} placeholder={tc("notProvided")} options={regions} value={form.region} onChange={set("region")} />
         <RolePicker user={user} matrix={matrix} value={form.roles} onChange={(roles) => setForm({ ...form, roles })} />
         <div className="field--full">
@@ -171,7 +190,7 @@ function HrTab({ member, user, regions, onSaved }) {
     setSaving(true);
     try {
       const result = await adminApi.updateUserProfile(member.id, {
-        phone: form.phone.trim(),
+        phone: formatPhone(form.phone),
         region: form.region,
         skills: form.skills.trim(),
         availability: form.availability.trim(),
@@ -188,7 +207,7 @@ function HrTab({ member, user, regions, onSaved }) {
 
   return (
     <form className="form-grid" onSubmit={save}>
-      <Input label={tc("phone")} type="tel" maxLength={40} value={form.phone} onChange={set("phone")} />
+      <PhoneField label={tc("phone")} value={form.phone} onChange={(value) => setForm((prev) => ({ ...prev, phone: value }))} autoComplete="off" />
       <Select label={tc("region")} placeholder={tc("notProvided")} options={regions} value={form.region} onChange={set("region")} />
       <Textarea
         full
@@ -329,7 +348,8 @@ function MemberModal({ member, user, matrix, regions, onClose, onSaved, onDelete
 
 // ---------- Liste (pagination et filtres serveur : GET /admin/users?page&pageSize&region&role&status&q) ----------
 
-const NO_FILTERS = { region: "", role: "", status: "", q: "" };
+// Filtres, recherche et page conserves dans l'URL.
+const URL_DEFAULTS = { region: "", role: "", status: "", q: "", page: 1 };
 const SEARCH_DELAY = 300;
 
 function MembersDirectory() {
@@ -341,18 +361,21 @@ function MembersDirectory() {
   const { user } = useAuth();
   const { meta } = useMeta();
   const regions = regionOptions(meta);
-  const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState(NO_FILTERS);
-  // Saisie de recherche affichee tout de suite, envoyee a l'API apres une courte pause.
-  const [search, setSearch] = useState("");
+  const { values, setValues, reset } = useUrlFilters(URL_DEFAULTS);
+  const { page, region } = values;
+  const setPage = (next) => setValues({ page: next });
+  // Saisie de recherche affichee tout de suite, envoyee a l'API (et a l'URL) apres une courte pause.
+  const [search, setSearch] = useState(values.q);
   const searchTimer = useRef(null);
-  const { region } = filters;
+  const filterKey = `${values.region}|${values.role}|${values.status}|${values.q}`;
   const { data, loading, error, reload, setData } = useAsync(
     async () => {
-      const params = Object.fromEntries(Object.entries(filters).filter(([, value]) => value));
+      const params = Object.fromEntries(
+        ["region", "role", "status", "q"].map((key) => [key, values[key]]).filter(([, value]) => value)
+      );
       return toPage(await adminApi.users({ page, pageSize: PAGE_SIZE, ...params }));
     },
-    [page, filters]
+    [page, filterKey]
   );
   useEffect(() => () => clearTimeout(searchTimer.current), []);
   const { data: matrix } = useRoleMatrix();
@@ -387,23 +410,20 @@ function MembersDirectory() {
     else reload();
   };
 
-  const applyFilters = (next) => {
-    setFilters(next);
-    setPage(1);
-  };
-  const setFilter = (key) => (event) => applyFilters({ ...filters, [key]: event.target.value });
+  const filters = values;
+  const setFilter = (key) => (event) => setValues({ [key]: event.target.value });
   const changeSearch = (event) => {
     const value = event.target.value;
     setSearch(value);
     clearTimeout(searchTimer.current);
-    searchTimer.current = setTimeout(() => applyFilters({ ...filters, q: value.trim() }), SEARCH_DELAY);
+    searchTimer.current = setTimeout(() => setValues({ q: value.trim() }), SEARCH_DELAY);
   };
   const clearFilters = () => {
     clearTimeout(searchTimer.current);
     setSearch("");
-    applyFilters(NO_FILTERS);
+    reset();
   };
-  const hasFilters = Object.values(filters).some(Boolean);
+  const hasFilters = ["region", "role", "status", "q"].some((key) => Boolean(values[key]));
 
   const columns = [
     {
@@ -437,6 +457,10 @@ function MembersDirectory() {
       <input
         type="search"
         className="input"
+        inputMode="search"
+        enterKeyHint="search"
+        autoComplete="off"
+        data-page-search=""
         aria-label={t("searchPlaceholder")}
         placeholder={t("searchPlaceholder")}
         value={search}

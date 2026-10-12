@@ -5,47 +5,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { CheckCircle2, LogIn } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Alert, Badge, Button, Card } from "../../../components/ui";
-import { useAuth } from "../../../context/AuthContext";
-import { useFormat } from "../../../i18n/format";
-import { Link, useLocalePath } from "../../../i18n/navigation";
-import { publicApi } from "../../../services";
-import Swal from "sweetalert2";
-import { toast } from "../../../utils/alerts";
-import { errorMessage } from "../../../i18n/errors";
+import { Alert, Badge, Button, Card } from "@/src/components/ui";
+import { useAuth } from "@/src/context/AuthContext";
+import { useFormat } from "@/src/i18n/format";
+import { Link, useLocalePath } from "@/src/i18n/navigation";
+import { publicApi } from "@/src/services";
+import { useAlerts } from "@/src/utils/alerts";
+import { errorMessage } from "@/src/i18n/errors";
 import { isPast, spotsStatus } from "./helpers";
 import { invalidateMyEvents } from "./RegisteredBadge";
-
-// Boites de dialogue (memes classes que utils/alerts.js) avec des boutons traduits.
-const SWAL_CLASSES = {
-  popup: "hope-swal-popup",
-  title: "hope-swal-title",
-  htmlContainer: "hope-swal-text",
-  actions: "hope-swal-actions",
-  confirmButton: "hope-swal-confirm",
-  cancelButton: "hope-swal-cancel",
-};
-const swalBase = { width: "32rem", backdrop: "var(--backdrop)", buttonsStyling: false, customClass: SWAL_CLASSES };
-
-function showError(title, text, closeText) {
-  return Swal.fire({ ...swalBase, icon: "error", title, text, confirmButtonText: closeText });
-}
-
-async function confirmDanger(title, text, confirmText, cancelText) {
-  const result = await Swal.fire({
-    ...swalBase,
-    icon: "warning",
-    title,
-    text,
-    showCancelButton: true,
-    reverseButtons: true,
-    focusCancel: true,
-    confirmButtonText: confirmText,
-    cancelButtonText: cancelText,
-    customClass: { ...SWAL_CLASSES, confirmButton: "hope-swal-danger" },
-  });
-  return result.isConfirmed;
-}
 
 export default function RegistrationPanel({ initialEvent }) {
   const t = useTranslations("site.eventDetail.registration");
@@ -56,6 +24,7 @@ export default function RegistrationPanel({ initialEvent }) {
   const { status } = useAuth();
   const [event, setEvent] = useState(initialEvent);
   const [busy, setBusy] = useState(false);
+  const { toast, showError, confirmAction } = useAlerts();
 
   const refresh = useCallback(async () => {
     try {
@@ -80,7 +49,7 @@ export default function RegistrationPanel({ initialEvent }) {
       invalidateMyEvents();
       toast(t("registered"));
     } catch (err) {
-      showError(t("registerError"), errorMessage(tErrors, err), tErrors("close"));
+      showError(t("registerError"), errorMessage(tErrors, err));
     } finally {
       await refresh();
       setBusy(false);
@@ -88,7 +57,7 @@ export default function RegistrationPanel({ initialEvent }) {
   };
 
   const unregister = async () => {
-    const ok = await confirmDanger(t("cancelTitle"), t("cancelText"), t("cancelConfirm"), t("keep"));
+    const ok = await confirmAction(t("cancelTitle"), t("cancelText"), t("cancelConfirm"), { danger: true, cancelText: t("keep") });
     if (!ok) return;
     setBusy(true);
     try {
@@ -97,7 +66,7 @@ export default function RegistrationPanel({ initialEvent }) {
       toast(t("canceled"));
       await refresh();
     } catch (err) {
-      showError(t("cancelError"), errorMessage(tErrors, err), tErrors("close"));
+      showError(t("cancelError"), errorMessage(tErrors, err));
     } finally {
       setBusy(false);
     }

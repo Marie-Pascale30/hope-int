@@ -139,7 +139,7 @@
 
 .pub-card__title {
   margin: 0;
-  font-size: 1.22rem;
+  font-size: var(--text-xl);
   line-height: 1.25;
 }
 
@@ -342,7 +342,7 @@
 
 .pub-event__title {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: var(--text-xl);
 }
 
 .pub-event__title a {
@@ -861,8 +861,9 @@
   color: var(--accent-700);
 }
 
-.pub-feature h3 {
+.pub-feature :is(h2, h3) {
   margin: 0;
+  font-size: var(--text-xl);
 }
 
 .pub-feature p {
@@ -875,6 +876,10 @@
   padding-left: 18px;
   color: var(--ink-2);
   font-size: var(--text-md);
+}
+
+.pub-news-stack {
+  gap: clamp(20px, 3vw, 32px);
 }
 
 /* Coordonnees */
@@ -930,9 +935,9 @@
   gap: var(--space-2);
 }
 
-.pub-mini-cta h3 {
+.pub-mini-cta :is(h2, h3) {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
 }
 
 .pub-mini-cta p {
