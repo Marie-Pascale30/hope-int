@@ -64,6 +64,10 @@ export function buildContentSecurityPolicy({ nonce, isDev = false, apiUrls = [] 
     "font-src": ["'self'"],
     "connect-src": unique(["'self'", ...apiOrigins, ...STRIPE_API, isDev && "ws:", isDev && "wss:"]),
     "frame-src": STRIPE_FRAMES,
+    // Application installable : service worker (/sw.js) et manifeste servis par le site lui-meme.
+    // Explicites : sans worker-src, le navigateur retomberait sur script-src ('strict-dynamic').
+    "worker-src": ["'self'"],
+    "manifest-src": ["'self'"],
     "object-src": ["'none'"],
     "base-uri": ["'self'"],
     "form-action": ["'self'"],

@@ -49,10 +49,12 @@ function SummaryCounter({ value }) {
 }
 
 // scopedRegion : region imposee a une directrice regionale (null = pas de restriction).
-export default function ContentForm({ type, item, projects = [], scopedRegion = null, onClose, onSaved }) {
+// canPublish : false -> workflow de validation (le contenu est soumis au lieu d'etre publie).
+export default function ContentForm({ type, item, projects = [], scopedRegion = null, canPublish = true, onClose, onSaved }) {
   const getErrorMessage = useErrorMessage();
   const t = useTranslations("adminOps.contentForm");
   const tType = useTranslations(`adminOps.content.types.${type}`);
+  const tReview = useTranslations("volunteering.review");
   const { showError, toast } = useAlerts();
   const { meta } = useMeta();
   const [values, setValues] = useState(() => {
@@ -60,7 +62,10 @@ export default function ContentForm({ type, item, projects = [], scopedRegion = 
     if (type === "projects" && scopedRegion && !item) initial.region = scopedRegion;
     return initial;
   });
-  const [published, setPublished] = useState(item ? Boolean(item.published) : false);
+  // Personne non habilitee : l'interrupteur demande la publication (soumission a validation).
+  const [published, setPublished] = useState(
+    item ? Boolean(item.published) || (!canPublish && item.review_status === "submitted") : false
+  );
   const [file, setFile] = useState(null);
   const [removeImage, setRemoveImage] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -259,8 +264,12 @@ export default function ContentForm({ type, item, projects = [], scopedRegion = 
             onAltChange={(text) => setValues((prev) => ({ ...prev, image_alt: text }))}
           />
           <div className="field field--full">
+            {!canPublish && item?.review_status === "rejected" && item.review_comment && (
+              <Alert tone="warning" title={tReview("rejectedTitle")}>{item.review_comment}</Alert>
+            )}
+            {!canPublish && item?.published && <Alert tone="info">{tReview("editPublishedWarning")}</Alert>}
             <Switch
-              label={published ? t("publishedOn") : t("publishedOff")}
+              label={canPublish ? (published ? t("publishedOn") : t("publishedOff")) : published ? tReview("submitOn") : tReview("submitOff")}
               checked={published}
               onChange={setPublished}
             />

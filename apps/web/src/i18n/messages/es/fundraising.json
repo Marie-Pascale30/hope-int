@@ -1,3 +1,419 @@
 {
-  "fundraising": {}
+  "fundraising": {
+    "donate": {
+      "fundraiserTitle": "Recaudación «{title}»",
+      "fundraiserText": "Tu donación apoya la recaudación organizada por {organizer} a favor del proyecto «{project}».",
+      "fundraiserClosed": "Esta recaudación ha terminado: tu donación irá directamente a la asociación.",
+      "fundraiserProject": "Tu donación se destina al proyecto «{project}» a través de esta recaudación.",
+      "pledgeTitle": "Tu donación mensual",
+      "pledgeText": "¡Gracias por tu fidelidad! Esta donación contará en el seguimiento de tu compromiso mensual.",
+      "pledgeHint": "¿Prefieres donar cada mes por Mobile Money? <link>Comprométete en 1 minuto</link>: te enviaremos un recordatorio con un enlace de pago listo para usar.",
+      "tributeStep": {
+        "title": "Dedicar esta donación (opcional)",
+        "description": "Rinde homenaje a un ser querido: podemos avisarle con un mensaje, sin mencionar el importe."
+      },
+      "anonymous": "Aparecer como «Anónimo» en la lista de apoyos de la recaudación",
+      "summaryTribute": "Homenaje",
+      "tributeValue": {
+        "honor": "En honor de {name}",
+        "memory": "En memoria de {name}"
+      }
+    },
+    "tribute": {
+      "toggle": "Hacer esta donación en homenaje a alguien",
+      "typeLabel": "Tipo de homenaje",
+      "types": {
+        "honor": "En honor de",
+        "memory": "En memoria de"
+      },
+      "name": "Nombre de la persona",
+      "email": "Correo de un ser querido a avisar",
+      "emailHint": "Opcional: le enviaremos una tarjeta electrónica tras tu donación, sin el importe.",
+      "message": "Mensaje breve (opcional)",
+      "messageHint": "{count, plural, one {Queda # carácter} other {Quedan # caracteres}}. Los enlaces no se transmiten.",
+      "receiptNote": "La mención del homenaje figurará en tu recibo.",
+      "errors": {
+        "name": "Indica el nombre de la persona (2 caracteres como mínimo).",
+        "email": "Correo electrónico no válido.",
+        "message": "Mensaje demasiado largo (300 caracteres como máximo)."
+      }
+    },
+    "thanks": {
+      "fundraiser": "Recaudación",
+      "tribute": "Homenaje",
+      "tributeValue": {
+        "honor": "En honor de {name}",
+        "memory": "En memoria de {name}"
+      },
+      "card": {
+        "title": "Actualiza tu tarjeta",
+        "text": "El último cobro de tu donación mensual no se ha podido realizar. Actualiza tu tarjeta en la página segura de Stripe y tu donación se reanudará automáticamente.",
+        "button": "Actualizar mi tarjeta"
+      }
+    },
+    "page": {
+      "eyebrow": "Recaudación para «{project}»",
+      "organizer": "Organizada por {name}",
+      "endsOn": "hasta el {date}",
+      "storyTitle": "Su historia",
+      "projectNote": "Cada donación se destina al proyecto «{project}» de HOPE International y da derecho a un recibo.",
+      "goal": "recaudados de un objetivo de {goal} ({percent} %)",
+      "progressLabel": "{percent} % del objetivo alcanzado",
+      "supporters": "{count, plural, =0 {Aún no hay apoyos} one {# apoyo} other {# apoyos}}",
+      "until": "hasta el {date}",
+      "donate": "Apoyo esta recaudación",
+      "closedTitle": "Recaudación terminada",
+      "closedText": "¡Gracias a todos los donantes! Todavía puedes apoyar el proyecto desde su página.",
+      "shareText": "Apoyo la recaudación «{title}» para HOPE International:",
+      "shareLabel": "Compartir la recaudación",
+      "recentTitle": "Últimos apoyos",
+      "anonymous": "Anónimo",
+      "noSupporters": "¡Sé la primera persona en apoyar esta recaudación!",
+      "metaTitle": "Recaudación solidaria",
+      "metaDescription": "Apoya una recaudación solidaria a favor de un proyecto de HOPE International en Camerún."
+    },
+    "meta": {
+      "pledgeTitle": "Donación mensual por Mobile Money",
+      "pledgeDescription": "Comprométete a donar cada mes por Mobile Money: un recordatorio y un enlace de pago listo para usar, modificable en cualquier momento.",
+      "pledgeManageTitle": "Gestionar mi donación mensual",
+      "createTitle": "Crear una recaudación",
+      "createDescription": "Crea una página de recaudación para un proyecto de HOPE International y compártela con tus seres queridos."
+    },
+    "pledge": {
+      "summary": "{amount} al mes, hacia el día {day}",
+      "status": {
+        "active": "Activo",
+        "paused": "Suspendido",
+        "stopped": "Detenido"
+      },
+      "forProject": "Para «{project}»",
+      "generalFund": "Fondo general",
+      "since": "desde el {date}",
+      "regularityNone": "Todavía no hay cuotas: el primer recordatorio llegará el mes que viene.",
+      "regularity": "{paid, plural, one {# cuota pagada} other {# cuotas pagadas}}, {missed, plural, one {# no pagada} other {# no pagadas}} ({rate} % de regularidad)",
+      "periodsLabel": "Cuotas de los últimos meses",
+      "periodStatus": {
+        "paid": "pagada",
+        "missed": "no pagada",
+        "due": "pendiente"
+      },
+      "payNow": "Pagar este mes",
+      "copyLink": "Copiar el enlace de pago",
+      "whatsapp": "Enviar por WhatsApp",
+      "newWindow": "(nueva ventana)",
+      "amount": "Importe mensual (FCFA)",
+      "day": "Día del recordatorio",
+      "dayHint": "Entre 1 y 28.",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "edit": "Modificar",
+      "pause": "Suspender",
+      "resume": "Reanudar",
+      "stop": "Detener",
+      "stopTitle": "¿Detener tu donación mensual?",
+      "stopText": "Ya no recibirás recordatorios. Siempre podrás crear un nuevo compromiso más adelante.",
+      "stopConfirm": "Detener",
+      "stopped": "Compromiso detenido",
+      "paused": "Compromiso suspendido",
+      "resumed": "Compromiso reanudado",
+      "saved": "Compromiso actualizado",
+      "copied": "Enlace copiado",
+      "copyFailed": "No se pudo copiar: selecciona el enlace manualmente."
+    },
+    "pledgeCreate": {
+      "eyebrow": "Donación mensual Mobile Money",
+      "title": "Dona cada mes por Mobile Money",
+      "lead": "Elige un importe y un día: cada mes te enviamos un recordatorio con un enlace de pago Orange Money o MTN MoMo ya rellenado. Puedes suspender o detener cuando quieras.",
+      "presets": "Importes sugeridos",
+      "amount": "Importe mensual (FCFA)",
+      "day": "Día del mes del recordatorio",
+      "dayHint": "Entre 1 y 28, por ejemplo justo después de cobrar tu sueldo.",
+      "project": "Proyecto apoyado",
+      "generalFund": "Fondo general de la asociación",
+      "name": "Nombre completo",
+      "email": "Correo electrónico",
+      "emailHint": "Los recordatorios y el enlace de gestión se enviarán a esta dirección.",
+      "as": "Compromiso a nombre de {name} ({email}).",
+      "howItWorks": "Sin cargo automático: validas cada donación en tu teléfono. Cada donación confirmada da derecho a un recibo.",
+      "submit": "Comprometerme con {amount} al mes",
+      "createdTitle": "¡Gracias por tu compromiso!",
+      "createdText": "Te acabamos de enviar un correo de confirmación. Ya puedes hacer la donación de este mes.",
+      "accountLink": "Volver a mi espacio",
+      "errors": {
+        "amount": "El importe debe estar entre {min} y {max}.",
+        "day": "Elige un día entre 1 y 28.",
+        "name": "Indica tu nombre (2 caracteres como mínimo).",
+        "email": "Correo electrónico no válido."
+      }
+    },
+    "pledgeManage": {
+      "eyebrow": "Donación mensual Mobile Money",
+      "title": "Gestionar mi compromiso",
+      "invalidTitle": "Enlace no válido",
+      "invalidText": "Este enlace de gestión no es válido o ha caducado. Usa el enlace recibido por correo o contáctanos.",
+      "createdTitle": "¡Gracias por tu compromiso!",
+      "createdText": "Te acabamos de enviar un correo de confirmación con este enlace.",
+      "keepLink": "Este enlace es personal: no lo compartas. Para compartir el enlace de pago, usa el botón de WhatsApp."
+    },
+    "form": {
+      "eyebrow": "Recaudación solidaria",
+      "title": "Crear mi recaudación",
+      "editTitle": "Modificar mi recaudación",
+      "lead": "¿Un cumpleaños, una carrera, un evento? Crea una página de recaudación para un proyecto de HOPE International e invita a tus seres queridos a donar.",
+      "rejectedTitle": "Mensaje del equipo",
+      "locked": "Esta recaudación está publicada: ya no se puede modificar. Contacta con el equipo para cualquier corrección.",
+      "project": "Proyecto apoyado",
+      "projectPlaceholder": "Elegir un proyecto",
+      "titleLabel": "Título de la recaudación",
+      "titleHint": "Breve y expresivo, por ejemplo «Mis 30 años para la escuela de Bafia».",
+      "story": "Tu historia",
+      "storyHint": "Por qué esta recaudación es importante para ti. {count, plural, one {Queda # carácter} other {Quedan # caracteres}}.",
+      "goal": "Objetivo",
+      "currency": "Moneda",
+      "currencies": {
+        "eur": "Euro (€)",
+        "xaf": "Franco CFA (FCFA)"
+      },
+      "endsOn": "Fecha de fin (opcional)",
+      "endsOnHint": "Dentro del próximo año.",
+      "image": "Foto (opcional)",
+      "imageHint": "JPG, PNG o WebP, 5 MB como máximo.",
+      "moderationNote": "El equipo revisará tu recaudación antes de publicarla (normalmente en 48 h). Recibirás un correo.",
+      "submit": "Enviar para revisión",
+      "resubmit": "Guardar y volver a enviar",
+      "cancel": "Cancelar",
+      "errors": {
+        "project": "Elige un proyecto.",
+        "title": "Título: 5 caracteres como mínimo.",
+        "story": "Cuenta tu historia en {min} caracteres como mínimo.",
+        "goal": "El objetivo debe estar entre {min} y {max}."
+      }
+    },
+    "account": {
+      "pledges": {
+        "title": "Donaciones mensuales Mobile Money",
+        "description": "Tus compromisos, sus recordatorios y tu regularidad.",
+        "create": "Nuevo compromiso",
+        "emptyTitle": "Ningún compromiso",
+        "emptyText": "Dona cada mes por Mobile Money: un recordatorio y un enlace de pago listo para usar."
+      },
+      "fundraisers": {
+        "title": "Mis recaudaciones",
+        "description": "Sigue tus páginas de recaudación y compártelas.",
+        "create": "Crear una recaudación",
+        "emptyTitle": "Ninguna recaudación",
+        "emptyText": "Moviliza a tus seres queridos en torno a un proyecto que te importa.",
+        "status": {
+          "pending": "En revisión",
+          "published": "En línea",
+          "rejected": "A revisar",
+          "closed": "Cerrada"
+        },
+        "project": "Para «{project}»",
+        "progress": "{raised} recaudados de {goal} · {count, plural, =0 {ningún apoyo} one {# apoyo} other {# apoyos}}",
+        "progressLabel": "{percent} % del objetivo",
+        "rejectedTitle": "Mensaje del equipo",
+        "pendingNote": "El equipo está revisando tu recaudación.",
+        "view": "Ver la página",
+        "edit": "Modificar",
+        "close": "Cerrar",
+        "closeTitle": "¿Cerrar la recaudación?",
+        "closeText": "La página seguirá visible pero ya no aceptará donaciones.",
+        "closeConfirm": "Cerrar",
+        "closed": "Recaudación cerrada",
+        "shareText": "Apoya mi recaudación «{title}» para HOPE International:"
+      }
+    },
+    "admin": {
+      "nav": {
+        "offline": "Donaciones fuera de línea",
+        "pledges": "Compromisos Mobile Money",
+        "fundraisers": "Recaudaciones personales"
+      },
+      "donation": {
+        "source": "Origen",
+        "direct": "Acceso directo",
+        "tribute": "Homenaje",
+        "tributeType": {
+          "honor": "En honor de una persona",
+          "memory": "En memoria de una persona"
+        },
+        "fundraiser": "Recaudación",
+        "pledge": "Compromiso Mobile Money"
+      },
+      "offline": {
+        "eyebrow": "Finanzas",
+        "title": "Donaciones fuera de línea",
+        "description": "Efectivo, transferencias, cheques y donaciones en especie: registro con justificante y validación por una segunda persona que emite el recibo.",
+        "create": "Registrar una donación",
+        "filter": "Estado",
+        "allStatuses": "Todos los estados",
+        "statuses": {
+          "pending_validation": "Pendiente de validación",
+          "validated": "Validada",
+          "rejected": "Rechazada"
+        },
+        "emptyTitle": "Ninguna donación fuera de línea",
+        "emptyText": "Las donaciones registradas aparecerán aquí.",
+        "created": "Donación registrada: debe validarla otra persona.",
+        "validate": "Validar",
+        "validateTitle": "¿Validar esta donación?",
+        "validateText": "Donación de {amount} de {donor}: se emitirá un recibo numerado y se enviará si se indicó un correo.",
+        "validated": "Donación validada, recibo {receipt}",
+        "reject": "Rechazar",
+        "rejectTitle": "¿Rechazar este registro?",
+        "rejectText": "No se emitirá ningún recibo.",
+        "rejected": "Registro rechazado",
+        "proof": "Justificante",
+        "proofError": "Justificante no disponible",
+        "waitingOther": "Validación por otra persona",
+        "enteredBy": "Registrado por {name}",
+        "decidedBy": "Decisión: {name}",
+        "columns": {
+          "date": "Recibida el",
+          "donor": "Donante",
+          "kind": "Tipo",
+          "amount": "Importe",
+          "project": "Destino",
+          "status": "Estado",
+          "actions": "Acciones"
+        },
+        "form": {
+          "title": "Registrar una donación fuera de línea",
+          "kind": "Tipo de donación",
+          "kinds": {
+            "cash": "Efectivo",
+            "transfer": "Transferencia bancaria",
+            "check": "Cheque",
+            "in_kind": "Donación en especie"
+          },
+          "receivedOn": "Fecha de recepción",
+          "valuation": "Valoración",
+          "amount": "Importe",
+          "currency": "Moneda",
+          "donorName": "Nombre del donante",
+          "donorEmail": "Correo del donante",
+          "donorEmailHint": "Opcional: el recibo se le enviará tras la validación.",
+          "project": "Destino",
+          "generalFund": "Fondo general",
+          "reference": {
+            "check": "Número del cheque",
+            "transfer": "Referencia de la transferencia"
+          },
+          "inKindDescription": "Descripción de la donación en especie",
+          "inKindHint": "Naturaleza, cantidad y base de valoración (p. ej. «200 kg de arroz, precio de mercado»).",
+          "note": "Nota interna",
+          "proof": "Justificante",
+          "proofHint": "PDF, JPG, PNG o WebP, 5 MB como máximo (resguardo, foto del cheque, certificado).",
+          "fourEyes": "La donación quedará «pendiente de validación» hasta que la valide otra persona del área financiera.",
+          "submit": "Guardar",
+          "cancel": "Cancelar",
+          "errors": {
+            "amount": "Importe no válido.",
+            "donorName": "Indica el nombre del donante.",
+            "receivedOn": "Indica la fecha de recepción.",
+            "inKind": "Describe la donación en especie."
+          }
+        }
+      },
+      "fundraisers": {
+        "eyebrow": "Contenidos",
+        "title": "Recaudaciones personales",
+        "description": "Revisa las recaudaciones creadas por los miembros antes de publicarlas.",
+        "filter": "Estado",
+        "allStatuses": "Todos los estados",
+        "statuses": {
+          "pending": "Por revisar",
+          "published": "Publicada",
+          "rejected": "Rechazada",
+          "closed": "Cerrada"
+        },
+        "emptyTitle": "Ninguna recaudación",
+        "emptyText": "Nada que revisar por ahora.",
+        "approved": "Recaudación publicada",
+        "rejected": "Recaudación rechazada",
+        "errorTitle": "Acción imposible",
+        "meta": "Por {organizer} · proyecto «{project}» · creada el {date}",
+        "goal": "{raised} recaudados de {goal} · fin: {end}",
+        "noEnd": "sin fecha",
+        "story": "Leer la historia",
+        "noteTitle": "Nota de moderación",
+        "approve": "Publicar",
+        "reject": "Rechazar",
+        "view": "Ver la página",
+        "rejectTitle": "Rechazar la recaudación",
+        "rejectNote": "Mensaje para la persona organizadora",
+        "rejectHint": "Explica qué debe corregir: podrá modificar y volver a enviar su recaudación.",
+        "cancel": "Cancelar"
+      },
+      "pledges": {
+        "eyebrow": "Donaciones",
+        "title": "Compromisos Mobile Money",
+        "description": "Donaciones mensuales por Mobile Money: recordatorios enviados cada mes y regularidad de los donantes.",
+        "filter": "Estado",
+        "allStatuses": "Todos los estados",
+        "emptyTitle": "Ningún compromiso",
+        "columns": {
+          "donor": "Donante",
+          "amount": "Compromiso",
+          "project": "Destino",
+          "regularity": "Regularidad",
+          "since": "Desde",
+          "status": "Estado"
+        }
+      },
+      "insights": {
+        "loading": "Cargando los indicadores de recaudación",
+        "offlineMethod": "{method, select, cash {Efectivo} transfer {Transferencia} check {Cheque} in_kind {Donación en especie} other {Fuera de línea}} (fuera de línea)",
+        "offlinePendingTitle": "{count, plural, one {# donación fuera de línea pendiente} other {# donaciones fuera de línea pendientes}} de validación",
+        "offlinePendingText": "Una segunda persona del área financiera debe validarlas: <link>ver las donaciones fuera de línea</link>.",
+        "recurring": {
+          "title": "Donaciones periódicas",
+          "description": "Donaciones mensuales con tarjeta (Stripe) y compromisos Mobile Money, a día de hoy.",
+          "mrr": "Ingreso mensual recurrente",
+          "mrrHint": "Donaciones mensuales con tarjeta en curso",
+          "active": "Donaciones mensuales activas",
+          "pastDue": "Cobros fallidos",
+          "pastDueHint": "Donantes invitados a actualizar su tarjeta",
+          "churn": "Bajas en 30 días",
+          "churnHint": "{count, plural, =0 {ninguna baja} one {# baja} other {# bajas}} en los últimos 30 días"
+        },
+        "pledges": {
+          "active": "Compromisos Mobile Money",
+          "monthly": "{amount} prometidos al mes",
+          "regularity": "Regularidad Mobile Money",
+          "regularityHint": "{paid} cuotas pagadas, {missed} no pagadas"
+        },
+        "bySource": {
+          "title": "Donaciones por origen",
+          "description": "De dónde vienen las donaciones confirmadas (enlaces compartidos, recordatorios, recaudaciones...).",
+          "header": "Origen",
+          "caption": "Reparto de las donaciones confirmadas por origen",
+          "empty": "Ninguna donación confirmada en el periodo."
+        },
+        "sources": {
+          "direct": "Acceso directo",
+          "partage-whatsapp": "Compartido por WhatsApp",
+          "partage-facebook": "Compartido en Facebook",
+          "partage-lien": "Enlace copiado",
+          "partage-natif": "Compartido desde el teléfono",
+          "relance": "Recordatorio de donación abandonada",
+          "engagement": "Recordatorio de compromiso Mobile Money",
+          "collecte": "Recaudación personal",
+          "hors-ligne": "Registro fuera de línea"
+        },
+        "annual": {
+          "title": "Resúmenes fiscales {year}",
+          "description": "Se envían automáticamente en enero a cada cuenta que donó el año anterior, con el PDF anual.",
+          "send": "Enviar ahora",
+          "confirmTitle": "¿Enviar los resúmenes {year}?",
+          "confirmText": "{count, plural, one {# cuenta afectada} other {# cuentas afectadas}}. Una cuenta ya atendida nunca recibe un duplicado.",
+          "done": "Resúmenes en cola de envío",
+          "error": "Envío interrumpido",
+          "completed": "Campaña terminada: {sent} resúmenes enviados.",
+          "progress": "{sent} enviados de {recipients} cuentas afectadas."
+        }
+      }
+    }
+  }
 }

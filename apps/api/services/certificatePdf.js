@@ -44,7 +44,7 @@ const BADGE_LABELS = {
 };
 
 const formatHours = (value) =>
-    `${new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 }).format(Number(value) || 0).replace(/ | /g, " ")} h`;
+    `${new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 }).format(Number(value) || 0).replace(/\s/g, " ")} h`;
 
 // Jour "AAAA-MM-JJ" -> "JJ/MM/AAAA".
 const formatDay = (day) => {

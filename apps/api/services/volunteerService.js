@@ -197,5 +197,5 @@ exports.exportVolunteers = async (actor, filters) => {
         action: "volunteer.export",
         meta: { count: rows.length, ...(applied.region ? { region: applied.region } : {}), ...(applied.q ? { q: applied.q } : {}), ...(applied.engaged ? { engaged: true } : {}) },
     });
-    return { csv: `﻿${lines.join("\r\n")}`, count: rows.length };
+    return { csv: String.fromCharCode(0xfeff) + lines.join("\r\n"), count: rows.length };
 };

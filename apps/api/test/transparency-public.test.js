@@ -8,17 +8,31 @@ const PRIVATE_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "hope-private-"));
 process.env.PRIVATE_UPLOADS_DIR = PRIVATE_DIR;
 
 const {
-    db, request, app, resetDatabase, createUser, loginAs, insertProject, insertPayment, insertEvent, lastLog, hoursFromNow, PNG_BYTES,
+    db, request, app, resetDatabase, createUser, insertProject, insertPayment, insertEvent, lastLog, hoursFromNow, PNG_BYTES,
 } = require("./fixtures");
 const { describe, it, before, after, beforeEach } = require("node:test");
 const assert = require("node:assert/strict");
 const transparencyService = require("../services/transparencyService");
 const { removeUpload } = require("../utils/uploads");
+const jwt = require("jsonwebtoken");
 
 const PDF_BYTES = Buffer.from("%PDF-1.7\n%%EOF\n", "latin1");
 
+// Session par jeton Bearer (accepte par l'API pour les scripts) : les tests ne dependent pas du
+// parcours de connexion (double authentification des roles de direction, module separe).
+function asUser(user) {
+    const token = jwt.sign({ id: user.id, tv: 0 }, process.env.JWT_SECRET, { expiresIn: 3600 });
+    const raw = (method, url) => request(app)[method](url).set("Authorization", `Bearer ${token}`);
+    return {
+        raw,
+        get: (url) => raw("get", url),
+        post: (url, body) => raw("post", url).send(body),
+        delete: (url) => raw("delete", url),
+    };
+}
+
 function multipartAs(http, method, url, fields, file, fieldName) {
-    let req = http.agent[method](url).set("X-Requested-With", "XMLHttpRequest");
+    let req = http.raw(method, url);
     for (const [key, value] of Object.entries(fields)) req = req.field(key, String(value));
     if (file) req = req.attach(fieldName, file.buffer, { filename: file.filename, contentType: file.contentType });
     return req;
@@ -31,8 +45,8 @@ describe("transparence : pages publiques", () => {
     before(async () => {
         await resetDatabase();
         admin = await createUser({ roles: ["admin"] });
-        adminHttp = await loginAs(admin);
-        financeHttp = await loginAs(await createUser({ roles: ["responsable_finance"] }));
+        adminHttp = asUser(admin);
+        financeHttp = asUser(await createUser({ roles: ["responsable_finance"] }));
         published = await insertProject({ title: "Microcrédit Bafoussam", region: "Ouest", beneficiaries: 80, start_date: "2024-01-01" });
         hidden = await insertProject({ title: "Projet confidentiel", region: "Centre", published: 0, start_date: "2024-01-01" });
     });
@@ -55,8 +69,7 @@ describe("transparence : pages publiques", () => {
     });
 
     it("reserve la publication a la direction (portee nationale)", async () => {
-        const res = await financeHttp.agent.put("/api/transparency/admin/years/2025")
-            .set("X-Requested-With", "XMLHttpRequest").send({ published: true });
+        const res = await financeHttp.raw("put", "/api/transparency/admin/years/2025").send({ published: true });
         assert.equal(res.status, 403);
     });
 
@@ -72,8 +85,7 @@ describe("transparence : pages publiques", () => {
         );
         await db.query("INSERT INTO budget_lines (project_id, category, amount, currency) VALUES (?, 'training', 200, 'eur')", [published]);
 
-        const put = await adminHttp.agent.put("/api/transparency/admin/years/2025")
-            .set("X-Requested-With", "XMLHttpRequest").send({ published: true, note: "Comptes validés par le bureau" });
+        const put = await adminHttp.raw("put", "/api/transparency/admin/years/2025").send({ published: true, note: "Comptes validés par le bureau" });
         assert.equal(put.status, 200);
         assert.equal(put.body.published, true);
         assert.ok(await lastLog("transparency.year_publish"));
@@ -106,9 +118,9 @@ describe("transparence : pages publiques", () => {
     });
 
     it("retire une annee de la publication", async () => {
-        await adminHttp.agent.put("/api/transparency/admin/years/2025").set("X-Requested-With", "XMLHttpRequest").send({ published: false });
+        await adminHttp.raw("put", "/api/transparency/admin/years/2025").send({ published: false });
         assert.equal((await request(app).get("/api/transparency/2025")).status, 404);
-        await adminHttp.agent.put("/api/transparency/admin/years/2025").set("X-Requested-With", "XMLHttpRequest").send({ published: true });
+        await adminHttp.raw("put", "/api/transparency/admin/years/2025").send({ published: true });
         const years = await financeHttp.get("/api/transparency/admin/years");
         assert.equal(years.status, 200);
         assert.ok(years.body.years.find((row) => row.year === 2025).published);
@@ -154,7 +166,7 @@ describe("transparence : pages publiques", () => {
     it("n'affiche que les portraits consentis, sans email", async () => {
         const volunteer = await createUser({ roles: ["membre"], name: "Brice Bénévole", region: "Littoral" });
         const staff = await createUser({ roles: ["organisatrice"], name: "Odile Organisatrice" });
-        const volunteerHttp = await loginAs(volunteer);
+        const volunteerHttp = asUser(volunteer);
 
         assert.deepEqual((await request(app).get("/api/transparency/team")).body.members, []);
 
@@ -165,7 +177,7 @@ describe("transparence : pages publiques", () => {
         assert.ok(own.body.consentAt);
         createdUploads.push(own.body.photoUrl);
 
-        const hr = await loginAs(await createUser({ roles: ["responsable_rh"] }));
+        const hr = asUser(await createUser({ roles: ["responsable_rh"] }));
         const list = await hr.get("/api/transparency/admin/team");
         assert.equal(list.status, 200);
         const update = await multipartAs(hr, "patch", `/api/transparency/admin/team/${staff.id}`, { publicProfile: "1", title: "Coordinatrice" }, null, "image");
@@ -185,7 +197,7 @@ describe("transparence : pages publiques", () => {
         transparencyService.clearCache();
         assert.equal((await request(app).get("/api/transparency/team")).body.members.length, 1);
 
-        const member = await loginAs(await createUser({ roles: ["membre"] }));
+        const member = asUser(await createUser({ roles: ["membre"] }));
         assert.equal((await member.get("/api/transparency/admin/team")).status, 403);
     });
 });

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { ClipboardCopy, Download, Printer, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Button, DataTable, EmptyState, ErrorState, SkeletonTable, Modal } from "@/src/components/ui";
+import { Badge, Button, DataTable, EmptyState, ErrorState, SkeletonTable, Modal, TabPanel, Tabs } from "@/src/components/ui";
 import { useAsync } from "@/src/hooks/useAsync";
 import { useFormat } from "@/src/i18n/format";
 import { adminApi } from "@/src/services";
@@ -14,6 +14,7 @@ import { useErrorMessage } from "@/src/i18n/errors";
 import { saveBlob } from "@/src/utils/format";
 import { useAlerts } from "@/src/utils/alerts";
 import { todayStamp } from "../lib/finance";
+import AttendanceSheet, { WaitlistList, useAttendance } from "@/src/views/volunteering/AttendanceSheet";
 
 // Cellule CSV : separateur ";", guillemets echappes, formules neutralisees (Excel).
 function csvCell(value) {
@@ -80,6 +81,11 @@ export default function EventRegistrations({ event, onClose }) {
   const { data, loading, error, reload } = useAsync(() => adminApi.eventRegistrations(event.id), [event.id]);
   const rows = data || [];
   const [printing, setPrinting] = useState(false);
+  const tVol = useTranslations("volunteering.attendance");
+  // Appel (evenement commence) et liste d'attente : module benevolat.
+  const [tab, setTab] = useState(() => (new Date(event.start_at).getTime() <= Date.now() ? "attendance" : "registrations"));
+  const attendance = useAttendance(event.id);
+  const waitlist = attendance.data?.waitlist || [];
 
   // Impression de la feuille seule : classe posee sur <body> le temps de l'impression.
   useEffect(() => {
@@ -127,6 +133,20 @@ export default function EventRegistrations({ event, onClose }) {
       ),
     },
     { key: "phone", header: t("columns.phone"), render: (row) => row.phone || "—" },
+    {
+      key: "attendance",
+      header: tVol("columns.attendance"),
+      sortable: true,
+      sortValue: (row) => row.attendance || "",
+      render: (row) =>
+        row.attendance === "present" ? (
+          <Badge tone="success">{tVol("presentHours", { hours: f.number(row.hours, { maximumFractionDigits: 2 }) })}</Badge>
+        ) : row.attendance === "absent" ? (
+          <Badge tone="danger">{tVol("absent")}</Badge>
+        ) : (
+          <span className="muted">—</span>
+        ),
+    },
     { key: "region", header: t("columns.region"), sortable: true, render: (row) => row.region || "—" },
     {
       key: "created_at",
@@ -151,15 +171,41 @@ export default function EventRegistrations({ event, onClose }) {
         </>
       }
     >
-      {error ? (
-        <ErrorState message={getErrorMessage(error)} onRetry={reload} />
-      ) : loading ? (
-        <SkeletonTable toolbar={false} columns={4} label={t("loading")} />
-      ) : rows.length === 0 ? (
-        <EmptyState icon={Users} title={t("emptyTitle")} description={t("emptyText")} />
-      ) : (
-        <DataTable columns={columns} rows={rows} searchKeys={["name", "email", "region"]} searchPlaceholder={t("search")} pageSize={10} />
-      )}
+      <Tabs
+        id="event-registrations-tabs"
+        tabs={[
+          { value: "registrations", label: tVol("tabs.registrations"), count: rows.length },
+          { value: "attendance", label: tVol("tabs.attendance") },
+          { value: "waitlist", label: tVol("tabs.waitlist"), count: waitlist.length },
+        ]}
+        value={tab}
+        onChange={setTab}
+        label={tVol("tabs.label")}
+      />
+      <TabPanel tabsId="event-registrations-tabs" value={tab}>
+        {tab === "registrations" && (error ? (
+          <ErrorState message={getErrorMessage(error)} onRetry={reload} />
+        ) : loading ? (
+          <SkeletonTable toolbar={false} columns={4} label={t("loading")} />
+        ) : rows.length === 0 ? (
+          <EmptyState icon={Users} title={t("emptyTitle")} description={t("emptyText")} />
+        ) : (
+          <DataTable columns={columns} rows={rows} searchKeys={["name", "email", "region"]} searchPlaceholder={t("search")} pageSize={10} />
+        ))}
+        {tab === "attendance" && (
+          <AttendanceSheet
+            sheet={attendance.data}
+            loading={attendance.loading}
+            error={attendance.error}
+            reload={attendance.reload}
+            onSaved={(saved) => {
+              attendance.setData(saved);
+              reload();
+            }}
+          />
+        )}
+        {tab === "waitlist" && <WaitlistList rows={waitlist} />}
+      </TabPanel>
       {printing && createPortal(<SignInSheet event={event} rows={rows} />, document.body)}
     </Modal>
   );

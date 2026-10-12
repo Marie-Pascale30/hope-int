@@ -43,7 +43,9 @@ function proofUpload(field = "proof") {
             if (!req.file) return next();
             const type = detectProofType(req.file.buffer);
             if (!type) return next(Object.assign(new Error(PROOF_FORMAT_ERROR), { status: 400 }));
-            req.proof = { buffer: req.file.buffer, mime: type.mime, name: safeName(req.file.originalname, type.ext) };
+            // Multer lit le nom du fichier en latin1 : on le relit en UTF-8.
+            const original = Buffer.from(String(req.file.originalname || ""), "latin1").toString("utf8");
+            req.proof = { buffer: req.file.buffer, mime: type.mime, name: safeName(original, type.ext) };
             return next();
         });
     };

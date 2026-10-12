@@ -1,11 +1,14 @@
 // Pied de page (composant serveur) : les coordonnees viennent de GET /meta, chargees par le layout.
-// Selecteurs de langue et de theme : ilots client.
+// Selecteurs de langue et de theme, inscription a la newsletter : ilots client.
+import "../../views/engagement/engagement.css";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Logo from "./Logo";
 import LocaleSwitcher from "./LocaleSwitcher";
 import ThemeSwitcher from "../ThemeSwitcher";
 import { Link, useLocalePath } from "../../i18n/navigation";
+import NewsletterSignup from "../../views/engagement/NewsletterSignup";
+import SocialLinks from "../../views/engagement/SocialLinks";
 
 const DEFAULT_ORGANIZATION = { name: "HOPE International", email: "", phone: "", address: "" };
 
@@ -41,6 +44,7 @@ export default function SiteFooter({ organization }) {
             <li><Link href="/don">{t("nav.donate")}</Link></li>
             <li><Link href="/rejoindre">{t("nav.join")}</Link></li>
             <li><Link href="/espace">{t("nav.account")}</Link></li>
+            <li><Link href="/preferences">{t("engagement.preferences.title")}</Link></li>
           </ul>
         </div>
 
@@ -53,6 +57,10 @@ export default function SiteFooter({ organization }) {
             <li><Link href="/contact">{t("nav.contact")} →</Link></li>
           </ul>
         </div>
+      </div>
+      <div className="container eng-footer-band">
+        <NewsletterSignup />
+        <SocialLinks />
       </div>
       <div className="container site-footer__bottom">
         <span>© {new Date().getFullYear()} {org.name}. {t("footer.rights")}</span>

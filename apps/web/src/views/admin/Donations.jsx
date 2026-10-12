@@ -119,6 +119,7 @@ function ReviewPanel({ donation, onResolved }) {
 }
 
 function DonationDetail({ donation, xafPerEur, canManage, onClose, onUpdated }) {
+  const tf = useTranslations("fundraising.admin.donation");
   const getErrorMessage = useErrorMessage();
   const t = useTranslations("adminOps.donations.detail");
   const labels = useLabels();
@@ -207,6 +208,26 @@ function DonationDetail({ donation, xafPerEur, canManage, onClose, onUpdated }) 
           {donation.project_title || t("generalFund")}
           {donation.project_region && <span className="muted"> · {donation.project_region}</span>}
         </dd>
+        <dt>{tf("source")}</dt>
+        <dd>{donation.source || tf("direct")}</dd>
+        {donation.tribute_type && (
+          <>
+            <dt>{tf("tribute")}</dt>
+            <dd>{tf(`tributeType.${donation.tribute_type}`)}</dd>
+          </>
+        )}
+        {donation.fundraiser_id && (
+          <>
+            <dt>{tf("fundraiser")}</dt>
+            <dd>#{donation.fundraiser_id}</dd>
+          </>
+        )}
+        {donation.pledge_id && (
+          <>
+            <dt>{tf("pledge")}</dt>
+            <dd>#{donation.pledge_id}</dd>
+          </>
+        )}
         <dt>{t("createdAt")}</dt>
         <dd>{f.dateTime(donation.created_at)}</dd>
         <dt>{t("paidAt")}</dt>

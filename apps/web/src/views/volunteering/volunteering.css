@@ -1,0 +1,220 @@
+/* Module benevolat : espace membre, verification d'attestation, administration.
+   Uniquement des tokens de globals.css (themes clair et sombre geres par ces variables). */
+
+.vol-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-3);
+}
+
+.vol-badges {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-3);
+}
+
+.vol-badge {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px var(--space-3);
+  align-items: center;
+  padding: var(--space-3);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink-3);
+}
+
+.vol-badge--earned {
+  border-style: solid;
+  border-color: var(--brand);
+  background: var(--brand-50);
+  color: var(--ink);
+}
+
+.vol-badge__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  color: var(--ink-3);
+}
+
+.vol-badge--earned .vol-badge__icon {
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+.vol-badge__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.vol-badge__text strong {
+  color: var(--ink);
+}
+
+.vol-badge__text span {
+  font-size: var(--text-sm);
+}
+
+.vol-badge__bar {
+  grid-column: 1 / -1;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.vol-badge__bar span {
+  display: block;
+  height: 100%;
+  background: var(--accent-solid);
+}
+
+.vol-history {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.vol-history li {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.vol-history li:last-child {
+  border-bottom: 0;
+}
+
+.vol-history__date {
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+}
+
+.vol-history__hours {
+  white-space: nowrap;
+}
+
+.vol-cert-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: var(--space-3);
+  align-items: end;
+}
+
+.vol-certs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.vol-cert {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.vol-cert code,
+.vol-verify code {
+  font-family: var(--font-mono);
+}
+
+.vol-verify {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.vol-verify__form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: end;
+}
+
+.vol-verify__form .field {
+  flex: 1 1 240px;
+}
+
+.vol-verify dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--space-2) var(--space-4);
+  margin: var(--space-4) 0 0;
+}
+
+.vol-verify dt {
+  color: var(--ink-3);
+}
+
+.vol-verify dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.vol-attendance-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.vol-attendance-row input {
+  width: 6rem;
+}
+
+.vol-review-preview {
+  white-space: pre-line;
+  max-height: 320px;
+  overflow: auto;
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.vol-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: end;
+  margin-bottom: var(--space-4);
+}
+
+.vol-filters .field {
+  flex: 1 1 200px;
+  margin: 0;
+}
+
+.vol-region-title {
+  margin: var(--space-5) 0 var(--space-2);
+  font-size: var(--text-lg);
+}
+
+@media (max-width: 640px) {
+  .vol-history li {
+    grid-template-columns: 1fr auto;
+  }
+
+  .vol-history__date {
+    grid-column: 1 / -1;
+  }
+}

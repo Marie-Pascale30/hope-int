@@ -9,15 +9,16 @@ import { ProjectCard } from ".";
 
 const STATUSES = ["all", "en_cours", "planifie", "termine"];
 
-export default function ProjectsBrowser({ projects }) {
+// initialRegion : filtre de region venu de l'URL (?region=..., lien de la carte des regions).
+export default function ProjectsBrowser({ projects, initialRegion = "" }) {
   const t = useTranslations("site.projects");
   const locale = useLocale();
   const [status, setStatus] = useState("all");
-  const [region, setRegion] = useState("");
+  const [region, setRegion] = useState(initialRegion);
 
   const regions = useMemo(
-    () => [...new Set(projects.map((p) => p.region).filter(Boolean))].sort((a, b) => a.localeCompare(b, locale)),
-    [projects, locale]
+    () => [...new Set([...projects.map((p) => p.region), initialRegion].filter(Boolean))].sort((a, b) => a.localeCompare(b, locale)),
+    [projects, locale, initialRegion]
   );
   const byRegion = region ? projects.filter((p) => p.region === region) : projects;
   const visible = status === "all" ? byRegion : byRegion.filter((p) => p.status === status);
@@ -36,7 +37,7 @@ export default function ProjectsBrowser({ projects }) {
     <>
       <div className="pub-filters">
         <Tabs tabs={tabs} value={status} onChange={setStatus} label={t("filterStatus")} />
-        {regions.length > 1 && (
+        {(regions.length > 1 || initialRegion) && (
           <div className="pub-filters__region">
             <label htmlFor="projects-region">{t("region")}</label>
             <select id="projects-region" className="select" value={region} onChange={(e) => setRegion(e.target.value)}>

@@ -13,6 +13,8 @@ import AuthCard from "./components/AuthCard";
 import { PasswordInput, PasswordStrength } from "./components/PasswordFields";
 import { EMAIL_PATTERN, destinationFor, isStrongPassword } from "./components/authHelpers";
 import { useErrorMessage } from "../../i18n/errors";
+import ConsentCheckboxes, { initialConsents } from "../engagement/ConsentCheckboxes";
+import "../engagement/engagement.css";
 
 const EMPTY = { name: "", email: "", password: "", confirm: "" };
 
@@ -39,6 +41,7 @@ export default function RegisterView() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [sentTo, setSentTo] = useState("");
+  const [consents, setConsents] = useState(initialConsents);
 
   useEffect(() => {
     if (status === "authenticated" && user) router.replace(destinationFor(user, null, locale));
@@ -57,7 +60,7 @@ export default function RegisterView() {
     try {
       // Reponse volontairement neutre (201 meme si l'email existe deja) : pas de connexion
       // automatique, le message invite a verifier sa boite de reception.
-      await authApi.register({ name: form.name.trim(), email, password: form.password });
+      await authApi.register({ name: form.name.trim(), email, password: form.password, consents });
       setSentTo(email);
       setForm(EMPTY);
       setSubmitted(false);
@@ -129,6 +132,7 @@ export default function RegisterView() {
           onChange={set("confirm")}
           error={errors.confirm || (form.confirm && form.confirm !== form.password ? tf("passwordMismatch") : undefined)}
         />
+        <ConsentCheckboxes value={consents} onChange={setConsents} />
         <Button type="submit" size="lg" block icon={UserPlus} loading={loading}>
           {t("submit")}
         </Button>

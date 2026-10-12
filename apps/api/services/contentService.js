@@ -1,5 +1,6 @@
 const contentRepo = require("../repositories/contentRepository");
 const logService = require("./activityLogService");
+const contentReview = require("./contentReviewService");
 const { badRequest, forbidden, notFound } = require("../utils/httpError");
 const { getScopeRegion } = require("../utils/scope");
 const { removeUpload, removeReplacedUpload } = require("../utils/uploads");
@@ -97,7 +98,11 @@ exports.create = async (actor, type, body, file) => {
     const region = getScopeRegion(actor);
     const payload = normalizePayload(body, file);
     await applyScopeToPayload(type, payload, region, { isCreate: true });
+    // Workflow de validation : sans APPROVE_CONTENT (ou en portee regionale), soumission au lieu
+    // de publication.
+    const review = contentReview.planCreate(actor, payload);
     const id = await contentRepo.create(type, payload);
+    await contentReview.record(actor, type, id, review);
     await logService.log({ userId: actor.id, action: `content.create.${type}`, meta: { id, ...(region ? { region } : {}) } });
     return contentRepo.getById(type, id);
 };
@@ -106,10 +111,18 @@ exports.update = async (actor, type, id, body, file) => {
     const existing = await getForActor(actor, type, id);
     const payload = normalizePayload(body, file);
     await applyScopeToPayload(type, payload, getScopeRegion(actor), { isCreate: false });
+    const review = contentReview.planUpdate(actor, existing, payload);
     await contentRepo.update(type, id, payload);
+    await contentReview.record(actor, type, id, review, { previous: existing.review_status });
     if ("image_url" in payload) await removeReplacedUpload(existing.image_url, payload.image_url);
     await logService.log({ userId: actor.id, action: `content.update.${type}`, meta: { id } });
     return contentRepo.getById(type, id);
+};
+
+// Soumission explicite d'un brouillon ou d'un contenu refuse (portee regionale verifiee).
+exports.submit = async (actor, type, id) => {
+    const item = await getForActor(actor, type, id);
+    return contentReview.submit(actor, type, item);
 };
 
 exports.remove = async (actor, type, id) => {

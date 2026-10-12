@@ -13,6 +13,14 @@ const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/$/, "");
 
 const absolute = (origin, path) => (/^https?:\/\//.test(path) ? path : `${origin}${path}`);
 
+// Suivi de la source des dons : ajoute ?ref=<source>-<canal> au lien partage (facultatif).
+function withSource(url, source, channel) {
+  if (!source) return url;
+  const [base, hash] = url.split("#");
+  const separator = base.includes("?") ? "&" : "?";
+  return `${base}${separator}ref=${encodeURIComponent(`${source}-${channel}`)}${hash ? `#${hash}` : ""}`;
+}
+
 function WhatsAppIcon(props) {
   return (
     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" {...props}>
@@ -29,7 +37,9 @@ function FacebookIcon(props) {
   );
 }
 
-export default function ShareButtons({ path, title, text, label }) {
+// source (facultatif) : prefixe de suivi ajoute au lien selon le canal (ex. "partage" ->
+// ?ref=partage-whatsapp), conserve jusqu'au don par la page /don.
+export default function ShareButtons({ path, title, text, label, source }) {
   const t = useTranslations("common.share");
   const [canShare, setCanShare] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -45,11 +55,12 @@ export default function ShareButtons({ path, title, text, label }) {
   }, []);
 
   const url = absolute(origin, path);
-  const message = text ? `${text} ${url}` : url;
+  const linkFor = (channel) => withSource(url, source, channel);
+  const message = text ? `${text} ${linkFor("whatsapp")}` : linkFor("whatsapp");
 
   const nativeShare = async () => {
     try {
-      await navigator.share({ title, text, url });
+      await navigator.share({ title, text, url: linkFor("natif") });
     } catch {
       // Partage annule : rien a signaler.
     }
@@ -57,7 +68,7 @@ export default function ShareButtons({ path, title, text, label }) {
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(linkFor("lien"));
       setCopied(true);
       toast(t("copied"));
       window.setTimeout(() => setCopied(false), 2500);
@@ -83,7 +94,7 @@ export default function ShareButtons({ path, title, text, label }) {
           </a>
           <a
             className="btn btn--secondary btn--sm share__facebook"
-            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`}
+            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(linkFor("facebook"))}`}
             target="_blank"
             rel="noopener noreferrer"
           >

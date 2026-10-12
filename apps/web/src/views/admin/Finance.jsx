@@ -16,6 +16,7 @@ import { useAlerts } from "../../utils/alerts";
 import { PERMISSIONS as P } from "../../utils/rbac";
 import { fillMonths, formatEur, providerLabel, recentYears, todayStamp, toEur } from "./lib/finance";
 import { InlineSelect, MonthlyChart, MonthTable, ShareTable } from "./components/widgets";
+import FinanceInsights from "../fundraising/admin/FinanceInsights";
 
 const CURRENCIES = ["eur", "xaf"];
 
@@ -81,6 +82,7 @@ function ReconcilePanel({ providers, onDone }) {
 function FinanceView() {
   const getErrorMessage = useErrorMessage();
   const t = useTranslations("adminOps.finance");
+  const tf = useTranslations("fundraising.admin.insights");
   const tCommon = useTranslations("adminOps.common");
   const f = useFormat();
   const labels = useLabels();
@@ -101,7 +103,8 @@ function FinanceView() {
 
   const providerRows = (data?.byProvider || []).map((row) => ({
     key: `${row.provider}-${row.method}`,
-    label: providerLabel(labels, row.provider, row.method),
+    // Dons hors ligne (especes, virement, cheque, en nature) : saisis et valides par la finance.
+    label: row.provider === "offline" ? tf("offlineMethod", { method: row.method }) : providerLabel(labels, row.provider, row.method),
     count: row.count,
     value: row.amountEur,
   }));
@@ -232,6 +235,8 @@ function FinanceView() {
           </p>
         </>
       )}
+
+      <FinanceInsights year={year} />
 
       <ReconcilePanel providers={meta.providers} onDone={reload} />
     </>

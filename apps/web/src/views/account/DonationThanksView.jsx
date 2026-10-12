@@ -29,6 +29,9 @@ import { toast, useAlerts } from "../../utils/alerts";
 import { useLabels } from "../../utils/labels";
 import { useErrorMessage } from "../../i18n/errors";
 import ShareButtons from "../../components/ShareButtons";
+import "../../styles/fundraising.css";
+import { fundraisingApi } from "../../services/fundraising";
+import { SOURCES } from "@hope/shared/fundraising";
 
 const REF_PATTERN = /^[a-f0-9]{48}$/i;
 
@@ -55,6 +58,7 @@ const refundedOf = (payment) => Number(payment.refunded_amount) || 0;
 
 function ReceiptDetails({ payment }) {
   const t = useTranslations("account.thanks.details");
+  const tf = useTranslations("fundraising.thanks");
   const f = useFormat();
   const labels = useLabels();
   const refunded = refundedOf(payment);
@@ -71,6 +75,18 @@ function ReceiptDetails({ payment }) {
       )}
       <dt>{t("project")}</dt>
       <dd>{payment.project_title || t("general")}</dd>
+      {payment.fundraiser_title && (
+        <>
+          <dt>{tf("fundraiser")}</dt>
+          <dd>{payment.fundraiser_title}</dd>
+        </>
+      )}
+      {payment.tribute_type && payment.tribute_name && (
+        <>
+          <dt>{tf("tribute")}</dt>
+          <dd>{tf(`tributeValue.${payment.tribute_type}`, { name: payment.tribute_name })}</dd>
+        </>
+      )}
       <dt>{t("method")}</dt>
       <dd>
         {t("methodValue", { method: labels.method(payment.method), frequency: labels.frequency(payment.frequency) })}
@@ -94,6 +110,36 @@ function ReceiptDetails({ payment }) {
         </>
       )}
     </dl>
+  );
+}
+
+// Don mensuel en echec de prelevement (ou lien "Mettre a jour ma carte") : portail Stripe.
+function UpdateCard({ payment, highlight }) {
+  const t = useTranslations("fundraising.thanks.card");
+  const errorText = useErrorMessage();
+  const [opening, setOpening] = useState(false);
+  const [error, setError] = useState("");
+  if (payment.frequency !== "monthly" || !payment.subscription_id || payment.subscription_status === "canceled") return null;
+  if (payment.subscription_status !== "past_due" && !highlight) return null;
+
+  const open = async () => {
+    setOpening(true);
+    setError("");
+    try {
+      const { url } = await fundraisingApi.billingPortal({ token: payment.receipt_token });
+      window.location.assign(url);
+    } catch (err) {
+      setError(errorText(err));
+      setOpening(false);
+    }
+  };
+
+  return (
+    <div className="fr-card-update">
+      <Alert tone={payment.subscription_status === "past_due" ? "warning" : "info"} title={t("title")}>{t("text")}</Alert>
+      <Button icon={Wallet} loading={opening} onClick={open}>{t("button")}</Button>
+      {error && <Alert tone="danger">{error}</Alert>}
+    </div>
   );
 }
 
@@ -146,7 +192,7 @@ function MonthlyControl({ payment, isAuthenticated, onCanceled }) {
   );
 }
 
-function Success({ payment, isAuthenticated, onSubscriptionCanceled }) {
+function Success({ payment, isAuthenticated, onSubscriptionCanceled, cardHighlight }) {
   const t = useTranslations("account.thanks.success");
   const tShare = useTranslations("account.thanks.share");
   const f = useFormat();
@@ -181,6 +227,7 @@ function Success({ payment, isAuthenticated, onSubscriptionCanceled }) {
           </Button>
         </div>
         <p className="muted don-thanks__note">{t("receiptSent")}</p>
+        <UpdateCard payment={payment} highlight={cardHighlight} />
         <MonthlyControl payment={payment} isAuthenticated={isAuthenticated} onCanceled={onSubscriptionCanceled} />
       </Card>
       <div className="don-thanks__next">
@@ -194,12 +241,14 @@ function Success({ payment, isAuthenticated, onSubscriptionCanceled }) {
           <Share2 aria-hidden="true" />
           <h2>{t("next.shareTitle")}</h2>
           <p className="muted">{t("next.shareText")}</p>
-          {/* Partage du projet soutenu (ou du site pour un don general), jamais de la page de paiement. */}
+          {/* Partage de la collecte, du projet soutenu (ou du site pour un don general), jamais de la page
+              de paiement. La source (?ref=partage-<canal>) suit le visiteur jusqu'a son don. */}
           <ShareButtons
-            path={lp(payment.project_id ? `/projets/${payment.project_id}` : "/")}
-            title={payment.project_title || "HOPE International"}
-            text={payment.project_title ? tShare("textProject", { title: payment.project_title }) : tShare("text")}
+            path={lp(payment.fundraiser_slug ? `/collecte/${payment.fundraiser_slug}` : payment.project_id ? `/projets/${payment.project_id}` : "/")}
+            title={payment.fundraiser_title || payment.project_title || "HOPE International"}
+            text={payment.project_title ? tShare("textProject", { title: payment.fundraiser_title || payment.project_title }) : tShare("text")}
             label={t("next.shareButton")}
+            source={SOURCES.shareNative}
           />
         </Card>
         {isAuthenticated ? (
@@ -258,7 +307,14 @@ function Outcome({ payment }) {
   const lp = useLocalePath();
   const status = OUTCOMES[payment.status] ? payment.status : "failed";
   const screen = OUTCOMES[status];
-  const retry = lp(payment.project_id ? `/don?projet=${payment.project_id}` : "/don");
+  // Nouvel essai pre-rempli (montant, moyen, frequence, projet ou collecte).
+  const retryParams = new URLSearchParams({
+    montant: String(payment.amount),
+    moyen: payment.method === "mobile_money" ? "mobile_money" : "card",
+    ...(payment.frequency === "monthly" ? { frequence: "monthly" } : {}),
+    ...(payment.fundraiser_slug ? { collecte: payment.fundraiser_slug } : payment.project_id ? { projet: String(payment.project_id) } : {}),
+  });
+  const retry = lp(`/don?${retryParams.toString()}`);
   return (
     <>
       <div className="don-thanks__head">
@@ -340,7 +396,14 @@ export default function DonationThanksView() {
       />
     );
   } else if (payment.status === "succeeded") {
-    content = <Success payment={payment} isAuthenticated={isAuthenticated} onSubscriptionCanceled={cancelSubscriptionLocally} />;
+    content = (
+      <Success
+        payment={payment}
+        isAuthenticated={isAuthenticated}
+        onSubscriptionCanceled={cancelSubscriptionLocally}
+        cardHighlight={params.get("carte") === "1"}
+      />
+    );
   } else if (payment.status === "pending") {
     content = <Pending payment={payment} onCheck={reload} checking={loading} polling={pollingState} />;
   } else {

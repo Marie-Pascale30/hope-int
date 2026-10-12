@@ -19,6 +19,7 @@ const isPast = (event) => new Date(event.end_at || event.start_at).getTime() < D
 
 function EventRow({ event, past, onEdit, onRegistrations, onDelete, busy }) {
   const t = useTranslations("adminOps.events");
+  const tVol = useTranslations("volunteering.attendance");
   const f = useFormat();
   const lp = useLocalePath();
   const registered = Number(event.registered_count) || 0;
@@ -73,6 +74,9 @@ function EventRow({ event, past, onEdit, onRegistrations, onDelete, busy }) {
               </span>
               <span>{event.remaining_spots === 0 ? t("full") : t("spotsLeft", { count: Number(event.remaining_spots) || 0 })}</span>
             </div>
+            {event.waitlist_count > 0 && (
+              <div className="progress-meta"><span>{tVol("waitlistCount", { count: event.waitlist_count })}</span></div>
+            )}
           </>
         ) : (
           <div className="progress-meta" style={{ marginTop: 0 }}>

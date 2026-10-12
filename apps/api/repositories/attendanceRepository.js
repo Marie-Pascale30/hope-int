@@ -1,6 +1,4 @@
 // Appel des participants d'un evenement : presence et heures sur event_registrations.
-const db = require("../config/db");
-
 // Evenement verrouille (FOR UPDATE) le temps d'enregistrer l'appel.
 exports.lockEvent = async (connection, eventId) => {
     const [[event]] = await connection.query(

@@ -10,6 +10,10 @@ import { authApi } from "@/src/services";
 import { useAlerts } from "@/src/utils/alerts";
 import { useLabels } from "@/src/utils/labels";
 import { useErrorMessage } from "@/src/i18n/errors";
+import "@/src/views/engagement/engagement.css";
+import MfaPanel from "@/src/views/engagement/MfaPanel";
+import PreferencesPanel from "@/src/views/engagement/PreferencesPanel";
+import PrivacyPanel from "@/src/views/engagement/PrivacyPanel";
 
 export default function ProfileTab() {
   const t = useTranslations("account.profile");
@@ -44,49 +48,60 @@ export default function ProfileTab() {
     }
   };
 
+  // Profil, puis preferences de communication, double authentification et donnees personnelles
+  // (module engagement ; ces cartes peuvent rejoindre des onglets dedies de l espace membre).
   return (
-    <div className="acc-columns acc-tab">
-      <Card>
-        <h2 className="acc-section-title">{t("title")}</h2>
-        <form className="stack" onSubmit={submit} noValidate>
-          <Input
-            label={tf("fullName")}
-            autoComplete="name"
-            enterKeyHint="next"
-            required
-            value={form.name}
-            onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-            error={nameError}
-          />
-          <PhoneField
-            label={t("phone")}
-            value={form.phone}
-            onChange={(value) => setForm((prev) => ({ ...prev, phone: value }))}
-            error={phoneErrorText}
-            hint={t("phoneHint")}
-            enterKeyHint="done"
-          />
-          <div className="form-actions acc-form-actions">
-            <Button type="submit" icon={Save} loading={saving} disabled={!dirty}>{t("save")}</Button>
-          </div>
-        </form>
-      </Card>
-      <Card>
-        <h2 className="acc-section-title">{t("accountTitle")}</h2>
-        <dl className="dl">
-          <dt>{t("email")}</dt>
-          <dd>{user.email}</dd>
-          <dt>{t("region")}</dt>
-          <dd>{user.region || t("regionEmpty")}</dd>
-          <dt>{t("roles")}</dt>
-          <dd className="chip-list">
-            {(user.roles || [user.role]).map((role) => (
-              <Badge key={role} tone="brand">{labels.role(role)}</Badge>
-            ))}
-          </dd>
-        </dl>
-        <p className="muted acc-small">{t("managedNote")}</p>
-      </Card>
+    <div className="stack acc-tab">
+      <div className="acc-columns">
+        <Card>
+          <h2 className="acc-section-title">{t("title")}</h2>
+          <form className="stack" onSubmit={submit} noValidate>
+            <Input
+              label={tf("fullName")}
+              autoComplete="name"
+              enterKeyHint="next"
+              required
+              value={form.name}
+              onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
+              error={nameError}
+            />
+            <PhoneField
+              label={t("phone")}
+              value={form.phone}
+              onChange={(value) => setForm((prev) => ({ ...prev, phone: value }))}
+              error={phoneErrorText}
+              hint={t("phoneHint")}
+              enterKeyHint="done"
+            />
+            <div className="form-actions acc-form-actions">
+              <Button type="submit" icon={Save} loading={saving} disabled={!dirty}>{t("save")}</Button>
+            </div>
+          </form>
+        </Card>
+        <Card>
+          <h2 className="acc-section-title">{t("accountTitle")}</h2>
+          <dl className="dl">
+            <dt>{t("email")}</dt>
+            <dd>{user.email}</dd>
+            <dt>{t("region")}</dt>
+            <dd>{user.region || t("regionEmpty")}</dd>
+            <dt>{t("roles")}</dt>
+            <dd className="chip-list">
+              {(user.roles || [user.role]).map((role) => (
+                <Badge key={role} tone="brand">{labels.role(role)}</Badge>
+              ))}
+            </dd>
+          </dl>
+          <p className="muted acc-small">{t("managedNote")}</p>
+        </Card>
+      </div>
+      <div className="acc-columns">
+        <PreferencesPanel />
+        <div className="stack">
+          <MfaPanel />
+          <PrivacyPanel />
+        </div>
+      </div>
     </div>
   );
 }

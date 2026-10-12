@@ -53,10 +53,17 @@ function mapProject(row) {
     };
 }
 
+// Statut de relecture (workflow de validation) : deduit de published pour les lignes ecrites
+// sans le workflow (insertions directes, anciennes donnees).
+function withReviewStatus(row) {
+    if (!("review_status" in row) || row.review_status) return row;
+    return { ...row, review_status: row.published ? "published" : "draft" };
+}
+
 function mapRow(type, row) {
     if (!row) return row;
-    if (type === "projects") return mapProject(row);
-    return { ...row, published: Boolean(row.published) };
+    if (type === "projects") return withReviewStatus(mapProject(row));
+    return withReviewStatus({ ...row, published: Boolean(row.published) });
 }
 
 function projectSelect(where = "") {

@@ -6,12 +6,13 @@ import { useLocalePath } from "../../i18n/navigation";
 import { PublicHero } from "./components";
 import LoadError from "./components/LoadError";
 import ProjectsBrowser from "./components/ProjectsBrowser";
+import RegionMapSection from "./components/RegionMapSection";
 import { Button, EmptyState } from "../../components/ui";
 
 // Ordre d'affichage : en cours, puis a venir, puis termines.
 const STATUS_ORDER = { en_cours: 0, planifie: 1, termine: 2 };
 
-export default function ProjectsView({ projects, error }) {
+export default function ProjectsView({ projects, error, regions, region = "" }) {
   const t = useTranslations("site.projects");
   const lp = useLocalePath();
   const sorted = [...(projects || [])].sort((a, b) => (STATUS_ORDER[a.status] ?? 3) - (STATUS_ORDER[b.status] ?? 3));
@@ -19,7 +20,7 @@ export default function ProjectsView({ projects, error }) {
   return (
     <>
       <PublicHero eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
-      <section className="section section--tight">
+      <section className="section section--tight" id="projets-liste">
         <div className="container">
           {error ? (
             <LoadError />
@@ -31,10 +32,11 @@ export default function ProjectsView({ projects, error }) {
               action={<Button href={lp("/don")} variant="accent">{t("donate")}</Button>}
             />
           ) : (
-            <ProjectsBrowser projects={sorted} />
+            <ProjectsBrowser key={region} projects={sorted} initialRegion={region} />
           )}
         </div>
       </section>
+      {!error && sorted.length > 0 && <RegionMapSection regions={regions} selected={region || undefined} alt />}
     </>
   );
 }

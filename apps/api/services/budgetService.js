@@ -307,5 +307,5 @@ exports.exportDonorReport = async (actor, projectId, { from, to } = {}) => {
         action: "transparency.export_donor_report",
         meta: { projectId, from: from || null, to: to || null, expenses: expenses.length },
     });
-    return { csv: `﻿${lines.join("\r\n")}`, project };
+    return { csv: `\uFEFF${lines.join("\r\n")}`, project };
 };

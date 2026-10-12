@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { Copy, Eye, EyeOff, ExternalLink, Newspaper, Pencil, Plus, Sprout, MessageSquareQuote, Trash2 } from "lucide-react";
+import { ClipboardCheck, Copy, Eye, EyeOff, ExternalLink, Newspaper, Pencil, Plus, Send, Sprout, MessageSquareQuote, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { isRegionScoped } from "@hope/shared/rbac";
 import {
@@ -17,7 +17,8 @@ import { useErrorMessage } from "../../i18n/errors";
 import { truncate } from "../../utils/format";
 import { useLabels } from "../../utils/labels";
 import { useAlerts } from "../../utils/alerts";
-import { PERMISSIONS as P } from "../../utils/rbac";
+import { PERMISSIONS as P, can } from "../../utils/rbac";
+import { contentReviewApi } from "../../services/volunteering";
 import ContentForm, { toFormValues } from "./components/ContentForm";
 import { Thumb } from "./components/widgets";
 
@@ -42,6 +43,10 @@ function ContentManagerView({ type }) {
   const { user } = useAuth();
   // Directrice regionale : contenus limites a sa region (l'API filtre et controle).
   const scopedRegion = isRegionScoped(user?.roles) ? user?.region || "" : null;
+  // Workflow de validation : sans APPROVE_CONTENT (ou en portee regionale), on soumet au lieu de publier.
+  const canPublish = can(user, P.APPROVE_CONTENT) && scopedRegion === null;
+  const tReview = useTranslations("volunteering.review");
+  const { data: pending } = useAsync(() => contentReviewApi.count(), [], { enabled: canPublish });
 
   const { data, loading, error, reload, setData } = useAsync(() => adminApi.content(type), [type]);
   // Les actualites et temoignages peuvent etre lies a un projet (liste deja filtree par l'API).
@@ -73,12 +78,24 @@ function ContentManagerView({ type }) {
     setEditing(null);
   };
 
+  const submitForReview = async (item) => {
+    setBusyId(item.id);
+    try {
+      upsert(await contentReviewApi.submit(type, item.id), true);
+      toast(tReview("submittedToast"));
+    } catch (err) {
+      showError(t("errors.update"), getErrorMessage(err));
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   const togglePublished = async (item) => {
     setBusyId(item.id);
     try {
       const saved = await adminApi.updateContent(type, item.id, { published: !item.published });
       upsert(saved, true);
-      toast(saved.published ? t("toast.published") : t("toast.unpublished"));
+      toast(saved.published ? t("toast.published") : saved.review_status === "submitted" ? tReview("submittedToast") : t("toast.unpublished"));
     } catch (err) {
       showError(t("errors.update"), getErrorMessage(err));
     } finally {
@@ -138,6 +155,9 @@ function ContentManagerView({ type }) {
           <Thumb src={item.image_url} className={type === "testimonials" ? "adm-thumb adm-thumb--round" : "adm-thumb"} />
           <div className="cell-main">
             <strong>{item[config.nameKey]}</strong>
+            {item.review_status === "rejected" && item.review_comment && (
+              <span>{tReview("rejectedComment", { comment: truncate(item.review_comment, 120) })}</span>
+            )}
             <span>
               {type === "testimonials"
                 ? item.role_label || truncate(item.content, 70)
@@ -193,7 +213,11 @@ function ContentManagerView({ type }) {
       header: t("columns.published"),
       sortable: true,
       sortValue: (item) => (item.published ? 1 : 0),
-      render: (item) => (item.published ? <Badge tone="success">{t("published")}</Badge> : <Badge>{t("draft")}</Badge>),
+      render: (item) => {
+        const status = item.review_status || (item.published ? "published" : "draft");
+        const tone = { published: "success", submitted: "warning", approved: "info", rejected: "danger" }[status];
+        return <Badge tone={tone}>{tReview(`status.${status}`)}</Badge>;
+      },
     },
     {
       key: "actions",
@@ -204,15 +228,27 @@ function ContentManagerView({ type }) {
         const name = item[config.nameKey];
         return (
           <div className="adm-actions">
-            <Button
-              size="sm"
-              variant="ghost"
-              icon={item.published ? EyeOff : Eye}
-              disabled={busy}
-              onClick={() => togglePublished(item)}
-              aria-label={item.published ? t("actions.unpublishNamed", { name }) : t("actions.publishNamed", { name })}
-              title={item.published ? t("actions.unpublish") : t("actions.publish")}
-            />
+            {canPublish || item.published ? (
+              <Button
+                size="sm"
+                variant="ghost"
+                icon={item.published ? EyeOff : Eye}
+                disabled={busy}
+                onClick={() => togglePublished(item)}
+                aria-label={item.published ? t("actions.unpublishNamed", { name }) : t("actions.publishNamed", { name })}
+                title={item.published ? t("actions.unpublish") : t("actions.publish")}
+              />
+            ) : (
+              <Button
+                size="sm"
+                variant="ghost"
+                icon={Send}
+                disabled={busy || item.review_status === "submitted"}
+                onClick={() => submitForReview(item)}
+                aria-label={tReview("submitNamed", { name })}
+                title={item.review_status === "submitted" ? tReview("status.submitted") : tReview("submit")}
+              />
+            )}
             <Button
               size="sm"
               variant="ghost"
@@ -259,10 +295,22 @@ function ContentManagerView({ type }) {
   const createButton = (
     <Button icon={Plus} onClick={() => setEditing({ item: null })} disabled={noProjectAvailable}>{tType("create")}</Button>
   );
+  const headerActions = (
+    <>
+      {canPublish && (
+        <Button variant="secondary" icon={ClipboardCheck} href="/admin/validation">
+          {tReview("queueLink", { count: Number(pending?.pending) || 0 })}
+        </Button>
+      )}
+      {createButton}
+    </>
+  );
 
   return (
     <>
-      <PageHeader eyebrow={t("eyebrow")} title={tType("title")} description={tType("description")} actions={createButton} />
+      <PageHeader eyebrow={t("eyebrow")} title={tType("title")} description={tType("description")} actions={headerActions} />
+
+      {!canPublish && <Alert tone="info" title={tReview("submitterTitle")}>{tReview("submitterText")}</Alert>}
 
       {scopedRegion !== null && (
         <Alert tone="info" title={scopedRegion ? t("scope.title", { region: scopedRegion }) : t("scope.noRegionTitle")}>
@@ -307,6 +355,7 @@ function ContentManagerView({ type }) {
           item={editing.item}
           projects={projects || []}
           scopedRegion={scopedRegion}
+          canPublish={canPublish}
           onClose={closeForm}
           onSaved={onSaved}
         />

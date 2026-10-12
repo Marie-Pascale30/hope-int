@@ -1,3 +1,274 @@
 {
-  "volunteering": {}
+  "volunteering": {
+    "nav": {
+      "volunteers": "Volunteers",
+      "validation": "To review",
+      "myVolunteering": "My volunteering"
+    },
+    "badges": {
+      "label": "Volunteering badges",
+      "earned": "Earned",
+      "progress": {
+        "activities": "{value} / {threshold} commitment",
+        "hours": "{value} / {threshold} hours",
+        "events": "{value} / {threshold} events",
+        "days": "{value} / {threshold} days"
+      },
+      "names": {
+        "first_step": "First commitment",
+        "hours_10": "10 hours",
+        "hours_50": "50 hours",
+        "hours_100": "100 hours",
+        "events_5": "5 events",
+        "one_year": "1 year of commitment"
+      }
+    },
+    "mine": {
+      "tabLabel": "My volunteering",
+      "loading": "Loading your volunteering…",
+      "hours": "{hours} h",
+      "counters": {
+        "total": "Volunteer hours",
+        "events": "Events",
+        "missions": "Missions",
+        "since": "Volunteering since"
+      },
+      "badgesTitle": "My badges",
+      "historyTitle": "My history",
+      "agenda": "See the calendar",
+      "kinds": {
+        "event": "Event",
+        "mission": "Mission"
+      },
+      "emptyTitle": "No hours recorded yet",
+      "emptyText": "Your attendance at events and the missions approved by the team will appear here."
+    },
+    "certificates": {
+      "title": "Volunteering certificates",
+      "intro": "Generate a PDF certificate for the period of your choice. It carries a verification code that anyone can check online.",
+      "noHours": "A certificate can be generated as soon as volunteer hours have been recorded.",
+      "from": "From",
+      "to": "To",
+      "invalidPeriod": "The end date must be after the start date",
+      "generate": "Generate the certificate",
+      "issued": "Certificate generated",
+      "failed": "Certificate unavailable",
+      "list": "Issued certificates",
+      "period": "From {from} to {to}",
+      "summary": "{hours} h · issued on {date}",
+      "verifyLink": "Verification page",
+      "download": "Download PDF",
+      "downloadFailed": "Download failed"
+    },
+    "verify": {
+      "metaTitle": "Verify a volunteering certificate",
+      "metaDescription": "Check the authenticity of a HOPE International volunteering certificate using its code.",
+      "eyebrow": "Volunteering certificate",
+      "title": "Verify a certificate",
+      "intro": "Enter the code printed on the certificate (format HOPE-XXXX-XXXX-XXXX).",
+      "codeLabel": "Verification code",
+      "submit": "Verify",
+      "format": "This code is not in the right format: HOPE followed by three groups of four characters.",
+      "checking": "Checking…",
+      "valid": "Authentic certificate",
+      "validText": "This certificate was indeed issued by HOPE International.",
+      "invalid": "Certificate not found",
+      "invalidText": "No certificate matches the code {code}. Please check what you typed.",
+      "errorTitle": "Verification unavailable",
+      "errorText": "The check could not be completed. Please try again in a moment.",
+      "holder": "Volunteer",
+      "period": "Period",
+      "periodValue": "from {from} to {to}",
+      "hours": "Volunteer hours",
+      "hoursValue": "{hours} h",
+      "issued": "Issued on",
+      "code": "Code"
+    },
+    "waitlist": {
+      "label": "Waiting list",
+      "count": "{count, plural, one {# person} other {# people}}",
+      "fullHint": "The event is full: join the waiting list and you will be registered automatically if a place becomes available.",
+      "join": "Join the waiting list",
+      "joined": "You are number {position} on the waiting list",
+      "joinError": "Could not join the waiting list",
+      "position": "Waiting list · no. {position}",
+      "positionHint": "You will receive an email if a place becomes available: your registration will then be confirmed.",
+      "leave": "Leave the waiting list",
+      "leaveTitle": "Leave the waiting list?",
+      "leaveText": "You will lose your place in line. You can join again, at the end of the list.",
+      "leaveConfirm": "Leave the list",
+      "left": "You have left the waiting list",
+      "leaveError": "Could not leave the waiting list"
+    },
+    "attendance": {
+      "tabs": {
+        "label": "Participants",
+        "registrations": "Registered",
+        "attendance": "Attendance and hours",
+        "waitlist": "Waiting list"
+      },
+      "loading": "Loading the attendance sheet…",
+      "emptyTitle": "No one registered",
+      "emptyText": "Attendance is taken among registered people.",
+      "notStarted": "Attendance can be taken once the event has started.",
+      "summary": "{present} present, {absent} absent out of {registered} registered · {hours} h in total",
+      "defaultHours": "default duration: {hours} h",
+      "columns": {
+        "participant": "Participant",
+        "attendance": "Attendance",
+        "hours": "Hours"
+      },
+      "attendanceFor": "Attendance of {name}",
+      "hoursFor": "Hours for {name}",
+      "present": "Present",
+      "absent": "Absent",
+      "presentHours": "Present · {hours} h",
+      "notMarked": "Not marked",
+      "allPresent": "Mark all present",
+      "save": "Save attendance",
+      "saved": "Attendance saved: {present} present",
+      "saveFailed": "Could not save attendance",
+      "waitlistEmpty": "No one is on the waiting list.",
+      "waitlistSince": "since {date}",
+      "waitlistCount": "{count, plural, one {# person on the waiting list} other {# people on the waiting list}}"
+    },
+    "review": {
+      "eyebrow": "Content",
+      "title": "To review",
+      "description": "Projects, news and testimonials submitted before publication. Approval publishes the content and notifies its author.",
+      "loading": "Loading the queue…",
+      "search": "Search content",
+      "tabs": {
+        "label": "Review status",
+        "submitted": "To review",
+        "approved": "Approved, not published",
+        "rejected": "Rejected"
+      },
+      "empty": {
+        "submitted": "Nothing to review",
+        "approved": "No approved content waiting to be published",
+        "rejected": "No rejected content"
+      },
+      "emptyText": "Content submitted by the team and regional directors appears here.",
+      "columns": {
+        "content": "Content",
+        "type": "Type",
+        "region": "Region",
+        "author": "Submitted by",
+        "submittedAt": "Submitted on",
+        "actions": "Actions"
+      },
+      "types": {
+        "projects": "Project",
+        "news": "News",
+        "testimonials": "Testimonial"
+      },
+      "status": {
+        "draft": "Draft",
+        "submitted": "Awaiting approval",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "published": "Published"
+      },
+      "actions": {
+        "submit": "Submitted",
+        "publish": "Published",
+        "draft": "Back to draft",
+        "approve": "Approved",
+        "approve_publish": "Approved and published",
+        "reject": "Rejected"
+      },
+      "open": "Review",
+      "openNamed": "Review “{name}”",
+      "previewTitle": "Review: {name}",
+      "submittedBy": "submitted by {name}",
+      "lastComment": "Latest comment",
+      "comment": "Comment for the author",
+      "commentHint": "Required when rejecting; emailed to the author.",
+      "commentRequired": "Explain the rejection (3 characters minimum)",
+      "publishOn": "Publish upon approval",
+      "publishOff": "Approve without publishing yet",
+      "history": "History",
+      "close": "Close",
+      "reject": "Reject",
+      "approve": "Approve",
+      "approvePublish": "Approve and publish",
+      "approved": "Content approved",
+      "approvedPublished": "Content approved and published",
+      "rejected": "Content rejected: the author has been notified",
+      "failed": "Decision failed",
+      "submit": "Submit for approval",
+      "submitNamed": "Submit “{name}” for approval",
+      "submittedToast": "Content submitted for approval",
+      "rejectedComment": "Rejected: {comment}",
+      "rejectedTitle": "Content rejected",
+      "queueLink": "To review ({count})",
+      "submitterTitle": "Publication subject to approval",
+      "submitterText": "Your content is reviewed before going online: asking to publish submits it for approval, and you will be notified of the decision by email.",
+      "editPublishedWarning": "This content is online: saving it removes it from the site until it is approved again.",
+      "submitOn": "Submit for publication",
+      "submitOff": "Keep as draft"
+    },
+    "volunteers": {
+      "eyebrow": "Volunteering",
+      "title": "Volunteers by region",
+      "description": "Skills, availability, hours and latest commitment of each volunteer. Named exports are logged.",
+      "loading": "Loading volunteers…",
+      "export": "Export to CSV",
+      "exported": "Export downloaded",
+      "exportFailed": "Export failed",
+      "csvFile": "hope-volunteers-{date}.csv",
+      "stats": {
+        "people": "Volunteers",
+        "hours": "Total hours",
+        "regions": "Regions represented"
+      },
+      "filters": {
+        "region": "Region",
+        "allRegions": "All regions",
+        "search": "Search",
+        "searchPlaceholder": "Name, email, skill…",
+        "engaged": "Only volunteers with recorded hours"
+      },
+      "columns": {
+        "volunteer": "Volunteer",
+        "region": "Region",
+        "skills": "Skills",
+        "availability": "Availability",
+        "hours": "Hours",
+        "lastActivity": "Latest commitment",
+        "actions": "Actions"
+      },
+      "noRegion": "No region",
+      "never": "Never",
+      "open": "View profile",
+      "openNamed": "View {name}'s profile",
+      "emptyTitle": "No volunteers",
+      "emptyText": "No active account matches these filters.",
+      "hoursForm": {
+        "title": "Add hours outside events",
+        "mission": "Mission",
+        "missionPlaceholder": "E.g. office shift, collection…",
+        "date": "Date",
+        "hours": "Hours",
+        "hoursHint": "From 0.25 to 24 h",
+        "description": "Description (optional)",
+        "submit": "Add",
+        "saved": "Hours recorded",
+        "failed": "Could not save"
+      },
+      "detail": {
+        "loading": "Loading profile…",
+        "close": "Close",
+        "history": "History",
+        "noHistory": "No hours recorded.",
+        "delete": "Delete",
+        "deleteNamed": "Delete the mission “{mission}”",
+        "deleteTitle": "Delete this entry?",
+        "deleteText": "The hours of the mission “{mission}” will be removed from the volunteer's total.",
+        "deleted": "Entry deleted",
+        "deleteFailed": "Could not delete"
+      }
+    }
+  }
 }

@@ -6,7 +6,8 @@ import { Alert, Badge, Button, Card, StatCard, StatusBadge } from "../../compone
 import { useFormat } from "../../i18n/format";
 import { useLocalePath } from "../../i18n/navigation";
 import ShareButtons from "../../components/ShareButtons";
-import { BackLink, CampaignProgress, CoverImage, NewsCard, useProjectStatus } from "./components";
+import { BackLink, CampaignProgress, CoverImage, useProjectStatus } from "./components";
+import FieldJournal from "./components/FieldJournal";
 import StickyAction from "./components/StickyAction";
 import { campaignPercent, euros, hasCampaign, paragraphs } from "./components/helpers";
 
@@ -136,19 +137,8 @@ export default function ProjectDetailView({ project, related = [] }) {
         </StickyAction>
       )}
 
-      {related.length > 0 && (
-        <section className="section section--alt" aria-labelledby="project-news-title">
-          <div className="container">
-            <div className="section-head">
-              <span className="eyebrow">{t("newsEyebrow")}</span>
-              <h2 id="project-news-title">{t("newsTitle")}</h2>
-            </div>
-            <div className="grid grid--3">
-              {related.map((item) => <NewsCard key={item.id} item={item} />)}
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Journal de terrain : frise chronologique des actualites liees au projet. */}
+      <FieldJournal entries={related} />
     </>
   );
 }

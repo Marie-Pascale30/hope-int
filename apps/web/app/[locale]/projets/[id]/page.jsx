@@ -3,6 +3,7 @@ import { serverApi, settle } from "@/src/services/server";
 import LoadError from "@/src/views/site/components/LoadError";
 import { loadDetail, loadForMetadata } from "@/src/views/site/detail";
 import ProjectDetailView from "@/src/views/site/ProjectDetailView";
+import { journalEntries } from "@/src/views/site/components/FieldJournal";
 import { buildMetadata, shareImage, truncateText } from "@/src/views/site/seo";
 
 export const revalidate = 60;
@@ -31,8 +32,8 @@ export default async function ProjectDetailPage({ params }) {
   const { data: project, error } = await loadDetail(serverApi.getContent("projects", id, locale));
   if (error) return <div className="container section"><LoadError /></div>;
 
-  // Actualites liees : facultatives, ignorees si l'API ne repond pas.
+  // Journal de terrain (actualites liees) : facultatif, ignore si l'API ne repond pas.
   const { data: news } = await settle(serverApi.listContent("news", locale));
-  const related = (news || []).filter((item) => String(item.project_id) === String(project.id)).slice(0, 3);
+  const related = journalEntries(news || [], project.id);
   return <ProjectDetailView project={project} related={related} />;
 }

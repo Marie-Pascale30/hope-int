@@ -13,6 +13,7 @@ import { useAlerts } from "@/src/utils/alerts";
 import { saveBlob } from "@/src/utils/format";
 import { useLabels } from "@/src/utils/labels";
 import { useErrorMessage } from "@/src/i18n/errors";
+import { fundraisingApi } from "@/src/services/fundraising";
 
 const ENDED = ["canceled"];
 
@@ -115,8 +116,22 @@ function SubscriptionCard({ subscription, onStopped }) {
   const labels = useLabels();
   const { confirmAction, showError, toast } = useAlerts();
   const errorText = useErrorMessage();
+  const tf = useTranslations("fundraising.thanks.card");
   const [stopping, setStopping] = useState(false);
+  const [opening, setOpening] = useState(false);
   const status = labels.status("subscriptionStatus", subscription.status);
+
+  // Prelevement en echec : mise a jour de la carte dans le portail de facturation Stripe.
+  const updateCard = async () => {
+    setOpening(true);
+    try {
+      const { url } = await fundraisingApi.billingPortal({ subscriptionId: subscription.id });
+      window.location.assign(url);
+    } catch (err) {
+      showError(tf("title"), errorText(err));
+      setOpening(false);
+    }
+  };
   const ended = ENDED.includes(subscription.status);
   const amount = f.money(subscription.amount, subscription.currency);
 
@@ -153,6 +168,11 @@ function SubscriptionCard({ subscription, onStopped }) {
       </div>
       <div className="acc-sub__side">
         <StatusBadge status={status} />
+        {subscription.status === "past_due" && (
+          <Button size="sm" variant="accent" onClick={updateCard} loading={opening}>
+            {tf("button")}
+          </Button>
+        )}
         {!ended && (
           <Button size="sm" variant="ghost" onClick={stop} loading={stopping}>
             {t("stop")}

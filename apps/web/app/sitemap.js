@@ -1,5 +1,6 @@
 import { DEFAULT_LOCALE, localizePath } from "@/src/i18n/config";
 import { serverApi, settle } from "@/src/services/server";
+import { transparencyServer } from "@/src/services/transparencyServer";
 import { absoluteUrl, languageAlternates } from "@/src/views/site/seo";
 
 // Plan du site : pages publiques + projets, actualites et evenements publies, avec leurs
@@ -14,6 +15,8 @@ const STATIC_PAGES = [
   { path: "/don", priority: 0.9, changeFrequency: "monthly" },
   { path: "/rejoindre", priority: 0.7, changeFrequency: "monthly" },
   { path: "/contact", priority: 0.5, changeFrequency: "yearly" },
+  { path: "/transparence", priority: 0.7, changeFrequency: "monthly" },
+  { path: "/equipe", priority: 0.5, changeFrequency: "monthly" },
 ];
 
 function entry(path, { lastModified, priority = 0.6, changeFrequency = "weekly" } = {}) {
@@ -30,16 +33,19 @@ function entry(path, { lastModified, priority = 0.6, changeFrequency = "weekly" 
 }
 
 export default async function sitemap() {
-  const [projects, news, events] = await Promise.all([
+  const [projects, news, events, transparency] = await Promise.all([
     settle(serverApi.listContent("projects")),
     settle(serverApi.listContent("news")),
     settle(serverApi.listEvents()),
+    settle(transparencyServer.index()),
   ]);
 
   return [
     ...STATIC_PAGES.map((page) => entry(page.path, page)),
     ...(projects.data || []).map((item) => entry(`/projets/${item.id}`, { lastModified: item.updated_at || item.created_at, priority: 0.7 })),
     ...(news.data || []).map((item) => entry(`/actualites/${item.id}`, { lastModified: item.updated_at || item.created_at, priority: 0.6 })),
+    // Annees publiees de la page Transparence.
+    ...(transparency.data?.years || []).map((year) => entry(`/transparence/${year}`, { priority: 0.5, changeFrequency: "yearly" })),
     ...(events.data || []).map((item) => entry(`/evenements/${item.id}`, { lastModified: item.updated_at || item.created_at, priority: 0.6 })),
   ];
 }

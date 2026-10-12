@@ -1,3 +1,274 @@
 {
-  "volunteering": {}
+  "volunteering": {
+    "nav": {
+      "volunteers": "Bénévoles",
+      "validation": "À valider",
+      "myVolunteering": "Mon bénévolat"
+    },
+    "badges": {
+      "label": "Badges de bénévolat",
+      "earned": "Obtenu",
+      "progress": {
+        "activities": "{value} / {threshold} engagement",
+        "hours": "{value} / {threshold} heures",
+        "events": "{value} / {threshold} événements",
+        "days": "{value} / {threshold} jours"
+      },
+      "names": {
+        "first_step": "Premier engagement",
+        "hours_10": "10 heures",
+        "hours_50": "50 heures",
+        "hours_100": "100 heures",
+        "events_5": "5 événements",
+        "one_year": "1 an d'engagement"
+      }
+    },
+    "mine": {
+      "tabLabel": "Mon bénévolat",
+      "loading": "Chargement de votre bénévolat…",
+      "hours": "{hours} h",
+      "counters": {
+        "total": "Heures de bénévolat",
+        "events": "Événements",
+        "missions": "Missions",
+        "since": "Engagé·e depuis"
+      },
+      "badgesTitle": "Mes badges",
+      "historyTitle": "Mon historique",
+      "agenda": "Voir l'agenda",
+      "kinds": {
+        "event": "Événement",
+        "mission": "Mission"
+      },
+      "emptyTitle": "Pas encore d'heures enregistrées",
+      "emptyText": "Vos présences aux événements et vos missions validées par l'équipe apparaîtront ici."
+    },
+    "certificates": {
+      "title": "Attestations de bénévolat",
+      "intro": "Générez une attestation PDF pour la période de votre choix. Elle porte un code de vérification que toute personne peut contrôler en ligne.",
+      "noHours": "Une attestation pourra être générée dès que des heures de bénévolat seront enregistrées.",
+      "from": "Du",
+      "to": "Au",
+      "invalidPeriod": "La date de fin doit suivre la date de début",
+      "generate": "Générer l'attestation",
+      "issued": "Attestation générée",
+      "failed": "Attestation impossible",
+      "list": "Attestations émises",
+      "period": "Du {from} au {to}",
+      "summary": "{hours} h · émise le {date}",
+      "verifyLink": "Page de vérification",
+      "download": "Télécharger le PDF",
+      "downloadFailed": "Téléchargement impossible"
+    },
+    "verify": {
+      "metaTitle": "Vérifier une attestation de bénévolat",
+      "metaDescription": "Contrôlez l'authenticité d'une attestation de bénévolat HOPE International à l'aide de son code.",
+      "eyebrow": "Attestation de bénévolat",
+      "title": "Vérifier une attestation",
+      "intro": "Saisissez le code imprimé sur l'attestation (format HOPE-XXXX-XXXX-XXXX).",
+      "codeLabel": "Code de vérification",
+      "submit": "Vérifier",
+      "format": "Ce code n'a pas le bon format : HOPE suivi de trois groupes de quatre caractères.",
+      "checking": "Vérification en cours…",
+      "valid": "Attestation authentique",
+      "validText": "Cette attestation a bien été délivrée par HOPE International.",
+      "invalid": "Attestation introuvable",
+      "invalidText": "Aucune attestation ne correspond au code {code}. Vérifiez la saisie.",
+      "errorTitle": "Vérification indisponible",
+      "errorText": "La vérification n'a pas pu aboutir. Réessayez dans quelques instants.",
+      "holder": "Bénévole",
+      "period": "Période",
+      "periodValue": "du {from} au {to}",
+      "hours": "Heures de bénévolat",
+      "hoursValue": "{hours} h",
+      "issued": "Délivrée le",
+      "code": "Code"
+    },
+    "waitlist": {
+      "label": "Liste d'attente",
+      "count": "{count, plural, one {# personne} other {# personnes}}",
+      "fullHint": "L'événement est complet : inscrivez-vous sur la liste d'attente, vous serez inscrit·e automatiquement si une place se libère.",
+      "join": "Rejoindre la liste d'attente",
+      "joined": "Vous êtes n° {position} sur la liste d'attente",
+      "joinError": "Inscription en liste d'attente impossible",
+      "position": "En attente · n° {position}",
+      "positionHint": "Vous recevrez un email si une place se libère : votre inscription sera alors confirmée.",
+      "leave": "Quitter la liste d'attente",
+      "leaveTitle": "Quitter la liste d'attente ?",
+      "leaveText": "Vous perdrez votre rang. Vous pourrez vous réinscrire, en fin de liste.",
+      "leaveConfirm": "Quitter la liste",
+      "left": "Vous avez quitté la liste d'attente",
+      "leaveError": "Impossible de quitter la liste d'attente"
+    },
+    "attendance": {
+      "tabs": {
+        "label": "Participants",
+        "registrations": "Inscrits",
+        "attendance": "Appel et heures",
+        "waitlist": "Liste d'attente"
+      },
+      "loading": "Chargement de la feuille d'appel…",
+      "emptyTitle": "Aucun inscrit",
+      "emptyText": "L'appel se fait parmi les personnes inscrites.",
+      "notStarted": "L'appel sera possible dès le début de l'événement.",
+      "summary": "{present} présent·es, {absent} absent·es sur {registered} inscrit·es · {hours} h au total",
+      "defaultHours": "durée par défaut : {hours} h",
+      "columns": {
+        "participant": "Participant·e",
+        "attendance": "Présence",
+        "hours": "Heures"
+      },
+      "attendanceFor": "Présence de {name}",
+      "hoursFor": "Heures de {name}",
+      "present": "Présent·e",
+      "absent": "Absent·e",
+      "presentHours": "Présent·e · {hours} h",
+      "notMarked": "Non pointé·e",
+      "allPresent": "Tous présents",
+      "save": "Enregistrer l'appel",
+      "saved": "Appel enregistré : {present} présent·es",
+      "saveFailed": "Enregistrement de l'appel impossible",
+      "waitlistEmpty": "Personne n'est en liste d'attente.",
+      "waitlistSince": "depuis le {date}",
+      "waitlistCount": "{count, plural, one {# personne en liste d'attente} other {# personnes en liste d'attente}}"
+    },
+    "review": {
+      "eyebrow": "Contenus",
+      "title": "À valider",
+      "description": "Projets, actualités et témoignages soumis avant publication. L'approbation publie le contenu et prévient son auteur.",
+      "loading": "Chargement de la file…",
+      "search": "Rechercher un contenu",
+      "tabs": {
+        "label": "Statut de validation",
+        "submitted": "À valider",
+        "approved": "Approuvés non publiés",
+        "rejected": "Refusés"
+      },
+      "empty": {
+        "submitted": "Rien à valider",
+        "approved": "Aucun contenu approuvé en attente de publication",
+        "rejected": "Aucun contenu refusé"
+      },
+      "emptyText": "Les contenus soumis par l'équipe et les directrices régionales apparaissent ici.",
+      "columns": {
+        "content": "Contenu",
+        "type": "Type",
+        "region": "Région",
+        "author": "Soumis par",
+        "submittedAt": "Soumis le",
+        "actions": "Actions"
+      },
+      "types": {
+        "projects": "Projet",
+        "news": "Actualité",
+        "testimonials": "Témoignage"
+      },
+      "status": {
+        "draft": "Brouillon",
+        "submitted": "En attente de validation",
+        "approved": "Approuvé",
+        "rejected": "Refusé",
+        "published": "Publié"
+      },
+      "actions": {
+        "submit": "Soumis",
+        "publish": "Publié",
+        "draft": "Repassé en brouillon",
+        "approve": "Approuvé",
+        "approve_publish": "Approuvé et publié",
+        "reject": "Refusé"
+      },
+      "open": "Examiner",
+      "openNamed": "Examiner « {name} »",
+      "previewTitle": "Relecture : {name}",
+      "submittedBy": "soumis par {name}",
+      "lastComment": "Dernier commentaire",
+      "comment": "Commentaire pour l'auteur",
+      "commentHint": "Obligatoire en cas de refus ; envoyé par email à l'auteur.",
+      "commentRequired": "Expliquez le refus (3 caractères minimum)",
+      "publishOn": "Publier dès l'approbation",
+      "publishOff": "Approuver sans publier pour l'instant",
+      "history": "Historique",
+      "close": "Fermer",
+      "reject": "Refuser",
+      "approve": "Approuver",
+      "approvePublish": "Approuver et publier",
+      "approved": "Contenu approuvé",
+      "approvedPublished": "Contenu approuvé et publié",
+      "rejected": "Contenu refusé : l'auteur est prévenu",
+      "failed": "Décision impossible",
+      "submit": "Soumettre pour validation",
+      "submitNamed": "Soumettre « {name} » pour validation",
+      "submittedToast": "Contenu soumis pour validation",
+      "rejectedComment": "Refusé : {comment}",
+      "rejectedTitle": "Contenu refusé",
+      "queueLink": "À valider ({count})",
+      "submitterTitle": "Publication soumise à validation",
+      "submitterText": "Vos contenus sont relus avant d'être mis en ligne : demander la publication les soumet à la validation, et vous êtes prévenu·e par email de la décision.",
+      "editPublishedWarning": "Ce contenu est en ligne : l'enregistrer le retire du site jusqu'à sa nouvelle validation.",
+      "submitOn": "Soumettre pour publication",
+      "submitOff": "Garder en brouillon"
+    },
+    "volunteers": {
+      "eyebrow": "Bénévolat",
+      "title": "Bénévoles par région",
+      "description": "Compétences, disponibilités, heures et dernier engagement de chaque bénévole. Les exports nominatifs sont journalisés.",
+      "loading": "Chargement des bénévoles…",
+      "export": "Exporter en CSV",
+      "exported": "Export téléchargé",
+      "exportFailed": "Export impossible",
+      "csvFile": "benevoles-hope-{date}.csv",
+      "stats": {
+        "people": "Bénévoles",
+        "hours": "Heures cumulées",
+        "regions": "Régions représentées"
+      },
+      "filters": {
+        "region": "Région",
+        "allRegions": "Toutes les régions",
+        "search": "Recherche",
+        "searchPlaceholder": "Nom, email, compétence…",
+        "engaged": "Seulement les bénévoles ayant des heures"
+      },
+      "columns": {
+        "volunteer": "Bénévole",
+        "region": "Région",
+        "skills": "Compétences",
+        "availability": "Disponibilités",
+        "hours": "Heures",
+        "lastActivity": "Dernier engagement",
+        "actions": "Actions"
+      },
+      "noRegion": "Sans région",
+      "never": "Jamais",
+      "open": "Voir la fiche",
+      "openNamed": "Voir la fiche de {name}",
+      "emptyTitle": "Aucun bénévole",
+      "emptyText": "Aucun compte actif ne correspond à ces filtres.",
+      "hoursForm": {
+        "title": "Ajouter des heures hors événement",
+        "mission": "Mission",
+        "missionPlaceholder": "Ex. permanence au local, collecte…",
+        "date": "Date",
+        "hours": "Heures",
+        "hoursHint": "De 0,25 à 24 h",
+        "description": "Description (facultatif)",
+        "submit": "Ajouter",
+        "saved": "Heures enregistrées",
+        "failed": "Enregistrement impossible"
+      },
+      "detail": {
+        "loading": "Chargement de la fiche…",
+        "close": "Fermer",
+        "history": "Historique",
+        "noHistory": "Aucune heure enregistrée.",
+        "delete": "Supprimer",
+        "deleteNamed": "Supprimer la mission « {mission} »",
+        "deleteTitle": "Supprimer cette saisie ?",
+        "deleteText": "Les heures de la mission « {mission} » seront retirées du compteur du bénévole.",
+        "deleted": "Saisie supprimée",
+        "deleteFailed": "Suppression impossible"
+      }
+    }
+  }
 }

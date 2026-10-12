@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { CardNumberElement, Elements, useElements, useStripe } from "@stripe/react-stripe-js";
 import { CalendarHeart, CreditCard, Heart, Lock, Mail, Receipt, RefreshCcw, Smartphone, Sprout } from "lucide-react";
-import { Alert, Badge, Button, Input, PhoneField, focusFirstInvalid, usePhoneErrorMessage } from "../../components/ui";
+import { Alert, Badge, Button, Input, PhoneField, Switch, focusFirstInvalid, usePhoneErrorMessage } from "../../components/ui";
 import { phoneError, toE164 } from "../../utils/phone";
 import { useAuth } from "../../context/AuthContext";
 import { useAsync } from "../../hooks/useAsync";
@@ -29,6 +29,10 @@ import {
 } from "./components/donationData";
 import { useErrorMessage } from "../../i18n/errors";
 import { STRIPE_PUBLISHABLE_KEY, getStripe } from "./components/stripe";
+import "../../styles/fundraising.css";
+import { fundraisingApi } from "../../services/fundraising";
+import { parseDonateParams, rememberSource } from "../fundraising/donateParams";
+import TributeFields, { EMPTY_TRIBUTE, tributeErrors, tributePayload } from "../fundraising/components/TributeFields";
 
 // Nom affiche du prestataire Mobile Money actif (choisi par le serveur).
 const MOBILE_PARTNERS = { notchpay: "Notch Pay", flutterwave: "Flutterwave" };
@@ -83,11 +87,30 @@ function DonateForm({ meta, metaLoaded, stripeReady, onCardSelected }) {
   const { user, isAuthenticated } = useAuth();
   const projects = useAsync(() => publicApi.listContent("projects"), []);
 
+  // Liens de relance, d'engagement, de collecte et de partage : formulaire pre-rempli depuis l'URL.
+  const [initial] = useState(() => parseDonateParams(params));
+  const tf = useTranslations("fundraising.donate");
+  const [source, setSource] = useState(initial.source);
+  useEffect(() => {
+    // La source (?ref=) est conservee le temps de la visite (connexion, changement de langue).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSource(rememberSource(initial.source));
+  }, [initial.source]);
+  const fundraiserData = useAsync(
+    () => fundraisingApi.publicFundraiser(initial.fundraiser),
+    [initial.fundraiser],
+    { enabled: Boolean(initial.fundraiser) }
+  );
+  const fundraiser = fundraiserData.data?.open ? fundraiserData.data : null;
+  const fundraiserClosed = Boolean(initial.fundraiser) && !fundraiserData.loading && !fundraiser;
+  const [tribute, setTribute] = useState(EMPTY_TRIBUTE);
+  const [anonymous, setAnonymous] = useState(false);
+
   const preference = usePaymentPreference();
-  const [frequency, setFrequency] = useState("once");
-  const [methodChoice, setMethodChoice] = useState(null); // null = moyen preselectionne automatiquement
-  const [presetIndex, setPresetIndex] = useState(DEFAULT_PRESET_INDEX); // null = montant libre
-  const [customAmount, setCustomAmount] = useState("");
+  const [frequency, setFrequency] = useState(initial.frequency === "monthly" && initial.method !== "mobile_money" ? "monthly" : "once");
+  const [methodChoice, setMethodChoice] = useState(initial.method); // null = moyen preselectionne automatiquement
+  const [presetIndex, setPresetIndex] = useState(initial.amount ? null : DEFAULT_PRESET_INDEX); // null = montant libre
+  const [customAmount, setCustomAmount] = useState(initial.amount ? String(initial.amount) : "");
   const [projectChoice, setProjectChoice] = useState(null); // null = selection issue de l'URL
   const [donor, setDonor] = useState({ name: "", email: "" });
   const [phone, setPhone] = useState(null); // null = telephone du compte
@@ -126,7 +149,7 @@ function DonateForm({ meta, metaLoaded, stripeReady, onCardSelected }) {
 
   // Campagnes ouvertes aux dons ; pre-selection via ?projet=<id>.
   const campaigns = useMemo(() => (projects.data || []).filter((project) => project.status !== "termine"), [projects.data]);
-  const requested = params.get("projet");
+  const requested = fundraiser ? String(fundraiser.project_id) : initial.projectId;
   const requestedOpen = Boolean(requested) && campaigns.some((project) => String(project.id) === requested);
   const projectId = projectChoice ?? (requestedOpen ? requested : "");
   const project = campaigns.find((item) => String(item.id) === projectId) || null;
@@ -149,6 +172,7 @@ function DonateForm({ meta, metaLoaded, stripeReady, onCardSelected }) {
     if (phoneCode) errors.phone = phoneMessage(phoneCode);
   }
   if (method === "card" && stripeReady && !card.complete) errors.card = card.error || t("errors.card");
+  Object.assign(errors, tributeErrors(tribute, EMAIL_PATTERN));
   const shown = submitted ? errors : {};
 
   const changeFrequency = (value) => {
@@ -202,6 +226,11 @@ function DonateForm({ meta, metaLoaded, stripeReady, onCardSelected }) {
         donorName: isAuthenticated ? undefined : donorName,
         donorEmail: isAuthenticated ? undefined : donorEmail,
         phone: method === "mobile_money" ? toE164(phoneValue) : undefined,
+        source: source || undefined,
+        fundraiser: fundraiser ? fundraiser.slug : undefined,
+        pledgeRef: initial.pledgeRef || undefined,
+        anonymous: fundraiser ? anonymous : undefined,
+        ...tributePayload(tribute),
       });
 
       if (result.redirectUrl) {
@@ -247,6 +276,9 @@ function DonateForm({ meta, metaLoaded, stripeReady, onCardSelected }) {
   }, [submitError]);
 
   const monthly = frequency === "monthly";
+  // Retour apres connexion : memes parametres (collecte, engagement, source...) que l'arrivee.
+  const query = params.toString();
+  const loginReturnPath = query ? `/don?${query}` : projectId ? `/don?projet=${projectId}` : "/don";
   const frequencyKey = monthly ? "monthly" : "once";
   const partnerName = MOBILE_PARTNERS[meta.providers.mobileMoneyProvider];
   // Libelle du bouton de validation, avec l'equivalent dans l'autre devise.
@@ -278,6 +310,14 @@ function DonateForm({ meta, metaLoaded, stripeReady, onCardSelected }) {
             })}
           </Alert>
         )}
+
+        {fundraiser && (
+          <Alert tone="info" title={tf("fundraiserTitle", { title: fundraiser.title })}>
+            {tf("fundraiserText", { organizer: fundraiser.organizer || "-", project: fundraiser.project_title || "" })}
+          </Alert>
+        )}
+        {fundraiserClosed && <Alert tone="warning">{tf("fundraiserClosed")}</Alert>}
+        {initial.pledgeRef && <Alert tone="info" title={tf("pledgeTitle")}>{tf("pledgeText")}</Alert>}
 
         <Step number={1} title={t("steps.support.title")} description={t("steps.support.description")}>
           <div className="don-toggle" role="radiogroup" aria-label={t("frequency.label")}>
@@ -324,6 +364,11 @@ function DonateForm({ meta, metaLoaded, stripeReady, onCardSelected }) {
             })}
           </div>
           {notice && <Alert tone="info">{notice}</Alert>}
+          {method === "mobile_money" && !initial.pledgeRef && (
+            <p className="don-step__desc fr-pledge-hint">
+              {tf.rich("pledgeHint", { link: (chunks) => <Link href="/collecte/engagement">{chunks}</Link> })}
+            </p>
+          )}
           {metaLoaded && !providerReady && !noProvider && (
             <Alert tone="warning" title={t(`methods.${method}.soonTitle`)}>
               {t(`methods.${method}.soonText`)}
@@ -385,17 +430,25 @@ function DonateForm({ meta, metaLoaded, stripeReady, onCardSelected }) {
           {requestedClosed && (
             <Alert tone="info">{t("requestedClosed")}</Alert>
           )}
-          <CampaignPicker
-            campaigns={campaigns}
-            loading={projects.loading}
-            error={projects.error}
-            onRetry={projects.reload}
-            value={projectId}
-            onChange={setProjectChoice}
-          />
+          {fundraiser ? (
+            <p className="don-step__desc">{tf("fundraiserProject", { project: fundraiser.project_title || "" })}</p>
+          ) : (
+            <CampaignPicker
+              campaigns={campaigns}
+              loading={projects.loading}
+              error={projects.error}
+              onRetry={projects.reload}
+              value={projectId}
+              onChange={setProjectChoice}
+            />
+          )}
         </Step>
 
-        <Step number={4} title={t("steps.donor.title")} description={t("steps.donor.description")}>
+        <Step number={4} title={tf("tributeStep.title")} description={tf("tributeStep.description")}>
+          <TributeFields value={tribute} onChange={setTribute} errors={submitted ? errors : {}} />
+        </Step>
+
+        <Step number={5} title={t("steps.donor.title")} description={t("steps.donor.description")}>
           {isAuthenticated ? (
             <div className="don-identity">
               <span>
@@ -431,7 +484,7 @@ function DonateForm({ meta, metaLoaded, stripeReady, onCardSelected }) {
               <p className="don-login-hint">
                 {t.rich("donor.loginHint", {
                   link: (chunks) => (
-                    <Link href={`/connexion?next=${encodeURIComponent(lp(projectId ? `/don?projet=${projectId}` : "/don"))}`}>
+                    <Link href={`/connexion?next=${encodeURIComponent(lp(loginReturnPath))}`}>
                       {chunks}
                     </Link>
                   ),
@@ -450,9 +503,12 @@ function DonateForm({ meta, metaLoaded, stripeReady, onCardSelected }) {
               hint={t("donor.phoneHint")}
             />
           )}
+          {fundraiser && (
+            <Switch label={tf("anonymous")} checked={anonymous} onChange={setAnonymous} />
+          )}
         </Step>
 
-        <Step number={5} title={t("steps.payment.title")}>
+        <Step number={6} title={t("steps.payment.title")}>
           {method === "card" && stripeReady && (
             <StripeCardField
               disabled={submitting}
@@ -503,6 +559,12 @@ function DonateForm({ meta, metaLoaded, stripeReady, onCardSelected }) {
               <dt>{t("summary.project")}</dt>
               <dd>{project ? project.title : t("general")}</dd>
             </div>
+            {tribute.enabled && tribute.name.trim() && (
+              <div>
+                <dt>{tf("summaryTribute")}</dt>
+                <dd>{tf(`tributeValue.${tribute.type}`, { name: tribute.name.trim() })}</dd>
+              </div>
+            )}
             <div>
               <dt>{t("summary.method")}</dt>
               <dd>{t(`summary.methodValue.${method}`)}</dd>

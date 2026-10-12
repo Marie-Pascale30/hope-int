@@ -8,7 +8,11 @@ import { useFormat } from "../../i18n/format";
 import { useLocalePath } from "../../i18n/navigation";
 import { CoverImage, EventCard, NewsCard, ProjectCard } from "./components";
 import LoadError from "./components/LoadError";
-import { euros, hasCampaign } from "./components/helpers";
+import AnimatedCounter from "./components/AnimatedCounter";
+import ImpactCalculator from "./components/ImpactCalculator";
+import RegionMapSection from "./components/RegionMapSection";
+import { DataSaverToggle } from "../../components/eco/DataSaver";
+import { hasCampaign } from "./components/helpers";
 
 const APPROACH = [
   { icon: GraduationCap, key: "training" },
@@ -18,14 +22,14 @@ const APPROACH = [
 
 function ImpactBand({ impact }) {
   const t = useTranslations("site.home.impact");
-  const f = useFormat();
+  // Compteurs animes a l'entree dans l'ecran (sauf mouvement reduit ou mode eco donnees).
   const items = [
-    { value: f.number(impact.beneficiaries), label: t("beneficiaries") },
-    { value: f.number(impact.trainees), label: t("trainees") },
-    { value: f.number(impact.creditsGranted), label: t("credits") },
-    { value: f.number(impact.regionsCovered), label: t("regions") },
-    { value: euros(f, impact.totalRaisedEur), label: t("raised") },
-    { value: f.number(impact.donors), label: t("donors") },
+    { value: impact.beneficiaries, label: t("beneficiaries") },
+    { value: impact.trainees, label: t("trainees") },
+    { value: impact.creditsGranted, label: t("credits") },
+    { value: impact.regionsCovered, label: t("regions") },
+    { value: impact.totalRaisedEur, label: t("raised"), format: "eur" },
+    { value: impact.donors, label: t("donors") },
   ];
   return (
     <section className="home-impact" aria-labelledby="home-impact-title">
@@ -40,7 +44,7 @@ function ImpactBand({ impact }) {
         <ul className="home-impact__grid">
           {items.map((item) => (
             <li key={item.label}>
-              <span className="home-impact__value">{item.value}</span>
+              <AnimatedCounter className="home-impact__value" value={item.value} format={item.format} />
               <span className="home-impact__label">{item.label}</span>
             </li>
           ))}
@@ -50,8 +54,25 @@ function ImpactBand({ impact }) {
   );
 }
 
-export default function HomeView({ impact, projects, testimonials, news, events, failed }) {
+function CalculatorSection({ xafPerEur }) {
+  const t = useTranslations("transparency.calculator");
+  return (
+    <section className="section section--alt" aria-labelledby="home-calculator-title">
+      <div className="container">
+        <div className="section-head section-head--center">
+          <span className="eyebrow">{t("eyebrow")}</span>
+          <h2 id="home-calculator-title">{t("title")}</h2>
+          <p>{t("text")}</p>
+        </div>
+        <ImpactCalculator xafPerEur={xafPerEur} />
+      </div>
+    </section>
+  );
+}
+
+export default function HomeView({ impact, projects, testimonials, news, events, regions, xafPerEur, failed }) {
   const t = useTranslations("site.home");
+  const tEco = useTranslations("transparency.eco");
   const f = useFormat();
   const lp = useLocalePath();
 
@@ -118,8 +139,10 @@ export default function HomeView({ impact, projects, testimonials, news, events,
         </div>
       </section>
 
+      <CalculatorSection xafPerEur={xafPerEur} />
+
       {campaigns.length > 0 && (
-        <section className="section section--alt" aria-labelledby="home-campaigns-title">
+        <section className="section" aria-labelledby="home-campaigns-title">
           <div className="container">
             <div className="pub-head-row">
               <div className="section-head">
@@ -135,6 +158,8 @@ export default function HomeView({ impact, projects, testimonials, news, events,
           </div>
         </section>
       )}
+
+      <RegionMapSection regions={regions} alt />
 
       {quotes.length > 0 && (
         <section className="section" aria-labelledby="home-quotes-title">
@@ -209,6 +234,10 @@ export default function HomeView({ impact, projects, testimonials, news, events,
               <Button href={lp("/rejoindre")} variant="light" size="lg">{t("ctaJoin")}</Button>
             </div>
           </div>
+          <p className="eco-note">
+            <span>{tEco("homeNote")}</span>
+            <DataSaverToggle />
+          </p>
         </div>
       </section>
     </>

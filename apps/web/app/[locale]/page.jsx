@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { serverApi, settle } from "@/src/services/server";
+import { transparencyServer } from "@/src/services/transparencyServer";
 import HomeView from "@/src/views/site/HomeView";
 import { SITE_NAME, SITE_URL, buildMetadata, jsonLdProps } from "@/src/views/site/seo";
 
@@ -17,13 +18,15 @@ export default async function HomePage({ params }) {
   const t = await getTranslations({ locale, namespace: "site.meta" });
 
   // Cinq sources independantes : une erreur n'empeche pas d'afficher les autres.
-  const [meta, impact, projects, testimonials, news, events] = await Promise.all([
+  const [meta, impact, projects, testimonials, news, events, regions] = await Promise.all([
     settle(serverApi.meta(locale)),
     settle(serverApi.impact(locale)),
     settle(serverApi.listContent("projects", locale)),
     settle(serverApi.listContent("testimonials", locale)),
     settle(serverApi.listContent("news", locale)),
     settle(serverApi.listEvents(locale)),
+    // Carte des regions : facultative (masquee si l'API ne repond pas).
+    settle(transparencyServer.regions(locale)),
   ]);
   const failed = [impact, projects, testimonials, news, events].some((source) => source.error);
   const org = meta.data?.organization || {};
@@ -50,6 +53,8 @@ export default async function HomePage({ params }) {
         testimonials={testimonials.data}
         news={news.data}
         events={events.data}
+        regions={regions.data?.regions}
+        xafPerEur={meta.data?.xafPerEur}
         failed={failed}
       />
     </>

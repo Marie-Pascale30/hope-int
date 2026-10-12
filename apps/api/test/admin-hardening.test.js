@@ -296,7 +296,7 @@ describe("administration : droits, listes, actions groupees et supervision", () 
             assert.equal(res.body.status, "ok");
             assert.equal(res.body.database.ok, true);
             assert.deepEqual(res.body.migrations.pending, []);
-            assert.match(res.body.migrations.latest, /^004_/);
+            assert.match(res.body.migrations.latest, /^\d{3}_/);
             assert.equal(typeof res.body.emailOutbox.pending, "number");
             assert.ok("lastRun" in res.body.reconcile);
         });

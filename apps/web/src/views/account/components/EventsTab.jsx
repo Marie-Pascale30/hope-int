@@ -8,25 +8,32 @@ import { useAsync } from "@/src/hooks/useAsync";
 import { useFormat } from "@/src/i18n/format";
 import { Link, useLocalePath } from "@/src/i18n/navigation";
 import { publicApi } from "@/src/services";
+import { volunteeringApi } from "@/src/services/volunteering";
 import { useAlerts } from "@/src/utils/alerts";
 import { resolveImage } from "@/src/utils/format";
 import { useErrorMessage } from "@/src/i18n/errors";
 
 function EventCard({ event, upcoming, onUnregistered }) {
   const t = useTranslations("account.events");
+  const tWait = useTranslations("volunteering.waitlist");
+  const tVol = useTranslations("volunteering.attendance");
   const f = useFormat();
   const lp = useLocalePath();
   const { confirmAction, showError, toast } = useAlerts();
+  const waitlisted = event.my_status === "waitlisted";
   const errorText = useErrorMessage();
   const [leaving, setLeaving] = useState(false);
 
   const leave = async () => {
-    const ok = await confirmAction(t("leaveTitle"), t("leaveText", { title: event.title }), t("leaveConfirm"), { danger: true });
+    const ok = waitlisted
+      ? await confirmAction(tWait("leaveTitle"), tWait("leaveText"), tWait("leaveConfirm"), { danger: true })
+      : await confirmAction(t("leaveTitle"), t("leaveText", { title: event.title }), t("leaveConfirm"), { danger: true });
     if (!ok) return;
     setLeaving(true);
     try {
-      await publicApi.unregisterEvent(event.id);
-      toast(t("left"));
+      if (waitlisted) await volunteeringApi.leaveWaitlist(event.id);
+      else await publicApi.unregisterEvent(event.id);
+      toast(waitlisted ? tWait("left") : t("left"));
       onUnregistered(event.id);
     } catch (err) {
       showError(t("leaveError"), errorText(err));
@@ -46,6 +53,10 @@ function EventCard({ event, upcoming, onUnregistered }) {
       </div>
       <div className="acc-event__body">
         {!upcoming && <Badge>{t("pastBadge")}</Badge>}
+        {waitlisted && <Badge tone="warning">{tWait("position", { position: event.waitlist_position })}</Badge>}
+        {!upcoming && event.my_attendance === "present" && (
+          <Badge tone="success">{tVol("presentHours", { hours: f.number(event.my_hours, { maximumFractionDigits: 2 }) })}</Badge>
+        )}
         <h3 className="acc-event__title">
           <Link href={`/evenements/${event.id}`}>{event.title}</Link>
         </h3>
@@ -60,7 +71,7 @@ function EventCard({ event, upcoming, onUnregistered }) {
         {upcoming && (
           <div className="row">
             <Button href={lp(`/evenements/${event.id}`)} size="sm" variant="secondary">{t("details")}</Button>
-            <Button size="sm" variant="ghost" onClick={leave} loading={leaving}>{t("leaveConfirm")}</Button>
+            <Button size="sm" variant="ghost" onClick={leave} loading={leaving}>{waitlisted ? tWait("leave") : t("leaveConfirm")}</Button>
           </div>
         )}
       </div>

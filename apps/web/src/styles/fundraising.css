@@ -1,0 +1,43 @@
+/* Collecte de fonds : hommage, engagements Mobile Money, collectes personnelles, dons hors ligne.
+   S'appuie uniquement sur les jetons de globals.css (clair / sombre). */
+
+.fr-tribute { display: grid; gap: 16px; }
+.fr-tribute__body { display: grid; gap: 16px; padding-top: 4px; }
+.fr-note { font-size: 0.875rem; margin: 0; }
+.fr-pledge-hint { margin-top: 12px; }
+
+.fr-card-update { display: grid; gap: 12px; margin-top: 16px; justify-items: start; }
+
+/* Page publique d'une collecte */
+.fr-page { padding-block: 40px 64px; }
+.fr-page__grid { display: grid; gap: 32px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) {
+  .fr-page__grid { grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr); align-items: start; }
+  .fr-page__aside { position: sticky; top: calc(var(--header-h, 72px) + 16px); }
+}
+.fr-page__image { width: 100%; height: auto; border-radius: 16px; aspect-ratio: 16 / 9; object-fit: cover; background: var(--brand-50); }
+.fr-page__story { white-space: pre-line; line-height: var(--leading-normal, 1.6); color: var(--ink-2); overflow-wrap: anywhere; }
+.fr-page__meta { color: var(--ink-3); font-size: 0.9375rem; margin: 4px 0 0; }
+.fr-gauge { display: grid; gap: 8px; }
+.fr-gauge__raised { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; color: var(--ink); margin: 0; }
+.fr-gauge__goal { color: var(--ink-3); margin: 0; font-size: 0.9375rem; }
+.fr-supporters { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.fr-supporters li { display: flex; justify-content: space-between; gap: 12px; padding-block: 8px; border-bottom: 1px solid var(--line-input); }
+.fr-supporters li:last-child { border-bottom: 0; }
+.fr-supporters time { color: var(--ink-3); font-size: 0.875rem; white-space: nowrap; }
+
+/* Listes de l'espace membre et du back-office */
+.fr-list { display: grid; gap: 16px; }
+.fr-item { display: grid; gap: 12px; }
+.fr-item__head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; }
+.fr-item__title { margin: 0; font-size: 1.0625rem; }
+.fr-item__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.fr-periods { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0; padding: 0; }
+.fr-periods li { font-size: 0.8125rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line-input); color: var(--ink-2); }
+.fr-periods li.is-paid { background: var(--brand-50); border-color: var(--brand); color: var(--brand-700); }
+.fr-periods li.is-missed { background: var(--danger-50); border-color: var(--danger); color: var(--danger-ink); }
+.fr-form { display: grid; gap: 16px; }
+.fr-form__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.fr-copy { display: flex; gap: 8px; align-items: stretch; flex-wrap: wrap; }
+.fr-copy input { flex: 1 1 220px; min-width: 0; }
+.fr-wrap { padding-block: 32px 64px; max-width: 760px; }

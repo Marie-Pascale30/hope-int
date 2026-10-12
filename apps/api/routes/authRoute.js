@@ -22,6 +22,8 @@ router.post(
         body("name").isString().trim().isLength({ min: 2, max: 150 }),
         body("email").trim().toLowerCase().isEmail(),
         password("password"),
+        body("consents").optional().isObject(),
+        body("consents.*").optional().isBoolean().withMessage("Choix de consentement invalide"),
         validate,
     ],
     authController.register
@@ -71,5 +73,22 @@ router.post(
     [body("currentPassword").isString().notEmpty(), password("newPassword"), validate],
     authController.changePassword
 );
+
+// --- Double authentification (TOTP) ---
+const mfaLimiter = createLimiter({
+    windowMinutes: 15,
+    max: 30,
+    message: "Trop de tentatives : réessayez dans 15 minutes.",
+});
+const mfaCode = body("code").isString().trim().isLength({ min: 6, max: 20 }).withMessage("Code de vérification requis");
+
+// Seconde etape de la connexion (cookie de verification pose par /login).
+router.post("/mfa/verify", mfaLimiter, [mfaCode, validate], authController.mfaVerify);
+// Enrolement : session ouverte, ou jeton de verification d'un compte oblige de s'equiper.
+router.post("/mfa/setup", mfaLimiter, auth.optionalAuth, authController.mfaSetup);
+router.post("/mfa/enable", mfaLimiter, auth.optionalAuth, [mfaCode, validate], authController.mfaEnable);
+router.get("/mfa/status", auth, authController.mfaStatus);
+router.post("/mfa/disable", auth, mfaLimiter, [body("password").isString().notEmpty(), mfaCode, validate], authController.mfaDisable);
+router.post("/mfa/backup-codes", auth, mfaLimiter, [mfaCode, validate], authController.mfaBackupCodes);
 
 module.exports = router;

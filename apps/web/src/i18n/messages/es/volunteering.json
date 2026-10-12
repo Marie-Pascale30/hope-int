@@ -1,3 +1,274 @@
 {
-  "volunteering": {}
+  "volunteering": {
+    "nav": {
+      "volunteers": "Voluntarios",
+      "validation": "Por validar",
+      "myVolunteering": "Mi voluntariado"
+    },
+    "badges": {
+      "label": "Insignias de voluntariado",
+      "earned": "Conseguida",
+      "progress": {
+        "activities": "{value} / {threshold} compromiso",
+        "hours": "{value} / {threshold} horas",
+        "events": "{value} / {threshold} eventos",
+        "days": "{value} / {threshold} días"
+      },
+      "names": {
+        "first_step": "Primer compromiso",
+        "hours_10": "10 horas",
+        "hours_50": "50 horas",
+        "hours_100": "100 horas",
+        "events_5": "5 eventos",
+        "one_year": "1 año de compromiso"
+      }
+    },
+    "mine": {
+      "tabLabel": "Mi voluntariado",
+      "loading": "Cargando tu voluntariado…",
+      "hours": "{hours} h",
+      "counters": {
+        "total": "Horas de voluntariado",
+        "events": "Eventos",
+        "missions": "Misiones",
+        "since": "Voluntario/a desde"
+      },
+      "badgesTitle": "Mis insignias",
+      "historyTitle": "Mi historial",
+      "agenda": "Ver la agenda",
+      "kinds": {
+        "event": "Evento",
+        "mission": "Misión"
+      },
+      "emptyTitle": "Aún no hay horas registradas",
+      "emptyText": "Tu asistencia a los eventos y las misiones validadas por el equipo aparecerán aquí."
+    },
+    "certificates": {
+      "title": "Certificados de voluntariado",
+      "intro": "Genera un certificado en PDF para el periodo que elijas. Incluye un código de verificación que cualquiera puede comprobar en línea.",
+      "noHours": "Podrás generar un certificado en cuanto se registren horas de voluntariado.",
+      "from": "Desde",
+      "to": "Hasta",
+      "invalidPeriod": "La fecha de fin debe ser posterior a la de inicio",
+      "generate": "Generar el certificado",
+      "issued": "Certificado generado",
+      "failed": "No se pudo generar el certificado",
+      "list": "Certificados emitidos",
+      "period": "Del {from} al {to}",
+      "summary": "{hours} h · emitido el {date}",
+      "verifyLink": "Página de verificación",
+      "download": "Descargar PDF",
+      "downloadFailed": "No se pudo descargar"
+    },
+    "verify": {
+      "metaTitle": "Verificar un certificado de voluntariado",
+      "metaDescription": "Comprueba la autenticidad de un certificado de voluntariado de HOPE International con su código.",
+      "eyebrow": "Certificado de voluntariado",
+      "title": "Verificar un certificado",
+      "intro": "Introduce el código impreso en el certificado (formato HOPE-XXXX-XXXX-XXXX).",
+      "codeLabel": "Código de verificación",
+      "submit": "Verificar",
+      "format": "Este código no tiene el formato correcto: HOPE seguido de tres grupos de cuatro caracteres.",
+      "checking": "Verificando…",
+      "valid": "Certificado auténtico",
+      "validText": "Este certificado fue emitido por HOPE International.",
+      "invalid": "Certificado no encontrado",
+      "invalidText": "Ningún certificado corresponde al código {code}. Revisa lo que has escrito.",
+      "errorTitle": "Verificación no disponible",
+      "errorText": "No se pudo completar la verificación. Inténtalo de nuevo en unos instantes.",
+      "holder": "Voluntario/a",
+      "period": "Periodo",
+      "periodValue": "del {from} al {to}",
+      "hours": "Horas de voluntariado",
+      "hoursValue": "{hours} h",
+      "issued": "Emitido el",
+      "code": "Código"
+    },
+    "waitlist": {
+      "label": "Lista de espera",
+      "count": "{count, plural, one {# persona} other {# personas}}",
+      "fullHint": "El evento está completo: apúntate a la lista de espera y quedarás inscrito/a automáticamente si se libera una plaza.",
+      "join": "Apuntarme a la lista de espera",
+      "joined": "Eres el número {position} de la lista de espera",
+      "joinError": "No se pudo entrar en la lista de espera",
+      "position": "En espera · n.º {position}",
+      "positionHint": "Recibirás un correo si se libera una plaza: tu inscripción quedará entonces confirmada.",
+      "leave": "Salir de la lista de espera",
+      "leaveTitle": "¿Salir de la lista de espera?",
+      "leaveText": "Perderás tu puesto. Podrás volver a apuntarte, al final de la lista.",
+      "leaveConfirm": "Salir de la lista",
+      "left": "Has salido de la lista de espera",
+      "leaveError": "No se pudo salir de la lista de espera"
+    },
+    "attendance": {
+      "tabs": {
+        "label": "Participantes",
+        "registrations": "Inscritos",
+        "attendance": "Asistencia y horas",
+        "waitlist": "Lista de espera"
+      },
+      "loading": "Cargando la hoja de asistencia…",
+      "emptyTitle": "Ningún inscrito",
+      "emptyText": "La asistencia se pasa entre las personas inscritas.",
+      "notStarted": "Podrás pasar lista en cuanto empiece el evento.",
+      "summary": "{present} presentes, {absent} ausentes de {registered} inscritos · {hours} h en total",
+      "defaultHours": "duración por defecto: {hours} h",
+      "columns": {
+        "participant": "Participante",
+        "attendance": "Asistencia",
+        "hours": "Horas"
+      },
+      "attendanceFor": "Asistencia de {name}",
+      "hoursFor": "Horas de {name}",
+      "present": "Presente",
+      "absent": "Ausente",
+      "presentHours": "Presente · {hours} h",
+      "notMarked": "Sin marcar",
+      "allPresent": "Todos presentes",
+      "save": "Guardar la asistencia",
+      "saved": "Asistencia guardada: {present} presentes",
+      "saveFailed": "No se pudo guardar la asistencia",
+      "waitlistEmpty": "No hay nadie en la lista de espera.",
+      "waitlistSince": "desde el {date}",
+      "waitlistCount": "{count, plural, one {# persona en lista de espera} other {# personas en lista de espera}}"
+    },
+    "review": {
+      "eyebrow": "Contenidos",
+      "title": "Por validar",
+      "description": "Proyectos, noticias y testimonios enviados antes de su publicación. La aprobación publica el contenido y avisa a su autor.",
+      "loading": "Cargando la cola…",
+      "search": "Buscar un contenido",
+      "tabs": {
+        "label": "Estado de validación",
+        "submitted": "Por validar",
+        "approved": "Aprobados sin publicar",
+        "rejected": "Rechazados"
+      },
+      "empty": {
+        "submitted": "Nada que validar",
+        "approved": "Ningún contenido aprobado pendiente de publicación",
+        "rejected": "Ningún contenido rechazado"
+      },
+      "emptyText": "Aquí aparecen los contenidos enviados por el equipo y las directoras regionales.",
+      "columns": {
+        "content": "Contenido",
+        "type": "Tipo",
+        "region": "Región",
+        "author": "Enviado por",
+        "submittedAt": "Enviado el",
+        "actions": "Acciones"
+      },
+      "types": {
+        "projects": "Proyecto",
+        "news": "Noticia",
+        "testimonials": "Testimonio"
+      },
+      "status": {
+        "draft": "Borrador",
+        "submitted": "Pendiente de validación",
+        "approved": "Aprobado",
+        "rejected": "Rechazado",
+        "published": "Publicado"
+      },
+      "actions": {
+        "submit": "Enviado",
+        "publish": "Publicado",
+        "draft": "Vuelto a borrador",
+        "approve": "Aprobado",
+        "approve_publish": "Aprobado y publicado",
+        "reject": "Rechazado"
+      },
+      "open": "Revisar",
+      "openNamed": "Revisar «{name}»",
+      "previewTitle": "Revisión: {name}",
+      "submittedBy": "enviado por {name}",
+      "lastComment": "Último comentario",
+      "comment": "Comentario para el autor",
+      "commentHint": "Obligatorio en caso de rechazo; se envía por correo al autor.",
+      "commentRequired": "Explica el rechazo (3 caracteres como mínimo)",
+      "publishOn": "Publicar al aprobar",
+      "publishOff": "Aprobar sin publicar por ahora",
+      "history": "Historial",
+      "close": "Cerrar",
+      "reject": "Rechazar",
+      "approve": "Aprobar",
+      "approvePublish": "Aprobar y publicar",
+      "approved": "Contenido aprobado",
+      "approvedPublished": "Contenido aprobado y publicado",
+      "rejected": "Contenido rechazado: se ha avisado al autor",
+      "failed": "No se pudo registrar la decisión",
+      "submit": "Enviar a validación",
+      "submitNamed": "Enviar «{name}» a validación",
+      "submittedToast": "Contenido enviado a validación",
+      "rejectedComment": "Rechazado: {comment}",
+      "rejectedTitle": "Contenido rechazado",
+      "queueLink": "Por validar ({count})",
+      "submitterTitle": "Publicación sujeta a validación",
+      "submitterText": "Tus contenidos se revisan antes de publicarse: solicitar la publicación los envía a validación y recibirás un correo con la decisión.",
+      "editPublishedWarning": "Este contenido está publicado: guardarlo lo retira del sitio hasta su nueva validación.",
+      "submitOn": "Enviar para publicación",
+      "submitOff": "Guardar como borrador"
+    },
+    "volunteers": {
+      "eyebrow": "Voluntariado",
+      "title": "Voluntarios por región",
+      "description": "Competencias, disponibilidad, horas y último compromiso de cada voluntario. Las exportaciones nominativas quedan registradas.",
+      "loading": "Cargando voluntarios…",
+      "export": "Exportar a CSV",
+      "exported": "Exportación descargada",
+      "exportFailed": "No se pudo exportar",
+      "csvFile": "voluntarios-hope-{date}.csv",
+      "stats": {
+        "people": "Voluntarios",
+        "hours": "Horas acumuladas",
+        "regions": "Regiones representadas"
+      },
+      "filters": {
+        "region": "Región",
+        "allRegions": "Todas las regiones",
+        "search": "Búsqueda",
+        "searchPlaceholder": "Nombre, correo, competencia…",
+        "engaged": "Solo voluntarios con horas registradas"
+      },
+      "columns": {
+        "volunteer": "Voluntario/a",
+        "region": "Región",
+        "skills": "Competencias",
+        "availability": "Disponibilidad",
+        "hours": "Horas",
+        "lastActivity": "Último compromiso",
+        "actions": "Acciones"
+      },
+      "noRegion": "Sin región",
+      "never": "Nunca",
+      "open": "Ver la ficha",
+      "openNamed": "Ver la ficha de {name}",
+      "emptyTitle": "Ningún voluntario",
+      "emptyText": "Ninguna cuenta activa coincide con estos filtros.",
+      "hoursForm": {
+        "title": "Añadir horas fuera de eventos",
+        "mission": "Misión",
+        "missionPlaceholder": "P. ej. guardia en el local, colecta…",
+        "date": "Fecha",
+        "hours": "Horas",
+        "hoursHint": "De 0,25 a 24 h",
+        "description": "Descripción (opcional)",
+        "submit": "Añadir",
+        "saved": "Horas registradas",
+        "failed": "No se pudo guardar"
+      },
+      "detail": {
+        "loading": "Cargando la ficha…",
+        "close": "Cerrar",
+        "history": "Historial",
+        "noHistory": "No hay horas registradas.",
+        "delete": "Eliminar",
+        "deleteNamed": "Eliminar la misión «{mission}»",
+        "deleteTitle": "¿Eliminar este registro?",
+        "deleteText": "Las horas de la misión «{mission}» se restarán del contador del voluntario.",
+        "deleted": "Registro eliminado",
+        "deleteFailed": "No se pudo eliminar"
+      }
+    }
+  }
 }

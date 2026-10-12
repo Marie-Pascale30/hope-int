@@ -1,15 +1,27 @@
 {
-  "short_name": "HOPE",
+  "id": "/",
   "name": "HOPE International",
-  "icons": [
-    {
-      "src": "/icon.svg",
-      "type": "image/svg+xml",
-      "sizes": "any"
-    }
-  ],
-  "start_url": "/",
+  "short_name": "HOPE",
+  "description": "Microfinance solidaire, formation et entraide au Cameroun : projets, actualités, agenda et dons.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "any",
   "theme_color": "#1f5f4a",
-  "background_color": "#faf7f2"
+  "background_color": "#faf7f2",
+  "categories": ["nonprofit", "social", "finance"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Faire un don", "short_name": "Don", "url": "/don?source=pwa", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Nos projets", "short_name": "Projets", "url": "/projets?source=pwa", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Transparence", "short_name": "Transparence", "url": "/transparence?source=pwa", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
 }

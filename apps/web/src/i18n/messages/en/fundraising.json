@@ -1,3 +1,419 @@
 {
-  "fundraising": {}
+  "fundraising": {
+    "donate": {
+      "fundraiserTitle": "Fundraiser “{title}”",
+      "fundraiserText": "Your donation supports the fundraiser organised by {organizer} for the project “{project}”.",
+      "fundraiserClosed": "This fundraiser has ended: your donation will go directly to the association.",
+      "fundraiserProject": "Your donation is allocated to the project “{project}” through this fundraiser.",
+      "pledgeTitle": "Your monthly donation",
+      "pledgeText": "Thank you for your loyalty! This donation will count towards your monthly commitment.",
+      "pledgeHint": "Would you rather give every month by Mobile Money? <link>Commit in 1 minute</link>: we will send you a reminder with a ready-to-use payment link.",
+      "tributeStep": {
+        "title": "Dedicate this donation (optional)",
+        "description": "Pay tribute to someone dear: we can let them know with a message, without mentioning the amount."
+      },
+      "anonymous": "Appear as “Anonymous” in the fundraiser's list of supporters",
+      "summaryTribute": "Tribute",
+      "tributeValue": {
+        "honor": "In honour of {name}",
+        "memory": "In memory of {name}"
+      }
+    },
+    "tribute": {
+      "toggle": "Make this donation as a tribute to someone",
+      "typeLabel": "Type of tribute",
+      "types": {
+        "honor": "In honour of",
+        "memory": "In memory of"
+      },
+      "name": "Person's name",
+      "email": "Email of someone to notify",
+      "emailHint": "Optional: we will send them an e-card after your donation, without the amount.",
+      "message": "Short message (optional)",
+      "messageHint": "{count, plural, one {# character left} other {# characters left}}. Links are not passed on.",
+      "receiptNote": "The tribute will be mentioned on your receipt.",
+      "errors": {
+        "name": "Enter the person's name (at least 2 characters).",
+        "email": "Invalid email address.",
+        "message": "Message too long (300 characters maximum)."
+      }
+    },
+    "thanks": {
+      "fundraiser": "Fundraiser",
+      "tribute": "Tribute",
+      "tributeValue": {
+        "honor": "In honour of {name}",
+        "memory": "In memory of {name}"
+      },
+      "card": {
+        "title": "Update your card",
+        "text": "The latest payment of your monthly donation did not go through. Update your card on Stripe's secure page and your donation will resume automatically.",
+        "button": "Update my card"
+      }
+    },
+    "page": {
+      "eyebrow": "Fundraiser for “{project}”",
+      "organizer": "Organised by {name}",
+      "endsOn": "until {date}",
+      "storyTitle": "The story",
+      "projectNote": "Every donation goes to HOPE International's project “{project}” and comes with a receipt.",
+      "goal": "raised of a {goal} goal ({percent}%)",
+      "progressLabel": "{percent}% of the goal reached",
+      "supporters": "{count, plural, =0 {No supporters yet} one {# supporter} other {# supporters}}",
+      "until": "until {date}",
+      "donate": "Support this fundraiser",
+      "closedTitle": "Fundraiser ended",
+      "closedText": "Thank you to all donors! You can still support the project from its page.",
+      "shareText": "I'm supporting the fundraiser “{title}” for HOPE International:",
+      "shareLabel": "Share the fundraiser",
+      "recentTitle": "Latest supporters",
+      "anonymous": "Anonymous",
+      "noSupporters": "Be the first to support this fundraiser!",
+      "metaTitle": "Charity fundraiser",
+      "metaDescription": "Support a charity fundraiser for a HOPE International project in Cameroon."
+    },
+    "meta": {
+      "pledgeTitle": "Monthly donation by Mobile Money",
+      "pledgeDescription": "Commit to giving every month by Mobile Money: a reminder and a ready-to-use payment link, editable at any time.",
+      "pledgeManageTitle": "Manage my monthly donation",
+      "createTitle": "Create a fundraiser",
+      "createDescription": "Create a fundraising page for a HOPE International project and share it with your friends and family."
+    },
+    "pledge": {
+      "summary": "{amount} per month, around day {day}",
+      "status": {
+        "active": "Active",
+        "paused": "Paused",
+        "stopped": "Stopped"
+      },
+      "forProject": "For “{project}”",
+      "generalFund": "General fund",
+      "since": "since {date}",
+      "regularityNone": "No instalments yet: the first reminder arrives next month.",
+      "regularity": "{paid, plural, one {# instalment paid} other {# instalments paid}}, {missed, plural, one {# missed} other {# missed}} ({rate}% regularity)",
+      "periodsLabel": "Instalments of recent months",
+      "periodStatus": {
+        "paid": "paid",
+        "missed": "missed",
+        "due": "due"
+      },
+      "payNow": "Pay this month",
+      "copyLink": "Copy the payment link",
+      "whatsapp": "Send via WhatsApp",
+      "newWindow": "(new window)",
+      "amount": "Monthly amount (FCFA)",
+      "day": "Reminder day",
+      "dayHint": "Between 1 and 28.",
+      "save": "Save",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "pause": "Pause",
+      "resume": "Resume",
+      "stop": "Stop",
+      "stopTitle": "Stop your monthly donation?",
+      "stopText": "You will no longer receive reminders. You can always create a new commitment later.",
+      "stopConfirm": "Stop",
+      "stopped": "Commitment stopped",
+      "paused": "Commitment paused",
+      "resumed": "Commitment resumed",
+      "saved": "Commitment updated",
+      "copied": "Link copied",
+      "copyFailed": "Could not copy: please select the link manually."
+    },
+    "pledgeCreate": {
+      "eyebrow": "Monthly Mobile Money donation",
+      "title": "Give every month by Mobile Money",
+      "lead": "Choose an amount and a day: every month we send you a reminder with a pre-filled Orange Money or MTN MoMo payment link. You are free to pause or stop at any time.",
+      "presets": "Suggested amounts",
+      "amount": "Monthly amount (FCFA)",
+      "day": "Day of the month for the reminder",
+      "dayHint": "Between 1 and 28, for example just after payday.",
+      "project": "Project supported",
+      "generalFund": "Association's general fund",
+      "name": "Full name",
+      "email": "Email",
+      "emailHint": "Reminders and the management link will be sent to this address.",
+      "as": "Commitment in the name of {name} ({email}).",
+      "howItWorks": "No automatic debit: you approve each donation on your phone. Every confirmed donation comes with a receipt.",
+      "submit": "Commit to {amount} per month",
+      "createdTitle": "Thank you for your commitment!",
+      "createdText": "A confirmation email has just been sent to you. You can make this month's donation right now.",
+      "accountLink": "Back to my account",
+      "errors": {
+        "amount": "The amount must be between {min} and {max}.",
+        "day": "Choose a day between 1 and 28.",
+        "name": "Enter your name (at least 2 characters).",
+        "email": "Invalid email address."
+      }
+    },
+    "pledgeManage": {
+      "eyebrow": "Monthly Mobile Money donation",
+      "title": "Manage my commitment",
+      "invalidTitle": "Invalid link",
+      "invalidText": "This management link is invalid or has expired. Use the link you received by email, or contact us.",
+      "createdTitle": "Thank you for your commitment!",
+      "createdText": "A confirmation email containing this link has just been sent to you.",
+      "keepLink": "This link is personal: do not share it. To share the payment link, use the WhatsApp button."
+    },
+    "form": {
+      "eyebrow": "Charity fundraiser",
+      "title": "Create my fundraiser",
+      "editTitle": "Edit my fundraiser",
+      "lead": "A birthday, a race, an event? Create a fundraising page for a HOPE International project and invite your friends and family to give.",
+      "rejectedTitle": "Message from the team",
+      "locked": "This fundraiser is published: it can no longer be edited. Contact the team for any correction.",
+      "project": "Project supported",
+      "projectPlaceholder": "Choose a project",
+      "titleLabel": "Fundraiser title",
+      "titleHint": "Short and meaningful, for example “My 30th birthday for the Bafia school”.",
+      "story": "Your story",
+      "storyHint": "Why this fundraiser matters to you. {count, plural, one {# character left} other {# characters left}}.",
+      "goal": "Goal",
+      "currency": "Currency",
+      "currencies": {
+        "eur": "Euro (€)",
+        "xaf": "CFA franc (FCFA)"
+      },
+      "endsOn": "End date (optional)",
+      "endsOnHint": "Within the next year.",
+      "image": "Photo (optional)",
+      "imageHint": "JPG, PNG or WebP, 5 MB maximum.",
+      "moderationNote": "Your fundraiser will be reviewed by the team before publication (usually within 48 hours). You will receive an email.",
+      "submit": "Submit for review",
+      "resubmit": "Save and resubmit",
+      "cancel": "Cancel",
+      "errors": {
+        "project": "Choose a project.",
+        "title": "Title: at least 5 characters.",
+        "story": "Tell your story in at least {min} characters.",
+        "goal": "The goal must be between {min} and {max}."
+      }
+    },
+    "account": {
+      "pledges": {
+        "title": "Monthly Mobile Money donations",
+        "description": "Your commitments, their reminders and your regularity.",
+        "create": "New commitment",
+        "emptyTitle": "No commitments",
+        "emptyText": "Give every month by Mobile Money: a reminder and a ready-to-use payment link."
+      },
+      "fundraisers": {
+        "title": "My fundraisers",
+        "description": "Follow your fundraising pages and share them.",
+        "create": "Create a fundraiser",
+        "emptyTitle": "No fundraisers",
+        "emptyText": "Rally your friends and family around a project you care about.",
+        "status": {
+          "pending": "Under review",
+          "published": "Live",
+          "rejected": "Needs changes",
+          "closed": "Closed"
+        },
+        "project": "For “{project}”",
+        "progress": "{raised} raised of {goal} · {count, plural, =0 {no supporters} one {# supporter} other {# supporters}}",
+        "progressLabel": "{percent}% of the goal",
+        "rejectedTitle": "Message from the team",
+        "pendingNote": "Your fundraiser is being reviewed by the team.",
+        "view": "View the page",
+        "edit": "Edit",
+        "close": "Close",
+        "closeTitle": "Close the fundraiser?",
+        "closeText": "The page will stay visible but will no longer accept donations.",
+        "closeConfirm": "Close",
+        "closed": "Fundraiser closed",
+        "shareText": "Support my fundraiser “{title}” for HOPE International:"
+      }
+    },
+    "admin": {
+      "nav": {
+        "offline": "Offline donations",
+        "pledges": "Mobile Money commitments",
+        "fundraisers": "Personal fundraisers"
+      },
+      "donation": {
+        "source": "Source",
+        "direct": "Direct access",
+        "tribute": "Tribute",
+        "tributeType": {
+          "honor": "In honour of someone",
+          "memory": "In memory of someone"
+        },
+        "fundraiser": "Fundraiser",
+        "pledge": "Mobile Money commitment"
+      },
+      "offline": {
+        "eyebrow": "Finance",
+        "title": "Offline donations",
+        "description": "Cash, bank transfers, cheques and in-kind donations: entered with a supporting document, then approved by a second person who issues the receipt.",
+        "create": "Enter a donation",
+        "filter": "Status",
+        "allStatuses": "All statuses",
+        "statuses": {
+          "pending_validation": "Awaiting approval",
+          "validated": "Approved",
+          "rejected": "Rejected"
+        },
+        "emptyTitle": "No offline donations",
+        "emptyText": "Entered donations will appear here.",
+        "created": "Donation recorded: it must be approved by someone else.",
+        "validate": "Approve",
+        "validateTitle": "Approve this donation?",
+        "validateText": "Donation of {amount} from {donor}: a numbered receipt will be issued and sent if an email is provided.",
+        "validated": "Donation approved, receipt {receipt}",
+        "reject": "Reject",
+        "rejectTitle": "Reject this entry?",
+        "rejectText": "No receipt will be issued.",
+        "rejected": "Entry rejected",
+        "proof": "Document",
+        "proofError": "Document unavailable",
+        "waitingOther": "To be approved by someone else",
+        "enteredBy": "Entered by {name}",
+        "decidedBy": "Decision: {name}",
+        "columns": {
+          "date": "Received on",
+          "donor": "Donor",
+          "kind": "Type",
+          "amount": "Amount",
+          "project": "Allocation",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "form": {
+          "title": "Enter an offline donation",
+          "kind": "Donation type",
+          "kinds": {
+            "cash": "Cash",
+            "transfer": "Bank transfer",
+            "check": "Cheque",
+            "in_kind": "In-kind donation"
+          },
+          "receivedOn": "Date received",
+          "valuation": "Valuation",
+          "amount": "Amount",
+          "currency": "Currency",
+          "donorName": "Donor's name",
+          "donorEmail": "Donor's email",
+          "donorEmailHint": "Optional: the receipt will be sent after approval.",
+          "project": "Allocation",
+          "generalFund": "General fund",
+          "reference": {
+            "check": "Cheque number",
+            "transfer": "Transfer reference"
+          },
+          "inKindDescription": "Description of the in-kind donation",
+          "inKindHint": "Type, quantity and valuation basis (e.g. “200 kg of rice, market price”).",
+          "note": "Internal note",
+          "proof": "Supporting document",
+          "proofHint": "PDF, JPG, PNG or WebP, 5 MB maximum (deposit slip, photo of the cheque, certificate).",
+          "fourEyes": "The donation will stay “awaiting approval” until it is approved by another finance team member.",
+          "submit": "Save",
+          "cancel": "Cancel",
+          "errors": {
+            "amount": "Invalid amount.",
+            "donorName": "Enter the donor's name.",
+            "receivedOn": "Enter the date received.",
+            "inKind": "Describe the in-kind donation."
+          }
+        }
+      },
+      "fundraisers": {
+        "eyebrow": "Content",
+        "title": "Personal fundraisers",
+        "description": "Review the fundraisers created by members before they are published.",
+        "filter": "Status",
+        "allStatuses": "All statuses",
+        "statuses": {
+          "pending": "To review",
+          "published": "Published",
+          "rejected": "Rejected",
+          "closed": "Closed"
+        },
+        "emptyTitle": "No fundraisers",
+        "emptyText": "Nothing to review at the moment.",
+        "approved": "Fundraiser published",
+        "rejected": "Fundraiser rejected",
+        "errorTitle": "Action not possible",
+        "meta": "By {organizer} · project “{project}” · created on {date}",
+        "goal": "{raised} raised of {goal} · ends: {end}",
+        "noEnd": "no date",
+        "story": "Read the story",
+        "noteTitle": "Moderation note",
+        "approve": "Publish",
+        "reject": "Reject",
+        "view": "View the page",
+        "rejectTitle": "Reject the fundraiser",
+        "rejectNote": "Message to the organiser",
+        "rejectHint": "Explain what needs to change: they will be able to edit and resubmit the fundraiser.",
+        "cancel": "Cancel"
+      },
+      "pledges": {
+        "eyebrow": "Donations",
+        "title": "Mobile Money commitments",
+        "description": "Monthly Mobile Money donations: reminders sent every month and donor regularity.",
+        "filter": "Status",
+        "allStatuses": "All statuses",
+        "emptyTitle": "No commitments",
+        "columns": {
+          "donor": "Donor",
+          "amount": "Commitment",
+          "project": "Allocation",
+          "regularity": "Regularity",
+          "since": "Since",
+          "status": "Status"
+        }
+      },
+      "insights": {
+        "loading": "Loading fundraising indicators",
+        "offlineMethod": "{method, select, cash {Cash} transfer {Transfer} check {Cheque} in_kind {In-kind donation} other {Offline}} (offline)",
+        "offlinePendingTitle": "{count, plural, one {# offline donation is} other {# offline donations are}} awaiting approval",
+        "offlinePendingText": "A second finance team member must approve them: <link>see offline donations</link>.",
+        "recurring": {
+          "title": "Regular giving",
+          "description": "Monthly card donations (Stripe) and Mobile Money commitments, as of today.",
+          "mrr": "Monthly recurring revenue",
+          "mrrHint": "Ongoing monthly card donations",
+          "active": "Active monthly donations",
+          "pastDue": "Failed payments",
+          "pastDueHint": "Donors invited to update their card",
+          "churn": "30-day churn",
+          "churnHint": "{count, plural, =0 {no cancellations} one {# cancellation} other {# cancellations}} in the last 30 days"
+        },
+        "pledges": {
+          "active": "Mobile Money commitments",
+          "monthly": "{amount} pledged per month",
+          "regularity": "Mobile Money regularity",
+          "regularityHint": "{paid} instalments paid, {missed} missed"
+        },
+        "bySource": {
+          "title": "Donations by source",
+          "description": "Where confirmed donations come from (shared links, reminders, fundraisers...).",
+          "header": "Source",
+          "caption": "Breakdown of confirmed donations by source",
+          "empty": "No confirmed donations in this period."
+        },
+        "sources": {
+          "direct": "Direct access",
+          "partage-whatsapp": "WhatsApp share",
+          "partage-facebook": "Facebook share",
+          "partage-lien": "Copied link",
+          "partage-natif": "Shared from a phone",
+          "relance": "Abandoned donation reminder",
+          "engagement": "Mobile Money commitment reminder",
+          "collecte": "Personal fundraiser",
+          "hors-ligne": "Offline entry"
+        },
+        "annual": {
+          "title": "{year} tax summaries",
+          "description": "Sent automatically in January to every account that gave the previous year, with the annual PDF.",
+          "send": "Send now",
+          "confirmTitle": "Send the {year} summaries?",
+          "confirmText": "{count, plural, one {# account concerned} other {# accounts concerned}}. An account already served never receives a duplicate.",
+          "done": "Summaries queued for sending",
+          "error": "Sending interrupted",
+          "completed": "Campaign complete: {sent} summaries sent.",
+          "progress": "{sent} sent out of {recipients} accounts concerned."
+        }
+      }
+    }
+  }
 }
