@@ -1,11 +1,9 @@
 // Pied de page (composant serveur) : les coordonnees viennent de GET /meta, chargees par le layout.
-// Selecteurs de langue et de theme, inscription a la newsletter : ilots client.
+// Langue et theme sont dans l'en-tete ; mode eco donnees et newsletter : ilots client.
 import "../../views/engagement/engagement.css";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Logo from "./Logo";
-import LocaleSwitcher from "./LocaleSwitcher";
-import ThemeSwitcher from "../ThemeSwitcher";
 import { DataSaverToggle } from "../eco/DataSaver";
 import { Link, useLocalePath } from "../../i18n/navigation";
 import NewsletterSignup from "../../views/engagement/NewsletterSignup";
@@ -25,8 +23,6 @@ export default function SiteFooter({ organization }) {
           <Logo href={lp("/")} label={t("nav.home")} light />
           <p>{t("footer.tagline")}</p>
           <div className="site-footer__prefs">
-            <LocaleSwitcher onDark />
-            <ThemeSwitcher onDark />
             <DataSaverToggle />
           </div>
         </div>

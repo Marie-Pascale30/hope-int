@@ -3,6 +3,7 @@ import "../../styles/public.css";
 import { CalendarCheck, CalendarDays, GraduationCap, HandCoins, Heart, MapPin, Users, Wallet } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Alert, Badge, Button, Card, StatCard, StatusBadge } from "../../components/ui";
+import NumberTicker from "../../components/motion/NumberTicker";
 import { useFormat } from "../../i18n/format";
 import { useLocalePath } from "../../i18n/navigation";
 import ShareButtons from "../../components/ShareButtons";
@@ -50,7 +51,7 @@ export default function ProjectDetailView({ project, related = [] }) {
   const f = useFormat();
   const statusOf = useProjectStatus();
   const planned = project.status === "planifie";
-  const indicator = (value) => (planned && !Number(value) ? t("upcoming") : f.number(value));
+  const indicator = (value) => (planned && !Number(value) ? t("upcoming") : <NumberTicker value={value} />);
   const lp = useLocalePath();
   const campaign = hasCampaign(project);
   const percent = campaignPercent(project);

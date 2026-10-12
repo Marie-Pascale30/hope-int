@@ -29,7 +29,7 @@ describe("service worker", () => {
 
   it("ecoute installation, activation, requetes et messages", () => {
     expect(Object.keys(listeners).sort()).toEqual(["activate", "fetch", "install", "message"]);
-    expect(sw.PRECACHE).toEqual(expect.arrayContaining(["/hors-ligne", "/en/hors-ligne", "/es/hors-ligne"]));
+    expect(sw.PRECACHE).toEqual(expect.arrayContaining(["/hors-ligne", "/en/hors-ligne", "/es/hors-ligne", "/offline.html"]));
   });
 
   it("met en cache les pages publiques (reseau d'abord) et les ressources statiques", () => {
@@ -41,7 +41,12 @@ describe("service worker", () => {
   });
 
   it("ne met jamais en cache l'API, l'administration, l'espace membre, le don ni l'authentification", () => {
-    for (const url of ["/api/impact", "/admin", "/admin/budget", "/espace", "/don", "/en/don/merci", "/es/espace", "/connexion", "/changer-mot-de-passe"]) {
+    // Navigations vers une page personnelle : reseau seul (page hors ligne en cas d'echec).
+    for (const url of ["/admin", "/admin/budget", "/espace", "/don", "/en/don/merci", "/es/espace", "/connexion", "/changer-mot-de-passe"]) {
+      expect(sw.classify(request(url), ORIGIN), url).toBe("private-page");
+      expect(sw.classify(request(url, { mode: "cors" }), ORIGIN), url).toBe("none");
+    }
+    for (const url of ["/api/impact", "/uploads/photo.jpg", "/payment/retour"]) {
       expect(sw.classify(request(url), ORIGIN), url).toBe("none");
     }
     expect(sw.classify(request("/projets", { headers: { Authorization: "Bearer x" } }), ORIGIN)).toBe("none");

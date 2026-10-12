@@ -35,11 +35,17 @@
     "transparency": "Transparency",
     "team": "Our team"
   },
+  "pwa": {
+    "install": "Install the app",
+    "iosHint": "In Safari, tap <share>Share</share>, then <add>Add to Home Screen</add>."
+  },
   "theme": {
     "label": "Theme",
     "light": "Light",
     "dark": "Dark",
-    "system": "System"
+    "system": "System",
+    "switchToDark": "Switch to dark theme",
+    "switchToLight": "Switch to light theme"
   },
   "footer": {
     "tagline": "Solidarity microfinance, training and mutual support for Cameroonian families.",
@@ -159,9 +165,13 @@
       "cancel": "Cancel"
     },
     "logout": {
-      "done": "You have been signed out. See you soon!",
-      "doneAll": "You have been signed out of all your devices."
+      "title": "Sign out?",
+      "text": "You are about to sign out of your HOPE International account. You can sign back in at any time.",
+      "confirm": "Sign out",
+      "done": "You have been signed out. See you soon!"
     },
+    "filters": "Filters"
+  },
     "phone": {
       "label": "Phone",
       "placeholder": "6 77 12 34 56",
@@ -185,5 +195,4 @@
       "selectPage": "Select all rows on this page",
       "selectRow": "Select: {label}"
     }
-  }
 }

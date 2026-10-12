@@ -282,7 +282,7 @@
     "donate": {
       "hero": {
         "eyebrow": "Donate",
-        "title": "Give families the means to succeed",
+        "title": "Give families the means to <hl>succeed</hl>",
         "lead": "Every donation funds community microloans, training and hands-on support in Cameroon. You choose where your generosity goes, and we show you what it makes possible."
       },
       "general": "Where it’s needed most",

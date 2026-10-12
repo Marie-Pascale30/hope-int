@@ -992,6 +992,9 @@ p {
 /* ---------- Tableaux ---------- */
 
 .table-wrap {
+  /* relative : les textes masques (.visually-hidden, en absolute) restent dans le cadre qui defile,
+     sinon ils elargissent toute la page (ex. matrice des droits) */
+  position: relative;
   width: 100%;
   overflow-x: auto;
   border: 1px solid var(--line);
@@ -1029,6 +1032,7 @@ p {
   all: unset;
   display: inline-flex;
   align-items: center;
+  min-height: 24px; /* cible tactile minimale */
   gap: var(--space-1);
   cursor: pointer;
 }
@@ -1868,11 +1872,23 @@ p {
 
   .table--stack td {
     display: grid;
-    grid-template-columns: minmax(96px, 38%) minmax(0, 1fr);
+    grid-template-columns: minmax(84px, 32%) minmax(0, 1fr);
     align-items: start;
     gap: var(--space-3);
     padding: var(--space-2) 0;
     text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  /* Contenu des cellules : ne pas imposer sa largeur (emails, titres longs) */
+  .table--stack td > * {
+    min-width: 0;
+  }
+
+  /* Etiquettes longues (poles d'interet...) : retour a la ligne dans la carte */
+  .table--stack .badge {
+    max-width: 100%;
     white-space: normal;
   }
 
@@ -2008,4 +2024,91 @@ p {
   flex: 1;
   flex-direction: column;
   gap: var(--space-2);
+}
+
+/* ---------- Petits ecrans : composants partages ---------- */
+
+/* Onglets plus larges que l'ecran : fondu sur le bord ou il en reste (attributs poses par Tabs) */
+.tabs[data-more-end] {
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+}
+
+.tabs[data-more-start] {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 40px);
+  mask-image: linear-gradient(90deg, transparent, #000 40px);
+}
+
+.tabs[data-more-start][data-more-end] {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+}
+
+/* Bloc repliable sur telephone (MobileCollapse) : transparent sur grand ecran */
+.mobile-collapse,
+.mobile-collapse__body {
+  display: contents;
+}
+
+.mobile-collapse__toggle {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-collapse {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .mobile-collapse__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    align-self: flex-start;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    font: inherit;
+    font-size: var(--text-md);
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .mobile-collapse__chevron {
+    transition: transform 0.2s ease;
+  }
+
+  .mobile-collapse.is-open .mobile-collapse__chevron {
+    transform: rotate(180deg);
+  }
+
+  .mobile-collapse__body {
+    display: none;
+  }
+
+  .mobile-collapse.is-open .mobile-collapse__body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Barres d'outils des tableaux : recherche et filtres en pleine largeur */
+  .table-toolbar > *,
+  .table-toolbar .input,
+  .table-toolbar .select,
+  .table-search {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .table-toolbar .mobile-collapse {
+    margin-bottom: 0;
+  }
 }

@@ -98,17 +98,24 @@
     "home": {
       "eyebrow": "International solidarity organisation",
       "title": "Investing in families' dreams",
+      "titleLead": "Investing in the dreams of",
+      "titleWords": [
+        "families",
+        "women",
+        "young people",
+        "communities"
+      ],
       "lead": "In Cameroon, we help women, young people and rural communities become self-reliant through solidarity microfinance, training and mutual support.",
       "ctaDonate": "Donate",
       "ctaDiscover": "Discover our projects",
-      "ctaTitle": "Let's change lives, together",
+      "ctaTitle": "Let's change lives, <hl>together</hl>",
       "ctaText": "Every contribution strengthens a family, a neighbourhood and a generation. Give once or monthly, by card or Mobile Money.",
       "ctaJoin": "Volunteer",
       "heroFloat": "{count, plural, one {<strong>{value}</strong> person supported towards self-reliance} other {<strong>{value}</strong> people supported towards self-reliance}}",
       "partialError": "Some information could not be loaded",
       "impact": {
         "eyebrow": "Our impact",
-        "title": "Real results, on the ground",
+        "title": "<hl>Real results</hl>, on the ground",
         "text": "Consolidated figures from all our programmes in Cameroon, continuously updated.",
         "beneficiaries": "Beneficiaries supported",
         "trainees": "People trained",
@@ -119,7 +126,7 @@
       },
       "approach": {
         "eyebrow": "Our approach",
-        "title": "Giving people the means to move forward, not just aid",
+        "title": "Giving people the means to <hl>move forward</hl>, not just aid",
         "text": "Three complementary levers, designed with communities, for changes that last beyond our programmes.",
         "training": {
           "title": "Training",
@@ -142,7 +149,7 @@
       },
       "quotes": {
         "eyebrow": "Testimonials",
-        "title": "In their own words",
+        "title": "In their <hl>own words</hl>",
         "quoted": "“{text}”"
       },
       "news": {
@@ -155,11 +162,15 @@
         "title": "Upcoming events",
         "text": "Workshops, fundraising days, field visits: come and meet us.",
         "all": "All events"
+      },
+      "partners": {
+        "eyebrow": "Partners",
+        "title": "They trust us"
       }
     },
     "projects": {
       "eyebrow": "Our projects",
-      "title": "Projects rooted in communities",
+      "title": "Projects <hl>rooted</hl> in communities",
       "lead": "Microcredit, training, farming, access to water, health savings: discover our work across the regions of Cameroon and choose the action you would like to support.",
       "emptyTitle": "No projects published yet",
       "emptyText": "Our teams are preparing new initiatives. Come back soon, or support all our programmes today.",
@@ -214,7 +225,7 @@
     },
     "news": {
       "eyebrow": "News",
-      "title": "News from the field",
+      "title": "News from the <hl>field</hl>",
       "lead": "Project launches, lessons learned, life in our organisation: see what your donations and commitment make possible.",
       "emptyTitle": "No news yet",
       "emptyText": "Our teams will soon share news from the projects. In the meantime, discover our current work.",
@@ -228,7 +239,7 @@
     },
     "events": {
       "eyebrow": "Events",
-      "title": "Our upcoming events",
+      "title": "Our upcoming <hl>events</hl>",
       "lead": "Training workshops, fundraising days, field visits, general assembly: sign up and come and take action with us.",
       "emptyTitle": "No events scheduled",
       "emptyText": "New events will be announced soon. Follow our news or join the organisation to be the first to know.",
@@ -244,7 +255,8 @@
       "noneOnDate": "No events on this date",
       "noneText": "Choose another date in the calendar or browse all events.",
       "filterDay": "On {day}",
-      "filterMonth": "In {month}"
+      "filterMonth": "In {month}",
+      "calendarToggle": "Calendar and months"
     },
     "calendar": {
       "previousMonth": "Previous month",
@@ -297,9 +309,20 @@
     },
     "join": {
       "eyebrow": "Join us",
-      "title": "Get involved with us",
+      "title": "<hl>Get involved</hl> with us",
       "lead": "Volunteers, members, professionals: everyone can help Cameroonian families become self-reliant, according to their time and skills.",
+      "welcome": {
+        "eyebrow": "Community member",
+        "title": "Great {name}, you're already part of the big <hl>HOPE family</hl>!",
+        "titleNoName": "Great, you're already part of the big <hl>HOPE family</hl>!",
+        "text": "Thank you for standing with us. Find your donations, event registrations and details in your personal space, and join us at our upcoming events.",
+        "account": "My space",
+        "events": "See upcoming events"
+      },
       "ways": {
+        "eyebrow": "How to get involved",
+        "title": "Three ways to <hl>act</hl> with us",
+        "text": "A few hours to give, a wish to take part in decisions or skills to share: everyone has a place in the association.",
         "volunteer": {
           "title": "Volunteer",
           "text": "Give a few hours: welcoming the public at fundraising events, supporting workshops, logistics, communication."
@@ -344,7 +367,6 @@
       "form": {
         "title": "Your application",
         "required": "Fields marked with an asterisk are required.",
-        "alreadyMember": "You are already signed in: if you would like a new role, please contact the team via the Contact page instead.",
         "name": "Full name",
         "email": "Email",
         "phone": "Phone",
@@ -386,7 +408,7 @@
     },
     "contact": {
       "eyebrow": "Contact",
-      "title": "Let's talk",
+      "title": "Let's <hl>talk</hl>",
       "lead": "A question about our projects, a partnership, a press enquiry? Write to us: our team will reply as soon as possible.",
       "details": "Our contact details",
       "email": "Email",

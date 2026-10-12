@@ -2,17 +2,23 @@
 // Une source en erreur n'empeche pas l'affichage des autres (contenu partiel + message).
 import "../../styles/public.css";
 import { ArrowRight, GraduationCap, HandCoins, Heart, Quote, Users } from "lucide-react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { hl } from "../../components/motion/hl";
+import Marquee from "../../components/motion/Marquee";
+import NumberTicker from "../../components/motion/NumberTicker";
+import PageBanner from "../../components/site/PageBanner";
+import WordRotate from "../../components/motion/WordRotate";
 import { Avatar, Button, Card } from "../../components/ui";
 import { useFormat } from "../../i18n/format";
 import { useLocalePath } from "../../i18n/navigation";
 import { CoverImage, EventCard, NewsCard, ProjectCard } from "./components";
 import LoadError from "./components/LoadError";
-import AnimatedCounter from "./components/AnimatedCounter";
 import ImpactCalculator from "./components/ImpactCalculator";
 import RegionMapSection from "./components/RegionMapSection";
 import { DataSaverToggle } from "../../components/eco/DataSaver";
 import { hasCampaign } from "./components/helpers";
+import { PARTNERS } from "./partners";
 
 const APPROACH = [
   { icon: GraduationCap, key: "training" },
@@ -22,29 +28,29 @@ const APPROACH = [
 
 function ImpactBand({ impact }) {
   const t = useTranslations("site.home.impact");
-  // Compteurs animes a l'entree dans l'ecran (sauf mouvement reduit ou mode eco donnees).
+  // Les chiffres defilent jusqu'a leur valeur a l'arrivee du bandeau a l'ecran.
   const items = [
     { value: impact.beneficiaries, label: t("beneficiaries") },
     { value: impact.trainees, label: t("trainees") },
     { value: impact.creditsGranted, label: t("credits") },
     { value: impact.regionsCovered, label: t("regions") },
-    { value: impact.totalRaisedEur, label: t("raised"), format: "eur" },
+    { value: impact.totalRaisedEur, kind: "eur", label: t("raised") },
     { value: impact.donors, label: t("donors") },
   ];
   return (
-    <section className="home-impact" aria-labelledby="home-impact-title">
+    <section className="home-impact" aria-labelledby="home-impact-title" data-header-overlay>
       <div className="container">
         <div className="home-impact__head">
           <div>
             <span className="eyebrow">{t("eyebrow")}</span>
-            <h2 id="home-impact-title">{t("title")}</h2>
+            <h2 id="home-impact-title">{t.rich("title", { hl })}</h2>
           </div>
           <p>{t("text")}</p>
         </div>
         <ul className="home-impact__grid">
           {items.map((item) => (
             <li key={item.label}>
-              <AnimatedCounter className="home-impact__value" value={item.value} format={item.format} />
+              <NumberTicker value={item.value} kind={item.kind} className="home-impact__value" />
               <span className="home-impact__label">{item.label}</span>
             </li>
           ))}
@@ -77,17 +83,25 @@ export default function HomeView({ impact, projects, testimonials, news, events,
   const lp = useLocalePath();
 
   const campaigns = (projects || []).filter(hasCampaign).slice(0, 3);
-  const quotes = (testimonials || []).slice(0, 3);
+  const quotes = testimonials || [];
   const latestNews = (news || []).slice(0, 3);
   const nextEvents = (events || []).slice(0, 3);
 
   return (
     <>
+      <PageBanner name="home" />
+
       <section className="home-hero">
         <div className="container home-hero__grid">
           <div>
             <span className="eyebrow">{t("eyebrow")}</span>
-            <h1>{t("title")}</h1>
+            {/* Titre complet pour les lecteurs d'ecran ; a l'ecran, le dernier mot change (familles, femmes...). */}
+            <h1>
+              <span className="visually-hidden">{t("title")}</span>
+              <span aria-hidden="true">
+                {t("titleLead")} <WordRotate words={t.raw("titleWords")} className="home-hero__rotate" />
+              </span>
+            </h1>
             <p className="lead">{t("lead")}</p>
             <div className="home-hero__actions">
               <Button href={lp("/don")} variant="accent" size="lg" icon={Heart}>{t("ctaDonate")}</Button>
@@ -120,22 +134,25 @@ export default function HomeView({ impact, projects, testimonials, news, events,
         </div>
       )}
 
+      {/* Approche : titre fixe a gauche, les trois etapes s'empilent au defilement (Stacking Cards). */}
       <section className="section" aria-labelledby="home-approach-title">
-        <div className="container">
-          <div className="section-head section-head--center">
+        <div className="container home-approach-layout">
+          <div className="section-head home-approach__head">
             <span className="eyebrow">{t("approach.eyebrow")}</span>
-            <h2 id="home-approach-title">{t("approach.title")}</h2>
+            <h2 id="home-approach-title">{t.rich("approach.title", { hl })}</h2>
             <p>{t("approach.text")}</p>
           </div>
-          <div className="grid grid--3 home-approach">
-            {APPROACH.map(({ icon: Icon, key, accent }) => (
-              <Card key={key} className={`pub-feature${accent ? " pub-feature--accent" : ""}`}>
-                <span className="pub-feature__icon"><Icon aria-hidden="true" /></span>
-                <h3>{t(`approach.${key}.title`)}</h3>
-                <p>{t(`approach.${key}.text`)}</p>
-              </Card>
+          <ol className="home-approach stack-cards">
+            {APPROACH.map(({ icon: Icon, key, accent }, index) => (
+              <li key={key} className="stack-cards__step" style={{ "--step": index }}>
+                <Card className={`pub-feature${accent ? " pub-feature--accent" : ""}`}>
+                  <span className="pub-feature__icon"><Icon aria-hidden="true" /></span>
+                  <h3>{t(`approach.${key}.title`)}</h3>
+                  <p>{t(`approach.${key}.text`)}</p>
+                </Card>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
@@ -166,24 +183,52 @@ export default function HomeView({ impact, projects, testimonials, news, events,
           <div className="container">
             <div className="section-head section-head--center">
               <span className="eyebrow">{t("quotes.eyebrow")}</span>
-              <h2 id="home-quotes-title">{t("quotes.title")}</h2>
-            </div>
-            <div className="grid grid--3">
-              {quotes.map((quote) => (
-                <Card key={quote.id} as="figure" className="home-quote">
-                  <Quote className="home-quote__mark" aria-hidden="true" />
-                  <blockquote>{t("quotes.quoted", { text: quote.content })}</blockquote>
-                  <figcaption>
-                    <Avatar name={quote.author} large />
-                    <span>
-                      <strong>{quote.author}</strong>
-                      {quote.role_label && <span>{quote.role_label}</span>}
-                    </span>
-                  </figcaption>
-                </Card>
-              ))}
+              <h2 id="home-quotes-title">{t.rich("quotes.title", { hl })}</h2>
             </div>
           </div>
+          {/* Bande defilante pleine largeur, pause au survol */}
+          <Marquee
+            items={quotes}
+            getKey={(quote) => quote.id}
+            minItems={6}
+            duration={Math.max(40, quotes.length * 14)}
+            className="home-quotes"
+            renderItem={(quote) => (
+              <Card as="figure" className="home-quote">
+                <Quote className="home-quote__mark" aria-hidden="true" />
+                <blockquote>{t("quotes.quoted", { text: quote.content })}</blockquote>
+                <figcaption>
+                  <Avatar name={quote.author} large />
+                  <span>
+                    <strong>{quote.author}</strong>
+                    {quote.role_label && <span>{quote.role_label}</span>}
+                  </span>
+                </figcaption>
+              </Card>
+            )}
+          />
+        </section>
+      )}
+
+      {PARTNERS.length > 0 && (
+        <section className="section section--tight" aria-labelledby="home-partners-title">
+          <div className="container">
+            <div className="section-head section-head--center">
+              <span className="eyebrow">{t("partners.eyebrow")}</span>
+              <h2 id="home-partners-title">{t("partners.title")}</h2>
+            </div>
+          </div>
+          <Marquee
+            items={PARTNERS}
+            getKey={(partner) => partner.name}
+            minItems={8}
+            duration={35}
+            className="home-partners"
+            renderItem={(partner) => {
+              const logo = <Image src={partner.logo} alt={partner.name} width={160} height={48} />;
+              return partner.url ? <a href={partner.url} target="_blank" rel="noopener noreferrer">{logo}</a> : logo;
+            }}
+          />
         </section>
       )}
 
@@ -224,9 +269,10 @@ export default function HomeView({ impact, projects, testimonials, news, events,
 
       <section className="section section--tight" aria-labelledby="home-cta-title">
         <div className="container">
-          <div className="home-cta">
+          {/* shine-border : reflet dore qui fait le tour du cadre (Shine Border) */}
+          <div className="home-cta shine-border">
             <div>
-              <h2 id="home-cta-title">{t("ctaTitle")}</h2>
+              <h2 id="home-cta-title">{t.rich("ctaTitle", { hl })}</h2>
               <p>{t("ctaText")}</p>
             </div>
             <div className="home-cta__actions">

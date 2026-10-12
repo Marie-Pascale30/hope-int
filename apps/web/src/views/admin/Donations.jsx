@@ -4,7 +4,8 @@ import { useCallback, useMemo, useState } from "react";
 import { CheckCircle2, Clock, Download, FileDown, HandCoins, HeartHandshake, Mail, RotateCcw, Users, XCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
-  Alert, Badge, Button, DataTable, ErrorState, Input, PageSkeleton, Modal, PageHeader, Select, StatCard, StatusBadge, Textarea,
+  Alert, Badge, Button, DataTable, ErrorState, Input, MobileCollapse, PageSkeleton, Modal, PageHeader, Select, StatCard, StatusBadge,
+  Textarea,
 } from "../../components/ui";
 import RequireAuth from "../../components/RequireAuth";
 import { useAuth } from "../../context/AuthContext";
@@ -251,6 +252,7 @@ function DonationsView() {
   const getErrorMessage = useErrorMessage();
   const t = useTranslations("adminOps.donations");
   const tCommon = useTranslations("adminOps.common");
+  const tUi = useTranslations("ui");
   const labels = useLabels();
   const f = useFormat();
   const { showError, toast } = useAlerts();
@@ -415,6 +417,46 @@ function DonationsView() {
         }
       />
 
+      {/* Telephone : filtres replies derriere un bouton (nombre de filtres actifs affiche) */}
+      <MobileCollapse label={tUi("filters")} count={Object.keys(params).length}>
+        <form className="adm-filters" aria-label={t("filters.label")} onSubmit={(event) => event.preventDefault()}>
+          <Select
+            label={t("filters.status")}
+            placeholder={t("filters.allStatuses")}
+            options={statusOptions}
+            value={filters.status}
+            onChange={setFilter("status")}
+          />
+          <Select
+            label={t("filters.provider")}
+            placeholder={t("filters.allProviders")}
+            options={providerOptions}
+            value={filters.provider}
+            onChange={setFilter("provider")}
+          />
+          <Select
+            label={t("filters.project")}
+            placeholder={t("filters.allProjects")}
+            options={(projects || []).map((project) => ({ value: String(project.id), label: project.title }))}
+            value={filters.projectId}
+            onChange={setFilter("projectId")}
+          />
+          <Input label={t("filters.from")} type="date" value={filters.from} onChange={setFilter("from")} max={filters.to || undefined} />
+          <Input
+            label={t("filters.to")}
+            type="date"
+            value={filters.to}
+            onChange={setFilter("to")}
+            min={filters.from || undefined}
+            error={periodInvalid ? t("filters.periodInvalid") : undefined}
+          />
+          <div className="adm-filters__actions">
+            <Button variant="ghost" size="sm" icon={RotateCcw} onClick={() => setFilters(EMPTY_FILTERS)} disabled={!hasFilters}>
+              {t("filters.reset")}
+            </Button>
+          </div>
+        </form>
+      </MobileCollapse>
       <form className="adm-filters" aria-label={t("filters.label")} onSubmit={(event) => event.preventDefault()}>
         <Select
           label={t("filters.status")}

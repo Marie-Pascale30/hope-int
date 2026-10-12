@@ -1,13 +1,14 @@
 "use client";
 
-// Partage d'une page : feuille de partage native (navigator.share) quand le navigateur la propose
-// (mobile surtout), sinon WhatsApp (tres utilise au Cameroun), Facebook et copie du lien.
+// Partage d'une page : feuille de partage native (application mobile, ou navigator.share quand le
+// navigateur la propose), sinon WhatsApp (tres utilise au Cameroun), Facebook et copie du lien.
 // path : chemin localise (useLocalePath / lp) ou URL absolue ; text : message d'accompagnement.
 import { useEffect, useState } from "react";
 import { Check, Link2, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "./ui";
 import { toast } from "../utils/alerts";
+import { isNativeApp, shareContent } from "../utils/native";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/$/, "");
 
@@ -49,7 +50,7 @@ export default function ShareButtons({ path, title, text, label, source }) {
   useEffect(() => {
     // Detection apres le montage : le rendu serveur propose toujours les liens de repli.
     /* eslint-disable react-hooks/set-state-in-effect */
-    setCanShare(typeof navigator !== "undefined" && typeof navigator.share === "function");
+    setCanShare(isNativeApp() || (typeof navigator !== "undefined" && typeof navigator.share === "function"));
     setOrigin(window.location.origin);
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
@@ -60,7 +61,7 @@ export default function ShareButtons({ path, title, text, label, source }) {
 
   const nativeShare = async () => {
     try {
-      await navigator.share({ title, text, url: linkFor("natif") });
+      await shareContent({ title, text, url: linkFor("natif") });
     } catch {
       // Partage annule : rien a signaler.
     }

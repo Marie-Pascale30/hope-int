@@ -8,6 +8,7 @@ export { LoadingState, EmptyState, ErrorState } from "./Feedback";
 export { SkeletonLine, SkeletonRegion, SkeletonTable, PageSkeleton } from "./Skeleton";
 export { fieldDescriptionIds, Field, Input, Textarea, Select, ChoiceGroup, Switch } from "./Form";
 export { Tabs, tabPanelProps, TabPanel } from "./Tabs";
+export { MobileCollapse } from "./MobileCollapse";
 export { Modal } from "./Modal";
 export { DataTable } from "./DataTable";
 export { PhoneField, usePhoneErrorMessage } from "./PhoneField";

@@ -1,0 +1,324 @@
+/* =========================================================
+   Effet « liquid glass » : surfaces translucides, flou et
+   saturation de ce qui passe dessous, reflet lumineux en haut.
+
+   Reserve aux elements qui flottent au-dessus d'un contenu
+   (en-tete, menus, modales, notifications) ou poses sur une
+   photo / un fond colore : sur un fond uni, le verre ne se voit pas.
+
+   Charge en dernier ; les selecteurs sont prefixes par html pour
+   l'emporter sur public.css / account.css, importes plus tard par
+   les vues. Les deux blocs sombres doivent rester identiques.
+   ========================================================= */
+
+:root {
+  --glass-filter: saturate(180%) blur(18px);
+  --glass-filter-strong: saturate(190%) blur(26px);
+  /* Fond : leger (pastilles, boutons) / lisible (panneaux avec du texte) */
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-strong: rgba(255, 255, 255, 0.74);
+  /* Reflet diagonal, superpose au fond */
+  --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 42%);
+  --glass-edge: rgba(255, 255, 255, 0.7);
+  --glass-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.25),
+    0 10px 32px rgba(28, 36, 33, 0.12),
+    0 1px 3px rgba(28, 36, 33, 0.06);
+  /* Verre pose sur un fond sombre fixe (bandeau d'impact, appel au don, pied de page) */
+  --glass-dark-bg: rgba(255, 255, 255, 0.09);
+  --glass-dark-bg-hover: rgba(255, 255, 255, 0.16);
+  --glass-dark-edge: rgba(255, 255, 255, 0.2);
+  --glass-dark-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 12px 32px rgba(0, 0, 0, 0.18);
+  --glass-backdrop: rgba(20, 30, 26, 0.32);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --glass-bg: rgba(23, 34, 30, 0.5);
+    --glass-bg-strong: rgba(23, 34, 30, 0.74);
+    --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 42%);
+    --glass-edge: rgba(255, 255, 255, 0.12);
+    --glass-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.03),
+      0 12px 36px rgba(0, 0, 0, 0.45),
+      0 1px 3px rgba(0, 0, 0, 0.3);
+    --glass-backdrop: rgba(0, 0, 0, 0.45);
+  }
+}
+
+:root[data-theme="dark"] {
+  --glass-bg: rgba(23, 34, 30, 0.5);
+  --glass-bg-strong: rgba(23, 34, 30, 0.74);
+  --glass-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 42%);
+  --glass-edge: rgba(255, 255, 255, 0.12);
+  --glass-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.03),
+    0 12px 36px rgba(0, 0, 0, 0.45),
+    0 1px 3px rgba(0, 0, 0, 0.3);
+  --glass-backdrop: rgba(0, 0, 0, 0.45);
+}
+
+/* ---------- Classes utilitaires ---------- */
+
+html .glass,
+html .glass-strong {
+  background: var(--glass-sheen), var(--glass-bg);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+}
+
+html .glass-strong {
+  background: var(--glass-sheen), var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-filter-strong);
+  backdrop-filter: var(--glass-filter-strong);
+}
+
+/* ---------- En-tete ---------- */
+
+/* Le flou est porte par un pseudo-element et non par l'en-tete : un parent avec
+   backdrop-filter empecherait ses menus deroulants de flouter la page dessous. */
+html .site-header.is-scrolled {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+html .site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  backdrop-filter: saturate(160%) blur(14px);
+}
+
+html .site-header.is-scrolled::before {
+  opacity: 1;
+}
+
+@media (max-width: 960px) {
+  html:not(.has-mobile-nav) .site-header.is-scrolled {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  html .site-header::before {
+    background: var(--glass-bg-strong);
+    box-shadow: inset 0 -1px 0 var(--glass-edge), 0 6px 20px rgba(0, 0, 0, 0.06);
+    -webkit-backdrop-filter: var(--glass-filter-strong);
+    backdrop-filter: var(--glass-filter-strong);
+  }
+
+  /* Menu mobile deroule sous l'en-tete */
+  html .site-nav {
+    background: var(--glass-sheen), var(--glass-bg-strong);
+    border-bottom-color: var(--glass-edge);
+    box-shadow: var(--glass-shadow);
+    -webkit-backdrop-filter: var(--glass-filter-strong);
+    backdrop-filter: var(--glass-filter-strong);
+  }
+}
+
+/* Boutons ronds de l'en-tete (compte, menu) */
+html .user-menu__trigger,
+html .site-header__burger {
+  background: var(--glass-sheen), var(--glass-bg);
+  border-color: var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+}
+
+/* Panneaux deroulants (langue, compte) */
+html .locale-menu__panel,
+html .user-menu__panel {
+  background: var(--glass-sheen), var(--glass-bg-strong);
+  border-color: var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-filter-strong);
+  backdrop-filter: var(--glass-filter-strong);
+}
+
+html .user-menu__head {
+  border-bottom-color: var(--glass-edge);
+}
+
+/* ---------- Accueil ---------- */
+
+/* Pastille flottante posee sur la photo du hero */
+html .home-hero__float {
+  background: var(--glass-sheen), var(--glass-bg-strong);
+  border-color: var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-filter-strong);
+  backdrop-filter: var(--glass-filter-strong);
+}
+
+/* Chiffres d'impact : panneau de verre sur le bandeau de marque */
+html .home-impact__grid {
+  padding: 0 22px 22px;
+  border: 1px solid var(--glass-dark-edge);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 50%), var(--glass-dark-bg);
+  box-shadow: var(--glass-dark-shadow);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+}
+
+/* Bouton clair de l'appel au don : verre sur le degrade de marque */
+html .home-cta .btn--light {
+  --btn-bg: var(--glass-dark-bg-hover);
+  --btn-fg: var(--on-dark);
+  --btn-border: var(--glass-dark-edge);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 55%), var(--btn-bg);
+  box-shadow: var(--glass-dark-shadow);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+}
+
+html .home-cta .btn--light:hover {
+  --btn-bg: rgba(255, 255, 255, 0.24);
+  --btn-fg: var(--on-dark);
+  --btn-border: rgba(255, 255, 255, 0.4);
+}
+
+/* ---------- Cartes publiques : badge pose sur l'image ---------- */
+
+html .pub-card__badge .badge {
+  background: var(--glass-sheen), var(--glass-bg-strong);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+}
+
+/* ---------- Onglets (controle segmente) ---------- */
+
+html .tabs {
+  background: var(--glass-bg);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06), inset 0 0 0 1px var(--glass-edge);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+}
+
+html .tab[aria-selected="true"] {
+  background: var(--glass-sheen), var(--glass-bg-strong);
+  box-shadow: var(--glass-shadow);
+}
+
+/* ---------- Modales et notifications ---------- */
+
+html .modal-backdrop {
+  background: var(--glass-backdrop);
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  backdrop-filter: saturate(140%) blur(10px);
+}
+
+html .modal {
+  background: var(--glass-sheen), color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow), var(--shadow-lg);
+  -webkit-backdrop-filter: var(--glass-filter-strong);
+  backdrop-filter: var(--glass-filter-strong);
+}
+
+html .swal2-container.swal2-backdrop-show {
+  background: var(--glass-backdrop) !important;
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  backdrop-filter: saturate(140%) blur(10px);
+}
+
+html .hope-swal-popup,
+html .hope-swal-toast {
+  background: var(--glass-sheen), var(--glass-bg-strong) !important;
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow) !important;
+  -webkit-backdrop-filter: var(--glass-filter-strong);
+  backdrop-filter: var(--glass-filter-strong);
+}
+
+/* Le voile floute deja la page : la fenetre, qui ne voit que ce voile, reste plus couvrante */
+html .hope-swal-popup:not(.hope-swal-toast) {
+  background: var(--glass-sheen), color-mix(in srgb, var(--surface) 88%, transparent) !important;
+}
+
+/* ---------- Divers ---------- */
+
+html .install-app__hint {
+  background: var(--glass-sheen), var(--glass-bg);
+  border-color: var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+}
+
+/* Selecteur de theme du pied de page */
+html .theme-switch--on-dark .theme-switch__options {
+  background: var(--glass-dark-bg);
+  box-shadow: inset 0 0 0 1px var(--glass-dark-edge), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+}
+
+/* ---------- Administration ---------- */
+
+@media (max-width: 960px) {
+  html .admin-topbar {
+    background: var(--glass-bg-strong);
+    border-bottom-color: var(--glass-edge);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    -webkit-backdrop-filter: var(--glass-filter-strong);
+    backdrop-filter: var(--glass-filter-strong);
+  }
+
+  html .admin-topbar__burger {
+    background: var(--glass-sheen), var(--glass-bg);
+    border-color: var(--glass-edge);
+    box-shadow: var(--glass-shadow);
+  }
+}
+
+/* ---------- Replis ----------
+   Sans flou (navigateur ancien) ou si l'utilisateur demande moins de
+   transparence : surfaces opaques, le texte reste lisible partout. */
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root,
+  :root:not([data-theme="light"]),
+  :root[data-theme="dark"] {
+    --glass-bg: var(--surface);
+    --glass-bg-strong: var(--surface);
+    --glass-backdrop: var(--backdrop);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root,
+  :root:not([data-theme="light"]),
+  :root[data-theme="dark"] {
+    --glass-bg: var(--surface);
+    --glass-bg-strong: var(--surface);
+    --glass-backdrop: var(--backdrop);
+    --glass-filter: none;
+    --glass-filter-strong: none;
+  }
+}
+
+@media (forced-colors: active) {
+  html .glass,
+  html .glass-strong,
+  html .modal,
+  html .locale-menu__panel,
+  html .user-menu__panel {
+    border: 1px solid CanvasText;
+  }
+}

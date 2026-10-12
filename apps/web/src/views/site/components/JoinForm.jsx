@@ -116,7 +116,6 @@ export default function JoinForm({ regions = [], interestAreas = [] }) {
           <h3 className="pub-form__title">{t("title")}</h3>
           <p className="pub-form__intro">{t("required")}</p>
         </div>
-        {isAuthenticated && <Alert tone="info">{t("alreadyMember")}</Alert>}
         <div className="form-grid">
           <Input label={t("name")} required autoComplete="name" enterKeyHint="next" value={form.name} onChange={update("name")} error={errors.name} />
           <Input label={t("email")} type="email" inputMode="email" required autoComplete="email" enterKeyHint="next" value={form.email} onChange={update("email")} error={errors.email} />

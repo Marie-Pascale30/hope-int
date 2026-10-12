@@ -35,11 +35,17 @@
     "transparency": "Transparencia",
     "team": "El equipo"
   },
+  "pwa": {
+    "install": "Instalar la aplicación",
+    "iosHint": "En Safari, toca <share>Compartir</share> y luego <add>Agregar a inicio</add>."
+  },
   "theme": {
     "label": "Tema",
     "light": "Claro",
     "dark": "Oscuro",
-    "system": "Sistema"
+    "system": "Sistema",
+    "switchToDark": "Cambiar al tema oscuro",
+    "switchToLight": "Cambiar al tema claro"
   },
   "footer": {
     "tagline": "Microfinanzas solidarias, formación y ayuda mutua para las familias cameruneses.",
@@ -159,9 +165,14 @@
       "cancel": "Cancelar"
     },
     "logout": {
-      "done": "Has cerrado sesión. ¡Hasta pronto!",
-      "doneAll": "Se ha cerrado la sesión en todos sus dispositivos."
+      "title": "¿Cerrar sesión?",
+      "text": "Vas a cerrar la sesión de tu cuenta de HOPE International. Podrás volver a iniciarla en cualquier momento.",
+      "confirm": "Cerrar sesión",
+      "done": "Has cerrado sesión. ¡Hasta pronto!"
     },
+    "filters": "Filtros"
+
+   },
     "phone": {
       "label": "Teléfono",
       "placeholder": "6 77 12 34 56",
@@ -185,5 +196,4 @@
       "selectPage": "Seleccionar todas las filas de la página",
       "selectRow": "Seleccionar: {label}"
     }
-  }
 }

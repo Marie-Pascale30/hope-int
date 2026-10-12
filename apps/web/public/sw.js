@@ -6,11 +6,14 @@
  *   un cookie de l'API, lu cote client) : il peut etre conserve.
  * - Jamais mis en cache : /api, l'administration, l'espace membre, le don et les paiements, la
  *   connexion et les mots de passe, les requetes authentifiees (en-tete Authorization), les autres
- *   origines (API, Stripe, prestataires) et les requetes autres que GET.
+ *   origines (API, Stripe, prestataires) et les requetes autres que GET. Hors connexion, ces pages
+ *   (telephones souvent partages) affichent la page hors ligne au lieu d'une erreur du navigateur.
  * - Ressources statiques de Next (/_next/static, noms versionnes) : cache d'abord.
- * - Images et icones : cache puis mise a jour en arriere-plan (nombre d'entrees limite).
+ * - Images, icones, polices et feuilles de style : cache puis mise a jour en arriere-plan
+ *   (nombre d'entrees limite).
+ * Changer VERSION a chaque modification de ce fichier pour purger les anciens caches.
  */
-const VERSION = "v1";
+const VERSION = "v2";
 const STATIC_CACHE = `hope-static-${VERSION}`;
 const PAGES_CACHE = `hope-pages-${VERSION}`;
 const IMAGES_CACHE = `hope-images-${VERSION}`;
@@ -18,8 +21,11 @@ const MAX_PAGES = 40;
 const MAX_IMAGES = 80;
 
 const OFFLINE_PAGES = { fr: "/hors-ligne", en: "/en/hors-ligne", es: "/es/hors-ligne" };
+// Page statique de dernier recours (aussi reprise par l'application mobile, apps/mobile).
+const OFFLINE_FALLBACK = "/offline.html";
 const PRECACHE = [
   ...Object.values(OFFLINE_PAGES),
+  OFFLINE_FALLBACK,
   "/manifest.json",
   "/icon.svg",
   "/icons/icon-192.png",
@@ -47,18 +53,27 @@ function isPrivatePath(pathname) {
   return PRIVATE_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`) || path.startsWith(`${prefix}?`));
 }
 
-// Strategie d'une requete : "none" (navigateur seul), "static", "image" ou "page".
+// Prefixes qui ne sont pas des pages (fichiers, API, retours de paiement) : jamais interceptes.
+const NON_PAGE_PREFIXES = ["/api", "/uploads", "/payment"];
+
+// Strategie d'une requete : "none" (navigateur seul), "static", "image", "page" ou "private-page"
+// (navigation vers une page personnelle : reseau seul, page hors ligne en cas d'echec).
 function classify(request, origin) {
   if (request.method !== "GET") return "none";
   const url = new URL(request.url);
   if (url.origin !== origin) return "none";
   if (request.headers.get("authorization")) return "none";
-  if (isPrivatePath(url.pathname)) return "none";
   // Navigations internes de Next (flux RSC) : laissees au reseau ; hors ligne, Next bascule sur
   // une navigation complete, servie par la strategie "page".
   if (request.headers.get("rsc") || url.searchParams.has("_rsc")) return "none";
+  if (isPrivatePath(url.pathname)) {
+    const path = stripLocale(url.pathname);
+    const isPage = !NON_PAGE_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+    return isPage && request.mode === "navigate" ? "private-page" : "none";
+  }
   if (url.pathname.startsWith("/_next/static/")) return "static";
   if (url.pathname.startsWith("/_next/image") || url.pathname.startsWith("/images/") || url.pathname.startsWith("/icons/")) return "image";
+  if (request.destination === "font" || request.destination === "style") return "image";
   if (request.mode === "navigate" || (request.headers.get("accept") || "").includes("text/html")) return "page";
   return "none";
 }
@@ -90,9 +105,23 @@ async function networkFirstPage(event) {
   } catch (error) {
     const cached = await caches.match(request, { ignoreVary: true });
     if (cached) return cached;
-    const offline = await caches.match(offlinePathFor(new URL(request.url).pathname));
-    if (offline) return offline;
-    throw error;
+    return offlineResponse(request, error);
+  }
+}
+
+// Page hors ligne de la langue, sinon la page statique de dernier recours.
+async function offlineResponse(request, error) {
+  const offline = (await caches.match(offlinePathFor(new URL(request.url).pathname))) || (await caches.match(OFFLINE_FALLBACK));
+  if (offline) return offline;
+  throw error;
+}
+
+// Pages personnelles : ni cache du worker ni cache HTTP du navigateur.
+async function privatePage(request) {
+  try {
+    return await fetch(request, { cache: "no-store" });
+  } catch (error) {
+    return offlineResponse(request, error);
   }
 }
 
@@ -148,6 +177,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const strategy = classify(event.request, self.location.origin);
   if (strategy === "page") event.respondWith(networkFirstPage(event));
+  else if (strategy === "private-page") event.respondWith(privatePage(event.request));
   else if (strategy === "static") event.respondWith(cacheFirst(event.request));
   else if (strategy === "image") event.respondWith(staleWhileRevalidate(event));
 });

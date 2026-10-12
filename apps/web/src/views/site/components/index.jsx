@@ -2,11 +2,13 @@
 // Sans "use client" : rendus cote serveur par les pages, ou cote client dans les ilots interactifs.
 import { ArrowLeft, ArrowRight, CalendarDays, Clock, MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Badge, Button, ProgressBar, StatusBadge } from "@/src/components/ui";
-import { useFormat } from "@/src/i18n/format";
-import { Link, useLocalePath } from "@/src/i18n/navigation";
-import { truncate } from "@/src/utils/format";
-import { TONES } from "@/src/utils/labels";
+import { Badge, Button, ProgressBar, StatusBadge } from "../../../components/ui";
+import NumberTicker from "../../../components/motion/NumberTicker";
+import Reveal from "../../../components/motion/Reveal";
+import { useFormat } from "../../../i18n/format";
+import { Link, useLocalePath } from "../../../i18n/navigation";
+import { truncate } from "../../../utils/format";
+import { TONES } from "../../../utils/labels";
 import CoverImage, { IMAGE_SIZES } from "./CoverImage";
 import RegisteredBadge from "./RegisteredBadge";
 import { campaignPercent, cx, euros, eventTimeRange, hasCampaign, spotsStatus } from "./helpers";
@@ -52,14 +54,18 @@ export function CampaignProgress({ project, large }) {
   return (
     <div className={cx("pub-campaign", large && "pub-campaign--large")}>
       <p className="pub-campaign__figures">
+        {/* Montant collecte anime, barre qui se remplit : rejoues a chaque passage a l'ecran */}
         {t.rich("raised", {
-          raised: euros(f, project.raised_eur),
+          // key : t.rich place l'element dans une liste
+          raised: <NumberTicker key="raised" value={project.raised_eur} kind="eur" />,
           goal: euros(f, project.goal_amount),
           strong: (chunks) => <strong>{chunks}</strong>,
         })}
         {!large && <> · {donors}</>}
       </p>
-      <ProgressBar value={percent} accent label={t("progressLabel", { percent })} />
+      <Reveal className="progress-reveal">
+        <ProgressBar value={percent} accent label={t("progressLabel", { percent })} />
+      </Reveal>
       <div className="progress-meta">
         <span className="pub-campaign__pct">{t("percent", { percent })}</span>
         {large && <span>{donors}</span>}

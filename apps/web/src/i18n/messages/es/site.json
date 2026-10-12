@@ -98,17 +98,24 @@
     "home": {
       "eyebrow": "Asociación de solidaridad internacional",
       "title": "Invertir en los sueños de las familias",
+      "titleLead": "Invertir en los sueños de",
+      "titleWords": [
+        "las familias",
+        "las mujeres",
+        "los jóvenes",
+        "las comunidades"
+      ],
       "lead": "En Camerún, acompañamos a mujeres, jóvenes y comunidades rurales hacia la autonomía con microfinanzas solidarias, formación y ayuda mutua.",
       "ctaDonate": "Donar",
       "ctaDiscover": "Descubrir los proyectos",
-      "ctaTitle": "Cambiemos vidas, juntos",
+      "ctaTitle": "Cambiemos vidas, <hl>juntos</hl>",
       "ctaText": "Cada contribución fortalece a una familia, un barrio y una generación. Dona una vez o cada mes, con tarjeta o Mobile Money.",
       "ctaJoin": "Hazte voluntario",
       "heroFloat": "{count, plural, one {<strong>{value}</strong> persona acompañada hacia la autonomía} other {<strong>{value}</strong> personas acompañadas hacia la autonomía}}",
       "partialError": "No se ha podido cargar parte de la información",
       "impact": {
         "eyebrow": "Nuestro impacto",
-        "title": "Resultados concretos, sobre el terreno",
+        "title": "Resultados <hl>concretos</hl>, sobre el terreno",
         "text": "Cifras consolidadas de todos nuestros programas en Camerún, actualizadas de forma continua.",
         "beneficiaries": "Personas beneficiarias acompañadas",
         "trainees": "Personas formadas",
@@ -119,7 +126,7 @@
       },
       "approach": {
         "eyebrow": "Nuestro enfoque",
-        "title": "Dar los medios para avanzar, no solo ayuda",
+        "title": "Dar los medios para <hl>avanzar</hl>, no solo ayuda",
         "text": "Tres palancas complementarias, pensadas con las comunidades, para cambios que perduran más allá de nuestros programas.",
         "training": {
           "title": "Formación",
@@ -142,7 +149,7 @@
       },
       "quotes": {
         "eyebrow": "Testimonios",
-        "title": "Ellos y ellas cuentan su historia",
+        "title": "Ellos y ellas cuentan su <hl>historia</hl>",
         "quoted": "«{text}»"
       },
       "news": {
@@ -155,11 +162,15 @@
         "title": "Próximas citas",
         "text": "Talleres, jornadas de recaudación, visitas sobre el terreno: ven a conocernos.",
         "all": "Toda la agenda"
+      },
+      "partners": {
+        "eyebrow": "Socios",
+        "title": "Confían en nosotros"
       }
     },
     "projects": {
       "eyebrow": "Nuestros proyectos",
-      "title": "Proyectos arraigados en las comunidades",
+      "title": "Proyectos <hl>arraigados</hl> en las comunidades",
       "lead": "Microcréditos, formación, agricultura, acceso al agua, ahorro para la salud: descubre nuestras acciones en las regiones de Camerún y elige la que quieres apoyar.",
       "emptyTitle": "Todavía no hay proyectos publicados",
       "emptyText": "Nuestros equipos preparan nuevas acciones. Vuelve pronto o apoya desde ahora el conjunto de nuestros programas.",
@@ -214,7 +225,7 @@
     },
     "news": {
       "eyebrow": "Noticias",
-      "title": "Noticias del terreno",
+      "title": "Noticias del <hl>terreno</hl>",
       "lead": "Lanzamientos de proyectos, experiencias, vida de la asociación: descubre lo que tus donativos y tu compromiso hacen posible.",
       "emptyTitle": "Todavía no hay noticias",
       "emptyText": "Nuestros equipos publicarán pronto noticias de los proyectos. Mientras tanto, descubre nuestras acciones en curso.",
@@ -228,7 +239,7 @@
     },
     "events": {
       "eyebrow": "Agenda",
-      "title": "Nuestras próximas citas",
+      "title": "Nuestras próximas <hl>citas</hl>",
       "lead": "Talleres de formación, jornadas de recaudación, visitas sobre el terreno, asamblea general: inscríbete y ven a actuar con nosotros.",
       "emptyTitle": "No hay eventos programados",
       "emptyText": "Pronto anunciaremos nuevas citas. Sigue nuestras noticias o únete a la asociación para enterarte antes que nadie.",
@@ -244,7 +255,8 @@
       "noneOnDate": "No hay eventos en esta fecha",
       "noneText": "Elige otra fecha en el calendario o consulta toda la agenda.",
       "filterDay": "El {day}",
-      "filterMonth": "En {month}"
+      "filterMonth": "En {month}",
+      "calendarToggle": "Calendario y meses"
     },
     "calendar": {
       "previousMonth": "Mes anterior",
@@ -297,9 +309,20 @@
     },
     "join": {
       "eyebrow": "Únete",
-      "title": "Comprométete con nosotros",
+      "title": "<hl>Comprométete</hl> con nosotros",
       "lead": "Voluntarios, miembros, profesionales: cada persona puede contribuir a la autonomía de las familias cameruneses, según su tiempo y sus competencias.",
+      "welcome": {
+        "eyebrow": "Miembro de la comunidad",
+        "title": "¡Genial {name}, ya formas parte de la gran <hl>familia HOPE</hl>!",
+        "titleNoName": "¡Genial, ya formas parte de la gran <hl>familia HOPE</hl>!",
+        "text": "Gracias por tu compromiso con nosotros. Encuentra tus donaciones, tus inscripciones a eventos y tus datos en tu espacio, y acompáñanos en nuestras próximas citas.",
+        "account": "Mi espacio",
+        "events": "Ver la agenda"
+      },
       "ways": {
+        "eyebrow": "Cómo comprometerse",
+        "title": "Tres formas de <hl>actuar</hl> a nuestro lado",
+        "text": "Unas horas para dar, ganas de participar en las decisiones o competencias para compartir: cada persona encuentra su lugar en la asociación.",
         "volunteer": {
           "title": "Voluntario/a",
           "text": "Dedica unas horas: acogida en las campañas de recaudación, apoyo en los talleres, logística, comunicación."
@@ -344,7 +367,6 @@
       "form": {
         "title": "Tu candidatura",
         "required": "Los campos marcados con un asterisco son obligatorios.",
-        "alreadyMember": "Ya has iniciado sesión: si deseas un nuevo rol, contacta mejor con el equipo a través de la página de Contacto.",
         "name": "Nombre completo",
         "email": "Correo electrónico",
         "phone": "Teléfono",
@@ -386,7 +408,7 @@
     },
     "contact": {
       "eyebrow": "Contacto",
-      "title": "Hablemos",
+      "title": "<hl>Hablemos</hl>",
       "lead": "¿Una pregunta sobre nuestros proyectos, una alianza, una solicitud de prensa? Escríbenos: nuestro equipo te responderá lo antes posible.",
       "details": "Nuestros datos de contacto",
       "email": "Correo electrónico",

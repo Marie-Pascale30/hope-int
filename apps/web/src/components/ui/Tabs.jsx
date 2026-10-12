@@ -1,7 +1,7 @@
 "use client";
 
 // Onglets accessibles (role tablist / tab / tabpanel).
-import { useId, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import { useTranslations } from "next-intl";
 
 // tabs : [{ value, label, count? }]
@@ -17,6 +17,24 @@ export function Tabs({ tabs, value, onChange, label, id }) {
   const generated = useId();
   const base = id || generated;
   const listRef = useRef(null);
+
+  // Liste plus large que l'ecran : fondu sur le bord ou il reste des onglets a faire defiler.
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return undefined;
+    const update = () => {
+      list.toggleAttribute("data-more-start", list.scrollLeft > 2);
+      list.toggleAttribute("data-more-end", list.scrollLeft + list.clientWidth < list.scrollWidth - 2);
+    };
+    update();
+    list.addEventListener("scroll", update, { passive: true });
+    const observer = new ResizeObserver(update);
+    observer.observe(list);
+    return () => {
+      list.removeEventListener("scroll", update);
+      observer.disconnect();
+    };
+  }, [tabs.length]);
 
   const onKeyDown = (event) => {
     const index = tabs.findIndex((tab) => tab.value === value);

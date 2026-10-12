@@ -5,6 +5,8 @@ import { Heart, LayoutDashboard, LogOut, Menu, UserRound, X } from "lucide-react
 import { useTranslations } from "next-intl";
 import Logo from "./Logo";
 import LocaleSwitcher from "./LocaleSwitcher";
+import ThemeToggle from "../ThemeToggle";
+import InstallAppButton from "../pwa/InstallAppButton";
 import { Button, Avatar } from "../ui";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useLocalePath, usePathname } from "../../i18n/navigation";
@@ -77,6 +79,8 @@ export default function SiteHeader() {
   const lp = useLocalePath();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [pastMedia, setPastMedia] = useState(false);
+  const headerRef = useRef(null);
   const burgerRef = useRef(null);
   const navRef = useRef(null);
 
@@ -108,17 +112,39 @@ export default function SiteHeader() {
     };
   }, [mobileOpen, closeMenu]);
 
+  // Zones sombres ([data-header-overlay] : photo du hero, bandeau d'impact) : le CSS passe l'en-tete
+  // en clair ; is-past-media le ramene aux couleurs normales quand aucune n'est sous l'en-tete.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => {
+      const isScrolled = window.scrollY > 8;
+      setScrolled(isScrolled);
+      // Telephone : une fois la page defilee, l'en-tete a un fond (site.css) et garde ses couleurs normales.
+      if (isScrolled && compact.matches) {
+        setPastMedia(true);
+        return;
+      }
+      const middle = (headerRef.current?.offsetHeight || 0) / 2;
+      const overlays = [...document.querySelectorAll("[data-header-overlay]")];
+      const underHeader = overlays.some((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.top <= middle && rect.bottom > middle;
+      });
+      setPastMedia(overlays.length > 0 && !underHeader);
+    };
+    const compact = window.matchMedia("(max-width: 960px)");
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [pathname]);
 
   const isActive = (href) => pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <header className={`site-header${scrolled ? " is-scrolled" : ""}`}>
+    <header ref={headerRef} className={`site-header${scrolled ? " is-scrolled" : ""}${pastMedia ? " is-past-media" : ""}`}>
       <div className="container site-header__inner">
         <Logo href={lp("/")} label={t("home")} />
 
@@ -142,16 +168,16 @@ export default function SiteHeader() {
             ) : (
               <Button href={lp("/connexion")} variant="secondary" block>{t("login")}</Button>
             )}
+            <InstallAppButton />
             <LocaleSwitcher className="site-nav__locale" />
           </div>
         </nav>
 
         <div className="site-header__actions">
-          <LocaleSwitcher variant="menu" className="site-header__locale" />
-          <Button href={lp("/don")} variant="accent" size="sm" icon={Heart} className="site-header__donate">
-            <span className="site-header__donate-long">{t("donate")}</span>
-            <span className="site-header__donate-short" aria-hidden="true">{t("donateShort")}</span>
-          </Button>
+          <div className="site-header__tools">
+            <LocaleSwitcher variant="menu" className="site-header__locale" />
+            <ThemeToggle />
+          </div>
           <div className="site-header__account">
             {status === "authenticated" && user ? (
               <UserMenu user={user} onLogout={logout} t={t} />
@@ -159,6 +185,10 @@ export default function SiteHeader() {
               <Link href="/connexion" className="site-header__login">{t("login")}</Link>
             ) : null}
           </div>
+          <Button href={lp("/don")} variant="accent" size="sm" icon={Heart} className="site-header__donate">
+            <span className="site-header__donate-long">{t("donate")}</span>
+            <span className="site-header__donate-short" aria-hidden="true">{t("donateShort")}</span>
+          </Button>
           <button
             type="button"
             ref={burgerRef}

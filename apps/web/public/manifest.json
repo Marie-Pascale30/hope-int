@@ -11,7 +11,7 @@
   "orientation": "any",
   "theme_color": "#1f5f4a",
   "background_color": "#faf7f2",
-  "categories": ["nonprofit", "social", "finance"],
+  "categories": ["nonprofit", "social", "finance", "lifestyle"],
   "icons": [
     { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
@@ -22,6 +22,8 @@
   "shortcuts": [
     { "name": "Faire un don", "short_name": "Don", "url": "/don?source=pwa", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
     { "name": "Nos projets", "short_name": "Projets", "url": "/projets?source=pwa", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Mon espace", "short_name": "Espace", "url": "/espace?source=pwa", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Événements", "short_name": "Agenda", "url": "/evenements?source=pwa", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
     { "name": "Transparence", "short_name": "Transparence", "url": "/transparence?source=pwa", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
   ]
 }

@@ -282,7 +282,7 @@
     "donate": {
       "hero": {
         "eyebrow": "Donar",
-        "title": "Dales a las familias los medios para salir adelante",
+        "title": "Dales a las familias los medios para <hl>salir adelante</hl>",
         "lead": "Cada donativo financia microcréditos solidarios, formación y un acompañamiento cercano en Camerún. Tú eliges adónde va tu generosidad y nosotros te mostramos lo que hace posible."
       },
       "general": "Donde más se necesite",

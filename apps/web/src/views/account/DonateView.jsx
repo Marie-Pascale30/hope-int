@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { CardNumberElement, Elements, useElements, useStripe } from "@stripe/react-stripe-js";
 import { CalendarHeart, CreditCard, Heart, Lock, Mail, Receipt, RefreshCcw, Smartphone, Sprout } from "lucide-react";
 import { Alert, Badge, Button, Input, PhoneField, Switch, focusFirstInvalid, usePhoneErrorMessage } from "../../components/ui";
+import { hl } from "../../components/motion/hl";
 import { phoneError, toE164 } from "../../utils/phone";
 import { useAuth } from "../../context/AuthContext";
 import { useAsync } from "../../hooks/useAsync";
@@ -28,6 +29,7 @@ import {
   toEur,
 } from "./components/donationData";
 import { useErrorMessage } from "../../i18n/errors";
+import PageBanner from "../../components/site/PageBanner";
 import { STRIPE_PUBLISHABLE_KEY, getStripe } from "./components/stripe";
 import "../../styles/fundraising.css";
 import { fundraisingApi } from "../../services/fundraising";
@@ -541,7 +543,8 @@ function DonateForm({ meta, metaLoaded, stripeReady, onCardSelected }) {
       </div>
 
       <aside className="don-summary" aria-label={t("summary.label")}>
-        <div className="don-summary__card" ref={summaryRef}>
+        {/* shine-border : reflet dore autour du recapitulatif et du bouton de paiement */}
+        <div className="don-summary__card shine-border" ref={summaryRef}>
           <span className="eyebrow">{t("summary.eyebrow")}</span>
           <p className="don-summary__amount">
             {amountLabel}
@@ -635,10 +638,11 @@ export default function DonateView() {
 
   return (
     <>
+      <PageBanner name="donate" />
       <section className="don-hero">
         <div className="container">
           <span className="eyebrow">{t("eyebrow")}</span>
-          <h1>{t("title")}</h1>
+          <h1>{t.rich("title", { hl })}</h1>
           <p className="lead">{t("lead")}</p>
         </div>
       </section>

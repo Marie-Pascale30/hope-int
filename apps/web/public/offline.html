@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1f5f4a">
+  <title>Hors connexion · Hope International</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <style>
+    :root { --bg: #faf7f2; --surface: #ffffff; --text: #1d2a24; --muted: #5b6b63; --brand: #1f5f4a; --on-brand: #faf7f2; --line: #e7e0d4; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #101915; --surface: #17221e; --text: #eef3ef; --muted: #a7b6ae; --brand: #6cc79f; --on-brand: #0c1d16; --line: #2b3a34; }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center;
+      padding: max(24px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+      background: var(--bg); color: var(--text);
+      font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    main { width: 100%; max-width: 420px; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 36px 24px; }
+    img { width: 64px; height: 64px; }
+    h1 { font-size: 1.35rem; line-height: 1.3; margin: 20px 0 8px; }
+    p { margin: 0 0 24px; color: var(--muted); }
+    button {
+      min-height: 48px; padding: 0 28px; border: 0; border-radius: 999px; cursor: pointer;
+      background: var(--brand); color: var(--on-brand); font: inherit; font-weight: 600;
+    }
+    button:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="/icons/icon-192.png" alt="" width="64" height="64">
+    <h1 id="title">Vous êtes hors connexion</h1>
+    <p id="text">Cette page n’a pas encore été enregistrée sur votre téléphone. Les pages déjà consultées restent lisibles ; réessayez dès que le réseau revient.</p>
+    <button type="button" id="retry">Réessayer</button>
+  </main>
+  <script>
+    (function () {
+      var copy = {
+        en: ["You are offline", "This page has not been saved on your phone yet. Pages you have already visited remain available; try again as soon as the network is back.", "Try again", "Offline"],
+        es: ["Estás sin conexión", "Esta página aún no se ha guardado en tu teléfono. Las páginas ya visitadas siguen disponibles; vuelve a intentarlo cuando regrese la red.", "Reintentar", "Sin conexión"],
+      };
+      var match = location.pathname.match(/^\/(en|es)(\/|$)/);
+      var lang = match ? match[1] : (navigator.language || "fr").slice(0, 2);
+      var c = copy[lang];
+      if (c) {
+        document.documentElement.lang = lang;
+        document.getElementById("title").textContent = c[0];
+        document.getElementById("text").textContent = c[1];
+        document.getElementById("retry").textContent = c[2];
+        document.title = c[3] + " · Hope International";
+      }
+      document.getElementById("retry").addEventListener("click", function () { location.reload(); });
+      window.addEventListener("online", function () { location.reload(); });
+    })();
+  </script>
+</body>
+</html>
