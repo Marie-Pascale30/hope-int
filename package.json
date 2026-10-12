@@ -24,7 +24,7 @@
     "check": "npm run check:i18n -w @hope/web && npm run check:contrast -w @hope/web"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^10.0.6"
   },
   "engines": {
     "node": ">=22"
