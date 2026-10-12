@@ -1,0 +1,68 @@
+# Preproduction : surcharge de docker-compose.yml.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging pull
+#   docker compose -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging run --rm backend npm run migrate
+#   docker compose -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging up -d
+#
+# - Images publiees sur GHCR par .github/workflows/release.yml (pas de build sur le serveur) ;
+#   IMAGE_TAG = sha-<commit> (recommande) ou une version vX.Y.Z.
+# - Paiements en MODE TEST uniquement : cles Stripe sk_test_/pk_test_ et cles Notch Pay de test.
+#   Le garde-fou ci-dessous refuse le demarrage si une cle live est fournie.
+# - L'image du site embarque NEXT_PUBLIC_API_BASE_URL au build : publier une image construite pour
+#   l'URL de preproduction (build-arg du workflow release, voir README).
+# Variables (.env.staging, non versionne) : MYSQL_*, IMAGE_TAG, GHCR_OWNER, STAGING_SITE_URL,
+# STAGING_API_URL, STRIPE_TEST_*, NOTCHPAY_TEST_*, JWT_SECRET...
+services:
+  backend:
+    image: ghcr.io/${GHCR_OWNER:?Definir GHCR_OWNER}/hope-api:${IMAGE_TAG:?Definir IMAGE_TAG}
+    build: !reset null
+    pull_policy: always
+    env_file: !reset []
+    environment:
+      NODE_ENV: production
+      JWT_SECRET: ${JWT_SECRET:?Definir JWT_SECRET (32 caracteres min.)}
+      CORS_ORIGIN: ${STAGING_SITE_URL:?Definir STAGING_SITE_URL}
+      FRONTEND_URL: ${STAGING_SITE_URL}
+      API_PUBLIC_URL: ${STAGING_API_URL:?Definir STAGING_API_URL}
+      # Migrations lancees explicitement avant `up` (commande en tete de fichier).
+      MIGRATE_ON_START: "false"
+      TRUST_PROXY: "1"
+      COOKIE_SECURE: "true"
+      COOKIE_SAMESITE: ${COOKIE_SAMESITE:-lax}
+      # Prestataires de paiement : mode test exclusivement.
+      STRIPE_SECRET_KEY: ${STRIPE_TEST_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_TEST_WEBHOOK_SECRET:-}
+      NOTCHPAY_PUBLIC_KEY: ${NOTCHPAY_TEST_PUBLIC_KEY:-}
+      NOTCHPAY_WEBHOOK_HASH: ${NOTCHPAY_TEST_WEBHOOK_HASH:-}
+      MOBILE_MONEY_PROVIDER: notchpay
+      # Emails : SMTP de test (ex. Mailpit, Mailtrap) pour ne jamais ecrire a de vrais donateurs.
+      SMTP_HOST: ${STAGING_SMTP_HOST:-}
+      SMTP_PORT: ${STAGING_SMTP_PORT:-587}
+      SMTP_USER: ${STAGING_SMTP_USER:-}
+      SMTP_PASS: ${STAGING_SMTP_PASS:-}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      SENTRY_ENVIRONMENT: staging
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    # Garde-fou : refuse une cle de paiement live en preproduction, puis demarre l'API.
+    command:
+      - sh
+      - -c
+      - >-
+        case "$${STRIPE_SECRET_KEY:-}" in sk_live_*) echo "Cle Stripe live refusee en preproduction" >&2; exit 1;; esac;
+        case "$${NOTCHPAY_PUBLIC_KEY:-}" in pk.*live*|*_live_*) echo "Cle Notch Pay live refusee en preproduction" >&2; exit 1;; esac;
+        exec node server.js
+    ports: !override
+      - "127.0.0.1:5000:5000"
+
+  frontend:
+    image: ghcr.io/${GHCR_OWNER}/hope-web:${IMAGE_TAG}
+    build: !reset null
+    pull_policy: always
+    environment:
+      API_INTERNAL_URL: http://backend:5000/api
+    ports: !override
+      - "127.0.0.1:3001:3001"
+
+  backup:
+    environment:
+      S3_PREFIX: hope-backups/staging

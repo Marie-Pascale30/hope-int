@@ -25,7 +25,7 @@ const pairs=[
  ["success-ink","success-50",4.5,"alerte"],["warning-ink","warning-50",4.5,"alerte"],["danger-ink","danger-50",4.5,"alerte"],["info-ink","info-50",4.5,"alerte"],
  ["ink-2","neutral-50",4.5,"badge neutre"],
  ["on-dark","surface-dark",4.5,"pied de page / admin"],["on-dark-2","surface-dark",4.5,""],["on-dark-3","surface-dark",4.5,"titres de section admin"],
- ["on-dark","surface-brand",4.5,"bandeau CTA"],["on-dark-2","surface-brand-deep",4.5,"bandeau chiffres"],
+ ["on-dark","surface-brand",4.5,"bandeau CTA"],["on-dark-2","surface-brand-deep",4.5,"bandeau chiffres"],["accent-on-dark","surface-brand-deep",4.5,"surtitre bandeau chiffres"],
  ["line-input","bg",3,"bordure champ"],["line-input","surface",3,""],["line-input","surface-2",3,""],
  ["focus-color","bg",3,"contour focus"],["focus-color","surface",3,""],["focus-color","surface-2",3,""],
  ["focus-on-dark","surface-dark",3,"focus fond sombre"],["focus-on-dark","surface-brand",3,""],

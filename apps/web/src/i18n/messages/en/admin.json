@@ -187,7 +187,6 @@
         "title": "Create an account",
         "submit": "Create account",
         "name": "Full name",
-        "phonePlaceholder": "+237 6 …",
         "info": "A temporary password is generated and sent by email; it must be changed at first login.",
         "noRoleTitle": "Choose at least one role",
         "noRoleText": "An account must have at least one role (for example Member).",
@@ -427,7 +426,11 @@
         "manage_finance": "Finance: exports, reconciliation, financial summary",
         "manage_organization": "Manage events and field actions",
         "manage_it": "Supervise the system (IT)",
-        "manage_regional": "Regional dashboard"
+        "manage_regional": "Regional dashboard",
+        "approve_content": "Approve content before publication",
+        "manage_donors": "Manage donor records (CRM)",
+        "manage_campaigns": "Manage the newsletter and campaigns",
+        "manage_volunteers": "Manage attendance and volunteer hours"
       }
     },
     "regional": {
@@ -538,6 +541,14 @@
         "activity_logs": "Activity log",
         "subscriptions": "Monthly donations"
       }
+    },
+    "shortcuts": {
+      "title": "Keyboard shortcuts",
+      "intro": "Available throughout the admin area, except while typing in a field.",
+      "search": "Jump to the page search",
+      "help": "Show this help",
+      "escapeKey": "Esc",
+      "escape": "Close a dialog or the menu"
     }
   }
 }

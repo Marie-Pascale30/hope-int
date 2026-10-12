@@ -63,6 +63,7 @@ export default function ProfileTab() {
             value={form.phone}
             onChange={(value) => setForm((prev) => ({ ...prev, phone: value }))}
             error={phoneErrorText}
+            hint={t("phoneHint")}
             enterKeyHint="done"
           />
           <div className="form-actions acc-form-actions">

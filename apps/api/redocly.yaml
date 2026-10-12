@@ -1,0 +1,6 @@
+# Configuration de @redocly/cli (npm run docs:api).
+extends:
+  - recommended
+rules:
+  # Le seul serveur documente est l API locale de developpement.
+  no-server-example.com: off

@@ -5,6 +5,8 @@
 //   account.json -> { "account": { ... } } dons, connexion, espace membre
 //   admin.json   -> { "admin": { ... } }   back-office : habillage, tableau de bord, membres,
 //                                           candidatures, messages, roles, regional, systeme
+//   fundraising / engagement / volunteering / transparency .json -> modules fonctionnels
+//                 (dons etendus ; RGPD, CRM, newsletter ; benevolat ; transparence), une racine chacun
 //   adminOps.json -> { "adminOps": { ... } } back-office : dons, finance, rapport, contenus,
 //                                           evenements, journal
 //
@@ -13,7 +15,10 @@
 // sur le francais, langue de reference.
 import { DEFAULT_LOCALE, isLocale } from "../config";
 
-export const MESSAGE_FILES = ["common", "site", "account", "admin", "adminOps"];
+// Modules fonctionnels : charges a la fois par le site et par le back-office.
+export const FEATURE_FILES = ["fundraising","engagement","volunteering","transparency"];
+
+export const MESSAGE_FILES = ["common", "site", "account", "admin", "adminOps", ...FEATURE_FILES];
 
 const loaders = {
   fr: {
@@ -22,6 +27,10 @@ const loaders = {
     account: () => import("./fr/account.json"),
     admin: () => import("./fr/admin.json"),
     adminOps: () => import("./fr/adminOps.json"),
+    fundraising: () => import("./fr/fundraising.json"),
+    engagement: () => import("./fr/engagement.json"),
+    volunteering: () => import("./fr/volunteering.json"),
+    transparency: () => import("./fr/transparency.json"),
   },
   en: {
     common: () => import("./en/common.json"),
@@ -29,6 +38,10 @@ const loaders = {
     account: () => import("./en/account.json"),
     admin: () => import("./en/admin.json"),
     adminOps: () => import("./en/adminOps.json"),
+    fundraising: () => import("./en/fundraising.json"),
+    engagement: () => import("./en/engagement.json"),
+    volunteering: () => import("./en/volunteering.json"),
+    transparency: () => import("./en/transparency.json"),
   },
   es: {
     common: () => import("./es/common.json"),
@@ -36,6 +49,10 @@ const loaders = {
     account: () => import("./es/account.json"),
     admin: () => import("./es/admin.json"),
     adminOps: () => import("./es/adminOps.json"),
+    fundraising: () => import("./es/fundraising.json"),
+    engagement: () => import("./es/engagement.json"),
+    volunteering: () => import("./es/volunteering.json"),
+    transparency: () => import("./es/transparency.json"),
   },
 };
 

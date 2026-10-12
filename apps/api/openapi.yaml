@@ -1,0 +1,1607 @@
+openapi: 3.1.0
+info:
+  title: API HOPE International
+  version: 1.0.0
+  description: |
+    API REST de la plateforme HOPE International (Express 5 + MySQL).
+    Document ecrit a la main a partir de `apps/api/routes/*.js` : a mettre a jour avec les routes.
+    Validation et page HTML : `npm run docs:api -w @hope/api` (genere `apps/api/docs/index.html`).
+
+    **Authentification** : `POST /auth/login` pose le JWT dans le cookie httpOnly `hope_session`
+    (`SameSite=Lax`, `Secure` en production). L'en-tete `Authorization: Bearer <jwt>` reste accepte (scripts).
+
+    **CSRF** : toute requete d'ecriture (POST, PUT, PATCH, DELETE) authentifiee par cookie doit porter
+    `X-Requested-With: XMLHttpRequest`, sinon 403.
+
+    **Langue** : les messages d'erreur sont traduits selon `Accept-Language` (fr, en, es).
+
+    **Erreurs** : corps `{ "error": "message" }`, plus `errors` (validation express-validator), `code` ou `details`.
+
+    **Limites** : 500 requetes / 15 min par IP en production ; connexion et inscription 20 / 15 min ;
+    dons 30 / 15 min ; formulaires publics 10 / heure.
+  contact:
+    name: HOPE International
+  license:
+    name: Proprietaire
+    identifier: LicenseRef-Proprietary
+servers:
+  - url: http://localhost:5000/api
+    description: Developpement local
+security: []
+tags:
+  - name: Sante
+    description: Sonde de disponibilite (healthcheck Docker, supervision)
+  - name: Public
+    description: Referentiels, contenus publies, formulaires et agenda
+  - name: Authentification
+    description: Session par cookie httpOnly, profil et mots de passe
+  - name: Dons
+    description: Dons, recus et dons mensuels
+  - name: Webhooks
+    description: Notifications des prestataires de paiement (signees)
+  - name: Administration
+    description: Back-office ; chaque route exige une permission RBAC (packages/shared/src/rbac.js)
+
+paths:
+  /health:
+    get:
+      tags: [Sante]
+      summary: Etat de l'API et de la base
+      operationId: getHealth
+      responses:
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "200":
+          description: API et base disponibles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, enum: [ok] }
+        "503":
+          description: Base injoignable
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, enum: [degraded] }
+
+  /health/details:
+    get:
+      tags: [Sante]
+      summary: Etat detaille (supervision) - jeton X-Health-Token ou permission manage_it
+      operationId: getHealthDetails
+      security: [{ healthToken: [] }, { cookieAuth: [] }, { bearerAuth: [] }]
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "503":
+          description: Base injoignable (detail dans le corps)
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+
+  # ---------------------------------------------------------------- Public
+  /meta:
+    get:
+      tags: [Public]
+      summary: Referentiels (regions, statuts, prestataires actifs, limites de don, organisation)
+      operationId: getMeta
+      responses:
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "200":
+          description: Referentiels
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Meta" }
+  /impact:
+    get:
+      tags: [Public]
+      summary: Chiffres d'impact publics (beneficiaires, formations, dons)
+      operationId: getImpact
+      responses:
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "200":
+          description: Indicateurs agreges
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+  /content/{type}:
+    get:
+      tags: [Public]
+      summary: Contenus publies d'un type
+      operationId: listContent
+      parameters:
+        - $ref: "#/components/parameters/ContentType"
+        - $ref: "#/components/parameters/RegionQuery"
+      responses:
+        "200":
+          description: Liste des contenus publies
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Content" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+  /content/{type}/{id}:
+    get:
+      tags: [Public]
+      summary: Detail d'un contenu publie
+      operationId: getContent
+      parameters:
+        - $ref: "#/components/parameters/ContentType"
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Contenu
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Content" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /messages:
+    post:
+      tags: [Public]
+      summary: Formulaire de contact
+      operationId: createMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, subject, content]
+              properties:
+                name: { type: string, minLength: 2, maxLength: 150 }
+                email: { type: string, format: email }
+                subject: { type: string, minLength: 3, maxLength: 255 }
+                content: { type: string, minLength: 10, maxLength: 5000 }
+      responses:
+        "201": { $ref: "#/components/responses/Message" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+  /applications:
+    post:
+      tags: [Public]
+      summary: Candidature (benevolat / adhesion)
+      operationId: createApplication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, motivation]
+              properties:
+                name: { type: string, minLength: 2, maxLength: 150 }
+                email: { type: string, format: email }
+                phone: { type: string, maxLength: 40 }
+                region: { $ref: "#/components/schemas/Region" }
+                motivation: { type: string, minLength: 30, maxLength: 5000 }
+                interests:
+                  type: array
+                  description: Poles d'interet indicatifs (referentiel INTEREST_AREAS)
+                  items: { type: string, enum: [terrain, sante, education, entrepreneuriat, communication, collecte, informatique, administration, autre] }
+      responses:
+        "201": { $ref: "#/components/responses/Message" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+  /events:
+    get:
+      tags: [Public]
+      summary: Agenda des evenements publies (inscription de l'utilisateur si connecte)
+      operationId: listEvents
+      security: [{}, { cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/RegionQuery"
+      responses:
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "200":
+          description: Evenements
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Event" }
+  /events/mine:
+    get:
+      tags: [Public]
+      summary: Evenements auxquels l'utilisateur connecte est inscrit
+      operationId: myEvents
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      responses:
+        "200":
+          description: Evenements
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Event" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /events/{id}:
+    get:
+      tags: [Public]
+      summary: Detail d'un evenement
+      operationId: getEvent
+      security: [{}, { cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Evenement
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Event" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /events/{id}/registration:
+    post:
+      tags: [Public]
+      summary: S'inscrire a un evenement
+      operationId: registerEvent
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      responses:
+        "200": { $ref: "#/components/responses/Message" }
+        "201": { $ref: "#/components/responses/Message" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409":
+          description: Evenement complet, passe ou deja inscrit
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+    delete:
+      tags: [Public]
+      summary: Se desinscrire d'un evenement
+      operationId: unregisterEvent
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      responses:
+        "200": { $ref: "#/components/responses/Message" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  # ---------------------------------------------------------------- Authentification
+  /auth/register:
+    post:
+      tags: [Authentification]
+      summary: Creer un compte membre
+      description: Reponse identique que l'email existe ou non (pas d'enumeration des comptes).
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name: { type: string, minLength: 2, maxLength: 150 }
+                email: { type: string, format: email }
+                password: { $ref: "#/components/schemas/Password" }
+      responses:
+        "201": { $ref: "#/components/responses/Message" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+  /auth/login:
+    post:
+      tags: [Authentification]
+      summary: Connexion (pose le cookie de session)
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+      responses:
+        "200":
+          description: Connecte ; cookie `hope_session` pose
+          headers:
+            Set-Cookie:
+              schema: { type: string }
+              description: "hope_session=<jwt>; HttpOnly; SameSite=Lax"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user: { $ref: "#/components/schemas/User" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+  /auth/forgot-password:
+    post:
+      tags: [Authentification]
+      summary: Demander un lien de reinitialisation
+      operationId: forgotPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        "200": { $ref: "#/components/responses/Message" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+  /auth/reset-password:
+    post:
+      tags: [Authentification]
+      summary: Reinitialiser le mot de passe avec le jeton recu par email
+      operationId: resetPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, password]
+              properties:
+                token: { type: string, minLength: 32, maxLength: 128 }
+                password: { $ref: "#/components/schemas/Password" }
+      responses:
+        "200": { $ref: "#/components/responses/Message" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+  /auth/logout:
+    post:
+      tags: [Authentification]
+      summary: Deconnexion (efface le cookie)
+      operationId: logout
+      parameters:
+        - $ref: "#/components/parameters/Csrf"
+      responses:
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "200": { $ref: "#/components/responses/Message" }
+  /auth/logout-all:
+    post:
+      tags: [Authentification]
+      summary: Fermer toutes les sessions du compte
+      operationId: logoutAll
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Csrf"
+      responses:
+        "200": { $ref: "#/components/responses/Message" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /auth/me:
+    get:
+      tags: [Authentification]
+      summary: Profil de l'utilisateur connecte
+      operationId: getMe
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      responses:
+        "200":
+          description: Profil
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+    patch:
+      tags: [Authentification]
+      summary: Modifier son nom ou son telephone
+      operationId: updateMe
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, minLength: 2, maxLength: 150 }
+                phone: { type: string, maxLength: 40 }
+      responses:
+        "200":
+          description: Profil mis a jour
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /auth/change-password:
+    post:
+      tags: [Authentification]
+      summary: Changer de mot de passe (ferme les autres sessions)
+      operationId: changePassword
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currentPassword, newPassword]
+              properties:
+                currentPassword: { type: string }
+                newPassword: { $ref: "#/components/schemas/Password" }
+      responses:
+        "200":
+          description: Mot de passe modifie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  user: { $ref: "#/components/schemas/User" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  # ---------------------------------------------------------------- Dons
+  /payment/donations:
+    post:
+      tags: [Dons]
+      summary: Creer un don (carte Stripe ou Mobile Money)
+      description: |
+        Carte : renvoie `clientSecret` (a confirmer avec Stripe.js). Mobile Money : renvoie `redirectUrl`
+        (page du prestataire). Un donateur anonyme fournit `donorName` et `donorEmail`.
+      operationId: createDonation
+      security: [{}, { cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount, provider]
+              properties:
+                amount: { type: number, exclusiveMinimum: 0, description: "EUR (carte) ou XAF (Mobile Money), dans les limites de /meta" }
+                provider: { type: string, enum: [stripe, mobile_money, notchpay, flutterwave] }
+                frequency: { type: string, enum: [once, monthly], default: once }
+                projectId: { type: integer, minimum: 1 }
+                donorName: { type: string, minLength: 2, maxLength: 150 }
+                donorEmail: { type: string, format: email }
+                phone: { type: string, maxLength: 40, description: Numero Mobile Money (E.164) }
+      responses:
+        "201":
+          description: Don cree (statut pending)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [paymentId, provider, receiptToken]
+                properties:
+                  paymentId: { type: integer }
+                  provider: { type: string }
+                  receiptToken: { type: string, minLength: 48, maxLength: 48 }
+                  clientSecret: { type: string }
+                  redirectUrl: { type: string, format: uri }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "503":
+          description: Prestataire non configure ou indisponible
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+  /payment/receipts/{token}:
+    get:
+      tags: [Dons]
+      summary: Etat d'un don et de son recu (page de remerciement, sans compte)
+      operationId: getReceipt
+      parameters:
+        - $ref: "#/components/parameters/ReceiptToken"
+      responses:
+        "200":
+          description: Don
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Donation" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /payment/receipts/{token}/confirm:
+    post:
+      tags: [Dons]
+      summary: Relire le statut chez le prestataire au retour de paiement
+      operationId: confirmReceipt
+      parameters:
+        - $ref: "#/components/parameters/ReceiptToken"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transactionId: { type: string, maxLength: 64 }
+                status: { type: string }
+      responses:
+        "200":
+          description: Don (statut a jour)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Donation" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /payment/receipts/{token}/pdf:
+    get:
+      tags: [Dons]
+      summary: Recu fiscal PDF
+      operationId: downloadReceipt
+      parameters:
+        - $ref: "#/components/parameters/ReceiptToken"
+      responses:
+        "200":
+          description: Recu PDF
+          content:
+            application/pdf:
+              schema: { type: string, format: binary }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409":
+          description: Don non confirme (pas de recu)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+  /payment/receipts/{token}/cancel-subscription:
+    post:
+      tags: [Dons]
+      summary: Arreter un don mensuel depuis le lien du recu
+      operationId: cancelSubscriptionByReceipt
+      parameters:
+        - $ref: "#/components/parameters/ReceiptToken"
+      responses:
+        "200":
+          description: Don mensuel arrete
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  alreadyCanceled: { type: boolean }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /payment/receipts/annual/{year}/pdf:
+    get:
+      tags: [Dons]
+      summary: Recapitulatif annuel des dons confirmes du compte
+      operationId: downloadAnnualReceipt
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - name: year
+          in: path
+          required: true
+          schema: { type: integer, minimum: 2000, maximum: 2100 }
+      responses:
+        "200":
+          description: PDF
+          content:
+            application/pdf:
+              schema: { type: string, format: binary }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /payment/mine:
+    get:
+      tags: [Dons]
+      summary: Dons et dons mensuels du compte connecte
+      operationId: getMyDonations
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      responses:
+        "200":
+          description: Dons du compte
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /payment/subscriptions/{id}:
+    delete:
+      tags: [Dons]
+      summary: Arreter un de ses dons mensuels
+      operationId: cancelSubscription
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, pattern: "^sub_[A-Za-z0-9]+$" }
+        - $ref: "#/components/parameters/Csrf"
+      responses:
+        "200": { $ref: "#/components/responses/Message" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  # ---------------------------------------------------------------- Webhooks
+  /payment/webhook:
+    post:
+      tags: [Webhooks]
+      summary: Webhook Stripe (corps brut, en-tete Stripe-Signature)
+      operationId: stripeWebhook
+      parameters:
+        - name: Stripe-Signature
+          in: header
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        "200": { $ref: "#/components/responses/WebhookReceived" }
+        "400": { $ref: "#/components/responses/WebhookRejected" }
+  /payment/notchpay/webhook:
+    post:
+      tags: [Webhooks]
+      summary: Webhook Notch Pay (HMAC-SHA256 du corps brut)
+      operationId: notchpayWebhook
+      parameters:
+        - name: x-notch-signature
+          in: header
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        "200": { $ref: "#/components/responses/WebhookReceived" }
+        "400": { $ref: "#/components/responses/WebhookRejected" }
+  /payment/flutterwave/webhook:
+    post:
+      tags: [Webhooks]
+      summary: Webhook Flutterwave (en-tete verif-hash)
+      operationId: flutterwaveWebhook
+      parameters:
+        - name: verif-hash
+          in: header
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        "200": { $ref: "#/components/responses/WebhookReceived" }
+        "400": { $ref: "#/components/responses/WebhookRejected" }
+
+  # ---------------------------------------------------------------- Administration
+  /admin/stats:
+    get:
+      tags: [Administration]
+      summary: Tableau de bord (permission view_stats)
+      operationId: adminStats
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/roles:
+    get:
+      tags: [Administration]
+      summary: Roles et permissions, roles attribuables par l'utilisateur
+      operationId: adminRoles
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/logs:
+    get:
+      tags: [Administration]
+      summary: Journal d'activite (view_logs)
+      operationId: adminLogs
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 500 } }
+        - { name: offset, in: query, schema: { type: integer, minimum: 0 } }
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/system:
+    get:
+      tags: [Administration]
+      summary: Etat du systeme et configuration restante (manage_it)
+      operationId: adminSystem
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/regional:
+    get:
+      tags: [Administration]
+      summary: Vue regionale (manage_regional)
+      operationId: adminRegional
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/RegionQuery"
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/reports/annual:
+    get:
+      tags: [Administration]
+      summary: Rapport annuel (view_stats)
+      operationId: adminAnnualReport
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/YearQuery"
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/users:
+    get:
+      tags: [Administration]
+      summary: Membres (view_users), pagination optionnelle
+      operationId: adminListUsers
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/RegionQuery"
+        - { name: status, in: query, schema: { type: string, enum: [active, inactive] } }
+        - { name: role, in: query, schema: { type: string } }
+        - { name: q, in: query, schema: { type: string, maxLength: 100 } }
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+      responses:
+        "200": { $ref: "#/components/responses/PagedList" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    post:
+      tags: [Administration]
+      summary: Creer un compte avec mot de passe provisoire (manage_user_roles)
+      operationId: adminCreateUser
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, roles]
+              properties:
+                name: { type: string, minLength: 2, maxLength: 150 }
+                email: { type: string, format: email }
+                phone: { type: string, maxLength: 40 }
+                region: { $ref: "#/components/schemas/Region" }
+                roles: { $ref: "#/components/schemas/Roles" }
+      responses:
+        "201": { $ref: "#/components/responses/AnyObject" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "409":
+          description: Email deja utilise
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+  /admin/staff:
+    get:
+      tags: [Administration]
+      summary: Membres de l'equipe (assignation des messages)
+      operationId: adminStaff
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/users/{id}/roles:
+    patch:
+      tags: [Administration]
+      summary: Modifier les roles d'un membre (manage_user_roles)
+      operationId: adminUpdateUserRoles
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [roles]
+              properties:
+                roles: { $ref: "#/components/schemas/Roles" }
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /admin/users/{id}/profile:
+    patch:
+      tags: [Administration]
+      summary: Fiche RH d'un membre (manage_hr)
+      operationId: adminUpdateUserProfile
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone: { type: [string, "null"], maxLength: 40 }
+                region: { $ref: "#/components/schemas/Region" }
+                skills: { type: [string, "null"], maxLength: 2000 }
+                availability: { type: [string, "null"], maxLength: 255 }
+                status: { type: string, enum: [active, inactive] }
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /admin/users/{id}:
+    delete:
+      tags: [Administration]
+      summary: Supprimer un compte (delete_users)
+      operationId: adminDeleteUser
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      responses:
+        "200": { $ref: "#/components/responses/Message" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /admin/messages:
+    get:
+      tags: [Administration]
+      summary: Messages de contact (view_messages)
+      operationId: adminListMessages
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - { name: status, in: query, schema: { type: string, enum: [nouveau, lu, traite, archive] } }
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+      responses:
+        "200": { $ref: "#/components/responses/PagedList" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/messages/bulk:
+    patch:
+      tags: [Administration]
+      summary: Changer le statut de plusieurs messages
+      operationId: adminBulkUpdateMessages
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids, status]
+              properties:
+                ids: { $ref: "#/components/schemas/BulkIds" }
+                status: { type: string, enum: [nouveau, lu, traite, archive] }
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/messages/{id}:
+    patch:
+      tags: [Administration]
+      summary: Traiter un message (statut, assignation, notes)
+      operationId: adminUpdateMessage
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string, enum: [nouveau, lu, traite, archive] }
+                assignedTo: { type: [integer, "null"], minimum: 1 }
+                notes: { type: [string, "null"], maxLength: 5000 }
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      tags: [Administration]
+      summary: Supprimer un message
+      operationId: adminDeleteMessage
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      responses:
+        "200": { $ref: "#/components/responses/Message" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /admin/applications:
+    get:
+      tags: [Administration]
+      summary: Candidatures (manage_applications)
+      operationId: adminListApplications
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - { name: status, in: query, schema: { type: string, enum: [nouvelle, en_etude, acceptee, refusee] } }
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+      responses:
+        "200": { $ref: "#/components/responses/PagedList" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/applications/bulk-reject:
+    post:
+      tags: [Administration]
+      summary: Refuser plusieurs candidatures
+      operationId: adminBulkRejectApplications
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids]
+              properties:
+                ids: { $ref: "#/components/schemas/BulkIds" }
+                reviewNote: { type: [string, "null"], maxLength: 2000 }
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/applications/{id}/review:
+    post:
+      tags: [Administration]
+      summary: Passer une candidature en etude
+      operationId: adminReviewApplication
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        $ref: "#/components/requestBodies/ReviewNote"
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /admin/applications/{id}/reject:
+    post:
+      tags: [Administration]
+      summary: Refuser une candidature
+      operationId: adminRejectApplication
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        $ref: "#/components/requestBodies/ReviewNote"
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /admin/applications/{id}/accept:
+    post:
+      tags: [Administration]
+      summary: Accepter une candidature et creer (ou lier) le compte (manage_applications + manage_user_roles)
+      operationId: adminAcceptApplication
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [roles]
+              properties:
+                roles: { $ref: "#/components/schemas/Roles" }
+                linkExisting: { type: boolean }
+                reviewNote: { type: [string, "null"], maxLength: 2000 }
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409":
+          description: Un compte existe deja pour cet email (relancer avec linkExisting)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+  /admin/donations:
+    get:
+      tags: [Administration]
+      summary: Dons (view_donations), filtres et pagination
+      operationId: adminListDonations
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/DonationStatus"
+        - $ref: "#/components/parameters/From"
+        - $ref: "#/components/parameters/To"
+        - $ref: "#/components/parameters/ProjectIdQuery"
+        - $ref: "#/components/parameters/ProviderQuery"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+      responses:
+        "200": { $ref: "#/components/responses/PagedList" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/donations/{id}/review:
+    post:
+      tags: [Administration]
+      summary: Valider ou rejeter un don en verification (manage_finance)
+      operationId: adminResolveDonationReview
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision: { type: string, enum: [approve, reject] }
+                receivedAmount: { type: number, exclusiveMinimum: 0, description: Obligatoire si decision = approve }
+                note: { type: [string, "null"], maxLength: 500 }
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409":
+          description: Le don n'est pas en verification
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+  /admin/donations/{id}/resend-receipt:
+    post:
+      tags: [Administration]
+      summary: Renvoyer le recu par email (manage_finance)
+      operationId: adminResendReceipt
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      responses:
+        "200": { $ref: "#/components/responses/Message" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /admin/finance/summary:
+    get:
+      tags: [Administration]
+      summary: Bilan financier (manage_finance)
+      operationId: adminFinanceSummary
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/YearQuery"
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/finance/export:
+    get:
+      tags: [Administration]
+      summary: Export CSV des dons (manage_finance)
+      operationId: adminExportDonations
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/DonationStatus"
+        - $ref: "#/components/parameters/From"
+        - $ref: "#/components/parameters/To"
+        - $ref: "#/components/parameters/ProjectIdQuery"
+        - $ref: "#/components/parameters/ProviderQuery"
+      responses:
+        "200":
+          description: Fichier CSV
+          content:
+            text/csv:
+              schema: { type: string }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/finance/reconcile:
+    post:
+      tags: [Administration]
+      summary: Rapprocher les dons en attente avec les prestataires (manage_finance)
+      operationId: adminReconcile
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Csrf"
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/content/{type}:
+    get:
+      tags: [Administration]
+      summary: Tous les contenus d'un type, publies ou non (manage_content)
+      operationId: adminListContent
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/ContentType"
+      responses:
+        "200":
+          description: Contenus
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Content" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    post:
+      tags: [Administration]
+      summary: Creer un contenu (image optionnelle, 5 Mo max, JPG/PNG/WebP/GIF)
+      operationId: adminCreateContent
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/ContentType"
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        $ref: "#/components/requestBodies/ContentForm"
+      responses:
+        "201":
+          description: Contenu cree
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Content" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/content/{type}/{id}:
+    patch:
+      tags: [Administration]
+      summary: Modifier un contenu
+      operationId: adminUpdateContent
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/ContentType"
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        $ref: "#/components/requestBodies/ContentForm"
+      responses:
+        "200":
+          description: Contenu modifie
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Content" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      tags: [Administration]
+      summary: Supprimer un contenu
+      operationId: adminDeleteContent
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/ContentType"
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      responses:
+        "200": { $ref: "#/components/responses/Message" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /admin/events:
+    get:
+      tags: [Administration]
+      summary: Tous les evenements (manage_organization)
+      operationId: adminListEvents
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      responses:
+        "200":
+          description: Evenements
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Event" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    post:
+      tags: [Administration]
+      summary: Creer un evenement
+      operationId: adminCreateEvent
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        $ref: "#/components/requestBodies/EventForm"
+      responses:
+        "201":
+          description: Evenement cree
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Event" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/events/{id}:
+    patch:
+      tags: [Administration]
+      summary: Modifier un evenement
+      operationId: adminUpdateEvent
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        $ref: "#/components/requestBodies/EventForm"
+      responses:
+        "200":
+          description: Evenement modifie
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Event" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      tags: [Administration]
+      summary: Supprimer un evenement
+      operationId: adminDeleteEvent
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Csrf"
+      responses:
+        "200": { $ref: "#/components/responses/Message" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /admin/events/{id}/registrations:
+    get:
+      tags: [Administration]
+      summary: Inscrits a un evenement
+      operationId: adminEventRegistrations
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200": { $ref: "#/components/responses/AnyObject" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: hope_session
+      description: JWT pose par POST /auth/login. Ecritures - ajouter l'en-tete X-Requested-With - XMLHttpRequest.
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Alternative au cookie pour les scripts (pas de controle CSRF).
+    healthToken:
+      type: apiKey
+      in: header
+      name: X-Health-Token
+      description: Jeton de supervision (variable HEALTH_TOKEN de l'API).
+
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, minimum: 1 }
+    ContentType:
+      name: type
+      in: path
+      required: true
+      schema: { type: string, enum: [projects, news, testimonials] }
+    ReceiptToken:
+      name: token
+      in: path
+      required: true
+      description: Jeton de recu (48 caracteres hexadecimaux)
+      schema: { type: string, pattern: "^[0-9a-fA-F]{48}$" }
+    Csrf:
+      name: X-Requested-With
+      in: header
+      required: false
+      description: Obligatoire (valeur XMLHttpRequest) pour une ecriture authentifiee par cookie.
+      schema: { type: string, enum: [XMLHttpRequest] }
+    RegionQuery:
+      name: region
+      in: query
+      schema: { $ref: "#/components/schemas/Region" }
+    YearQuery:
+      name: year
+      in: query
+      schema: { type: integer, minimum: 2000, maximum: 2100 }
+    Page:
+      name: page
+      in: query
+      description: Sans page, la reponse est un tableau complet ; avec page, un objet pagine.
+      schema: { type: integer, minimum: 1, maximum: 100000 }
+    PageSize:
+      name: pageSize
+      in: query
+      schema: { type: integer, minimum: 1 }
+    DonationStatus:
+      name: status
+      in: query
+      schema: { $ref: "#/components/schemas/DonationStatus" }
+    From:
+      name: from
+      in: query
+      schema: { type: string, format: date }
+    To:
+      name: to
+      in: query
+      schema: { type: string, format: date }
+    ProjectIdQuery:
+      name: projectId
+      in: query
+      schema: { type: integer, minimum: 1 }
+    ProviderQuery:
+      name: provider
+      in: query
+      schema: { type: string, enum: [stripe, notchpay, flutterwave] }
+
+  requestBodies:
+    ReviewNote:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              reviewNote: { type: [string, "null"], maxLength: 2000 }
+    ContentForm:
+      required: true
+      description: JSON, ou multipart/form-data avec un champ fichier `image`. Champs obligatoires a la creation - projects (title, description), news (title, content), testimonials (author, content).
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ContentInput" }
+        multipart/form-data:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ContentInput"
+              - type: object
+                properties:
+                  image: { type: string, format: binary }
+    EventForm:
+      required: true
+      description: JSON, ou multipart/form-data avec un champ fichier `image`. title, description, location et start_at sont obligatoires a la creation.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/EventInput" }
+        multipart/form-data:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/EventInput"
+              - type: object
+                properties:
+                  image: { type: string, format: binary }
+
+  responses:
+    Message:
+      description: Operation effectuee
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message: { type: string }
+    AnyObject:
+      description: Reponse JSON (structure detaillee dans le controleur correspondant)
+      content:
+        application/json:
+          schema: { type: object, additionalProperties: true }
+    PagedList:
+      description: Tableau (sans `page`) ou objet pagine (avec `page`)
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - type: array
+                items: { type: object, additionalProperties: true }
+              - $ref: "#/components/schemas/Page"
+    ValidationError:
+      description: Requete invalide
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unauthorized:
+      description: Non connecte ou session expiree
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Forbidden:
+      description: Permission manquante, ou en-tete CSRF absent
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: Ressource introuvable
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    TooManyRequests:
+      description: Trop de requetes (limiteur)
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    WebhookReceived:
+      description: Notification acceptee
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              received: { type: boolean }
+    WebhookRejected:
+      description: Signature invalide
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+        code: { type: string }
+        details: {}
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              path: { type: string }
+              msg: { type: string }
+    Page:
+      type: object
+      properties:
+        rows:
+          type: array
+          items: { type: object, additionalProperties: true }
+        total: { type: integer }
+        page: { type: integer }
+        pageSize: { type: integer }
+    Password:
+      type: string
+      minLength: 8
+      maxLength: 100
+      description: Au moins 8 caracteres, une lettre et un chiffre
+    Region:
+      type: string
+      enum: [Adamaoua, Centre, Est, Extrême-Nord, Littoral, Nord, Nord-Ouest, Ouest, Sud, Sud-Ouest]
+    Roles:
+      type: array
+      minItems: 1
+      items:
+        type: string
+        enum: [directrice_generale, conseiller, responsable_rh, responsable_finance, organisatrice, responsable_it, directrice_regionale, secretaire_generale, membre, admin]
+    BulkIds:
+      type: array
+      minItems: 1
+      maxItems: 100
+      items: { type: integer, minimum: 1 }
+    DonationStatus:
+      type: string
+      enum: [pending, succeeded, failed, canceled, refunded, disputed, review]
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string, format: email }
+        roles: { type: array, items: { type: string } }
+        permissions: { type: array, items: { type: string } }
+        phone: { type: [string, "null"] }
+        region: { type: [string, "null"] }
+        mustChangePassword: { type: boolean }
+    Meta:
+      type: object
+      properties:
+        regions: { type: array, items: { $ref: "#/components/schemas/Region" } }
+        projectStatuses: { type: array, items: { type: string } }
+        interestAreas:
+          type: array
+          items:
+            type: object
+            properties:
+              value: { type: string }
+              label: { type: string }
+        providers:
+          type: object
+          properties:
+            stripe: { type: boolean }
+            mobileMoney: { type: boolean }
+            mobileMoneyProvider: { type: [string, "null"], enum: [notchpay, flutterwave, null] }
+            notchpay: { type: boolean }
+            flutterwave: { type: boolean }
+        donationLimits:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              min: { type: number }
+              max: { type: number }
+        xafPerEur: { type: number }
+        organization:
+          type: object
+          additionalProperties: { type: string }
+    Content:
+      type: object
+      description: Projet / campagne, actualite ou temoignage (champs selon le type)
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        summary: { type: [string, "null"] }
+        description: { type: string }
+        content: { type: string }
+        author: { type: string }
+        role_label: { type: [string, "null"] }
+        image_url: { type: [string, "null"] }
+        image_alt: { type: [string, "null"] }
+        status: { type: string, enum: [planifie, en_cours, termine] }
+        region: { type: [string, "null"] }
+        goal_amount: { type: [number, "null"] }
+        project_id: { type: [integer, "null"] }
+        published: { type: [boolean, integer] }
+        created_at: { type: string, format: date-time }
+      additionalProperties: true
+    ContentInput:
+      type: object
+      properties:
+        title: { type: string, maxLength: 255 }
+        summary: { type: string, maxLength: 500 }
+        description: { type: string }
+        content: { type: string }
+        author: { type: string, maxLength: 150 }
+        role_label: { type: string, maxLength: 150 }
+        image_alt: { type: string, maxLength: 255 }
+        status: { type: string, enum: [planifie, en_cours, termine] }
+        region: { $ref: "#/components/schemas/Region" }
+        budget: { type: number, minimum: 0 }
+        goal_amount: { type: number, minimum: 0 }
+        beneficiaries: { type: integer, minimum: 0 }
+        trainees: { type: integer, minimum: 0 }
+        credits_granted: { type: integer, minimum: 0 }
+        start_date: { type: string, format: date }
+        end_date: { type: string, format: date }
+        project_id: { type: integer, minimum: 1 }
+        published: { type: boolean }
+    Event:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        location: { type: string }
+        region: { type: [string, "null"] }
+        start_at: { type: string, format: date-time }
+        end_at: { type: [string, "null"], format: date-time }
+        capacity: { type: [integer, "null"] }
+        remaining_spots: { type: [integer, "null"] }
+        registered: { type: boolean, description: Present si l'utilisateur est connecte }
+        image_url: { type: [string, "null"] }
+        project_id: { type: [integer, "null"] }
+      additionalProperties: true
+    EventInput:
+      type: object
+      properties:
+        title: { type: string, minLength: 3, maxLength: 255 }
+        description: { type: string, minLength: 10 }
+        location: { type: string, minLength: 2, maxLength: 255 }
+        start_at: { type: string, format: date-time }
+        end_at: { type: string, format: date-time }
+        capacity: { type: integer, minimum: 1, maximum: 100000 }
+        region: { $ref: "#/components/schemas/Region" }
+        project_id: { type: integer, minimum: 1 }
+        image_alt: { type: string, maxLength: 255 }
+    Donation:
+      type: object
+      properties:
+        id: { type: integer }
+        status: { $ref: "#/components/schemas/DonationStatus" }
+        amount: { type: number }
+        currency: { type: string, enum: [eur, xaf] }
+        method: { type: string, enum: [card, mobile_money] }
+        provider: { type: string }
+        frequency: { type: string, enum: [once, monthly] }
+        receiptNumber: { type: [string, "null"] }
+      additionalProperties: true

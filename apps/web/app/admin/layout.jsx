@@ -6,7 +6,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import AdminShell from "@/src/components/admin/AdminShell";
 import { AuthProvider } from "@/src/context/AuthContext";
-import { loadMessages } from "@/src/i18n/messages";
+import { FEATURE_FILES, loadMessages } from "@/src/i18n/messages";
 import RootDocument, { rootViewport } from "../_lib/document";
 
 // Layout racine du back-office : pas de prefixe de langue dans l'URL, la langue vient
@@ -26,7 +26,7 @@ export const viewport = rootViewport;
 
 export default async function AdminLayout({ children }) {
   const locale = await getLocale();
-  const messages = await loadMessages(locale, ["common", "admin", "adminOps"]);
+  const messages = await loadMessages(locale, ["common", "admin", "adminOps", ...FEATURE_FILES]);
   return (
     <RootDocument locale={locale}>
       <NextIntlClientProvider locale={locale} messages={messages}>

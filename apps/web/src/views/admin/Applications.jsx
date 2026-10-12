@@ -452,6 +452,7 @@ function ApplicationsInbox() {
               caption={t("title")}
               selectable
               isSelectable={isOpen}
+              selectLabel={(row) => `${row.name} (${row.email})`}
               selectedIds={checkedIds}
               onSelectionChange={(ids) => setChecked({ key: viewKey, ids })}
               bulkActions={(rows) => (

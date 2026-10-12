@@ -156,6 +156,12 @@ exports.handleStripeWebhook = async (signature, payloadBuffer) => {
     } else if (event.type === "invoice.payment_failed") {
         if (object.billing_reason === "subscription_cycle") {
             await updateSubscription(invoiceSubscription(object), "past_due", "payment.subscription_payment_failed", { invoiceId: object.id });
+            // Donateur prevenu (une fois par facture) avec un lien vers la mise a jour de sa carte.
+            await require("../donationDunningService").notifyPaymentFailed({
+                invoiceId: object.id,
+                subscriptionId: invoiceSubscription(object),
+                attempt: object.attempt_count,
+            }).catch((error) => console.error("dunning-email-error:", error.message));
         }
     } else if (event.type === "charge.refunded") {
         await handleChargeRefunded(object);

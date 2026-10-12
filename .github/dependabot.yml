@@ -1,0 +1,49 @@
+version: 2
+updates:
+  # Dependances npm de tous les workspaces (un seul package-lock.json a la racine).
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Africa/Douala
+    open-pull-requests-limit: 10
+    groups:
+      # Correctifs et versions mineures : une seule PR par semaine.
+      npm-minor-patch:
+        update-types: [minor, patch]
+      # Montees majeures regroupees par famille (a tester separement).
+      stripe:
+        patterns: ["stripe", "@stripe/*"]
+        update-types: [major]
+      eslint:
+        patterns: ["eslint", "@eslint/*", "eslint-config-next", "globals"]
+        update-types: [major]
+      test-tooling:
+        patterns: ["vitest", "@vitejs/*", "@testing-library/*", "jsdom", "@playwright/test"]
+        update-types: [major]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: docker
+    directories:
+      - /apps/api
+      - /apps/web
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      docker-images:
+        patterns: ["*"]
+
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: monthly

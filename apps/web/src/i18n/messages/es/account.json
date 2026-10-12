@@ -126,7 +126,6 @@
     "profile": {
       "title": "Mis datos",
       "phone": "Teléfono",
-      "phonePlaceholder": "Ej.: +237 6 77 12 34 56",
       "phoneHint": "Útil para los donativos por Mobile Money y los eventos.",
       "save": "Guardar",
       "saved": "Perfil actualizado",
@@ -361,14 +360,12 @@
         "emailHint": "Te enviaremos ahí tu recibo.",
         "loginHint": "¿Ya tienes cuenta? <link>Inicia sesión</link> para encontrar todos tus donativos y recibos en tu espacio.",
         "phone": "Número de Mobile Money",
-        "phonePlaceholder": "Ej.: 6 77 12 34 56",
         "phoneHint": "Número de Orange Money o MTN MoMo con el que validarás el pago."
       },
       "errors": {
         "amount": "Indica un importe entre {min} y {max}.",
         "name": "Indica tu nombre (mínimo {min} caracteres)",
         "email": "Correo electrónico no válido",
-        "phone": "Indica el número de Mobile Money al que se cargará el pago",
         "card": "Completa los datos de tu tarjeta"
       },
       "payment": {
@@ -453,7 +450,7 @@
       },
       "share": {
         "text": "Acabo de apoyar a HOPE International, que acompaña a las familias cameruneses hacia la autonomía. ¡Súmate!",
-        "copied": "Enlace copiado: ya solo falta compartirlo"
+        "textProject": "Acabo de apoyar «{title}» con HOPE International. ¡Únase!"
       },
       "monthly": {
         "stopped": "Este donativo mensual está detenido: no se realizará ningún otro cargo.",

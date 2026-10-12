@@ -34,6 +34,8 @@ export default defineConfig({
           command: "npm run start -w @hope/api",
           cwd: "../..",
           url: apiHealth,
+          // Hors production : pas de cookie Secure ni de limiteur pour 127.0.0.1 (requetes de test).
+          env: { NODE_ENV: "development" },
           timeout: 120_000,
           reuseExistingServer: false,
           stdout: "pipe",
@@ -43,6 +45,7 @@ export default defineConfig({
           command: "npm run start -w @hope/web",
           cwd: "../..",
           url: baseURL,
+          env: { NODE_ENV: "production" },
           timeout: 120_000,
           reuseExistingServer: false,
           stdout: "pipe",

@@ -34,7 +34,8 @@
     "common": {
       "exported": "CSV export downloaded",
       "exportFailed": "Export failed",
-      "csvDonations": "hope-donations-{date}.csv"
+      "csvDonations": "hope-donations-{date}.csv",
+      "csvFinance": "hope-donations-{period}-{date}.csv"
     },
     "donations": {
       "eyebrow": "Donations",
@@ -449,7 +450,8 @@
         "eventDeleted": "“{title}” · {count, plural, =0 {no registrations} one {# registration deleted} other {# registrations deleted}}",
         "recipient": "Recipient: {to}",
         "attempts": "{count, plural, one {# attempt} other {# attempts}}"
-      }
+      },
+      "searchPlaceholder": "Search this page (action, author)…"
     },
     "content": {
       "eyebrow": "Content",
@@ -720,6 +722,17 @@
         "phone": "Phone",
         "region": "Region",
         "registeredAt": "Registered on"
+      },
+      "csvFile": "registrations-{event}-{date}.csv",
+      "print": "Sign-in sheet",
+      "sheet": {
+        "title": "Sign-in sheet",
+        "count": "{count, plural, one {# registered} other {# registered}}",
+        "number": "No.",
+        "name": "Name",
+        "contact": "Phone / email",
+        "signature": "Signature",
+        "printedAt": "Printed on {date} — HOPE International"
       }
     }
   }

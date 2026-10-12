@@ -1,6 +1,9 @@
 // Dons : creation chez le prestataire, page de remerciement, recus, validation manuelle et listes.
 const paymentRepo = require("../../repositories/paymentRepository");
 const contentRepo = require("../../repositories/contentRepository");
+const pledgeRepo = require("../../repositories/donationPledgeRepository");
+const fundraisingPageRepo = require("../../repositories/fundraisingPageRepository");
+const { cleanSource, parseTribute } = require("../donationExtras");
 const stripeProvider = require("./stripeProvider");
 const flutterwaveProvider = require("./flutterwaveProvider");
 const notchpayProvider = require("./notchpayProvider");
@@ -41,6 +44,11 @@ function toPublicView(payment) {
         subscription_id: payment.subscription_id,
         subscription_status: payment.subscription_status || null,
         refunded_amount: payment.refunded_amount || 0,
+        tribute_type: payment.tribute_type || null,
+        tribute_name: payment.tribute_name || null,
+        fundraiser_slug: payment.fundraiser_slug || null,
+        fundraiser_title: payment.fundraiser_title || null,
+        pledge_id: payment.pledge_id || null,
         paid_at: payment.paid_at,
         created_at: payment.created_at,
     };
@@ -112,6 +120,24 @@ async function resolveProject(projectId) {
     return project;
 }
 
+// Collecte personnelle publiee et ouverte (date de fin non depassee) : le don va aussi au projet.
+async function resolveFundraiser(slug) {
+    if (!slug) return null;
+    const fundraiser = await fundraisingPageRepo.findBySlug(String(slug));
+    const today = new Date().toISOString().slice(0, 10);
+    if (!fundraiser || fundraiser.status !== "published" || (fundraiser.ends_on && fundraiser.ends_on < today)) {
+        throw badRequest("Cette collecte ne reçoit plus de dons");
+    }
+    return fundraiser;
+}
+
+// Engagement Mobile Money (reference du lien de rappel) : rattachement silencieux s'il est inconnu.
+async function resolvePledge(payRef) {
+    if (!payRef) return null;
+    const pledge = await pledgeRepo.findByPayRef(String(payRef));
+    return pledge && pledge.status !== "stopped" ? pledge : null;
+}
+
 exports.createDonation = async (user, input) => {
     // "mobile_money" (ou un prestataire Mobile Money nomme) -> prestataire Mobile Money actif.
     const provider = input.provider === "stripe" ? "stripe" : getMobileMoneyProvider();
@@ -134,7 +160,11 @@ exports.createDonation = async (user, input) => {
     const donorEmail = user?.email || String(input.donorEmail || "").trim().toLowerCase();
     if (!donorName || !donorEmail) throw badRequest("Nom et email du donateur obligatoires");
 
-    const project = await resolveProject(input.projectId);
+    const tribute = parseTribute(input);
+    const fundraiser = await resolveFundraiser(input.fundraiser);
+    const pledge = await resolvePledge(input.pledgeRef);
+    const project = await resolveProject(fundraiser ? fundraiser.project_id : input.projectId);
+    const source = cleanSource(input.source) || (fundraiser ? "collecte" : null);
     const receiptToken = randomToken(24);
 
     const paymentId = await paymentRepo.create({
@@ -150,6 +180,11 @@ exports.createDonation = async (user, input) => {
         frequency,
         subscriptionStatus: frequency === "monthly" ? "incomplete" : null,
         receiptToken,
+        source,
+        ...tribute,
+        pledgeId: pledge?.id,
+        fundraiserId: fundraiser?.id,
+        publicAnonymous: input.anonymous === true,
     });
 
     const response = { paymentId, provider, receiptToken };
@@ -196,7 +231,13 @@ exports.createDonation = async (user, input) => {
     await logService.log({
         userId: user?.id || null,
         action: "payment.initiated",
-        meta: { paymentId, provider, amount, currency, frequency, projectId: project?.id || null },
+        meta: {
+            paymentId, provider, amount, currency, frequency, projectId: project?.id || null,
+            ...(source ? { source } : {}),
+            ...(tribute.tributeType ? { tribute: tribute.tributeType } : {}),
+            ...(pledge ? { pledgeId: pledge.id } : {}),
+            ...(fundraiser ? { fundraiserId: fundraiser.id } : {}),
+        },
     });
     return response;
 };

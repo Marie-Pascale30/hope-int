@@ -5,8 +5,10 @@ import { useTranslations } from "next-intl";
 import { Alert, Badge, Button, Card, StatCard, StatusBadge } from "../../components/ui";
 import { useFormat } from "../../i18n/format";
 import { useLocalePath } from "../../i18n/navigation";
+import ShareButtons from "../../components/ShareButtons";
 import { BackLink, CampaignProgress, CoverImage, NewsCard, useProjectStatus } from "./components";
-import { euros, hasCampaign, paragraphs } from "./components/helpers";
+import StickyAction from "./components/StickyAction";
+import { campaignPercent, euros, hasCampaign, paragraphs } from "./components/helpers";
 
 function CampaignAside({ project }) {
   const t = useTranslations("site.projectDetail.aside");
@@ -48,6 +50,9 @@ export default function ProjectDetailView({ project, related = [] }) {
   const statusOf = useProjectStatus();
   const planned = project.status === "planifie";
   const indicator = (value) => (planned && !Number(value) ? t("upcoming") : f.number(value));
+  const lp = useLocalePath();
+  const campaign = hasCampaign(project);
+  const percent = campaignPercent(project);
 
   return (
     <>
@@ -63,6 +68,13 @@ export default function ProjectDetailView({ project, related = [] }) {
           </div>
           <h1>{project.title}</h1>
           {project.summary && <p className="lead">{project.summary}</p>}
+          <div className="pub-detail-actions no-print">
+            <ShareButtons
+              path={lp(`/projets/${project.id}`)}
+              title={project.title}
+              text={t("shareText", { title: project.title })}
+            />
+          </div>
         </div>
       </div>
 
@@ -102,11 +114,27 @@ export default function ProjectDetailView({ project, related = [] }) {
             </div>
           </div>
 
-          <aside className="pub-aside" aria-label={t("asideLabel")}>
+          <aside id="soutenir" className="pub-aside" aria-label={t("asideLabel")}>
             <CampaignAside project={project} />
           </aside>
         </div>
       </section>
+
+      {project.status !== "termine" && (
+        <StickyAction targetId="soutenir" label={t("stickyLabel")}>
+          {campaign ? (
+            <div className="pub-sticky__info">
+              <span className="pub-sticky__label">{t("stickyProgress", { percent })}</span>
+              <span className="pub-sticky__bar" aria-hidden="true"><span style={{ width: `${Math.min(100, percent)}%` }} /></span>
+            </div>
+          ) : (
+            <div className="pub-sticky__info"><strong>{project.title}</strong></div>
+          )}
+          <Button href={lp(campaign ? `/don?projet=${project.id}` : "/don")} variant="accent" icon={Heart}>
+            {t("stickySupport")}
+          </Button>
+        </StickyAction>
+      )}
 
       {related.length > 0 && (
         <section className="section section--alt" aria-labelledby="project-news-title">

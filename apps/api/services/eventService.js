@@ -2,6 +2,8 @@ const { withTransaction } = require("../config/db");
 const eventRepo = require("../repositories/eventRepository");
 const logService = require("./activityLogService");
 const emailService = require("./emailService");
+const waitlist = require("./volunteerWaitlist");
+const waitlistRepo = require("../repositories/volunteerWaitlistRepository");
 const { badRequest, conflict, notFound } = require("../utils/httpError");
 const { removeUpload, removeReplacedUpload } = require("../utils/uploads");
 
@@ -118,19 +120,20 @@ function notifyChange(before, after, registrations) {
     return registrations.length;
 }
 
+// Membre connecte : statut sur chaque evenement (inscrit, en liste d'attente avec son rang).
 exports.listPublic = async ({ region, userId } = {}) => {
     const events = await eventRepo.getAll({ publishedOnly: true, upcomingOnly: true, region });
     if (!userId) return events;
-    const mine = new Set(await eventRepo.getRegisteredEventIds(userId));
-    return events.map((event) => ({ ...event, is_registered: mine.has(event.id) }));
+    const mine = await eventRepo.getParticipation(userId);
+    return events.map((event) => ({ ...event, ...eventRepo.participationFields(mine.get(event.id)) }));
 };
 
 exports.getPublic = async (id, userId) => {
     const event = await eventRepo.findById(id, { publishedOnly: true });
     if (!event) throw notFound("Événement introuvable");
     if (!userId) return event;
-    const mine = await eventRepo.getRegisteredEventIds(userId);
-    return { ...event, is_registered: mine.includes(event.id) };
+    const mine = await eventRepo.getParticipation(userId, [event.id]);
+    return { ...event, ...eventRepo.participationFields(mine.get(event.id)) };
 };
 
 exports.listAdmin = async (filters) => eventRepo.getAll(filters);
@@ -155,6 +158,13 @@ exports.update = async (actor, id, body, file) => {
     }
     await eventRepo.update(id, payload);
     if ("image_url" in payload) await removeReplacedUpload(existing.image_url, payload.image_url);
+    // Nouvelle date de debut : le rappel de la veille sera renvoye pour la nouvelle date.
+    if ("start_at" in payload && toSqlDateTime(existing.start_at) !== payload.start_at) {
+        await eventRepo.resetReminder(id);
+    }
+    // Places supplementaires (capacite augmentee ou supprimee) : promotion de la liste d'attente.
+    let promoted = 0;
+    if ("capacity" in payload && existing.waitlist_count > 0) promoted = await waitlist.promote(id, actor.id);
     const updated = await eventRepo.findById(id);
 
     // Seul un evenement a venir (avant comme apres) justifie de prevenir les inscrits.
@@ -163,7 +173,11 @@ exports.update = async (actor, id, body, file) => {
     if (upcoming(existing) && existing.registered_count > 0) {
         notified = notifyChange(existing, updated, await eventRepo.getRegistrations(id));
     }
-    await logService.log({ userId: actor.id, action: "event.update", meta: { id, ...(notified ? { notified } : {}) } });
+    await logService.log({
+        userId: actor.id,
+        action: "event.update",
+        meta: { id, ...(notified ? { notified } : {}), ...(promoted ? { promoted } : {}) },
+    });
     return updated;
 };
 
@@ -171,16 +185,24 @@ exports.remove = async (actor, id) => {
     const event = await eventRepo.findById(id);
     if (!event) throw notFound("Événement introuvable");
     const registrations = await eventRepo.getRegistrations(id);
+    const waiting = await waitlist.listForEvent(id);
     if (!(await eventRepo.remove(id))) throw notFound("Événement introuvable");
     if (event.image_url) await removeUpload(event.image_url);
 
     // Seul un evenement a venir justifie de prevenir les inscrits.
     const ended = new Date(event.end_at || event.start_at) < new Date();
-    if (!ended) notifyCancellation(event, registrations);
+    // Les personnes en liste d'attente sont prevenues elles aussi.
+    if (!ended) notifyCancellation(event, [...registrations, ...waiting]);
     await logService.log({
         userId: actor.id,
         action: "event.delete",
-        meta: { id, title: event.title, registrations: registrations.length, notified: ended ? 0 : registrations.length },
+        meta: {
+            id,
+            title: event.title,
+            registrations: registrations.length,
+            notified: ended ? 0 : registrations.length + waiting.length,
+            ...(waiting.length ? { waitlist: waiting.length } : {}),
+        },
     });
 };
 
@@ -196,7 +218,8 @@ const REGISTRATION_ERRORS = {
     not_found: () => notFound("Événement introuvable"),
     past: () => badRequest("Cet événement a déjà commencé"),
     already: () => conflict("Vous êtes déjà inscrit(e) à cet événement"),
-    full: () => conflict("Cet événement est complet"),
+    // Le site propose alors la liste d'attente (code EVENT_FULL).
+    full: () => conflict("Cet événement est complet", { code: "EVENT_FULL" }),
 };
 
 // Inscription atomique : evenement verrouille le temps de verifier les regles (publie, pas encore
@@ -209,6 +232,8 @@ exports.register = async (user, id) => {
         if (event.alreadyRegistered) throw REGISTRATION_ERRORS.already();
         if (event.capacity !== null && event.registered >= Number(event.capacity)) throw REGISTRATION_ERRORS.full();
         await eventRepo.insertRegistration(connection, id, user.id);
+        // Un membre en liste d'attente qui obtient une place la quitte.
+        await waitlistRepo.remove(connection, id, user.id);
     });
     await logService.log({ userId: user.id, action: "event.register", meta: { eventId: Number(id) } });
     return eventRepo.findById(id);
@@ -220,10 +245,19 @@ const UNREGISTRATION_ERRORS = {
     not_registered: () => notFound("Inscription introuvable"),
 };
 
+// Desinscription et promotion du premier de la liste d'attente dans la meme transaction
+// (evenement verrouille) : la place liberee ne peut pas etre prise par une inscription concurrente.
 exports.unregister = async (user, id) => {
-    const result = await eventRepo.unregister(id, user.id);
-    if (result.error) throw UNREGISTRATION_ERRORS[result.error]();
+    const outcome = await withTransaction(async (connection) => {
+        const event = await waitlistRepo.lockEventForUnregister(connection, id);
+        if (!event) return { error: "not_found" };
+        if (event.ended) return { error: "ended" };
+        if (!(await waitlistRepo.deleteRegistration(connection, id, user.id))) return { error: "not_registered" };
+        return waitlist.promoteWithin(connection, id);
+    });
+    if (outcome.error) throw UNREGISTRATION_ERRORS[outcome.error]();
     await logService.log({ userId: user.id, action: "event.unregister", meta: { eventId: Number(id) } });
+    await waitlist.afterPromotion(id, outcome);
 };
 
 exports.listForUser = async (userId) => eventRepo.getForUser(userId);

@@ -206,7 +206,11 @@
         "campaign": "Campagne de collecte",
         "donateProject": "Faire un don pour ce projet",
         "note": "Votre don est affecté à ce projet. Un reçu vous est délivré dès la confirmation du paiement."
-      }
+      },
+      "shareText": "Je soutiens « {title} » avec HOPE International :",
+      "stickyLabel": "Soutenir ce projet",
+      "stickyProgress": "{percent} % de l’objectif atteint",
+      "stickySupport": "Soutenir"
     },
     "news": {
       "eyebrow": "Actualités",
@@ -281,7 +285,15 @@
         "login": "Se connecter pour s’inscrire",
         "noAccount": "Pas encore de compte ? <link>Créez-le en une minute</link>.",
         "youAreRegistered": "Vous êtes inscrit(e) à cet événement."
-      }
+      },
+      "calendar": {
+        "add": "Ajouter à mon agenda"
+      },
+      "map": "Voir sur la carte",
+      "mapNewWindow": "(OpenStreetMap, nouvelle fenêtre)",
+      "shareText": "Rejoignez-moi à « {title} » avec HOPE International :",
+      "stickyLabel": "Inscription rapide",
+      "stickyRegister": "S’inscrire"
     },
     "join": {
       "eyebrow": "Nous rejoindre",

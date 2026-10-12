@@ -133,3 +133,77 @@ npm test
 - `@hope/api` : tests d'intégration (`node:test` + `supertest`) sur une vraie base MySQL **`hope_test`**, vidée à chaque fichier de test (garde-fou : le nom doit finir par `_test`). Elle est créée automatiquement avec le volume Docker (`infra/mysql/init`). Les prestataires de paiement et le SMTP sont désactivés pendant les tests.
 
 GitHub Actions ([.github/workflows/ci.yml](.github/workflows/ci.yml)) lance à chaque push sur `master` et sur chaque pull request : lint, tests (avec un service MySQL 8), build du site et build des deux images Docker.
+
+## Outillage
+
+### Tests
+
+| Commande | Rôle |
+|---|---|
+| `npm test` | Tous les tests unitaires : `@hope/shared`, API (MySQL `hope_test`), site (Vitest) |
+| `npm test -w @hope/web` | Tests du site (`apps/web/test/`) : fonctions pures, composants, en-têtes de sécurité |
+| `npm run test:coverage` | Tests de l'API avec couverture (`--experimental-test-coverage`, échec sous 85 % des lignes) |
+| `npm run test:e2e` | Scénarios Playwright (`apps/web/e2e/`) |
+| `npm run check` | Dictionnaires i18n cohérents et contrastes WCAG des tokens |
+
+Tests du site : Vitest + Testing Library. `test/intl.jsx` fournit `renderWithIntl` (NextIntlClientProvider + messages français), `translator(namespace)` et `message("a.b.c")` pour comparer aux dictionnaires sans recopier les textes. L'alias `@/` est celui de `jsconfig.json`. Le DOM jsdom est posé par `test/setup-dom.js` dans un environnement Vitest `node` : l'environnement `jsdom` de Vite 8 échoue à résoudre les paquets quand le chemin du dépôt contient un espace (« HOPE Int »).
+
+Scénarios e2e : connexion d'un membre de démo, refus du back-office à un membre, bascule fr → en sur `/projets`, en-têtes CSP sans violation, don Mobile Money jusqu'à la redirection vers le prestataire (API de paiement simulée par `page.route`, aucun paiement réel). En CI, Playwright démarre lui-même l'API et le site (`webServer`, base `hope_e2e` migrée et seedée). En local, rien n'est démarré : lancer l'API et le site (`npm run dev`, base seedée), puis `npx playwright install chromium` (une fois) et `E2E_BASE_URL=http://localhost:3001 npm run test:e2e`.
+
+### CI/CD
+
+- [ci.yml](.github/workflows/ci.yml) : lint, `check:i18n`, `check:contrast`, tests (shared, site, API avec seuil de couverture), `npm audit --omit=dev --audit-level=high`, build du site, e2e Playwright (rapport en artefact) et build des images (Buildx, cache GitHub Actions).
+- [release.yml](.github/workflows/release.yml) : sur `master` et sur les tags `v*`, publie `ghcr.io/<propriétaire>/hope-api` et `hope-web` (tags `sha-<commit>`, `edge`, `X.Y.Z`, `latest`). Variables de dépôt : `PUBLIC_API_BASE_URL`, `STRIPE_PUBLISHABLE_KEY` (inlinées dans l'image du site). Le déploiement (hébergeur non choisi) est un job commenté : tirer les images, **migrer** (`docker compose run --rm backend npm run migrate`), puis `up -d --wait`.
+- [dependabot.yml](.github/dependabot.yml) : npm (hebdomadaire, mineures groupées, majeures par famille), GitHub Actions, images Docker.
+
+### En-têtes de sécurité du site (CSP)
+
+`apps/web/proxy.js` génère un nonce par requête et pose, sur le site public comme sur `/admin` : `Content-Security-Policy` (`script-src 'self' 'nonce-…' 'strict-dynamic'` + Stripe, `connect-src` et `img-src` limités au site, à l'API et à Stripe, `frame-ancestors 'none'`…), `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` et, en production, HSTS. La politique est construite par le module pur `apps/web/security/headers.js` (testé). Next applique le nonce à ses propres scripts ; le script anti-flash du thème le lit via `headers()` (`app/_lib/document.jsx`), ce qui rend les pages dynamiques (indispensable : une page statique n'aurait pas de nonce). `style-src` garde `'unsafe-inline'` (attributs `style` de React, sweetalert2, Chart.js) ; `'unsafe-eval'` et les websockets ne sont autorisés qu'en développement. Ajouter un service tiers (analytics, cartes, vidéos) impose de compléter `security/headers.js`.
+
+### Docker
+
+Les deux images tournent sous l'utilisateur `node` et déclarent un `HEALTHCHECK` (Node `fetch`, pas de curl) : `/api/health` pour l'API, `/` pour le site ; docker compose attend `service_healthy` (MySQL → API → site). Un volume `backend_uploads` créé avant ce changement appartient à root : `docker compose run --rm -u root backend chown -R node:node uploads`. Si le dépôt est dans OneDrive, des fichiers « à la demande » peuvent faire échouer `docker compose build` (`invalid file request`) : les rendre disponibles hors connexion ou construire depuis une copie hors OneDrive.
+
+### Préproduction
+
+[docker-compose.staging.yml](docker-compose.staging.yml) surcharge la configuration : images GHCR (`IMAGE_TAG`), `NODE_ENV=production`, migrations explicites (`MIGRATE_ON_START=false`), cookies `Secure`, Stripe et Notch Pay **en mode test uniquement** (une clé live bloque le démarrage), SMTP de test. Variables dans `.env.staging` (non versionné) :
+
+```bash
+COMPOSE="docker compose -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging"
+$COMPOSE pull
+$COMPOSE run --rm backend npm run migrate
+$COMPOSE up -d --wait
+```
+
+### Sauvegardes
+
+`infra/backup/backup.sh` : `mysqldump --single-transaction` compressé + archive du volume des images, empreintes SHA-256, rotation 7 quotidiennes / 4 hebdomadaires (dimanche), chiffrement si `BACKUP_PASSPHRASE` (gpg, sinon openssl AES-256), envoi S3-compatible si `S3_BUCKET` (+ `S3_ENDPOINT`, `AWS_*`). Service planifié : copier `infra/backup/backup.env.example` en `backup.env`, puis `docker compose --profile backup up -d backup` (cron `BACKUP_CRON`, 02:30 UTC par défaut ; fichiers dans le volume `backups`). La rétention distante se règle par une règle de cycle de vie du bucket. Conserver la phrase de passe hors du serveur.
+
+**Tester la restauration (au moins une fois par trimestre)**, dans une base jetable, jamais sur la base de travail :
+
+1. Produire une sauvegarde : `docker compose --profile backup run --rm -e BACKUP_RUN_NOW=true backup` (ou attendre la nuit).
+2. Restaurer dans `hope_restore_test` avec le compte root (droit `CREATE`) :
+
+```bash
+docker compose --profile backup run --rm -e MYSQL_ROOT_PASSWORD --entrypoint sh backup -c '
+  apk add --no-cache mariadb-client mariadb-connector-c gnupg coreutils >/dev/null && ls /backups/daily &&
+  DB_USER=root DB_PASSWORD="$MYSQL_ROOT_PASSWORD" sh /opt/backup/restore.sh \
+    --db /backups/daily/db-HORODATAGE.sql.gz --target-db hope_restore_test \
+    --uploads /backups/daily/uploads-HORODATAGE.tar.gz --uploads-dir /tmp/uploads-test'
+```
+
+3. Vérifier les compteurs affichés (membres, dons, dernière migration) et le nombre d'images, puis `DROP DATABASE hope_restore_test`. `restore.sh` refuse d'écraser la base courante sans `--yes` et vérifie les empreintes.
+
+### Supervision
+
+- Journaux : `apps/api/config/logger.js` (pino + pino-http) — JSON en production, lisibles en développement (pino-pretty), muets en test, identifiant de requête (`X-Request-Id`), cookies, `Authorization`, mots de passe, jetons, emails et téléphones masqués, query string retirée des URL. Variables : `LOG_LEVEL`, `LOG_PRETTY=false`.
+- Erreurs : `apps/api/config/sentry.js`, actif seulement si `SENTRY_DSN` est défini (`SENTRY_ENVIRONMENT`, `SENTRY_TRACES_SAMPLE_RATE`, `SENTRY_RELEASE` = SHA du commit dans l'image). Aucune donnée personnelle envoyée.
+- Sonde : `GET /api/health` (vérifie MySQL), utilisée par les healthchecks Docker.
+
+### Documentation de l'API
+
+`apps/api/openapi.yaml` (OpenAPI 3.1, écrit à la main depuis `apps/api/routes/`) : routes, paramètres, corps, codes de réponse, authentification par cookie `hope_session` et en-tête CSRF `X-Requested-With`. `npm run docs:api` le valide (`@redocly/cli lint`, règles dans `apps/api/redocly.yaml`) et génère `apps/api/docs/index.html` (page statique, non versionnée). À mettre à jour avec chaque nouvelle route.
+
+### Données de démonstration volumineuses
+
+`npm run seed:demo` (après `npm run seed`) : ~200 membres répartis sur les 10 régions (`@demo.hope.test`, mot de passe `Member@123`), ~2 000 dons sur 3 ans (carte et Mobile Money, mensuels, remboursés totalement ou partiellement, en vérification, en attente, échoués, contestés ; reçus numérotés à la suite de `receipt_sequences`), 30 événements avec inscriptions, 60 candidatures. Options : `-- --scale=5` (volume ×5), `--seed=42` (générateur déterministe). Comme `npm run seed`, refusé si `NODE_ENV=production` (sauf `--force`) ; `npm run seed -- --reset` liste les tables qui vont être vidées et laisse 5 s pour annuler (`--yes` pour ne pas attendre).

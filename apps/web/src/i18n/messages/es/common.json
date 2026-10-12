@@ -1,7 +1,18 @@
 {
   "common": {
     "siteName": "HOPE International",
-    "loading": "Cargando…"
+    "loading": "Cargando…",
+    "share": {
+      "label": "Compartir esta página",
+      "share": "Compartir",
+      "whatsapp": "WhatsApp",
+      "facebook": "Facebook",
+      "copy": "Copiar el enlace",
+      "copiedShort": "Enlace copiado",
+      "copied": "Enlace copiado: solo queda compartirlo",
+      "copyFailed": "No se pudo copiar: copie la dirección desde la barra del navegador",
+      "newWindow": "(nueva ventana)"
+    }
   },
   "nav": {
     "home": "HOPE International — inicio",

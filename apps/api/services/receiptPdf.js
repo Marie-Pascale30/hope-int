@@ -2,6 +2,7 @@
 const PDFDocument = require("pdfkit");
 const {
     RECEIPT_TIMEZONE, DONATION_NATURE, formatAmount, formatDate, equivalent, receiptView, methodLabel, frequencyLabel,
+    natureLabel,
 } = require("./receiptFormat");
 
 const ORG = {
@@ -277,7 +278,7 @@ exports.generate = (payment) => {
     const halfWidth = (rightWidth - 20) / 2;
     const firstColumn = fieldList(doc, [
         { label: "Date du don", value: formatDate(view.paidAt) },
-        { label: "Nature du don", value: DONATION_NATURE },
+        { label: "Nature du don", value: natureLabel(view.method) },
     ], rightX, detailsY, halfWidth);
     const secondColumn = fieldList(doc, [
         { label: "Moyen de paiement", value: methodLabel(view.method) },
@@ -299,6 +300,9 @@ exports.generate = (payment) => {
             y,
             width,
         }) + 12;
+    }
+    if (view.tribute) {
+        y = callout(doc, { title: "Don en hommage", text: view.tribute, background: COLORS.surface, color: COLORS.brand, x: left, y, width }) + 12;
     }
     if (view.note) {
         y = callout(doc, { title: "Remarque", text: view.note, background: COLORS.brandSoft, color: COLORS.brand, x: left, y, width }) + 12;
@@ -361,7 +365,10 @@ exports.generateAnnual = ({ year, donorName, donorEmail, payments }) => {
     const donorEnd = Math.max(
         fieldList(doc, [{ label: "Donateur", value: donorName, strong: true }], left, infoY, infoWidth),
         fieldList(doc, [{ label: "Email", value: donorEmail }], left + infoWidth + 20, infoY, infoWidth),
-        fieldList(doc, [{ label: "Nature des dons", value: DONATION_NATURE }], left + (infoWidth + 20) * 2, infoY, infoWidth)
+        fieldList(doc, [{
+            label: "Nature des dons",
+            value: views.some((view) => view.method === "in_kind") ? `${DONATION_NATURE} et en nature` : DONATION_NATURE,
+        }], left + (infoWidth + 20) * 2, infoY, infoWidth)
     );
 
     // Tableau des dons, en-tete repete sur chaque page.

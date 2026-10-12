@@ -34,7 +34,8 @@
     "common": {
       "exported": "Export CSV téléchargé",
       "exportFailed": "Export impossible",
-      "csvDonations": "dons-hope-{date}.csv"
+      "csvDonations": "dons-hope-{date}.csv",
+      "csvFinance": "dons-hope-{period}-{date}.csv"
     },
     "donations": {
       "eyebrow": "Dons",
@@ -449,7 +450,8 @@
         "eventDeleted": "« {title} » · {count, plural, =0 {aucune inscription} one {# inscription supprimée} other {# inscriptions supprimées}}",
         "recipient": "Destinataire : {to}",
         "attempts": "{count, plural, one {# tentative} other {# tentatives}}"
-      }
+      },
+      "searchPlaceholder": "Rechercher dans la page (action, auteur)…"
     },
     "content": {
       "eyebrow": "Contenus",
@@ -720,6 +722,17 @@
         "phone": "Téléphone",
         "region": "Région",
         "registeredAt": "Inscrit le"
+      },
+      "csvFile": "inscrits-{event}-{date}.csv",
+      "print": "Feuille d’émargement",
+      "sheet": {
+        "title": "Feuille d’émargement",
+        "count": "{count, plural, one {# inscrit} other {# inscrits}}",
+        "number": "N°",
+        "name": "Nom",
+        "contact": "Téléphone / email",
+        "signature": "Signature",
+        "printedAt": "Imprimé le {date} — HOPE International"
       }
     }
   }

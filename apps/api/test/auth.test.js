@@ -112,18 +112,14 @@ describe("authentification par cookie", () => {
         assert.equal(res.body.code, "RESET_LINK_INVALID");
     });
 
-    it("envoie un lien de reinitialisation dans la langue de la demande", async () => {
+    it("envoie un lien de reinitialisation dans la langue de la demande", async (t) => {
         const user = await createUser();
-        const logs = [];
-        const original = console.log;
-        console.log = (...args) => logs.push(args.join(" "));
-        try {
-            await client().post("/api/auth/forgot-password", { email: user.email }).set("Accept-Language", "es");
-        } finally {
-            console.log = original;
-        }
+        // Sans SMTP, l'email est affiche dans la console : on l'intercepte.
+        const log = t.mock.method(console, "log", () => {});
+        await client().post("/api/auth/forgot-password", { email: user.email }).set("Accept-Language", "es");
 
-        assert.match(logs.join("\n"), /\/es\/reinitialiser-mot-de-passe\?token=[0-9a-f]+/);
+        const output = log.mock.calls.map((call) => call.arguments.join(" ")).join("\n");
+        assert.match(output, /\/es\/reinitialiser-mot-de-passe\?token=[0-9a-f]+/);
     });
 
     it("refuse un compte desactive", async () => {

@@ -1,7 +1,18 @@
 {
   "common": {
     "siteName": "HOPE International",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "share": {
+      "label": "Share this page",
+      "share": "Share",
+      "whatsapp": "WhatsApp",
+      "facebook": "Facebook",
+      "copy": "Copy link",
+      "copiedShort": "Link copied",
+      "copied": "Link copied: now just share it",
+      "copyFailed": "Could not copy: copy the address from the browser bar",
+      "newWindow": "(opens in a new window)"
+    }
   },
   "nav": {
     "home": "HOPE International — home",

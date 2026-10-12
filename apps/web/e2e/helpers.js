@@ -1,11 +1,11 @@
 // Aides partagees par les scenarios e2e : textes francais lus dans les dictionnaires
 // (pas de libelle recopie en dur) et connexion d'un compte de demonstration.
+// Playwright transpile ces fichiers en CommonJS (le paquet n'est pas "type": "module") : __dirname.
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { expect } from "@playwright/test";
 
-const MESSAGES_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "i18n", "messages");
+const MESSAGES_DIR = path.join(__dirname, "..", "src", "i18n", "messages");
 
 function load(locale) {
   return ["common", "site", "account", "admin", "adminOps"].reduce((all, file) => {

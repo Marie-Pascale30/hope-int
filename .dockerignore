@@ -5,5 +5,14 @@
 **/.env.*
 !**/.env.example
 **/*.log
+**/*.md
+**/test
+**/e2e
+**/coverage
+**/playwright-report
+**/test-results
 apps/api/uploads
+apps/api/docs
+.github
 .git
+infra/backup/*.env

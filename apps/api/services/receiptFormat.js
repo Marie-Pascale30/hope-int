@@ -3,9 +3,17 @@
 const { XAF_PER_EUR } = require("@hope/shared/constants");
 const { RECEIPT_TIMEZONE, formatDate, receiptYear, monthKey, yearBounds } = require("../utils/timezone");
 
-const METHOD_LABELS = { card: "Carte bancaire", mobile_money: "Mobile Money" };
+const METHOD_LABELS = {
+    card: "Carte bancaire",
+    mobile_money: "Mobile Money",
+    cash: "Espèces",
+    transfer: "Virement bancaire",
+    check: "Chèque",
+    in_kind: "Don en nature",
+};
 const GENERAL_FUND = "Fonds général de l'association";
 const DONATION_NATURE = "Don en numéraire";
+const IN_KIND_NATURE = "Don en nature (valorisé)";
 
 // Formatage manuel : les polices PDF standard ne gerent pas les espaces fines d'Intl.
 function formatAmount(amount, currency) {
@@ -44,7 +52,21 @@ function receiptView(payment) {
         frequency: pick(payment.receipt_frequency, payment.frequency),
         refundedAmount: refunded > 0 && refunded < amount ? refunded : 0,
         transactionId: payment.transaction_id,
+        // Mention d'hommage figee a l'emission (repli sur les donnees vivantes pour un ancien recu).
+        tribute: frozen ? payment.receipt_tribute || null : tributeLabel(payment),
     };
+}
+
+function tributeLabel(payment) {
+    if (!payment.tribute_name) return null;
+    if (payment.tribute_type === "memory") return `À la mémoire de ${payment.tribute_name}`;
+    if (payment.tribute_type === "honor") return `En l'honneur de ${payment.tribute_name}`;
+    return null;
+}
+
+// Nature du don imprimee sur le recu : en nature (valorise) ou en numeraire.
+function natureLabel(method) {
+    return method === "in_kind" ? IN_KIND_NATURE : DONATION_NATURE;
 }
 
 function methodLabel(method) {
@@ -67,6 +89,8 @@ module.exports = {
     yearBounds,
     equivalent,
     receiptView,
+    natureLabel,
+    tributeLabel,
     methodLabel,
     frequencyLabel,
 };

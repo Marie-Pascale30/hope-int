@@ -126,7 +126,7 @@ function FinanceView() {
     try {
       const params = { status: "succeeded", ...(year ? { from: `${year}-01-01`, to: `${year}-12-31` } : {}) };
       const blob = await adminApi.exportDonations(params);
-      saveBlob(blob, `dons-hope-${year || "tout"}-${todayStamp()}.csv`);
+      saveBlob(blob, tCommon("csvFinance", { period: year || "all", date: todayStamp() }));
       toast(tCommon("exported"));
     } catch (err) {
       showError(tCommon("exportFailed"), getErrorMessage(err));

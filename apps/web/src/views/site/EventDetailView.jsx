@@ -1,16 +1,29 @@
 // Detail d'un evenement (composant serveur) ; inscription dans l'ilot RegistrationPanel.
 import "../../styles/public.css";
-import { Clock, FolderOpen, MapPin, Map as MapIcon, Users } from "lucide-react";
+import { ArrowDown, Clock, ExternalLink, FolderOpen, MapPin, Map as MapIcon, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useFormat } from "../../i18n/format";
-import { Link } from "../../i18n/navigation";
+import { Badge } from "../../components/ui";
+import ShareButtons from "../../components/ShareButtons";
+import { Link, useLocalePath } from "../../i18n/navigation";
 import { BackLink, CoverImage, EventDate } from "./components";
+import AddToCalendar from "./components/AddToCalendar";
 import RegistrationPanel from "./components/RegistrationPanel";
-import { eventTimeRange, paragraphs } from "./components/helpers";
+import StickyAction from "./components/StickyAction";
+import { eventTimeRange, isPast, paragraphs, spotsStatus } from "./components/helpers";
+
+// Lien de carte (OpenStreetMap) a partir du lieu saisi, precise par la region et le pays.
+export const mapUrl = (event) =>
+  `https://www.openstreetmap.org/search?query=${encodeURIComponent([event.location, event.region, "Cameroun"].filter(Boolean).join(", "))}`;
 
 export default function EventDetailView({ event }) {
   const t = useTranslations("site.eventDetail");
+  const tSpots = useTranslations("site.spots");
   const f = useFormat();
+  const lp = useLocalePath();
+  const path = lp(`/evenements/${event.id}`);
+  const past = isPast(event);
+  const spots = spotsStatus(event, tSpots);
 
   return (
     <>
@@ -26,6 +39,10 @@ export default function EventDetailView({ event }) {
             </div>
           </div>
           <h1>{event.title}</h1>
+          <div className="pub-detail-actions no-print">
+            {!past && <AddToCalendar event={event} path={path} />}
+            <ShareButtons path={path} title={event.title} text={t("shareText", { title: event.title })} />
+          </div>
         </div>
       </div>
 
@@ -48,7 +65,13 @@ export default function EventDetailView({ event }) {
                 {event.location && (
                   <div>
                     <dt><MapPin aria-hidden="true" /> {t("location")}</dt>
-                    <dd>{event.location}</dd>
+                    <dd>
+                      {event.location}
+                      <a className="pub-map-link" href={mapUrl(event)} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink aria-hidden="true" /> {t("map")}
+                        <span className="visually-hidden"> {t("mapNewWindow")}</span>
+                      </a>
+                    </dd>
                   </div>
                 )}
                 {event.region && (
@@ -70,11 +93,22 @@ export default function EventDetailView({ event }) {
               </dl>
             </div>
           </div>
-          <aside className="pub-aside" aria-label={t("registrationLabel")}>
+          <aside id="inscription" className="pub-aside" aria-label={t("registrationLabel")} tabIndex={-1}>
             <RegistrationPanel initialEvent={event} />
           </aside>
         </div>
       </section>
+      {!past && (
+        <StickyAction targetId="inscription" label={t("stickyLabel")}>
+          <div className="pub-sticky__info">
+            <strong>{f.date(event.start_at, { weekday: "short", day: "numeric", month: "short" })} · {f.time(event.start_at)}</strong>
+            <Badge tone={spots.tone}>{spots.label}</Badge>
+          </div>
+          <a className="btn btn--accent" href="#inscription">
+            <ArrowDown aria-hidden="true" /> {t("stickyRegister")}
+          </a>
+        </StickyAction>
+      )}
     </>
   );
 }

@@ -114,6 +114,15 @@ exports.getSubscriptionStatus = async (subscriptionId) => {
     return { status: subscription.status, currentPeriodEnd: fromSeconds(periodEnd) };
 };
 
+// Portail de facturation Stripe (mise a jour de la carte d'un don mensuel) : session ephemere
+// pour le client de l'abonnement, retour sur returnUrl.
+exports.createBillingPortalSession = async ({ subscriptionId, returnUrl }) => {
+    const subscription = await client().subscriptions.retrieve(subscriptionId);
+    const customer = typeof subscription.customer === "object" ? subscription.customer.id : subscription.customer;
+    const session = await client().billingPortal.sessions.create({ customer, return_url: returnUrl });
+    return { url: session.url };
+};
+
 exports.cancelSubscription = async (subscriptionId) => {
     await client().subscriptions.cancel(subscriptionId);
 };

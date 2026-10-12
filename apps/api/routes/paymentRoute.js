@@ -5,6 +5,7 @@ const paymentController = require("../controllers/paymentController");
 const auth = require("../middlewares/authMiddleware");
 const validate = require("../middlewares/validateRequest");
 const { optionalAuth } = require("../middlewares/authMiddleware");
+const { TRIBUTE_TYPES, TRIBUTE_LIMITS } = require("@hope/shared/fundraising");
 
 const router = express.Router();
 
@@ -28,6 +29,17 @@ router.post(
         body("donorName").optional({ values: "falsy" }).isString().trim().isLength({ min: 2, max: 150 }),
         body("donorEmail").optional({ values: "falsy" }).isEmail(),
         body("phone").optional({ values: "falsy" }).isString().trim().isLength({ max: 40 }),
+        // Source (?ref=) : nettoyee et tronquee a 60 caracteres par le service.
+        body("source").optional({ values: "falsy" }).isString().isLength({ max: 200 }),
+        // Don en hommage (facultatif) : longueurs bornees, texte brut.
+        body("tributeType").optional({ values: "falsy" }).isIn(TRIBUTE_TYPES),
+        body("tributeName").optional({ values: "falsy" }).isString().isLength({ max: TRIBUTE_LIMITS.name }),
+        body("tributeEmail").optional({ values: "falsy" }).isEmail().isLength({ max: TRIBUTE_LIMITS.email }),
+        body("tributeMessage").optional({ values: "falsy" }).isString().isLength({ max: TRIBUTE_LIMITS.message }),
+        // Collecte personnelle (slug) et engagement Mobile Money (reference du lien de rappel).
+        body("fundraiser").optional({ values: "falsy" }).matches(/^[a-z0-9-]{3,80}$/),
+        body("pledgeRef").optional({ values: "falsy" }).isHexadecimal().isLength({ min: 24, max: 24 }),
+        body("anonymous").optional().isBoolean({ strict: true }),
         validate,
     ],
     paymentController.createDonation

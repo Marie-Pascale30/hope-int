@@ -28,6 +28,7 @@ import { useLocalePath } from "../../i18n/navigation";
 import { toast, useAlerts } from "../../utils/alerts";
 import { useLabels } from "../../utils/labels";
 import { useErrorMessage } from "../../i18n/errors";
+import ShareButtons from "../../components/ShareButtons";
 
 const REF_PATTERN = /^[a-f0-9]{48}$/i;
 
@@ -94,22 +95,6 @@ function ReceiptDetails({ payment }) {
       )}
     </dl>
   );
-}
-
-// t : useTranslations("account.thanks.share") ; path : page de don dans la langue courante.
-async function share(t, path) {
-  const url = `${window.location.origin}${path}`;
-  const text = t("text");
-  try {
-    if (navigator.share) {
-      await navigator.share({ title: "HOPE International", text, url });
-    } else {
-      await navigator.clipboard.writeText(`${text} ${url}`);
-      toast(t("copied"));
-    }
-  } catch {
-    // Partage annule par l'utilisateur : rien a signaler.
-  }
 }
 
 // Don mensuel : arret sans compte via le jeton du recu ; un membre connecte passe par son espace.
@@ -209,7 +194,13 @@ function Success({ payment, isAuthenticated, onSubscriptionCanceled }) {
           <Share2 aria-hidden="true" />
           <h2>{t("next.shareTitle")}</h2>
           <p className="muted">{t("next.shareText")}</p>
-          <Button variant="secondary" size="sm" onClick={() => share(tShare, lp("/don"))}>{t("next.shareButton")}</Button>
+          {/* Partage du projet soutenu (ou du site pour un don general), jamais de la page de paiement. */}
+          <ShareButtons
+            path={lp(payment.project_id ? `/projets/${payment.project_id}` : "/")}
+            title={payment.project_title || "HOPE International"}
+            text={payment.project_title ? tShare("textProject", { title: payment.project_title }) : tShare("text")}
+            label={t("next.shareButton")}
+          />
         </Card>
         {isAuthenticated ? (
           <Card hover className="don-next">

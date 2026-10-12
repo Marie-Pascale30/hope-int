@@ -42,27 +42,6 @@ export function BackLink({ href, children }) {
   );
 }
 
-// ---------- Squelettes ----------
-
-export function CardsSkeleton({ count = 3 }) {
-  const t = useTranslations("common");
-  return (
-    <div className="grid grid--3" aria-busy="true" aria-label={t("loading")}>
-      {Array.from({ length: count }, (_, index) => (
-        <div key={index} className="card pub-skeleton-card">
-          <div className="skeleton pub-skeleton-card__media" />
-          <div className="pub-skeleton-card__body">
-            <div className="skeleton" style={{ height: 12, width: "35%" }} />
-            <div className="skeleton" style={{ height: 22, width: "85%" }} />
-            <div className="skeleton" style={{ height: 12, width: "100%" }} />
-            <div className="skeleton" style={{ height: 12, width: "70%" }} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 // ---------- Campagne ----------
 
 export function CampaignProgress({ project, large }) {

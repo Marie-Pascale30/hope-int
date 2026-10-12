@@ -12,6 +12,9 @@ function listMigrations() {
     return fs
         .readdirSync(MIGRATIONS_DIR)
         .filter((file) => /^\d{3,}_[\w-]+\.js$/.test(file))
+        // MIGRATIONS_SKIP (expression reguliere, tests uniquement) : ignore des migrations en cours
+        // d'ecriture par ailleurs, pour developper plusieurs modules en parallele.
+        .filter((file) => !(process.env.NODE_ENV === "test" && process.env.MIGRATIONS_SKIP && new RegExp(process.env.MIGRATIONS_SKIP).test(file)))
         .sort()
         .map((file) => ({ name: file.replace(/\.js$/, ""), file: path.join(MIGRATIONS_DIR, file) }));
 }

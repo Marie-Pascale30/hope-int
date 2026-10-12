@@ -24,7 +24,21 @@ const TRANSITIONS = {
 // Statuts relus aupres du prestataire (page de remerciement, webhooks Mobile Money).
 const REFRESHABLE_STATUSES = ["pending", "failed", "canceled"];
 
+// Apres l'emission d'un recu : e-carte d'hommage au proche (une seule fois, sans le montant).
+async function notifyTribute(paymentId) {
+    try {
+        await require("../donationTributeService").notify(paymentId);
+    } catch (error) {
+        console.error("tribute-card-error:", error.message);
+    }
+}
+
 async function sendReceipt(paymentId) {
+    await sendReceiptEmail(paymentId);
+    await notifyTribute(paymentId);
+}
+
+async function sendReceiptEmail(paymentId) {
     try {
         const payment = await paymentRepo.findById(paymentId);
         if (!payment?.receipt_number || payment.status !== "succeeded") return;

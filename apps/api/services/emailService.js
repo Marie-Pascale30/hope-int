@@ -154,3 +154,39 @@ exports.sendDonationReceiptEmail = ({ to, fullName, amountLabel, receiptNumber, 
         ].join("\n"),
         attachments: pdfBuffer ? [{ filename: `recu-${receiptNumber}.pdf`, content: pdfBuffer, contentType: "application/pdf" }] : undefined,
     }, { kind: "donation_receipt", paymentId });
+
+// --- Emails non transactionnels (module engagement) ---
+// Toute communication de ce type verifie d'abord les preferences du destinataire (sujet refuse :
+// rien n'est envoye) et porte un lien signe de desinscription. Charge a la demande : le module des
+// preferences utilise lui-meme ce fichier (email de confirmation de la newsletter).
+const preferences = () => require("./preferences");
+
+// Texte complete du pied de page de desinscription propre au sujet.
+exports.withUnsubscribeFooter = async ({ to, text, topic, campaignId }) =>
+    `${text}\n${await preferences().unsubscribeFooter(to, topic, { campaignId })}`;
+
+// Envoi d'un email non transactionnel sur un sujet ("newsletter", "project_news",
+// "donation_reminders", "event_reminders") : { sent: false, reason: "no-consent" } si refuse.
+exports.sendTopicEmail = async ({ to, subject, text, topic, kind, campaignId }) => {
+    if (!(await preferences().canContact(to, topic))) return { sent: false, queued: false, reason: "no-consent" };
+    return send(
+        { to, subject, text: await exports.withUnsubscribeFooter({ to, text, topic, campaignId }) },
+        { kind: kind || `topic_${topic}` }
+    );
+};
+
+// Double opt-in de la newsletter (transactionnel : c'est la personne qui l'a demande).
+exports.sendNewsletterConfirmationEmail = ({ to, confirmUrl }) =>
+    send({
+        to,
+        subject: `${ORG_NAME} - Confirmez votre inscription à la lettre d'information`,
+        text: [
+            "Bonjour,",
+            "",
+            `Vous avez demandé à recevoir la lettre d'information de ${ORG_NAME}.`,
+            "Pour confirmer votre inscription, ouvrez ce lien (valable 7 jours) :",
+            confirmUrl,
+            "",
+            "Si vous n'êtes pas à l'origine de cette demande, ignorez ce message : vous ne serez pas inscrit(e).",
+        ].join("\n"),
+    }, { kind: "newsletter_confirmation" });

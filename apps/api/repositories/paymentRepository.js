@@ -10,7 +10,7 @@ const LIST_LIMIT = 2000;
 const LIST_COLUMNS = `
   p.id, p.user_id, p.amount, p.currency, p.method, p.provider, p.status, p.transaction_id,
   p.frequency, p.subscription_id, p.project_id, p.receipt_number, p.receipt_token, p.paid_at, p.created_at,
-  p.refunded_amount,
+  p.refunded_amount, p.source, p.tribute_type, p.pledge_id, p.fundraiser_id,
   COALESCE(u.name, p.donor_name) AS donor_name,
   COALESCE(u.email, p.donor_email) AS donor_email,
   pr.title AS project_title, pr.region AS project_region`;
@@ -20,12 +20,16 @@ const DETAIL_COLUMNS = `${LIST_COLUMNS},
   p.donor_name AS entered_donor_name, p.donor_email AS entered_donor_email, pr.status AS project_status,
   p.provider_payment_ref, p.subscription_status, p.subscription_period_end, p.refunded_at, p.receipt_sent_at,
   p.receipt_issued_at, p.receipt_donor_name, p.receipt_donor_email, p.receipt_designation,
-  p.receipt_amount, p.receipt_currency, p.receipt_method, p.receipt_frequency, p.receipt_note`;
+  p.receipt_amount, p.receipt_currency, p.receipt_method, p.receipt_frequency, p.receipt_note,
+  p.tribute_name, p.tribute_notify_email, p.tribute_message, p.tribute_notified_at, p.receipt_tribute,
+  p.reminder_count, p.reminder_sent_at, p.public_anonymous, p.subscription_ended_at,
+  fr.slug AS fundraiser_slug, fr.title AS fundraiser_title`;
 
 const LIST_FROM = `
   FROM payments p
   LEFT JOIN users u ON u.id = p.user_id
-  LEFT JOIN projects pr ON pr.id = p.project_id`;
+  LEFT JOIN projects pr ON pr.id = p.project_id
+  LEFT JOIN fundraisers fr ON fr.id = p.fundraiser_id`;
 
 function mapPayment(row) {
     if (!row) return row;
@@ -52,13 +56,23 @@ function insertParams(data) {
         data.subscriptionStatus || null,
         data.providerPaymentRef || null,
         data.receiptToken,
+        data.source || null,
+        data.tributeType || null,
+        data.tributeName || null,
+        data.tributeEmail || null,
+        data.tributeMessage || null,
+        data.pledgeId || null,
+        data.fundraiserId || null,
+        data.publicAnonymous ? 1 : 0,
     ];
 }
 
 const INSERT_SQL = `INSERT INTO payments
    (user_id, amount, currency, method, provider, status, transaction_id, donor_name, donor_email,
-    project_id, frequency, subscription_id, subscription_status, provider_payment_ref, receipt_token)
- VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    project_id, frequency, subscription_id, subscription_status, provider_payment_ref, receipt_token,
+    source, tribute_type, tribute_name, tribute_notify_email, tribute_message, pledge_id, fundraiser_id,
+    public_anonymous)
+ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
 exports.create = async (data) => {
     const [result] = await db.query(INSERT_SQL, insertParams(data));
@@ -165,7 +179,11 @@ async function issueReceipt(connection, id, { paidAt, year, note }) {
              p.receipt_currency = p.currency,
              p.receipt_method = p.method,
              p.receipt_frequency = p.frequency,
-             p.receipt_note = COALESCE(?, p.receipt_note)
+             p.receipt_note = COALESCE(?, p.receipt_note),
+             p.receipt_tribute = CASE p.tribute_type
+                 WHEN 'honor' THEN LEFT(CONCAT('En l''honneur de ', p.tribute_name), 255)
+                 WHEN 'memory' THEN LEFT(CONCAT('À la mémoire de ', p.tribute_name), 255)
+                 ELSE NULL END
          WHERE p.id = ?`,
         [paidAt, receiptNumber, paidAt, note || null, id]
     );
@@ -209,14 +227,19 @@ exports.markSucceeded = async (id, { fromStatuses, yearOf, note, paidAt: reporte
 // Echeance d'abonnement creee directement "succeeded" avec son recu, dans une seule transaction.
 // Livraison concurrente du meme evenement : l'index unique (provider, transaction_id) leve
 // ER_DUP_ENTRY, traite comme deja enregistre (renvoie null).
+async function insertSucceeded(connection, data, { yearOf, note } = {}) {
+    const [result] = await connection.query(INSERT_SQL, insertParams({ ...data, status: "succeeded" }));
+    const paidAt = providerDate(data.paidAt) || new Date();
+    const receiptNumber = await issueReceipt(connection, result.insertId, { paidAt, year: yearOf(paidAt), note });
+    return { id: result.insertId, receiptNumber };
+}
+
+// Variante dans une transaction de l'appelant (don hors ligne valide en meme temps que sa saisie).
+exports.insertSucceeded = insertSucceeded;
+
 exports.createSucceeded = async (data, { yearOf, note } = {}) => {
     try {
-        return await db.withTransaction(async (connection) => {
-            const [result] = await connection.query(INSERT_SQL, insertParams({ ...data, status: "succeeded" }));
-            const paidAt = providerDate(data.paidAt) || new Date();
-            const receiptNumber = await issueReceipt(connection, result.insertId, { paidAt, year: yearOf(paidAt), note });
-            return { id: result.insertId, receiptNumber };
-        });
+        return await db.withTransaction((connection) => insertSucceeded(connection, data, { yearOf, note }));
     } catch (error) {
         if (error.code === "ER_DUP_ENTRY" && /uq_payments_provider_tx/.test(error.message)) return null;
         throw error;
@@ -224,10 +247,12 @@ exports.createSucceeded = async (data, { yearOf, note } = {}) => {
 };
 
 // Un abonnement annule l'est definitivement : aucun evenement (retarde ou rejoue) ne le reactive.
+// L'arret date subscription_ended_at (indicateur d'attrition).
 exports.setSubscriptionStatus = async (subscriptionId, status, { onlyIf } = {}) => {
-    let sql = `UPDATE payments SET subscription_status = ?
+    let sql = `UPDATE payments SET subscription_status = ?,
+                 subscription_ended_at = IF(? = 'canceled', COALESCE(subscription_ended_at, NOW()), subscription_ended_at)
                WHERE subscription_id = ? AND (subscription_status IS NULL OR subscription_status <> 'canceled')`;
-    const params = [status, subscriptionId];
+    const params = [status, status, subscriptionId];
     if (onlyIf) {
         sql += " AND (subscription_status IS NULL OR subscription_status IN (?))";
         params.push(onlyIf);

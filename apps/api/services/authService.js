@@ -5,6 +5,8 @@ const userRepo = require("../repositories/userRepository");
 const resetRepo = require("../repositories/passwordResetRepository");
 const attemptRepo = require("../repositories/authAttemptRepository");
 const logService = require("./activityLogService");
+const mfaService = require("./engagementMfaService");
+const consentService = require("./consentService");
 const { sendPasswordResetEmail, sendRegistrationAttemptEmail } = require("./emailService");
 const { getPermissionsForRoles } = require("@hope/shared/rbac");
 const { HttpError, badRequest, unauthorized } = require("../utils/httpError");
@@ -48,7 +50,9 @@ function signToken(user) {
 // Inscription : reponse identique que l'email soit deja utilise ou non (pas d'enumeration des
 // comptes). Si un compte existe, rien n'est modifie et son titulaire est prevenu par email.
 // Le mot de passe est hache dans les deux cas pour un temps de reponse comparable.
-exports.register = async ({ name, email, password }, locale = "fr") => {
+// consents (facultatif) : cases de consentement du formulaire ({ newsletter: true, ... }),
+// enregistrees seulement pour un compte reellement cree (jamais pour un compte existant).
+exports.register = async ({ name, email, password, consents }, locale = "fr") => {
     assertStrongPassword(password);
     const hash = await bcrypt.hash(password, 12);
 
@@ -57,6 +61,8 @@ exports.register = async ({ name, email, password }, locale = "fr") => {
         try {
             const id = await userRepo.create({ name, email, password: hash, role: "membre", roles: ["membre"] });
             await logService.log({ userId: id, action: "auth.register", meta: { email } });
+            await consentService.recordFromForm({ email, userId: id, consents, source: "register", locale })
+                .catch((error) => console.error("register-consents-error:", error.message));
             return;
         } catch (error) {
             // Inscription concurrente avec le meme email (contrainte UNIQUE).
@@ -97,10 +103,22 @@ exports.login = async (email, password) => {
     }
 
     await attemptRepo.clear("login", identifier);
-    await userRepo.touchLogin(user.id);
-    await logService.log({ userId: user.id, action: "auth.login", meta: { email: user.email } });
 
-    return { token: signToken(user), user: toSessionUser(user) };
+    // Double authentification : pas de session avant le second facteur (ou son enrolement).
+    const mfa = await mfaService.loginRequirement(user);
+    if (mfa) {
+        await logService.log({ userId: user.id, action: "auth.mfa_challenge", meta: { step: mfa } });
+        return { mfa, challenge: mfaService.signChallenge(user, mfa) };
+    }
+    return exports.openSession(user);
+};
+
+// Session ouverte apres authentification complete (mot de passe, puis second facteur si requis).
+exports.openSession = async (user) => {
+    const fresh = (await userRepo.findAuthById(user.id)) || user;
+    await userRepo.touchLogin(fresh.id);
+    await logService.log({ userId: fresh.id, action: "auth.login", meta: { email: fresh.email } });
+    return { token: signToken(fresh), user: await exports.getMe(fresh.id) };
 };
 
 exports.getMe = async (userId) => {

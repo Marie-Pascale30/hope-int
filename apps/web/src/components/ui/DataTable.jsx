@@ -17,6 +17,7 @@ import { cx } from "./utils";
 // stacked : sous 768 px, chaque ligne devient une carte (libelle de colonne devant chaque valeur).
 // selectable : cases de selection (une par ligne + "tout selectionner" sur la page affichee) ;
 //   selectedIds / onSelectionChange(ids) : selection controlee ; isSelectable(row) exclut des lignes ;
+//   selectLabel(row) : nom de la ligne pour la case (ex. nom de la personne) ;
 //   bulkActions(selectedRows, clear) : barre d'actions affichee des qu'une ligne est cochee.
 // Le champ de recherche porte data-page-search : la touche "/" lui donne le focus (raccourcis admin).
 export function DataTable({
@@ -40,6 +41,7 @@ export function DataTable({
   selectedIds = [],
   onSelectionChange,
   isSelectable = () => true,
+  selectLabel,
   bulkActions,
 }) {
   const t = useTranslations("ui");
@@ -222,7 +224,7 @@ export function DataTable({
                             checked={checked}
                             onChange={() => toggleRow(row)}
                             onKeyDown={(event) => event.stopPropagation()}
-                            aria-label={t("bulk.selectRow", { label: rowLabel ? rowLabel(row) : String(key) })}
+                            aria-label={t("bulk.selectRow", { label: selectLabel ? selectLabel(row) : String(key) })}
                           />
                         )}
                       </td>

@@ -1,7 +1,10 @@
 "use client";
 
-// Liste des inscrits a un evenement : copie des emails et export CSV local.
-import { ClipboardCopy, Download, Users } from "lucide-react";
+// Liste des inscrits a un evenement : copie des emails, export CSV local et feuille d'emargement
+// imprimable (rendue hors de la modale, seule visible a l'impression).
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { ClipboardCopy, Download, Printer, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button, DataTable, EmptyState, ErrorState, SkeletonTable, Modal } from "@/src/components/ui";
 import { useAsync } from "@/src/hooks/useAsync";
@@ -28,6 +31,47 @@ const slug = (text) =>
     .replace(/^-|-$/g, "")
     .slice(0, 40);
 
+// Feuille d'emargement : une ligne par inscrit (ordre alphabetique) et une colonne de signature.
+function SignInSheet({ event, rows }) {
+  const t = useTranslations("adminOps.registrations.sheet");
+  const f = useFormat();
+  const locale = f.locale;
+  const sorted = [...rows].sort((a, b) => String(a.name).localeCompare(String(b.name), locale));
+  return (
+    <section className="print-sheet" aria-hidden="true">
+      <h1>{t("title")}</h1>
+      <p className="print-sheet__event"><strong>{event.title}</strong></p>
+      <p className="print-sheet__meta">
+        {f.dateTime(event.start_at)}
+        {event.location ? ` · ${event.location}` : ""}
+        {" · "}
+        {t("count", { count: rows.length })}
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">{t("number")}</th>
+            <th scope="col">{t("name")}</th>
+            <th scope="col">{t("contact")}</th>
+            <th scope="col">{t("signature")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sorted.map((row, index) => (
+            <tr key={row.id ?? row.email}>
+              <td>{index + 1}</td>
+              <td>{row.name}</td>
+              <td>{[row.phone, row.email].filter(Boolean).join(" · ")}</td>
+              <td className="print-sheet__sign" />
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="print-sheet__foot">{t("printedAt", { date: f.dateTime(new Date().toISOString()) })}</p>
+    </section>
+  );
+}
+
 export default function EventRegistrations({ event, onClose }) {
   const getErrorMessage = useErrorMessage();
   const t = useTranslations("adminOps.registrations");
@@ -35,6 +79,21 @@ export default function EventRegistrations({ event, onClose }) {
   const { showError, toast } = useAlerts();
   const { data, loading, error, reload } = useAsync(() => adminApi.eventRegistrations(event.id), [event.id]);
   const rows = data || [];
+  const [printing, setPrinting] = useState(false);
+
+  // Impression de la feuille seule : classe posee sur <body> le temps de l'impression.
+  useEffect(() => {
+    if (!printing) return undefined;
+    document.body.classList.add("is-printing-sheet");
+    const done = () => setPrinting(false);
+    window.addEventListener("afterprint", done);
+    const frame = window.requestAnimationFrame(() => window.print());
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("afterprint", done);
+      document.body.classList.remove("is-printing-sheet");
+    };
+  }, [printing]);
 
   const copyEmails = async () => {
     try {
@@ -51,7 +110,7 @@ export default function EventRegistrations({ event, onClose }) {
       [row.name, row.email, row.phone, row.region, f.dateTime(row.created_at)].map(csvCell).join(";")
     );
     const blob = new Blob([`﻿${[header.map(csvCell).join(";"), ...lines].join("\r\n")}`], { type: "text/csv;charset=utf-8" });
-    saveBlob(blob, `inscrits-${slug(event.title)}-${todayStamp()}.csv`);
+    saveBlob(blob, t("csvFile", { event: slug(event.title), date: todayStamp() }));
     toast(t("exported"));
   };
 
@@ -87,6 +146,7 @@ export default function EventRegistrations({ event, onClose }) {
         <>
           <Button variant="ghost" onClick={onClose}>{t("close")}</Button>
           <Button variant="secondary" icon={ClipboardCopy} onClick={copyEmails} disabled={!rows.length}>{t("copy")}</Button>
+          <Button variant="secondary" icon={Printer} onClick={() => setPrinting(true)} disabled={!rows.length}>{t("print")}</Button>
           <Button icon={Download} onClick={exportCsv} disabled={!rows.length}>{t("export")}</Button>
         </>
       }
@@ -100,6 +160,7 @@ export default function EventRegistrations({ event, onClose }) {
       ) : (
         <DataTable columns={columns} rows={rows} searchKeys={["name", "email", "region"]} searchPlaceholder={t("search")} pageSize={10} />
       )}
+      {printing && createPortal(<SignInSheet event={event} rows={rows} />, document.body)}
     </Modal>
   );
 }

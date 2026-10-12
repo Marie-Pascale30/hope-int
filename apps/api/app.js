@@ -1,9 +1,11 @@
 // Application Express, sans demarrage du serveur : importable telle quelle par les tests.
+const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const morgan = require("morgan");
+const { httpLogger, logger } = require("./config/logger");
 const multer = require("multer");
 const cookieParser = require("cookie-parser");
 const crypto = require("crypto");
@@ -56,7 +58,8 @@ app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 // credentials : le navigateur envoie le cookie de session aux origines autorisees.
 // exposedHeaders : en-tetes lisibles par le site (total des dons, nom du fichier exporte).
 app.use(cors({ origin: corsOrigins, credentials: true, exposedHeaders: ["X-Total-Count", "Content-Disposition"] }));
-if (process.env.NODE_ENV !== "test") app.use(morgan(isProduction ? "combined" : "dev"));
+// Journaux HTTP structures (pino) : JSON en production, lisibles en developpement, muets en test.
+app.use(httpLogger);
 // Messages traduits selon Accept-Language (avant le limiteur pour traduire aussi ses refus).
 app.use(localizeResponses);
 app.use(apiLimiter);
@@ -112,18 +115,37 @@ app.get("/api/health/details", healthAccess, async (_req, res) => {
 });
 
 // Routes principales
+// Modules fonctionnels : chaque fichier de routes/features/ exporte { basePath, router } et
+// gere lui-meme authentification et permissions. Montes avant les routeurs historiques.
+const featuresDir = path.join(__dirname, "routes", "features");
+if (fs.existsSync(featuresDir)) {
+  fs.readdirSync(featuresDir)
+    .filter((file) => file.endsWith(".js"))
+    .sort()
+    .forEach((file) => {
+      const feature = require(path.join(featuresDir, file));
+      if (!feature?.basePath?.startsWith("/api/") || !feature.router) {
+        throw new Error(`routes/features/${file} doit exporter { basePath: "/api/...", router }`);
+      }
+      app.use(feature.basePath, feature.router);
+    });
+}
+
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/payment", require("./routes/paymentRoute"));
 app.use("/api/admin", require("./routes/adminRoute"));
 app.use("/api", require("./routes/publicRoute"));
 
 // 404 pour toute route non definie
+// Suivi des erreurs (Sentry), actif seulement si SENTRY_DSN est defini.
+require("./config/sentry").setupErrorHandler(app);
+
 app.use((_req, res) => {
   res.status(404).json({ error: "Route introuvable" });
 });
 
 // Handler d'erreur centralise (doit rester le dernier middleware)
-app.use((err, _req, res, _next) => {
+app.use((err, req, res, _next) => {
   if (err instanceof multer.MulterError) {
     const message = err.code === "LIMIT_FILE_SIZE" ? "Image trop lourde (5 Mo maximum)" : "Fichier refusé";
     return res.status(400).json({ error: message });
@@ -133,7 +155,7 @@ app.use((err, _req, res, _next) => {
   }
 
   const status = err.status || err.statusCode || 500;
-  if (status >= 500) console.error(err);
+  if (status >= 500) (req.log || logger).error({ err }, "Erreur serveur");
 
   // Les erreurs metier (4xx) sont destinees a l'utilisateur ; les erreurs serveur restent generiques en production.
   res.status(status).json({

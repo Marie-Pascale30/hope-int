@@ -3,13 +3,15 @@ import "../../styles/public.css";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useFormat } from "../../i18n/format";
-import { Link } from "../../i18n/navigation";
+import ShareButtons from "../../components/ShareButtons";
+import { Link, useLocalePath } from "../../i18n/navigation";
 import { BackLink, CoverImage } from "./components";
 import { paragraphs } from "./components/helpers";
 
 export default function NewsDetailView({ item, linked }) {
   const t = useTranslations("site.newsDetail");
   const f = useFormat();
+  const lp = useLocalePath();
 
   return (
     <section className="section section--tight">
@@ -25,6 +27,9 @@ export default function NewsDetailView({ item, linked }) {
         </div>
         <h1>{item.title}</h1>
         {item.summary && <p className="lead">{item.summary}</p>}
+        <div className="pub-detail-actions no-print">
+          <ShareButtons path={lp(`/actualites/${item.id}`)} title={item.title} text={item.title} />
+        </div>
         <CoverImage src={item.image_url} alt={item.image_alt} priority sizes="article" />
         <div className="prose">
           {paragraphs(item.content).map((text, index) => <p key={index}>{text}</p>)}
@@ -34,7 +39,7 @@ export default function NewsDetailView({ item, linked }) {
           <Link href={`/projets/${linked.id}`} className="card card--hover pub-linked">
             <CoverImage src={linked.image_url} sizes="thumb" />
             <span className="pub-linked__body">
-              <span className="eyebrow" style={{ margin: 0 }}>{t("linkedEyebrow")}</span>
+              <span className="eyebrow pub-linked__eyebrow">{t("linkedEyebrow")}</span>
               <strong>{linked.title}</strong>
               {linked.summary && <span className="muted">{linked.summary}</span>}
               <span className="pub-card__more">{t("linkedCta")} <ArrowRight aria-hidden="true" /></span>
