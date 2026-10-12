@@ -1,4 +1,4 @@
-const db = require("../config/db");
+const { withTransaction } = require("../config/db");
 const applicationRepo = require("../repositories/applicationRepository");
 const userRepo = require("../repositories/userRepository");
 const userService = require("./userService");
@@ -7,6 +7,7 @@ const emailService = require("./emailService");
 const { normalizeRoles, canGrantRoles } = require("@hope/shared/rbac");
 const { normalizeInterests } = require("@hope/shared/applications");
 const { HttpError, conflict, forbidden, notFound } = require("../utils/httpError");
+const { FRONTEND_URL } = require("../utils/security");
 
 const ORG_NAME = process.env.ORG_NAME || "HOPE International";
 const CLOSED_MESSAGE = "Cette candidature a déjà été clôturée";
@@ -17,12 +18,30 @@ function notify(sendPromise) {
 }
 
 // Les poles d'interet sont indicatifs ; les roles demandes (ancien champ desiredRoles) sont ignores.
+// Reponse identique quel que soit l'email (pas d'enumeration des comptes ni des candidatures) :
+// - compte existant : rien n'est enregistre, le titulaire est prevenu par email ;
+// - candidature deja ouverte : rien n'est enregistre (journalise).
+// Renvoie l'id de la candidature creee, ou null.
 exports.submit = async (payload) => {
     if (await applicationRepo.findOpenByEmail(payload.email)) {
-        throw conflict("Une candidature est déjà en cours d'étude pour cet email");
+        await logService.log({ action: "application.duplicate_ignored", meta: { email: payload.email } });
+        return null;
     }
-    if (await userRepo.findByEmail(payload.email)) {
-        throw conflict("Un compte existe déjà avec cet email : connectez-vous à votre espace");
+    const existing = await userRepo.findByEmail(payload.email);
+    if (existing) {
+        notify(emailService.send({
+            to: existing.email,
+            subject: `${ORG_NAME} - Votre candidature`,
+            text: [
+                `Bonjour ${existing.name},`,
+                "",
+                "Nous avons reçu une candidature avec votre adresse email, qui correspond déjà à un compte sur notre plateforme.",
+                `Connectez-vous à votre espace (${FRONTEND_URL}/connexion) ; l'équipe peut aussi rattacher une nouvelle candidature à votre compte.`,
+                "Si vous n'êtes pas à l'origine de cette démarche, vous pouvez ignorer ce message.",
+            ].join("\n"),
+        }));
+        await logService.log({ userId: existing.id, action: "application.existing_account", meta: { email: payload.email } });
+        return null;
     }
 
     const interests = normalizeInterests(payload.interests);
@@ -63,14 +82,37 @@ exports.markReviewing = async (actor, id, reviewNote) => {
     return applicationRepo.findById(id);
 };
 
-exports.reject = async (actor, id, reviewNote) => {
-    const application = await getOpen(id);
-    if (!(await applicationRepo.updateReview(id, { status: "refusee", reviewerId: actor.id, reviewNote }))) {
-        throw closed();
-    }
+// Refus conditionnel (candidature encore ouverte) ; renvoie la candidature refusee, ou null si
+// elle est introuvable ou deja close.
+async function rejectOne(actor, id, reviewNote, meta = {}) {
+    const application = await applicationRepo.findById(id);
+    if (!application || ["acceptee", "refusee"].includes(application.status)) return null;
+    if (!(await applicationRepo.updateReview(id, { status: "refusee", reviewerId: actor.id, reviewNote }))) return null;
     notify(emailService.sendApplicationDecisionEmail({ to: application.email, fullName: application.name, accepted: false, note: reviewNote }));
-    await logService.log({ userId: actor.id, action: "application.rejected", meta: { applicationId: id } });
+    await logService.log({ userId: actor.id, action: "application.rejected", meta: { applicationId: Number(id), ...meta } });
+    return application;
+}
+
+exports.reject = async (actor, id, reviewNote) => {
+    await getOpen(id);
+    if (!(await rejectOne(actor, id, reviewNote))) throw closed();
     return applicationRepo.findById(id);
+};
+
+// Refus groupe : memes conditions que le refus unitaire ; les candidatures introuvables ou deja
+// closes sont ignorees et comptees dans skipped.
+exports.bulkReject = async (actor, ids, reviewNote) => {
+    const unique = [...new Set(ids.map(Number))];
+    const rejected = [];
+    for (const id of unique) {
+        if (await rejectOne(actor, id, reviewNote, { bulk: true })) rejected.push(id);
+    }
+    await logService.log({
+        userId: actor.id,
+        action: "application.bulk_rejected",
+        meta: { requested: unique, rejected, skipped: unique.length - rejected.length },
+    });
+    return { rejected: rejected.length, skipped: unique.length - rejected.length };
 };
 
 function accountExists(application) {
@@ -85,22 +127,8 @@ function closed() {
     return conflict(CLOSED_MESSAGE, { code: "APPLICATION_CLOSED" });
 }
 
-// Ecritures de l'acceptation dans une transaction (connexion dediee du pool) : le compte n'existe
-// jamais sans la candidature acceptee, ni l'inverse.
-async function inTransaction(work) {
-    const connection = await db.getConnection();
-    try {
-        await connection.beginTransaction();
-        const result = await work(connection);
-        await connection.commit();
-        return result;
-    } catch (error) {
-        await connection.rollback().catch(() => {});
-        throw error;
-    } finally {
-        connection.release();
-    }
-}
+// Ecritures de l'acceptation dans une transaction (withTransaction) : le compte n'existe jamais
+// sans la candidature acceptee, ni l'inverse.
 
 async function closeAsAccepted(connection, actor, id, { reviewNote, userId }) {
     const updated = await applicationRepo.updateReview(
@@ -112,17 +140,21 @@ async function closeAsAccepted(connection, actor, id, { reviewNote, userId }) {
     if (!updated) throw closed();
 }
 
-// Rattachement a un compte existant : mot de passe inchange, roles ajoutes seulement si l'acteur
-// peut les attribuer (verifie avant l'appel).
+// Rattachement a un compte existant et actif : mot de passe inchange, roles ajoutes seulement si
+// l'acteur peut les attribuer (verifie avant l'appel) et possede deja tous les droits du compte.
 async function acceptOnExistingAccount(actor, application, existing, { roles, reviewNote }) {
+    if (existing.status !== "active") {
+        throw forbidden("Ce compte est désactivé : réactivez-le avant d'y rattacher la candidature");
+    }
     const merged = normalizeRoles([...existing.roles, ...roles]);
     const rolesChanged = merged.length !== existing.roles.length;
     if (rolesChanged) {
         if (Number(existing.id) === Number(actor.id)) throw forbidden("Vous ne pouvez pas modifier vos propres rôles");
+        userService.assertCanManage(actor, existing);
         userService.assertValidRoleSet(merged);
     }
 
-    await inTransaction(async (connection) => {
+    await withTransaction(async (connection) => {
         if (rolesChanged) await userRepo.updateRoles(existing.id, merged, connection);
         await closeAsAccepted(connection, actor, application.id, { reviewNote, userId: existing.id });
     });
@@ -164,7 +196,7 @@ async function acceptWithNewAccount(actor, application, { roles, reviewNote }) {
 
     let userId;
     try {
-        userId = await inTransaction(async (connection) => {
+        userId = await withTransaction(async (connection) => {
             const id = await userRepo.create(prepared.record, connection);
             await closeAsAccepted(connection, actor, application.id, { reviewNote, userId: id });
             return id;

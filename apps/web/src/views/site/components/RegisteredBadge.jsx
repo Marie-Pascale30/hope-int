@@ -5,9 +5,9 @@
 import { useEffect, useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Badge } from "../../../components/ui";
-import { useAuth } from "../../../context/AuthContext";
-import { publicApi } from "../../../services";
+import { Badge } from "@/src/components/ui";
+import { useAuth } from "@/src/context/AuthContext";
+import { publicApi } from "@/src/services";
 
 const store = { userId: null, promise: null };
 

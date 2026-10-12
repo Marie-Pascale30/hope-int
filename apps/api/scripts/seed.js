@@ -1,12 +1,19 @@
 require("dotenv").config();
 
+const { refuseInProduction, warnBeforeTruncate } = require("./guard");
+
+// Jamais en production (comptes de demo aux mots de passe publics), sauf --force explicite.
+refuseInProduction("npm run seed");
+
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const db = require("../config/db");
 const { runMigrations } = require("../config/migrate");
 
 // Usage : npm run seed            -> complete la base si elle est vide
-//         npm run seed -- --reset -> vide les donnees de demo puis les recree
+//         npm run seed -- --reset -> vide les donnees de demo puis les recree (avertissement,
+//                                    5 s pour annuler ; --yes pour ne pas attendre)
+//         --force                 -> autorise l'execution avec NODE_ENV=production
 const RESET = process.argv.includes("--reset");
 
 const MEMBERS = [
@@ -124,9 +131,12 @@ async function isEmpty(table) {
     return Number(row.total) === 0;
 }
 
+const RESET_TABLES = ["event_registrations", "events", "payments", "news", "testimonials", "projects", "messages", "applications", "activity_logs"];
+
 async function resetDemoData() {
+    await warnBeforeTruncate(RESET_TABLES);
     await db.query("SET FOREIGN_KEY_CHECKS = 0");
-    for (const table of ["event_registrations", "events", "payments", "news", "testimonials", "projects", "messages", "applications", "activity_logs"]) {
+    for (const table of RESET_TABLES) {
         await db.query(`TRUNCATE TABLE ${table}`);
     }
     await db.query("SET FOREIGN_KEY_CHECKS = 1");

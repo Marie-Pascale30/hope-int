@@ -33,6 +33,14 @@ exports.update = async (actor, id, { status, assignedTo, notes }) => {
     return messageRepo.findDetailedById(id);
 };
 
+// Statut applique a plusieurs messages (1 a 100), journalise en une entree.
+exports.bulkUpdateStatus = async (actor, ids, status) => {
+    const unique = [...new Set(ids.map(Number))];
+    const updated = await messageRepo.bulkUpdateStatus(unique, status);
+    await logService.log({ userId: actor.id, action: "message.bulk_updated", meta: { messageIds: unique, status, updated } });
+    return { updated };
+};
+
 exports.remove = async (actor, id) => {
     const message = await messageRepo.findById(id);
     if (!message) throw notFound("Message introuvable");

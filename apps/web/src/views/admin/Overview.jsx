@@ -15,14 +15,14 @@ import { useFormat } from "../../i18n/format";
 import { adminApi } from "../../services";
 import { can, PERMISSIONS as P } from "../../utils/rbac";
 import { useErrorMessage } from "../../i18n/errors";
-import { alignMonthly, lastMonths, monthLabel } from "./parts-a/months";
+import { alignMonthly, lastMonths, monthLabel } from "./lib/months";
 
 const chartFallback = () => <div className="chart-box skeleton" aria-hidden="true" />;
-const DonationsChart = dynamic(() => import("./parts-a/OverviewCharts").then((mod) => mod.DonationsChart), {
+const DonationsChart = dynamic(() => import("./components/OverviewCharts").then((mod) => mod.DonationsChart), {
   ssr: false,
   loading: chartFallback,
 });
-const MembersChart = dynamic(() => import("./parts-a/OverviewCharts").then((mod) => mod.MembersChart), {
+const MembersChart = dynamic(() => import("./components/OverviewCharts").then((mod) => mod.MembersChart), {
   ssr: false,
   loading: chartFallback,
 });

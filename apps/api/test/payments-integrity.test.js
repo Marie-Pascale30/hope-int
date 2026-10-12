@@ -2,6 +2,7 @@ const { db, request, app, resetDatabase, createUser, createPayment, mockMethods,
 const { describe, it, before, after, afterEach } = require("node:test");
 const assert = require("node:assert/strict");
 const paymentService = require("../services/paymentService");
+const { applyStatus } = require("../services/payments/statusService");
 const paymentRepo = require("../repositories/paymentRepository");
 const stripeProvider = require("../services/payments/stripeProvider");
 const notchpayProvider = require("../services/payments/notchpayProvider");
@@ -81,7 +82,7 @@ describe("integrite des paiements", () => {
 
         it("le rapprochement rattrape un don annule recent paye tardivement", async () => {
             const payment = await createPayment({ status: "canceled", transaction_id: "pi_late_1" });
-            mock(stripeProvider, { isEnabled: () => true, retrieveIntentStatus: async () => "succeeded" });
+            mock(stripeProvider, { isEnabled: () => true, retrieveIntent: async () => ({ status: "succeeded", paidAt: null }) });
             const summary = await paymentService.reconcile({ id: null });
             assert.equal(await statusOf(payment.id), "succeeded");
             assert.ok(summary.recovered >= 1);
@@ -90,7 +91,7 @@ describe("integrite des paiements", () => {
         it("le rapprochement journalise chaque annulation automatique", async () => {
             const payment = await createPayment({ transaction_id: "pi_old_1" });
             await db.query("UPDATE payments SET created_at = DATE_SUB(NOW(), INTERVAL 2 DAY) WHERE id = ?", [payment.id]);
-            mock(stripeProvider, { isEnabled: () => true, retrieveIntentStatus: async () => "requires_payment_method" });
+            mock(stripeProvider, { isEnabled: () => true, retrieveIntent: async () => ({ status: "requires_payment_method", paidAt: null }) });
             const summary = await paymentService.reconcile({ id: null });
             assert.equal(await statusOf(payment.id), "canceled");
             assert.ok(summary.abandoned >= 1);
@@ -103,15 +104,15 @@ describe("integrite des paiements", () => {
             const payment = await createPayment();
             const stale = await paymentRepo.findById(payment.id);
             await Promise.all([
-                paymentService._applyStatus(stale, "succeeded", "test"),
-                paymentService._applyStatus(stale, "failed", "test"),
-                paymentService._applyStatus(stale, "canceled", "test"),
+                applyStatus(stale, "succeeded", "test"),
+                applyStatus(stale, "failed", "test"),
+                applyStatus(stale, "canceled", "test"),
             ]);
             // Quelle que soit l'ordre d'execution, un echec applique avant peut encore passer en succes.
             assert.equal(await statusOf(payment.id), "succeeded");
 
             // Objet perime (lu "pending") : la base refuse la transition.
-            assert.equal(await paymentService._applyStatus(stale, "failed", "test"), false);
+            assert.equal(await applyStatus(stale, "failed", "test"), false);
             assert.equal(await statusOf(payment.id), "succeeded");
         });
 
@@ -155,10 +156,10 @@ describe("integrite des paiements", () => {
             let intentCalls = 0;
             mock(stripeProvider, {
                 isEnabled: () => true,
-                retrieveInvoiceStatus: async () => "paid",
-                retrieveIntentStatus: async (id) => {
+                retrieveInvoice: async () => ({ status: "paid", paidAt: null }),
+                retrieveIntent: async (id) => {
                     if (id.startsWith("in_")) intentCalls += 1;
-                    return "canceled";
+                    return { status: "canceled", paidAt: null };
                 },
             });
             await paymentService.reconcile({ id: null });
@@ -190,7 +191,7 @@ describe("integrite des paiements", () => {
     describe("I1 - remboursements et litiges", () => {
         it("remboursement total : statut refunded, recu non telechargeable, journalise", async () => {
             const payment = await createPayment({ transaction_id: "pi_refund_1", amount: 20 });
-            await paymentService._applyStatus(await paymentRepo.findById(payment.id), "succeeded", "test");
+            await applyStatus(await paymentRepo.findById(payment.id), "succeeded", "test");
             const res = await stripeEvent("charge.refunded", { id: "ch_1", payment_intent: "pi_refund_1", amount_refunded: 2000, refunded: true, currency: "eur" });
             assert.equal(res.status, 200);
             const row = await paymentRepo.findById(payment.id);
@@ -205,7 +206,7 @@ describe("integrite des paiements", () => {
         it("remboursement partiel : reste succeeded, montant rembourse stocke et deduit des statistiques", async () => {
             await db.query("DELETE FROM payments");
             const payment = await createPayment({ transaction_id: "pi_partial", amount: 50 });
-            await paymentService._applyStatus(await paymentRepo.findById(payment.id), "succeeded", "test");
+            await applyStatus(await paymentRepo.findById(payment.id), "succeeded", "test");
             await stripeEvent("charge.refunded", { id: "ch_2", payment_intent: "pi_partial", amount_refunded: 1000, refunded: false, currency: "eur" });
             const row = await paymentRepo.findById(payment.id);
             assert.equal(row.status, "succeeded");
@@ -216,7 +217,7 @@ describe("integrite des paiements", () => {
         it("litige ouvert puis gagne, et litige perdu", async () => {
             const won = await createPayment({ transaction_id: "pi_dispute_won" });
             const lost = await createPayment({ transaction_id: "pi_dispute_lost" });
-            for (const p of [won, lost]) await paymentService._applyStatus(await paymentRepo.findById(p.id), "succeeded", "test");
+            for (const p of [won, lost]) await applyStatus(await paymentRepo.findById(p.id), "succeeded", "test");
             const numberBefore = (await paymentRepo.findById(won.id)).receipt_number;
 
             await stripeEvent("charge.dispute.created", { id: "dp_1", payment_intent: "pi_dispute_won", status: "needs_response" });
@@ -233,7 +234,7 @@ describe("integrite des paiements", () => {
 
         it("Notch Pay : un don reussi relu 'refunded' passe en rembourse", async () => {
             const payment = await createPayment({ provider: "notchpay", method: "mobile_money", currency: "xaf", amount: 5000, transaction_id: "trx.np-refund" });
-            await paymentService._applyStatus(await paymentRepo.findById(payment.id), "succeeded", "test");
+            await applyStatus(await paymentRepo.findById(payment.id), "succeeded", "test");
             mock(notchpayProvider, {
                 isValidWebhook: () => true,
                 verifyTransaction: async () => ({ status: "refunded", amount: 5000, currency: "xaf" }),
@@ -321,7 +322,9 @@ describe("integrite des paiements", () => {
             assert.ok(rows.every((row) => row.provider === "stripe"));
             const dates = rows.map((row) => new Date(row.paid_at || row.created_at).getTime());
             assert.deepEqual(dates, [...dates].sort((a, b) => a - b));
-            assert.equal(rows.length, (await paymentRepo.getAll({ provider: "stripe" })).length);
+            const list = await paymentRepo.getAll({ provider: "stripe" });
+            assert.equal(rows.length, list.rows.length);
+            assert.equal(rows.length, list.total);
         });
     });
 });

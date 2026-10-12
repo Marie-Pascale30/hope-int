@@ -2,9 +2,9 @@
 
 import { MapPin, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Alert, Badge, Button, ProgressBar } from "../../../components/ui";
-import { useFormat } from "../../../i18n/format";
-import { useLabels } from "../../../utils/labels";
+import { Alert, Badge, Button, ProgressBar } from "@/src/components/ui";
+import { useFormat } from "@/src/i18n/format";
+import { useLabels } from "@/src/utils/labels";
 
 function CampaignProgress({ project }) {
   const t = useTranslations("account.campaigns");

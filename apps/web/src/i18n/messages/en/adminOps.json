@@ -26,11 +26,16 @@
       "choose": "Choose an image",
       "undoNew": "Discard new image",
       "remove": "Remove image",
-      "keep": "Keep current image"
+      "keep": "Keep current image",
+      "altLabel": "Image alt text",
+      "altPlaceholder": "E.g. Women harvesting maize in a field in Bafoussam",
+      "altHint": "Describe what the image shows for people who cannot see it (max {max} characters). Leave empty if it is purely decorative."
     },
     "common": {
       "exported": "CSV export downloaded",
-      "exportFailed": "Export failed"
+      "exportFailed": "Export failed",
+      "csvDonations": "hope-donations-{date}.csv",
+      "csvFinance": "hope-donations-{period}-{date}.csv"
     },
     "donations": {
       "eyebrow": "Donations",
@@ -44,7 +49,6 @@
       "rowLabel": "Details of the donation from {name}",
       "rowLabelAnonymous": "Details of a donation from an anonymous donor",
       "rateNote": "Donations in CFA francs are converted at the fixed rate of €1 = {rate} FCFA.",
-      "limitNote": "Only the {limit} most recent donations are shown: refine the filters.",
       "columns": {
         "date": "Date",
         "donor": "Donor",
@@ -78,7 +82,8 @@
         "donorsHint": "Among successful donations",
         "pending": "Pending",
         "pendingHint": "{amount} awaiting confirmation",
-        "pendingNone": "No payments awaiting confirmation"
+        "pendingNone": "No payments awaiting confirmation",
+        "pageOnly": "on the displayed page"
       },
       "reviewBanner": {
         "title": "{count, plural, one {# donation to review} other {# donations to review}}",
@@ -140,7 +145,11 @@
         "confirmRejectText": "The donation will be cancelled and no receipt will be issued. Any refund must be made from the provider's dashboard.",
         "approved": "Donation approved",
         "rejected": "Donation rejected",
-        "failed": "Unable to record the decision"
+        "failed": "Unable to record the decision",
+        "receivedLabel": "Amount actually received ({currency})",
+        "receivedHint": "Pre-filled with the expected amount ({amount}): enter the amount collected as shown by the payment provider. It will appear on the tax receipt.",
+        "receivedInvalid": "Enter the amount received (a number above 0) to approve the donation.",
+        "confirmDiffers": "Note: the expected amount was {expected}."
       }
     },
     "finance": {
@@ -441,7 +450,8 @@
         "eventDeleted": "“{title}” · {count, plural, =0 {no registrations} one {# registration deleted} other {# registrations deleted}}",
         "recipient": "Recipient: {to}",
         "attempts": "{count, plural, one {# attempt} other {# attempts}}"
-      }
+      },
+      "searchPlaceholder": "Search this page (action, author)…"
     },
     "content": {
       "eyebrow": "Content",
@@ -712,6 +722,17 @@
         "phone": "Phone",
         "region": "Region",
         "registeredAt": "Registered on"
+      },
+      "csvFile": "registrations-{event}-{date}.csv",
+      "print": "Sign-in sheet",
+      "sheet": {
+        "title": "Sign-in sheet",
+        "count": "{count, plural, one {# registered} other {# registered}}",
+        "number": "No.",
+        "name": "Name",
+        "contact": "Phone / email",
+        "signature": "Signature",
+        "printedAt": "Printed on {date} — HOPE International"
       }
     }
   }

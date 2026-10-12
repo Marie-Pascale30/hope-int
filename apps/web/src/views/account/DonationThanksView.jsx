@@ -29,6 +29,7 @@ import { toast, useAlerts } from "../../utils/alerts";
 import { shareContent } from "../../utils/native";
 import { useLabels } from "../../utils/labels";
 import { useErrorMessage } from "../../i18n/errors";
+import ShareButtons from "../../components/ShareButtons";
 
 const REF_PATTERN = /^[a-f0-9]{48}$/i;
 
@@ -206,7 +207,13 @@ function Success({ payment, isAuthenticated, onSubscriptionCanceled }) {
           <Share2 aria-hidden="true" />
           <h2>{t("next.shareTitle")}</h2>
           <p className="muted">{t("next.shareText")}</p>
-          <Button variant="secondary" size="sm" onClick={() => share(tShare, lp("/don"))}>{t("next.shareButton")}</Button>
+          {/* Partage du projet soutenu (ou du site pour un don general), jamais de la page de paiement. */}
+          <ShareButtons
+            path={lp(payment.project_id ? `/projets/${payment.project_id}` : "/")}
+            title={payment.project_title || "HOPE International"}
+            text={payment.project_title ? tShare("textProject", { title: payment.project_title }) : tShare("text")}
+            label={t("next.shareButton")}
+          />
         </Card>
         {isAuthenticated ? (
           <Card hover className="don-next">

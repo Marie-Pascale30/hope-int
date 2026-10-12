@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { CalendarDays, Clock, MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Badge, Button, Card, EmptyState, ErrorState, LoadingState } from "../../../components/ui";
-import { useAsync } from "../../../hooks/useAsync";
-import { useFormat } from "../../../i18n/format";
-import { Link, useLocalePath } from "../../../i18n/navigation";
-import { publicApi } from "../../../services";
-import { useAlerts } from "../../../utils/alerts";
-import { resolveImage } from "../../../utils/format";
-import { useErrorMessage } from "../../../i18n/errors";
+import { Badge, Button, Card, EmptyState, ErrorState, LoadingState } from "@/src/components/ui";
+import { useAsync } from "@/src/hooks/useAsync";
+import { useFormat } from "@/src/i18n/format";
+import { Link, useLocalePath } from "@/src/i18n/navigation";
+import { publicApi } from "@/src/services";
+import { useAlerts } from "@/src/utils/alerts";
+import { resolveImage } from "@/src/utils/format";
+import { useErrorMessage } from "@/src/i18n/errors";
 
 function EventCard({ event, upcoming, onUnregistered }) {
   const t = useTranslations("account.events");

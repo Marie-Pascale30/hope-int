@@ -4,15 +4,15 @@ import "../../styles/public.css";
 import { ArrowRight, GraduationCap, HandCoins, Heart, Quote, Users } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Avatar, Card } from "../../components/ui";
 import { hl } from "../../components/motion/hl";
 import Marquee from "../../components/motion/Marquee";
 import NumberTicker from "../../components/motion/NumberTicker";
 import PageBanner from "../../components/site/PageBanner";
 import WordRotate from "../../components/motion/WordRotate";
+import { Avatar, Button, Card } from "../../components/ui";
 import { useFormat } from "../../i18n/format";
 import { useLocalePath } from "../../i18n/navigation";
-import { CoverImage, EventCard, LinkButton, NewsCard, ProjectCard } from "./components";
+import { CoverImage, EventCard, NewsCard, ProjectCard } from "./components";
 import LoadError from "./components/LoadError";
 import { hasCampaign } from "./components/helpers";
 import { PARTNERS } from "./partners";
@@ -84,8 +84,8 @@ export default function HomeView({ impact, projects, testimonials, news, events,
             </h1>
             <p className="lead">{t("lead")}</p>
             <div className="home-hero__actions">
-              <LinkButton href={lp("/don")} variant="accent" size="lg" icon={Heart}>{t("ctaDonate")}</LinkButton>
-              <LinkButton href={lp("/projets")} variant="secondary" size="lg" iconRight={ArrowRight}>{t("ctaDiscover")}</LinkButton>
+              <Button href={lp("/don")} variant="accent" size="lg" icon={Heart}>{t("ctaDonate")}</Button>
+              <Button href={lp("/projets")} variant="secondary" size="lg" iconRight={ArrowRight}>{t("ctaDiscover")}</Button>
             </div>
           </div>
           <div className="home-hero__visual">
@@ -145,7 +145,7 @@ export default function HomeView({ impact, projects, testimonials, news, events,
                 <h2 id="home-campaigns-title">{t("campaigns.title")}</h2>
                 <p>{t("campaigns.text")}</p>
               </div>
-              <LinkButton href={lp("/projets")} variant="secondary" iconRight={ArrowRight}>{t("campaigns.all")}</LinkButton>
+              <Button href={lp("/projets")} variant="secondary" iconRight={ArrowRight}>{t("campaigns.all")}</Button>
             </div>
             <div className="grid grid--3">
               {campaigns.map((project) => <ProjectCard key={project.id} project={project} />)}
@@ -216,7 +216,7 @@ export default function HomeView({ impact, projects, testimonials, news, events,
                 <span className="eyebrow">{t("news.eyebrow")}</span>
                 <h2 id="home-news-title">{t("news.title")}</h2>
               </div>
-              <LinkButton href={lp("/actualites")} variant="secondary" iconRight={ArrowRight}>{t("news.all")}</LinkButton>
+              <Button href={lp("/actualites")} variant="secondary" iconRight={ArrowRight}>{t("news.all")}</Button>
             </div>
             <div className="grid grid--3">
               {latestNews.map((item) => <NewsCard key={item.id} item={item} />)}
@@ -234,7 +234,7 @@ export default function HomeView({ impact, projects, testimonials, news, events,
                 <h2 id="home-events-title">{t("events.title")}</h2>
                 <p>{t("events.text")}</p>
               </div>
-              <LinkButton href={lp("/evenements")} variant="secondary" iconRight={ArrowRight}>{t("events.all")}</LinkButton>
+              <Button href={lp("/evenements")} variant="secondary" iconRight={ArrowRight}>{t("events.all")}</Button>
             </div>
             <div className="pub-events pub-events--compact">
               {nextEvents.map((event) => <EventCard key={event.id} event={event} compact />)}
@@ -252,8 +252,8 @@ export default function HomeView({ impact, projects, testimonials, news, events,
               <p>{t("ctaText")}</p>
             </div>
             <div className="home-cta__actions">
-              <LinkButton href={lp("/don")} variant="accent" size="lg" icon={Heart}>{t("ctaDonate")}</LinkButton>
-              <LinkButton href={lp("/rejoindre")} variant="light" size="lg">{t("ctaJoin")}</LinkButton>
+              <Button href={lp("/don")} variant="accent" size="lg" icon={Heart}>{t("ctaDonate")}</Button>
+              <Button href={lp("/rejoindre")} variant="light" size="lg">{t("ctaJoin")}</Button>
             </div>
           </div>
         </div>

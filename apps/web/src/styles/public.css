@@ -10,8 +10,8 @@
   overflow: hidden;
   padding-block: clamp(48px, 7vw, 88px) clamp(36px, 5vw, 56px);
   background:
-    radial-gradient(circle at 88% 20%, rgba(231, 154, 82, 0.22), transparent 40%),
-    radial-gradient(circle at 70% 110%, rgba(47, 138, 104, 0.16), transparent 45%),
+    radial-gradient(circle at 88% 20%, color-mix(in srgb, var(--glow-accent) 22%, transparent), transparent 40%),
+    radial-gradient(circle at 70% 110%, color-mix(in srgb, var(--glow-brand) 16%, transparent), transparent 45%),
     var(--brand-50);
   border-bottom: 1px solid var(--line);
 }
@@ -139,7 +139,7 @@
 
 .pub-card__title {
   margin: 0;
-  font-size: 1.22rem;
+  font-size: var(--text-xl);
   line-height: 1.25;
 }
 
@@ -167,7 +167,7 @@
 .pub-card__text {
   margin: 0;
   color: var(--ink-2);
-  font-size: 0.95rem;
+  font-size: var(--text-body);
 }
 
 .pub-card__foot {
@@ -194,7 +194,7 @@
 .pub-card__more svg {
   width: 16px;
   height: 16px;
-  transition: transform 0.2s ease;
+  transition: transform var(--duration) ease;
 }
 
 .pub-card:hover .pub-card__more svg {
@@ -254,7 +254,7 @@
 
 .pub-campaign__figures strong {
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: var(--text-title);
   color: var(--ink);
 }
 
@@ -312,7 +312,7 @@
 
 .pub-date__weekday {
   padding: 2px 0 8px;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--ink-3);
 }
 
@@ -342,7 +342,7 @@
 
 .pub-event__title {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: var(--text-xl);
 }
 
 .pub-event__title a {
@@ -861,8 +861,9 @@
   color: var(--accent-700);
 }
 
-.pub-feature h3 {
+.pub-feature :is(h2, h3) {
   margin: 0;
+  font-size: var(--text-xl);
 }
 
 .pub-feature p {
@@ -875,6 +876,10 @@
   padding-left: 18px;
   color: var(--ink-2);
   font-size: var(--text-md);
+}
+
+.pub-news-stack {
+  gap: clamp(20px, 3vw, 32px);
 }
 
 /* Coordonnees */
@@ -930,9 +935,9 @@
   gap: var(--space-2);
 }
 
-.pub-mini-cta h3 {
+.pub-mini-cta :is(h2, h3) {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
 }
 
 .pub-mini-cta p {
@@ -960,7 +965,7 @@
   overflow: hidden;
   padding-block: clamp(40px, 6vw, 80px) clamp(56px, 8vw, 96px);
   background:
-    radial-gradient(circle at 12% 0%, rgba(231, 154, 82, 0.14), transparent 45%),
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--glow-accent) 14%, transparent), transparent 45%),
     var(--bg);
 }
 
@@ -1063,7 +1068,7 @@
 .home-impact {
   padding-block: clamp(40px, 6vw, 64px);
   background:
-    radial-gradient(circle at 100% 0%, rgba(210, 119, 42, 0.25), transparent 40%),
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--glow-accent-deep) 25%, transparent), transparent 40%),
     var(--surface-brand-deep);
   color: var(--on-dark-2);
 }
@@ -1086,11 +1091,11 @@
 .home-impact__head p {
   margin: 0;
   max-width: 460px;
-  font-size: 0.95rem;
+  font-size: var(--text-body);
 }
 
 .home-impact .eyebrow {
-  color: #f3c08c;
+  color: var(--accent-on-dark);
 }
 
 .home-impact__grid {
@@ -1237,8 +1242,8 @@
   padding: clamp(32px, 6vw, 72px);
   border-radius: var(--radius-xl);
   background:
-    radial-gradient(circle at 100% 100%, rgba(210, 119, 42, 0.45), transparent 45%),
-    radial-gradient(circle at 0% 0%, rgba(47, 138, 104, 0.6), transparent 50%),
+    radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--glow-accent-deep) 45%, transparent), transparent 45%),
+    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--glow-brand) 60%, transparent), transparent 50%),
     var(--surface-brand);
   color: var(--on-dark-2);
 }
@@ -1326,7 +1331,7 @@
   border-radius: 10px;
   background: transparent;
   font: inherit;
-  font-size: 0.95rem;
+  font-size: var(--text-body);
   color: var(--ink);
   text-align: left;
   cursor: pointer;
@@ -1412,7 +1417,7 @@
 
 .pub-cal__title {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: var(--text-title);
 }
 
 .pub-cal__title::first-letter {
@@ -1443,7 +1448,7 @@
 
 .pub-cal__weekday {
   padding: 4px 0 8px;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 700;
   text-align: center;
   color: var(--ink-3);
@@ -1487,7 +1492,7 @@
   color: var(--ink);
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
+  transition: background var(--duration-fast) ease, transform var(--duration-fast) ease;
 }
 
 .pub-cal__day.has-events:hover {
@@ -1739,4 +1744,218 @@
   .pub-agenda__collapse {
     margin-bottom: 0;
   }
+}
+/* ---------- Actions des fiches : partage, agenda, carte ---------- */
+
+.pub-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.pub-map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pub-map-link svg {
+  width: 14px;
+  height: 14px;
+}
+
+.pub-linked__eyebrow {
+  margin: 0;
+}
+
+/* ---------- Barre d'action collante (fiches projet / evenement, < 960 px) ---------- */
+
+.pub-sticky,
+.pub-sticky-spacer {
+  display: none;
+}
+
+@media (max-width: 960px) {
+  .pub-sticky-spacer {
+    display: block;
+    height: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .pub-sticky {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) max(var(--space-4), env(safe-area-inset-right, 0px))
+      calc(var(--space-3) + env(safe-area-inset-bottom, 0px)) max(var(--space-4), env(safe-area-inset-left, 0px));
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    box-shadow: var(--shadow-lg);
+    transition: transform var(--duration) ease, visibility var(--duration);
+  }
+
+  .pub-sticky.is-hidden {
+    transform: translateY(100%);
+    visibility: hidden;
+  }
+
+  .pub-sticky__info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+    min-width: 0;
+    font-size: var(--text-sm);
+    line-height: 1.25;
+  }
+
+  .pub-sticky__info strong {
+    overflow: hidden;
+    max-width: 100%;
+    color: var(--ink);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pub-sticky__label {
+    color: var(--ink-2);
+    font-weight: 600;
+  }
+
+  .pub-sticky__bar {
+    display: block;
+    width: min(160px, 40vw);
+    height: 6px;
+    overflow: hidden;
+    border-radius: var(--radius-pill);
+    background: var(--surface-3);
+  }
+
+  .pub-sticky__bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--accent), var(--progress-accent-end));
+  }
+
+  .pub-sticky .btn {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 960px) and (prefers-reduced-motion: reduce) {
+  .pub-sticky {
+    transition: none;
+  }
+}
+
+.pub-aside:focus {
+  outline: none;
+}
+
+/* ---------- Impression des pages publiques ---------- */
+
+@media print {
+  @page {
+    margin: 14mm 12mm;
+  }
+
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .pub-sticky,
+  .pub-sticky-spacer,
+  .don-sticky,
+  .pub-back,
+  .pub-filters,
+  .no-print,
+  .share,
+  .theme-switch {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .pub-hero,
+  .home-hero,
+  .section--alt {
+    background: none;
+    border: 0;
+  }
+
+  .pub-hero,
+  .section {
+    padding-block: 12px;
+  }
+
+  .pub-detail-layout {
+    display: block;
+  }
+
+  .pub-aside {
+    position: static;
+    margin-top: 16px;
+  }
+
+  .card {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  /* Jauges de collecte conservees (couleurs de fond imprimees) */
+  .progress,
+  .progress__bar,
+  .pub-sticky__bar span,
+  .badge {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .prose a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+}
+
+/* Squelettes de chargement (loading.jsx) */
+.pub-skeleton-cover {
+  margin-block: var(--space-4);
+  border-radius: var(--radius-lg);
+}
+
+.pub-skeleton-event {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.pub-skeleton-event__date {
+  flex-shrink: 0;
+  width: 64px;
+  height: 72px;
+}
+
+.pub-skeleton-event__body {
+  flex: 1;
+  padding: 0;
 }

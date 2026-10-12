@@ -1,9 +1,13 @@
 require("dotenv").config();
+// Sentry instrumente Express et MySQL au chargement : avant tout autre module (inactif sans SENTRY_DSN).
+require("./config/sentry");
 
 const app = require("./app");
 const db = require("./config/db");
 const { runMigrations } = require("./config/migrate");
 const emailOutbox = require("./services/emailOutbox");
+const reconcileWorker = require("./services/payments/reconcileService");
+const featureWorkers = require("./workers");
 
 // Migrations appliquees au demarrage (desactivable avec MIGRATE_ON_START=false, par exemple
 // si elles sont lancees a part avec `npm run migrate` lors du deploiement).
@@ -43,6 +47,10 @@ function listen(port, attempt = 0) {
     listen(PORT);
     // File d'envoi des emails (ignoree avec NODE_ENV=test ou EMAIL_OUTBOX_WORKER=false).
     emailOutbox.start();
+    // Rapprochement planifie des paiements (ignore avec NODE_ENV=test ou RECONCILE_WORKER=false).
+    reconcileWorker.start();
+    // Taches planifiees des modules fonctionnels (dossier workers/).
+    featureWorkers.startAll();
   })
   .catch((err) => {
     console.error("Erreur initialisation DB:", err.message);
@@ -56,6 +64,12 @@ function shutdown(signal) {
   }
 
   server.close(async () => {
+    try {
+      await reconcileWorker.stop();
+      await featureWorkers.stopAll();
+    } catch (err) {
+      console.error("Erreur arrêt rapprochement:", err.message);
+    }
     try {
       await emailOutbox.stop();
     } catch (err) {

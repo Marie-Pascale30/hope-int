@@ -2,11 +2,15 @@ const db = require("../config/db");
 
 // Montant net (remboursements partiels deduits) converti en EUR.
 const { DONOR_KEY_SQL, NET_AMOUNT_SQL: NET_SQL, NET_EUR_SQL: EUR_SQL } = require("../utils/sql");
+const { BUCKET_SQL, groupByMonth, yearBounds } = require("../utils/timezone");
+
+// Plafond de la liste non paginee (compatibilite) : la troncature est signalee a l'appelant.
+const LIST_LIMIT = 2000;
 
 const LIST_COLUMNS = `
   p.id, p.user_id, p.amount, p.currency, p.method, p.provider, p.status, p.transaction_id,
   p.frequency, p.subscription_id, p.project_id, p.receipt_number, p.receipt_token, p.paid_at, p.created_at,
-  p.refunded_amount,
+  p.refunded_amount, p.source, p.tribute_type, p.pledge_id, p.fundraiser_id,
   COALESCE(u.name, p.donor_name) AS donor_name,
   COALESCE(u.email, p.donor_email) AS donor_email,
   pr.title AS project_title, pr.region AS project_region`;
@@ -14,14 +18,18 @@ const LIST_COLUMNS = `
 // Detail d'un don : colonnes de liste + recu fige + suivi abonnement / remboursement.
 const DETAIL_COLUMNS = `${LIST_COLUMNS},
   p.donor_name AS entered_donor_name, p.donor_email AS entered_donor_email, pr.status AS project_status,
-  p.provider_payment_ref, p.subscription_status, p.refunded_at, p.receipt_sent_at,
+  p.provider_payment_ref, p.subscription_status, p.subscription_period_end, p.refunded_at, p.receipt_sent_at,
   p.receipt_issued_at, p.receipt_donor_name, p.receipt_donor_email, p.receipt_designation,
-  p.receipt_amount, p.receipt_currency, p.receipt_method, p.receipt_frequency, p.receipt_note`;
+  p.receipt_amount, p.receipt_currency, p.receipt_method, p.receipt_frequency, p.receipt_note,
+  p.tribute_name, p.tribute_notify_email, p.tribute_message, p.tribute_notified_at, p.receipt_tribute,
+  p.reminder_count, p.reminder_sent_at, p.public_anonymous, p.subscription_ended_at,
+  fr.slug AS fundraiser_slug, fr.title AS fundraiser_title`;
 
 const LIST_FROM = `
   FROM payments p
   LEFT JOIN users u ON u.id = p.user_id
-  LEFT JOIN projects pr ON pr.id = p.project_id`;
+  LEFT JOIN projects pr ON pr.id = p.project_id
+  LEFT JOIN fundraisers fr ON fr.id = p.fundraiser_id`;
 
 function mapPayment(row) {
     if (!row) return row;
@@ -48,13 +56,23 @@ function insertParams(data) {
         data.subscriptionStatus || null,
         data.providerPaymentRef || null,
         data.receiptToken,
+        data.source || null,
+        data.tributeType || null,
+        data.tributeName || null,
+        data.tributeEmail || null,
+        data.tributeMessage || null,
+        data.pledgeId || null,
+        data.fundraiserId || null,
+        data.publicAnonymous ? 1 : 0,
     ];
 }
 
 const INSERT_SQL = `INSERT INTO payments
    (user_id, amount, currency, method, provider, status, transaction_id, donor_name, donor_email,
-    project_id, frequency, subscription_id, subscription_status, provider_payment_ref, receipt_token)
- VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    project_id, frequency, subscription_id, subscription_status, provider_payment_ref, receipt_token,
+    source, tribute_type, tribute_name, tribute_notify_email, tribute_message, pledge_id, fundraiser_id,
+    public_anonymous)
+ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
 exports.create = async (data) => {
     const [result] = await db.query(INSERT_SQL, insertParams(data));
@@ -161,45 +179,47 @@ async function issueReceipt(connection, id, { paidAt, year, note }) {
              p.receipt_currency = p.currency,
              p.receipt_method = p.method,
              p.receipt_frequency = p.frequency,
-             p.receipt_note = COALESCE(?, p.receipt_note)
+             p.receipt_note = COALESCE(?, p.receipt_note),
+             p.receipt_tribute = CASE p.tribute_type
+                 WHEN 'honor' THEN LEFT(CONCAT('En l''honneur de ', p.tribute_name), 255)
+                 WHEN 'memory' THEN LEFT(CONCAT('À la mémoire de ', p.tribute_name), 255)
+                 ELSE NULL END
          WHERE p.id = ?`,
         [paidAt, receiptNumber, paidAt, note || null, id]
     );
     return receiptNumber;
 }
 
-async function inTransaction(work) {
-    const connection = await db.getConnection();
-    try {
-        await connection.beginTransaction();
-        const result = await work(connection);
-        await connection.commit();
-        return result;
-    } catch (error) {
-        await connection.rollback();
-        throw error;
-    } finally {
-        connection.release();
-    }
+// Date de paiement communiquee par le prestataire : retenue si valide et non future (tolerance
+// de 5 minutes pour un ecart d'horloge).
+function providerDate(value) {
+    if (!value) return null;
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime()) || date.getTime() > Date.now() + 5 * 60000) return null;
+    return date;
 }
 
 // Passage a "succeeded" depuis un des statuts autorises. yearOf(date) donne l'annee du recu
-// dans le fuseau des recus. Renvoie { changed, issued } (issued : nouveau recu emis).
-exports.markSucceeded = async (id, { fromStatuses, yearOf, note } = {}) =>
-    inTransaction(async (connection) => {
+// dans le fuseau des recus. paidAt : date reelle du paiement chez le prestataire (sinon date
+// deja connue, sinon maintenant). amount : montant confirme (validation d'un don en
+// verification), ecrit dans la meme transaction que le recu.
+// Renvoie { changed, issued } (issued : nouveau recu emis).
+exports.markSucceeded = async (id, { fromStatuses, yearOf, note, paidAt: reportedPaidAt, amount } = {}) =>
+    db.withTransaction(async (connection) => {
         const [rows] = await connection.query(
             "SELECT id, status, receipt_number, paid_at FROM payments WHERE id = ? FOR UPDATE",
             [id]
         );
         const payment = rows[0];
         if (!payment || !fromStatuses.includes(payment.status)) return { changed: false, issued: false };
+        if (amount !== undefined) await connection.query("UPDATE payments SET amount = ? WHERE id = ?", [amount, id]);
 
         // Recu deja emis (ex. litige gagne) : on retablit le statut sans renumeroter.
         if (payment.receipt_number) {
             await connection.query("UPDATE payments SET status = 'succeeded' WHERE id = ?", [id]);
             return { changed: true, issued: false };
         }
-        const paidAt = payment.paid_at ? new Date(payment.paid_at) : new Date();
+        const paidAt = providerDate(reportedPaidAt) || (payment.paid_at ? new Date(payment.paid_at) : new Date());
         const receiptNumber = await issueReceipt(connection, id, { paidAt, year: yearOf(paidAt), note });
         return { changed: true, issued: true, receiptNumber };
     });
@@ -207,28 +227,44 @@ exports.markSucceeded = async (id, { fromStatuses, yearOf, note } = {}) =>
 // Echeance d'abonnement creee directement "succeeded" avec son recu, dans une seule transaction.
 // Livraison concurrente du meme evenement : l'index unique (provider, transaction_id) leve
 // ER_DUP_ENTRY, traite comme deja enregistre (renvoie null).
+async function insertSucceeded(connection, data, { yearOf, note } = {}) {
+    const [result] = await connection.query(INSERT_SQL, insertParams({ ...data, status: "succeeded" }));
+    const paidAt = providerDate(data.paidAt) || new Date();
+    const receiptNumber = await issueReceipt(connection, result.insertId, { paidAt, year: yearOf(paidAt), note });
+    return { id: result.insertId, receiptNumber };
+}
+
+// Variante dans une transaction de l'appelant (don hors ligne valide en meme temps que sa saisie).
+exports.insertSucceeded = insertSucceeded;
+
 exports.createSucceeded = async (data, { yearOf, note } = {}) => {
     try {
-        return await inTransaction(async (connection) => {
-            const [result] = await connection.query(INSERT_SQL, insertParams({ ...data, status: "succeeded" }));
-            const paidAt = data.paidAt || new Date();
-            const receiptNumber = await issueReceipt(connection, result.insertId, { paidAt, year: yearOf(paidAt), note });
-            return { id: result.insertId, receiptNumber };
-        });
+        return await db.withTransaction((connection) => insertSucceeded(connection, data, { yearOf, note }));
     } catch (error) {
         if (error.code === "ER_DUP_ENTRY" && /uq_payments_provider_tx/.test(error.message)) return null;
         throw error;
     }
 };
 
+// Un abonnement annule l'est definitivement : aucun evenement (retarde ou rejoue) ne le reactive.
+// L'arret date subscription_ended_at (indicateur d'attrition).
 exports.setSubscriptionStatus = async (subscriptionId, status, { onlyIf } = {}) => {
-    let sql = "UPDATE payments SET subscription_status = ? WHERE subscription_id = ?";
-    const params = [status, subscriptionId];
+    let sql = `UPDATE payments SET subscription_status = ?,
+                 subscription_ended_at = IF(? = 'canceled', COALESCE(subscription_ended_at, NOW()), subscription_ended_at)
+               WHERE subscription_id = ? AND (subscription_status IS NULL OR subscription_status <> 'canceled')`;
+    const params = [status, status, subscriptionId];
     if (onlyIf) {
         sql += " AND (subscription_status IS NULL OR subscription_status IN (?))";
         params.push(onlyIf);
     }
     const [result] = await db.query(sql, params);
+    return result.affectedRows > 0;
+};
+
+// Fin de la periode en cours (date de la prochaine echeance), tenue a jour par les webhooks.
+exports.setSubscriptionPeriodEnd = async (subscriptionId, periodEnd) => {
+    if (!subscriptionId || !periodEnd) return false;
+    const [result] = await db.query("UPDATE payments SET subscription_period_end = ? WHERE subscription_id = ?", [periodEnd, subscriptionId]);
     return result.affectedRows > 0;
 };
 
@@ -287,14 +323,19 @@ function buildFilters({ status, from, to, projectId, provider, region } = {}) {
     return { where: clauses.length ? `WHERE ${clauses.join(" AND ")}` : "", params };
 }
 
-exports.getAll = async (filters = {}) => {
+// Avec { limit, offset } : page demandee. Sans : les LIST_LIMIT dons les plus recents.
+// Renvoie toujours { rows, total } (total : nombre de dons correspondant aux filtres).
+exports.getAll = async (filters = {}, pagination = null) => {
     const { where, params } = buildFilters(filters);
     const [rows] = await db.query(
-        `SELECT ${LIST_COLUMNS} ${LIST_FROM} ${where} ORDER BY p.created_at DESC LIMIT 2000`,
-        params
+        `SELECT ${LIST_COLUMNS} ${LIST_FROM} ${where} ORDER BY p.created_at DESC, p.id DESC LIMIT ? OFFSET ?`,
+        [...params, pagination ? pagination.limit : LIST_LIMIT, pagination ? pagination.offset : 0]
     );
-    return rows.map(mapPayment);
+    const [[count]] = await db.query(`SELECT COUNT(*) AS total ${LIST_FROM} ${where}`, params);
+    return { rows: rows.map(mapPayment), total: Number(count.total) };
 };
+
+exports.LIST_LIMIT = LIST_LIMIT;
 
 // Export comptable : memes filtres et colonnes que getAll, sans limite, ordre chronologique.
 exports.getForExport = async (filters = {}) => {
@@ -325,12 +366,19 @@ exports.getRecentlyClosed = async (days) => {
     return rows;
 };
 
-exports.getSummary = async ({ year, region } = {}) => {
+// Bilan des dons confirmes. year : annee civile du fuseau des recus, convertie en bornes UTC
+// [from, to[ appliquees a paid_at (index idx_payments_status_paid), pas de YEAR() en UTC.
+exports.getSummary = async ({ year, region, ...range } = {}) => {
+    const { from, to } = year ? yearBounds(Number(year)) : range;
     const clauses = ["p.status = 'succeeded'"];
     const params = [];
-    if (year) {
-        clauses.push("YEAR(COALESCE(p.paid_at, p.created_at)) = ?");
-        params.push(year);
+    if (from) {
+        clauses.push("p.paid_at >= ?");
+        params.push(from);
+    }
+    if (to) {
+        clauses.push("p.paid_at < ?");
+        params.push(to);
     }
     if (region) {
         clauses.push("pr.region = ?");
@@ -361,12 +409,14 @@ exports.getSummary = async ({ year, region } = {}) => {
          ${LIST_FROM} ${where} GROUP BY p.project_id, pr.title ORDER BY amount_eur DESC`,
         params
     );
-    const [byMonth] = await db.query(
-        `SELECT DATE_FORMAT(COALESCE(p.paid_at, p.created_at), '%Y-%m') AS month,
+    // Regroupement par quart d'heure UTC en SQL, puis par mois du fuseau des recus en JS.
+    const [buckets] = await db.query(
+        `SELECT ${BUCKET_SQL("COALESCE(p.paid_at, p.created_at)")} AS bucket,
                 COALESCE(SUM(${EUR_SQL}), 0) AS amount_eur, COUNT(*) AS count
-         ${LIST_FROM} ${where} GROUP BY month ORDER BY month ASC`,
+         ${LIST_FROM} ${where} GROUP BY bucket`,
         params
     );
+    const byMonth = groupByMonth(buckets, ["amount_eur", "count"]);
     const [[pending]] = await db.query(
         `SELECT COUNT(*) AS count FROM payments p LEFT JOIN projects pr ON pr.id = p.project_id
          WHERE p.status = 'pending'${region ? " AND pr.region = ?" : ""}`,

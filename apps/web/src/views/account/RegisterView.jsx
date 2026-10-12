@@ -3,13 +3,12 @@
 import "../../styles/account.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { UserPlus } from "lucide-react";
+import { MailCheck, UserPlus } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Alert, Button, Input, LoadingState } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { authApi } from "../../services";
-import { Link } from "../../i18n/navigation";
-import { toast } from "../../utils/alerts";
+import { Link, useLocalePath } from "../../i18n/navigation";
 import AuthCard from "./components/AuthCard";
 import { PasswordInput, PasswordStrength } from "./components/PasswordFields";
 import { EMAIL_PATTERN, destinationFor, isStrongPassword } from "./components/authHelpers";
@@ -28,16 +27,18 @@ function validate(form, tf) {
 }
 
 export default function RegisterView() {
-  const { login, status, user } = useAuth();
+  const { status, user } = useAuth();
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("account.register");
   const tf = useTranslations("account.fields");
   const errorText = useErrorMessage();
+  const lp = useLocalePath();
   const [form, setForm] = useState(EMPTY);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [sentTo, setSentTo] = useState("");
 
   useEffect(() => {
     if (status === "authenticated" && user) router.replace(destinationFor(user, null, locale));
@@ -54,17 +55,41 @@ export default function RegisterView() {
     setLoading(true);
     const email = form.email.trim().toLowerCase();
     try {
+      // Reponse volontairement neutre (201 meme si l'email existe deja) : pas de connexion
+      // automatique, le message invite a verifier sa boite de reception.
       await authApi.register({ name: form.name.trim(), email, password: form.password });
-      await login(email, form.password);
-      toast(t("welcome"));
+      setSentTo(email);
+      setForm(EMPTY);
+      setSubmitted(false);
     } catch (err) {
       setError(errorText(err));
+    } finally {
       setLoading(false);
     }
   };
 
   if (status === "authenticated") {
     return <LoadingState label={t("opening")} />;
+  }
+
+  if (sentTo) {
+    return (
+      <AuthCard
+        title={t("sentTitle")}
+        description={t("sentDescription")}
+        footer={t.rich("hasAccount", { link: (chunks) => <Link href="/connexion">{chunks}</Link> })}
+      >
+        <div className="stack" aria-live="polite">
+          <Alert tone="success" title={t("sentAlertTitle")}>
+            {t.rich("sentText", { email: sentTo, strong: (chunks) => <strong>{chunks}</strong> })}
+          </Alert>
+          <p className="muted acc-small">{t("sentHelp")}</p>
+          <Button href={lp(`/connexion?email=${encodeURIComponent(sentTo)}`)} size="lg" block icon={MailCheck}>
+            {t("sentLogin")}
+          </Button>
+        </div>
+      </AuthCard>
+    );
   }
 
   return (
@@ -75,12 +100,13 @@ export default function RegisterView() {
     >
       <form className="stack" onSubmit={submit} noValidate>
         {error && <Alert tone="danger">{error}</Alert>}
-        <Input label={tf("fullName")} autoComplete="name" required value={form.name} onChange={set("name")} error={errors.name} />
+        <Input label={tf("fullName")} autoComplete="name" enterKeyHint="next" required value={form.name} onChange={set("name")} error={errors.name} />
         <Input
           label={tf("email")}
           type="email"
           autoComplete="email"
           inputMode="email"
+          enterKeyHint="next"
           required
           value={form.email}
           onChange={set("email")}

@@ -22,6 +22,14 @@ const PERMISSIONS = {
     MANAGE_IT: "manage_it",
     // Tableau de bord regional (limite a sa region hors roles a portee globale).
     MANAGE_REGIONAL: "manage_regional",
+    // Relecture et publication des contenus soumis (workflow de validation).
+    APPROVE_CONTENT: "approve_content",
+    // Fiches donateurs, segments, notes (CRM).
+    MANAGE_DONORS: "manage_donors",
+    // Newsletter, campagnes d'emailing et modeles de messages.
+    MANAGE_CAMPAIGNS: "manage_campaigns",
+    // Presences, heures de benevolat et attestations.
+    MANAGE_VOLUNTEERS: "manage_volunteers",
 };
 
 const PERMISSION_LABELS = {
@@ -40,6 +48,10 @@ const PERMISSION_LABELS = {
     manage_organization: "Gérer les événements et actions terrain",
     manage_it: "Superviser le système (IT)",
     manage_regional: "Tableau de bord régional",
+    approve_content: "Valider les contenus avant publication",
+    manage_donors: "Gérer les fiches donateurs (CRM)",
+    manage_campaigns: "Gérer la newsletter et les campagnes",
+    manage_volunteers: "Gérer les présences et heures de bénévolat",
 };
 
 const ROLE_LABELS = {
@@ -71,6 +83,10 @@ const ROLE_PERMISSIONS = {
         PERMISSIONS.MANAGE_FINANCE,
         PERMISSIONS.MANAGE_ORGANIZATION,
         PERMISSIONS.MANAGE_REGIONAL,
+        PERMISSIONS.APPROVE_CONTENT,
+        PERMISSIONS.MANAGE_DONORS,
+        PERMISSIONS.MANAGE_CAMPAIGNS,
+        PERMISSIONS.MANAGE_VOLUNTEERS,
     ],
     conseiller: [
         PERMISSIONS.ACCESS_ADMIN_DASHBOARD,
@@ -86,12 +102,14 @@ const ROLE_PERMISSIONS = {
         PERMISSIONS.MANAGE_APPLICATIONS,
         PERMISSIONS.VIEW_STATS,
         PERMISSIONS.MANAGE_HR,
+        PERMISSIONS.MANAGE_VOLUNTEERS,
     ],
     responsable_finance: [
         PERMISSIONS.ACCESS_ADMIN_DASHBOARD,
         PERMISSIONS.VIEW_DONATIONS,
         PERMISSIONS.VIEW_STATS,
         PERMISSIONS.MANAGE_FINANCE,
+        PERMISSIONS.MANAGE_DONORS,
     ],
     organisatrice: [
         PERMISSIONS.ACCESS_ADMIN_DASHBOARD,
@@ -99,6 +117,7 @@ const ROLE_PERMISSIONS = {
         PERMISSIONS.VIEW_STATS,
         PERMISSIONS.MANAGE_CONTENT,
         PERMISSIONS.MANAGE_ORGANIZATION,
+        PERMISSIONS.MANAGE_VOLUNTEERS,
     ],
     // Le pole IT a toutes les capacites applicatives, sans pouvoir attribuer le role admin.
     responsable_it: Object.values(PERMISSIONS),
@@ -116,6 +135,8 @@ const ROLE_PERMISSIONS = {
         PERMISSIONS.MANAGE_APPLICATIONS,
         PERMISSIONS.VIEW_STATS,
         PERMISSIONS.MANAGE_ORGANIZATION,
+        PERMISSIONS.APPROVE_CONTENT,
+        PERMISSIONS.MANAGE_CAMPAIGNS,
     ],
     membre: [],
 };

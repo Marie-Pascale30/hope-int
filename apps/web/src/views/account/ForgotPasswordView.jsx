@@ -74,6 +74,7 @@ export default function ForgotPasswordView() {
           type="email"
           autoComplete="email"
           inputMode="email"
+          enterKeyHint="send"
           required
           value={email}
           onChange={(event) => setEmail(event.target.value)}

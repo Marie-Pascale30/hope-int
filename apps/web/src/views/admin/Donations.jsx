@@ -11,6 +11,7 @@ import RequireAuth from "../../components/RequireAuth";
 import { useAuth } from "../../context/AuthContext";
 import { useAsync } from "../../hooks/useAsync";
 import { useMeta } from "../../hooks/useMeta";
+import { useUrlFilters } from "../../hooks/useUrlFilters";
 import { useFormat } from "../../i18n/format";
 import { adminApi, paymentApi, publicApi } from "../../services";
 import { useErrorMessage } from "../../i18n/errors";
@@ -20,11 +21,16 @@ import { useAlerts } from "../../utils/alerts";
 import { can, PERMISSIONS as P } from "../../utils/rbac";
 import {
   cleanParams, formatEur, netAmount, PROVIDER_KEYS, PROVIDER_METHOD, providerLabel, providerName, todayStamp, toEur,
-} from "./parts-b/finance";
+} from "./lib/finance";
+import { PAGE_SIZE, ServerPagination, countOf, toPage } from "./components/paging";
 
-const EMPTY_FILTERS = { status: "", provider: "", projectId: "", from: "", to: "" };
+// Filtres serveur + recherche (dans la page affichee) + page, conserves dans l'URL.
+const URL_DEFAULTS = { status: "", provider: "", projectId: "", from: "", to: "", q: "", page: 1 };
+const SERVER_FILTERS = ["status", "provider", "projectId", "from", "to"];
 const NOTE_MAX = 500;
-const LIST_LIMIT = 2000;
+
+// Montant saisi ("12,50", "15 000") -> nombre, ou NaN.
+const parseAmountInput = (value) => Number(String(value).replace(/\s/g, "").replace(",", "."));
 
 const donationDate = (row) => row.paid_at || row.created_at;
 const refundedOf = (row) => Number(row.refunded_amount) || 0;
@@ -36,14 +42,27 @@ function ReviewPanel({ donation, onResolved }) {
   const { confirmAction, showError, toast } = useAlerts();
   const f = useFormat();
   const [note, setNote] = useState("");
+  // Montant reellement recu, pre-rempli avec le montant attendu (a corriger d'apres le prestataire).
+  const [received, setReceived] = useState(String(donation.amount ?? ""));
+  const [receivedError, setReceivedError] = useState("");
   const [busy, setBusy] = useState("");
+  const isXaf = donation.currency === "xaf";
 
   const decide = async (decision) => {
     const approve = decision === "approve";
+    const receivedAmount = parseAmountInput(received);
+    if (approve && (!Number.isFinite(receivedAmount) || receivedAmount <= 0)) {
+      setReceivedError(t("receivedInvalid"));
+      return;
+    }
+    setReceivedError("");
+    const differs = approve && receivedAmount !== Number(donation.amount);
     const ok = await confirmAction(
       approve ? t("confirmApproveTitle") : t("confirmRejectTitle"),
       approve
-        ? t("confirmApproveText", { amount: f.money(donation.amount, donation.currency) })
+        ? `${t("confirmApproveText", { amount: f.money(receivedAmount, donation.currency) })}${differs
+          ? ` ${t("confirmDiffers", { expected: f.money(donation.amount, donation.currency) })}`
+          : ""}`
         : t("confirmRejectText"),
       approve ? t("approve") : t("reject"),
       { danger: !approve }
@@ -51,7 +70,10 @@ function ReviewPanel({ donation, onResolved }) {
     if (!ok) return;
     setBusy(decision);
     try {
-      const result = await adminApi.reviewDonation(donation.id, decision, note.trim());
+      const result = await adminApi.reviewDonation(donation.id, decision, {
+        note: note.trim(),
+        receivedAmount: approve ? receivedAmount : undefined,
+      });
       toast(result?.message || (approve ? t("approved") : t("rejected")));
       onResolved(result?.donation);
     } catch (err) {
@@ -64,6 +86,19 @@ function ReviewPanel({ donation, onResolved }) {
   return (
     <div className="adm-review">
       <Alert tone="warning" title={t("title")}>{t("explain")}</Alert>
+      <Input
+        label={t("receivedLabel", { currency: isXaf ? "FCFA" : "EUR" })}
+        inputMode={isXaf ? "numeric" : "decimal"}
+        autoComplete="off"
+        required
+        value={received}
+        onChange={(event) => {
+          setReceived(event.target.value);
+          setReceivedError("");
+        }}
+        error={receivedError || undefined}
+        hint={t("receivedHint", { amount: f.money(donation.amount, donation.currency) })}
+      />
       <Textarea
         label={t("noteLabel")}
         rows={2}
@@ -72,7 +107,7 @@ function ReviewPanel({ donation, onResolved }) {
         onChange={(event) => setNote(event.target.value)}
         hint={t("noteHint", { count: note.length, max: NOTE_MAX })}
       />
-      <div className="row" style={{ marginTop: 12, gap: 8, flexWrap: "wrap" }}>
+      <div className="row adm-review__actions">
         <Button icon={CheckCircle2} loading={busy === "approve"} disabled={Boolean(busy)} onClick={() => decide("approve")}>
           {t("approve")}
         </Button>
@@ -205,19 +240,35 @@ function DonationsView() {
   const xafPerEur = meta.xafPerEur;
   const canManage = can(user, P.MANAGE_FINANCE);
 
-  const [filters, setFilters] = useState(EMPTY_FILTERS);
+  const { values: filters, setValues: setFilters, reset: resetFilters } = useUrlFilters(URL_DEFAULTS);
+  const { page } = filters;
   const [selected, setSelected] = useState(null);
   const [exporting, setExporting] = useState(false);
   const closeDetail = useCallback(() => setSelected(null), []);
 
-  const params = useMemo(() => cleanParams(filters), [filters]);
-  const { data, loading, error, reload, setData } = useAsync(() => adminApi.donations(params), [params]);
+  const params = useMemo(
+    () => cleanParams(Object.fromEntries(SERVER_FILTERS.map((key) => [key, filters[key]]))),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filters.status, filters.provider, filters.projectId, filters.from, filters.to]
+  );
+  // Pagination serveur : GET /admin/donations?page&pageSize&filtres -> { rows, total, page, pageSize }.
+  const { data, loading, error, reload, setData } = useAsync(
+    async () => toPage(await adminApi.donations({ ...params, page, pageSize: PAGE_SIZE })),
+    [params, page]
+  );
+  // Dons en verification (bandeau), quel que soit le filtre affiche.
+  const { data: reviewCount, reload: reloadReviewCount } = useAsync(
+    () => (canManage ? countOf(adminApi.donations, { status: "review" }) : Promise.resolve(0)),
+    [canManage]
+  );
   const { data: projects } = useAsync(() => publicApi.listContent("projects"), []);
 
   const statusOptions = STATUS_KEYS.paymentStatus.map((value) => ({ value, label: labels.status("paymentStatus", value).label }));
   const providerOptions = PROVIDER_KEYS.map((value) => ({ value, label: providerLabel(labels, value, PROVIDER_METHOD[value]) }));
 
-  const donations = useMemo(() => data || [], [data]);
+  const donations = useMemo(() => data?.rows || [], [data]);
+  const total = data?.total || 0;
+  const partial = total > donations.length;
   const totals = useMemo(() => {
     const succeeded = donations.filter((row) => row.status === "succeeded");
     const pending = donations.filter((row) => row.status === "pending");
@@ -228,23 +279,23 @@ function DonationsView() {
       succeeded: succeeded.length,
       pending: pending.length,
       pendingEur: pending.reduce((sum, row) => sum + toEur(row.amount, row.currency, xafPerEur), 0),
-      review: donations.filter((row) => row.status === "review").length,
       donors: new Set(succeeded.map((row) => row.donor_email || `user:${row.user_id}`)).size,
     };
   }, [donations, xafPerEur]);
 
-  const setFilter = (key) => (event) => setFilters((prev) => ({ ...prev, [key]: event.target.value }));
+  const setFilter = (key) => (event) => setFilters({ [key]: event.target.value });
   const hasFilters = Object.keys(params).length > 0;
   const periodInvalid = filters.from && filters.to && filters.to < filters.from;
 
   // Don mis a jour (verification traitee) : remplace la ligne et le detail ouvert.
   const onUpdated = (donation) => {
+    reloadReviewCount();
     if (!donation) {
       reload();
       setSelected(null);
       return;
     }
-    setData((prev) => (prev || []).map((row) => (row.id === donation.id ? { ...row, ...donation } : row)));
+    setData((prev) => prev && ({ ...prev, rows: prev.rows.map((row) => (row.id === donation.id ? { ...row, ...donation } : row)) }));
     setSelected((prev) => (prev && prev.id === donation.id ? { ...prev, ...donation } : prev));
   };
 
@@ -252,7 +303,7 @@ function DonationsView() {
     setExporting(true);
     try {
       const blob = await adminApi.exportDonations(params);
-      saveBlob(blob, `dons-hope-${todayStamp()}.csv`);
+      saveBlob(blob, tCommon("csvDonations", { date: todayStamp() }));
       toast(tCommon("exported"));
     } catch (err) {
       showError(tCommon("exportFailed"), getErrorMessage(err));
@@ -385,6 +436,43 @@ function DonationsView() {
           </div>
         </form>
       </MobileCollapse>
+      <form className="adm-filters" aria-label={t("filters.label")} onSubmit={(event) => event.preventDefault()}>
+        <Select
+          label={t("filters.status")}
+          placeholder={t("filters.allStatuses")}
+          options={statusOptions}
+          value={filters.status}
+          onChange={setFilter("status")}
+        />
+        <Select
+          label={t("filters.provider")}
+          placeholder={t("filters.allProviders")}
+          options={providerOptions}
+          value={filters.provider}
+          onChange={setFilter("provider")}
+        />
+        <Select
+          label={t("filters.project")}
+          placeholder={t("filters.allProjects")}
+          options={(projects || []).map((project) => ({ value: String(project.id), label: project.title }))}
+          value={filters.projectId}
+          onChange={setFilter("projectId")}
+        />
+        <Input label={t("filters.from")} type="date" value={filters.from} onChange={setFilter("from")} max={filters.to || undefined} />
+        <Input
+          label={t("filters.to")}
+          type="date"
+          value={filters.to}
+          onChange={setFilter("to")}
+          min={filters.from || undefined}
+          error={periodInvalid ? t("filters.periodInvalid") : undefined}
+        />
+        <div className="adm-filters__actions">
+          <Button variant="ghost" size="sm" icon={RotateCcw} onClick={resetFilters} disabled={!hasFilters && !filters.q}>
+            {t("filters.reset")}
+          </Button>
+        </div>
+      </form>
 
       {error ? (
         <ErrorState message={getErrorMessage(error)} onRetry={reload} />
@@ -392,10 +480,10 @@ function DonationsView() {
         <PageSkeleton variant="stats-table" columns={6} label={t("loading")} />
       ) : (
         <>
-          {canManage && totals.review > 0 && !filters.status && (
-            <Alert tone="warning" title={t("reviewBanner.title", { count: totals.review })}>
+          {canManage && reviewCount > 0 && filters.status !== "review" && (
+            <Alert tone="warning" title={t("reviewBanner.title", { count: reviewCount })}>
               {t("reviewBanner.text")}{" "}
-              <Button variant="ghost" size="sm" onClick={() => setFilters((prev) => ({ ...prev, status: "review" }))}>
+              <Button variant="ghost" size="sm" onClick={() => setFilters({ status: "review" })}>
                 {t("reviewBanner.show")}
               </Button>
             </Alert>
@@ -404,17 +492,26 @@ function DonationsView() {
             <StatCard
               label={t("stats.amount")}
               value={formatEur(f, totals.amountEur)}
-              hint={totals.refundedEur > 0 ? t("stats.amountHintRefunds", { amount: formatEur(f, totals.refundedEur) }) : t("stats.amountHint")}
+              hint={[
+                totals.refundedEur > 0 ? t("stats.amountHintRefunds", { amount: formatEur(f, totals.refundedEur) }) : t("stats.amountHint"),
+                partial ? t("stats.pageOnly") : null,
+              ].filter(Boolean).join(" · ")}
               icon={HandCoins}
             />
             <StatCard
               label={t("stats.count")}
-              value={f.number(donations.length)}
+              value={f.number(total)}
               hint={t("stats.countHint", { count: totals.succeeded })}
               icon={HeartHandshake}
               tone="info"
             />
-            <StatCard label={t("stats.donors")} value={f.number(totals.donors)} hint={t("stats.donorsHint")} icon={Users} tone="accent" />
+            <StatCard
+              label={t("stats.donors")}
+              value={f.number(totals.donors)}
+              hint={partial ? `${t("stats.donorsHint")} · ${t("stats.pageOnly")}` : t("stats.donorsHint")}
+              icon={Users}
+              tone="accent"
+            />
             <StatCard
               label={t("stats.pending")}
               value={f.number(totals.pending)}
@@ -425,7 +522,6 @@ function DonationsView() {
           </div>
           <p className="adm-selection-note">
             {t("rateNote", { rate: f.number(xafPerEur, { maximumFractionDigits: 3 }) })}
-            {donations.length >= LIST_LIMIT && ` ${t("limitNote", { limit: f.number(LIST_LIMIT) })}`}
           </p>
 
           <DataTable
@@ -433,13 +529,17 @@ function DonationsView() {
             rows={donations}
             searchKeys={(row) => `${row.donor_name} ${row.donor_email} ${row.receipt_number || ""} ${row.project_title || ""}`}
             searchPlaceholder={t("search")}
-            pageSize={20}
+            search={filters.q}
+            onSearchChange={(value) => setFilters({ q: value, page })}
+            pageSize={Math.max(PAGE_SIZE, donations.length)}
             initialSort={{ key: "date", dir: "desc" }}
             onRowClick={setSelected}
             rowLabel={(row) => (row.donor_name ? t("rowLabel", { name: row.donor_name }) : t("rowLabelAnonymous"))}
             emptyTitle={hasFilters ? t("empty.filteredTitle") : t("empty.title")}
             emptyDescription={hasFilters ? t("empty.filteredText") : t("empty.text")}
+            caption={t("title")}
           />
+          <ServerPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={(next) => setFilters({ page: next })} disabled={loading} />
         </>
       )}
 

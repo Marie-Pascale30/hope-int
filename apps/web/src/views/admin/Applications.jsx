@@ -9,22 +9,80 @@ import {
 import RequireAuth from "../../components/RequireAuth";
 import { useAuth } from "../../context/AuthContext";
 import { useAsync } from "../../hooks/useAsync";
+import { useUrlFilters } from "../../hooks/useUrlFilters";
 import { useFormat } from "../../i18n/format";
 import { adminApi } from "../../services";
 import { toast, useAlerts } from "../../utils/alerts";
 import { truncate } from "../../utils/format";
 import { STATUS_KEYS, useLabels } from "../../utils/labels";
 import { can, PERMISSIONS as P } from "../../utils/rbac";
-import RolePicker from "./parts-a/RolePicker";
-import TempPasswordModal from "./parts-a/TempPasswordModal";
+import RolePicker from "./components/RolePicker";
+import TempPasswordModal from "./components/TempPasswordModal";
 import { useErrorMessage } from "../../i18n/errors";
-import { PAGE_SIZE, ServerPagination, countOf, toPage } from "./parts-a/paging";
-import { useRoleMatrix } from "./parts-a/roles";
+import { PAGE_SIZE, ServerPagination, countOf, toPage } from "./components/paging";
+import { useRoleMatrix } from "./lib/roles";
 
 const STATUSES = STATUS_KEYS.applicationStatus; // nouvelle, en_etude, acceptee, refusee
 const TABS = [...STATUSES, "all"];
 
 const isOpen = (application) => ["nouvelle", "en_etude"].includes(application.status);
+// Onglet, recherche (dans la page) et page conserves dans l'URL.
+const URL_DEFAULTS = { status: "nouvelle", q: "", page: 1 };
+const BULK_MAX = 100;
+
+// Refus groupe des candidatures cochees (POST /admin/applications/bulk-reject) avec note facultative.
+function BulkRejectModal({ rows, onClose, onDone }) {
+  const t = useTranslations("admin.applications.bulk");
+  const tc = useTranslations("admin.common");
+  const errorText = useErrorMessage();
+  const { showError } = useAlerts();
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const submit = async () => {
+    setBusy(true);
+    try {
+      const result = await adminApi.bulkRejectApplications(rows.slice(0, BULK_MAX).map((row) => row.id), note.trim() || undefined);
+      const rejected = Number(result?.rejected) || 0;
+      const skipped = Array.isArray(result?.skipped) ? result.skipped.length : Number(result?.skipped) || 0;
+      toast(skipped ? t("doneSkipped", { count: rejected, skipped }) : t("done", { count: rejected }), skipped ? "warning" : "success");
+      onDone();
+    } catch (err) {
+      showError(t("failed"), errorText(err));
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Modal
+      open
+      title={t("title", { count: rows.length })}
+      onClose={onClose}
+      footer={(
+        <>
+          <Button variant="ghost" onClick={onClose}>{tc("cancel")}</Button>
+          <Button variant="danger" icon={X} loading={busy} onClick={submit}>{t("confirm", { count: rows.length })}</Button>
+        </>
+      )}
+    >
+      <div className="stack">
+        <Alert tone="warning">{t("text")}</Alert>
+        <ul className="adm-bulk-list">
+          {rows.slice(0, 8).map((row) => <li key={row.id}>{row.name} <span className="muted">· {row.email}</span></li>)}
+          {rows.length > 8 && <li className="muted">{t("more", { count: rows.length - 8 })}</li>}
+        </ul>
+        <Textarea
+          label={t("noteLabel")}
+          hint={t("noteHint")}
+          rows={3}
+          maxLength={2000}
+          value={note}
+          onChange={(event) => setNote(event.target.value)}
+        />
+      </div>
+    </Modal>
+  );
+}
 
 // Poles d'interet (referentiel INTEREST_AREAS de @hope/shared/applications) : libelles dans "admin.interests".
 function InterestBadges({ interests }) {
@@ -264,8 +322,14 @@ function ApplicationsInbox() {
   const errorText = useErrorMessage();
   const roleList = useRoleList();
   const { user } = useAuth();
-  const [tab, setTab] = useState("nouvelle");
-  const [page, setPage] = useState(1);
+  const { values, setValues } = useUrlFilters(URL_DEFAULTS);
+  const tab = TABS.includes(values.status) ? values.status : "nouvelle";
+  const { page } = values;
+  const setPage = (next) => setValues({ page: next });
+  const viewKey = `${tab}-${page}`;
+  const [checked, setChecked] = useState({ key: viewKey, ids: [] });
+  const checkedIds = checked.key === viewKey ? checked.ids : [];
+  const [bulkRows, setBulkRows] = useState(null);
   const { data, loading, error, reload, setData } = useAsync(
     async () => toPage(await adminApi.applications({ status: tab === "all" ? undefined : tab, page, pageSize: PAGE_SIZE })),
     [tab, page]
@@ -284,10 +348,7 @@ function ApplicationsInbox() {
   const total = data?.total || 0;
   const selected = applications.find((item) => item.id === selectedId);
 
-  const changeTab = (value) => {
-    setTab(value);
-    setPage(1);
-  };
+  const changeTab = (value) => setValues({ status: value, q: values.q });
 
   const refresh = () => {
     reload();
@@ -386,6 +447,19 @@ function ApplicationsInbox() {
               pageSize={Math.max(PAGE_SIZE, applications.length)}
               searchKeys={["name", "email", "region"]}
               searchPlaceholder={t("searchPlaceholder")}
+              search={values.q}
+              onSearchChange={(value) => setValues({ q: value, page })}
+              caption={t("title")}
+              selectable
+              isSelectable={isOpen}
+              selectLabel={(row) => `${row.name} (${row.email})`}
+              selectedIds={checkedIds}
+              onSelectionChange={(ids) => setChecked({ key: viewKey, ids })}
+              bulkActions={(rows) => (
+                <Button size="sm" variant="danger" icon={X} onClick={() => setBulkRows(rows)}>
+                  {t("bulk.reject")}
+                </Button>
+              )}
               onRowClick={(row) => setSelectedId(row.id)}
               rowLabel={(row) => t("openRow", { name: row.name })}
               emptyTitle={t("emptyTab")}
@@ -414,6 +488,17 @@ function ApplicationsInbox() {
 
           onAccepted={handleAccepted}
           onStale={handleStale}
+        />
+      )}
+      {bulkRows && (
+        <BulkRejectModal
+          rows={bulkRows}
+          onClose={() => setBulkRows(null)}
+          onDone={() => {
+            setBulkRows(null);
+            setChecked({ key: viewKey, ids: [] });
+            refresh();
+          }}
         />
       )}
       <TempPasswordModal credentials={credentials} onClose={() => setCredentials(null)} />

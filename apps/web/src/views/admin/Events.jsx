@@ -12,8 +12,8 @@ import { adminApi, publicApi } from "../../services";
 import { useErrorMessage } from "../../i18n/errors";
 import { useAlerts } from "../../utils/alerts";
 import { PERMISSIONS as P } from "../../utils/rbac";
-import EventForm from "./parts-b/EventForm";
-import EventRegistrations from "./parts-b/EventRegistrations";
+import EventForm from "./components/EventForm";
+import EventRegistrations from "./components/EventRegistrations";
 
 const isPast = (event) => new Date(event.end_at || event.start_at).getTime() < Date.now();
 

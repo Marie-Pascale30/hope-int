@@ -1,3 +1,5 @@
+const crypto = require("crypto");
+
 // Flutterwave (Mobile Money Orange / MTN et carte en XAF), via l'API REST v3.
 const API_URL = "https://api.flutterwave.com/v3";
 
@@ -56,10 +58,17 @@ exports.verifyTransaction = async ({ transactionId, txRef }) => {
         status: data.status, // successful | failed | pending
         amount: Number(data.amount),
         currency: String(data.currency || "").toLowerCase(),
+        // Date de la transaction chez Flutterwave (champ created_at de la reponse de verification).
+        paidAt: data.created_at || null,
     };
 };
 
+// En-tete verif-hash compare en temps constant a la valeur configuree.
 exports.isValidWebhook = (headers) => {
     const expected = process.env.FLUTTERWAVE_WEBHOOK_HASH;
-    return Boolean(expected) && headers["verif-hash"] === expected;
+    const given = headers?.["verif-hash"];
+    if (!expected || typeof given !== "string") return false;
+    const a = Buffer.from(given);
+    const b = Buffer.from(expected);
+    return a.length === b.length && crypto.timingSafeEqual(a, b);
 };

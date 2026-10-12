@@ -1,0 +1,102 @@
+name: Release
+
+# Publie les images Docker sur GHCR :
+#   - push sur master  -> tags sha-<court> et edge
+#   - tag vX.Y.Z       -> tags X.Y.Z, X.Y, sha-<court> et latest
+# Le deploiement (hebergeur non choisi) est decrit en fin de fichier et dans le README.
+on:
+  push:
+    branches: [master]
+    tags: ["v*"]
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  images:
+    name: Image ${{ matrix.image }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - image: hope-api
+            dockerfile: apps/api/Dockerfile
+          - image: hope-web
+            dockerfile: apps/web/Dockerfile
+    steps:
+      - uses: actions/checkout@v5
+
+      # GHCR exige un nom d'image en minuscules.
+      - name: Proprietaire du registre
+        run: echo "OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ env.OWNER }}/${{ matrix.image }}
+          tags: |
+            type=sha,prefix=sha-,format=short
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=edge,enable={{is_default_branch}}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # Variables du site inlinees au build : variables de depot (Settings > Variables).
+          # Une image du site par URL d'API : pour la preproduction, publier depuis une branche/variable dediee.
+          build-args: |
+            GIT_SHA=${{ github.sha }}
+            NEXT_PUBLIC_API_BASE_URL=${{ vars.PUBLIC_API_BASE_URL }}
+            NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ vars.STRIPE_PUBLISHABLE_KEY }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+
+  # ------------------------------------------------------------------------------------------
+  # Deploiement : hebergeur non choisi. Exemple pour un serveur Docker accessible en SSH,
+  # a activer en decommentant et en definissant les secrets DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY.
+  # Ordre impose : tirer les images -> migrer la base -> redemarrer (MIGRATE_ON_START=false).
+  #
+  # deploy-staging:
+  #   name: Deploiement preproduction
+  #   needs: images
+  #   if: github.ref == 'refs/heads/master'
+  #   runs-on: ubuntu-latest
+  #   environment: staging
+  #   steps:
+  #     - uses: webfactory/ssh-agent@v0.9.0
+  #       with:
+  #         ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+  #     - name: Mise a jour du serveur
+  #       run: |
+  #         IMAGE_TAG="sha-${GITHUB_SHA::7}"   # tag publie par le job images
+  #         ssh -o StrictHostKeyChecking=accept-new ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "
+  #           cd /srv/hope &&
+  #           export IMAGE_TAG=$IMAGE_TAG &&
+  #           docker compose -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging pull backend frontend &&
+  #           docker compose -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging run --rm backend npm run migrate &&
+  #           docker compose -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging up -d --wait
+  #         "
+  #
+  # Production : meme principe sur un tag v*, avec `environment: production` (validation manuelle
+  # dans les reglages GitHub) et une sauvegarde (infra/backup/backup.sh) avant la migration.

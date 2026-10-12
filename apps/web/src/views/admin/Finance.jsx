@@ -14,8 +14,8 @@ import { saveBlob } from "../../utils/format";
 import { useLabels } from "../../utils/labels";
 import { useAlerts } from "../../utils/alerts";
 import { PERMISSIONS as P } from "../../utils/rbac";
-import { fillMonths, formatEur, providerLabel, recentYears, todayStamp, toEur } from "./parts-b/finance";
-import { InlineSelect, MonthlyChart, MonthTable, ShareTable } from "./parts-b/widgets";
+import { fillMonths, formatEur, providerLabel, recentYears, todayStamp, toEur } from "./lib/finance";
+import { InlineSelect, MonthlyChart, MonthTable, ShareTable } from "./components/widgets";
 
 const CURRENCIES = ["eur", "xaf"];
 
@@ -126,7 +126,7 @@ function FinanceView() {
     try {
       const params = { status: "succeeded", ...(year ? { from: `${year}-01-01`, to: `${year}-12-31` } : {}) };
       const blob = await adminApi.exportDonations(params);
-      saveBlob(blob, `dons-hope-${year || "tout"}-${todayStamp()}.csv`);
+      saveBlob(blob, tCommon("csvFinance", { period: year || "all", date: todayStamp() }));
       toast(tCommon("exported"));
     } catch (err) {
       showError(tCommon("exportFailed"), getErrorMessage(err));

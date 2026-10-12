@@ -187,7 +187,6 @@
         "title": "Créer un compte",
         "submit": "Créer le compte",
         "name": "Nom complet",
-        "phonePlaceholder": "+237 6 …",
         "info": "Un mot de passe provisoire est généré et envoyé par email ; il devra être changé à la première connexion.",
         "noRoleTitle": "Choisissez au moins un rôle",
         "noRoleText": "Un compte doit recevoir au moins un rôle (par exemple Membre).",
@@ -307,6 +306,18 @@
         "textWithNote": "{name} sera prévenu(e) par email, avec votre note.",
         "textNoNote": "{name} sera prévenu(e) par email. Vous pouvez ajouter une note explicative avant de refuser.",
         "button": "Refuser"
+      },
+      "bulk": {
+        "reject": "Refuser la sélection",
+        "title": "{count, plural, one {Refuser # candidature ?} other {Refuser # candidatures ?}}",
+        "text": "Les candidatures encore ouvertes seront refusées ; celles déjà traitées entre-temps seront ignorées.",
+        "more": "… et {count} autre(s)",
+        "noteLabel": "Note de décision (facultative)",
+        "noteHint": "Enregistrée sur chaque candidature refusée.",
+        "confirm": "{count, plural, one {Refuser # candidature} other {Refuser # candidatures}}",
+        "done": "{count, plural, one {# candidature refusée} other {# candidatures refusées}}",
+        "doneSkipped": "{count, plural, one {# candidature refusée} other {# candidatures refusées}}, {skipped} ignorée(s) (déjà traitées)",
+        "failed": "Refus groupé impossible"
       }
     },
     "interests": {
@@ -360,6 +371,14 @@
         "deleteConfirmText": "Le message de {name} sera définitivement supprimé. Préférez l’archivage pour en garder une trace.",
         "deleted": "Message supprimé",
         "deleteFailed": "Suppression impossible"
+      },
+      "bulk": {
+        "statusLabel": "Nouveau statut des messages sélectionnés",
+        "apply": "Appliquer",
+        "done": "{count, plural, one {# message passé} other {# messages passés}} en « {status} »",
+        "failed": "Modification groupée impossible",
+        "selectPage": "Tout sélectionner sur la page",
+        "selectOne": "Sélectionner le message de {name} : {subject}"
       }
     },
     "roles": {
@@ -407,7 +426,11 @@
         "manage_finance": "Finance : exports, rapprochement, bilan",
         "manage_organization": "Gérer les événements et actions terrain",
         "manage_it": "Superviser le système (IT)",
-        "manage_regional": "Tableau de bord régional"
+        "manage_regional": "Tableau de bord régional",
+        "approve_content": "Valider les contenus avant publication",
+        "manage_donors": "Gérer les fiches donateurs (CRM)",
+        "manage_campaigns": "Gérer la newsletter et les campagnes",
+        "manage_volunteers": "Gérer les présences et heures de bénévolat"
       }
     },
     "regional": {
@@ -518,6 +541,14 @@
         "activity_logs": "Journal d’activité",
         "subscriptions": "Dons mensuels"
       }
+    },
+    "shortcuts": {
+      "title": "Raccourcis clavier",
+      "intro": "Disponibles partout dans l’administration, sauf pendant la saisie dans un champ.",
+      "search": "Aller à la recherche de la page",
+      "help": "Afficher cette aide",
+      "escapeKey": "Échap",
+      "escape": "Fermer une fenêtre ou le menu"
     }
   }
 }

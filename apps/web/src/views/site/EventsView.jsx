@@ -8,6 +8,7 @@ import PageBanner from "../../components/site/PageBanner";
 import { Empty, LinkButton, PublicHero } from "./components";
 import EventsAgenda from "./components/EventsAgenda";
 import LoadError from "./components/LoadError";
+import { Button, EmptyState } from "../../components/ui";
 
 export default function EventsView({ events, error }) {
   const t = useTranslations("site.events");
@@ -23,11 +24,11 @@ export default function EventsView({ events, error }) {
           {error ? (
             <LoadError />
           ) : sorted.length === 0 ? (
-            <Empty
+            <EmptyState
               icon={CalendarX}
               title={t("emptyTitle")}
               description={t("emptyText")}
-              action={<LinkButton href={lp("/rejoindre")}>{t("emptyCta")}</LinkButton>}
+              action={<Button href={lp("/rejoindre")}>{t("emptyCta")}</Button>}
             />
           ) : (
             <EventsAgenda events={sorted} />

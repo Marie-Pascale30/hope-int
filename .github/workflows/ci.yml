@@ -9,9 +9,12 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   lint-test:
-    name: Lint et tests
+    name: Lint, verifications et tests unitaires
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -35,31 +38,138 @@ jobs:
       TEST_DB_NAME: hope_test
       JWT_SECRET: ci-secret-ci-secret-ci-secret-ci-secret
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
       - run: npm run lint
-      - run: npm test
+      - name: Dictionnaires i18n coherents
+        run: npm run check:i18n -w @hope/web
+      - name: Contrastes WCAG des tokens
+        # Le script affiche "Echecs: N" : la CI echoue si N > 0.
+        run: |
+          npm run check:contrast -w @hope/web | tee contrast.txt
+          grep -q "^Echecs: 0$" contrast.txt
+      - name: Tests de @hope/shared
+        run: npm test -w @hope/shared
+      - name: Tests unitaires du site (Vitest)
+        run: npm test -w @hope/web
+      - name: Tests de l'API avec couverture (seuil 85 % des lignes)
+        run: npm run test:coverage -w @hope/api
+
+  audit:
+    name: Audit des dependances de production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+      - run: npm audit --omit=dev --audit-level=high
 
   build-web:
     name: Build du site
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
       - run: npm run build
 
+  e2e:
+    name: Tests de bout en bout (Playwright)
+    runs-on: ubuntu-latest
+    needs: lint-test
+    timeout-minutes: 30
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: hope_e2e
+          MYSQL_USER: hope
+          MYSQL_PASSWORD: hope
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    env:
+      # API (demarree par Playwright via webServer, voir apps/web/playwright.config.mjs)
+      DB_HOST: 127.0.0.1
+      DB_USER: hope
+      DB_PASSWORD: hope
+      DB_NAME: hope_e2e
+      JWT_SECRET: ci-e2e-secret-ci-e2e-secret-ci-e2e-secret
+      PORT: 5000
+      PORT_FALLBACK: "false"
+      MIGRATE_ON_START: "false"
+      EMAIL_OUTBOX_WORKER: "false"
+      CORS_ORIGIN: http://localhost:3001
+      FRONTEND_URL: http://localhost:3001
+      API_PUBLIC_URL: http://localhost:5000/api
+      # Site (NEXT_PUBLIC_* inlinees au build)
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:5000/api
+      NEXT_PUBLIC_SITE_URL: http://localhost:3001
+      API_INTERNAL_URL: http://localhost:5000/api
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Migrations et donnees de demonstration
+        run: |
+          npm run migrate
+          npm run seed
+      - name: Build du site
+        run: npm run build
+      - name: Navigateur Playwright
+        run: npx playwright install --with-deps chromium
+        working-directory: apps/web
+      - name: Scenarios e2e
+        run: npm run test:e2e -w @hope/web
+      - name: Rapport Playwright
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            apps/web/playwright-report
+            apps/web/test-results
+          retention-days: 7
+
   docker:
     name: Images Docker
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: docker build -f apps/api/Dockerfile -t hope-api .
-      - run: docker build -f apps/web/Dockerfile -t hope-web .
+      - uses: actions/checkout@v5
+      - uses: docker/setup-buildx-action@v3
+      - name: Image de l'API
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          push: false
+          tags: hope-api:ci
+          cache-from: type=gha,scope=hope-api
+          cache-to: type=gha,mode=max,scope=hope-api
+      - name: Image du site
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          push: false
+          tags: hope-web:ci
+          build-args: |
+            NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api
+          cache-from: type=gha,scope=hope-web
+          cache-to: type=gha,mode=max,scope=hope-web

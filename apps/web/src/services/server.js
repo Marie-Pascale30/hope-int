@@ -18,8 +18,6 @@ export class ServerApiError extends Error {
   }
 }
 
-export const isNotFoundError = (error) => error instanceof ServerApiError && error.status === 404;
-
 // GET JSON avec cache (revalidation periodique). Leve ServerApiError si la reponse n'est pas 2xx
 // (status 0 : API injoignable ou trop lente).
 async function getJson(path, locale) {

@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { Save } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Badge, Button, Card, Input } from "../../../components/ui";
-import { useAuth } from "../../../context/AuthContext";
-import { authApi } from "../../../services";
-import { useAlerts } from "../../../utils/alerts";
-import { useLabels } from "../../../utils/labels";
-import { useErrorMessage } from "../../../i18n/errors";
+import { Badge, Button, Card, Input, PhoneField, usePhoneErrorMessage } from "@/src/components/ui";
+import { formatPhone, phoneError } from "@/src/utils/phone";
+import { useAuth } from "@/src/context/AuthContext";
+import { authApi } from "@/src/services";
+import { useAlerts } from "@/src/utils/alerts";
+import { useLabels } from "@/src/utils/labels";
+import { useErrorMessage } from "@/src/i18n/errors";
 
 export default function ProfileTab() {
   const t = useTranslations("account.profile");
@@ -21,16 +22,19 @@ export default function ProfileTab() {
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  const phoneMessage = usePhoneErrorMessage();
   const nameError = submitted && form.name.trim().length < 2 ? tf("nameMin", { min: 2 }) : undefined;
+  const phoneCode = phoneError(form.phone);
+  const phoneErrorText = submitted ? phoneMessage(phoneCode) : undefined;
   const dirty = form.name.trim() !== (user.name || "") || form.phone.trim() !== (user.phone || "");
 
   const submit = async (event) => {
     event.preventDefault();
     setSubmitted(true);
-    if (form.name.trim().length < 2) return;
+    if (form.name.trim().length < 2 || phoneCode) return;
     setSaving(true);
     try {
-      await authApi.updateMe({ name: form.name.trim(), phone: form.phone.trim() });
+      await authApi.updateMe({ name: form.name.trim(), phone: formatPhone(form.phone) });
       await refresh();
       toast(t("saved"));
     } catch (err) {
@@ -48,19 +52,19 @@ export default function ProfileTab() {
           <Input
             label={tf("fullName")}
             autoComplete="name"
+            enterKeyHint="next"
             required
             value={form.name}
             onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
             error={nameError}
           />
-          <Input
+          <PhoneField
             label={t("phone")}
-            type="tel"
-            autoComplete="tel"
-            placeholder={t("phonePlaceholder")}
             value={form.phone}
-            onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
+            onChange={(value) => setForm((prev) => ({ ...prev, phone: value }))}
+            error={phoneErrorText}
             hint={t("phoneHint")}
+            enterKeyHint="done"
           />
           <div className="form-actions acc-form-actions">
             <Button type="submit" icon={Save} loading={saving} disabled={!dirty}>{t("save")}</Button>

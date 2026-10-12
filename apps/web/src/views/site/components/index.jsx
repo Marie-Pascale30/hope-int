@@ -2,7 +2,7 @@
 // Sans "use client" : rendus cote serveur par les pages, ou cote client dans les ilots interactifs.
 import { ArrowLeft, ArrowRight, CalendarDays, Clock, MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Badge, ProgressBar, StatusBadge } from "../../../components/ui";
+import { Badge, Button, ProgressBar, StatusBadge } from "../../../components/ui";
 import NumberTicker from "../../../components/motion/NumberTicker";
 import Reveal from "../../../components/motion/Reveal";
 import { useFormat } from "../../../i18n/format";
@@ -11,10 +11,9 @@ import { truncate } from "../../../utils/format";
 import { TONES } from "../../../utils/labels";
 import CoverImage, { IMAGE_SIZES } from "./CoverImage";
 import RegisteredBadge from "./RegisteredBadge";
-import { Empty, LinkButton, Stat } from "./ui";
 import { campaignPercent, cx, euros, eventTimeRange, hasCampaign, spotsStatus } from "./helpers";
 
-export { CoverImage, Empty, IMAGE_SIZES, LinkButton, RegisteredBadge, Stat };
+export { CoverImage, IMAGE_SIZES, RegisteredBadge };
 
 // Statut de projet traduit ({ label, tone } pour StatusBadge).
 export function useProjectStatus() {
@@ -42,27 +41,6 @@ export function BackLink({ href, children }) {
     <Link href={href} className="pub-back">
       <ArrowLeft aria-hidden="true" /> {children}
     </Link>
-  );
-}
-
-// ---------- Squelettes ----------
-
-export function CardsSkeleton({ count = 3 }) {
-  const t = useTranslations("common");
-  return (
-    <div className="grid grid--3" aria-busy="true" aria-label={t("loading")}>
-      {Array.from({ length: count }, (_, index) => (
-        <div key={index} className="card pub-skeleton-card">
-          <div className="skeleton pub-skeleton-card__media" />
-          <div className="pub-skeleton-card__body">
-            <div className="skeleton" style={{ height: 12, width: "35%" }} />
-            <div className="skeleton" style={{ height: 22, width: "85%" }} />
-            <div className="skeleton" style={{ height: 12, width: "100%" }} />
-            <div className="skeleton" style={{ height: 12, width: "70%" }} />
-          </div>
-        </div>
-      ))}
-    </div>
   );
 }
 
@@ -98,7 +76,9 @@ export function CampaignProgress({ project, large }) {
 
 // ---------- Cartes ----------
 
-export function ProjectCard({ project }) {
+// headingLevel : niveau du titre de carte (2 directement sous le h1 d'une page de liste, 3 sous un h2).
+export function ProjectCard({ project, headingLevel = 3 }) {
+  const Heading = `h${headingLevel}`;
   const t = useTranslations("site.cards");
   const lp = useLocalePath();
   const statusOf = useProjectStatus();
@@ -108,16 +88,16 @@ export function ProjectCard({ project }) {
       <div className="pub-card__badge">
         <StatusBadge status={statusOf(project.status)} />
       </div>
-      <CoverImage src={project.image_url} />
+      <CoverImage src={project.image_url} alt={project.image_alt} />
       <div className="pub-card__body">
         {project.region && (
           <div className="pub-card__meta">
             <span><MapPin aria-hidden="true" /> {project.region}</span>
           </div>
         )}
-        <h3 className="pub-card__title">
+        <Heading className="pub-card__title">
           <Link href={`/projets/${project.id}`}>{project.title}</Link>
-        </h3>
+        </Heading>
         {project.summary && <p className="pub-card__text">{project.summary}</p>}
         {campaign && <CampaignProgress project={project} />}
         <div className="pub-card__foot">
@@ -125,9 +105,9 @@ export function ProjectCard({ project }) {
             {t("discover")} <ArrowRight />
           </span>
           {campaign && (
-            <LinkButton href={lp(`/don?projet=${project.id}`)} variant="accent" size="sm" aria-label={t("supportProject", { title: project.title })}>
+            <Button href={lp(`/don?projet=${project.id}`)} variant="accent" size="sm" aria-label={t("supportProject", { title: project.title })}>
               {t("support")}
-            </LinkButton>
+            </Button>
           )}
         </div>
       </div>
@@ -135,20 +115,21 @@ export function ProjectCard({ project }) {
   );
 }
 
-export function NewsCard({ item, featured }) {
+export function NewsCard({ item, featured, headingLevel = 3 }) {
+  const Heading = `h${headingLevel}`;
   const t = useTranslations("site.cards");
   const f = useFormat();
   return (
     <article className={cx("card pub-card card--hover", featured && "pub-card--featured")}>
-      <CoverImage src={item.image_url} priority={featured} sizes={featured ? "featured" : "card"} />
+      <CoverImage src={item.image_url} alt={item.image_alt} priority={featured} sizes={featured ? "featured" : "card"} />
       <div className="pub-card__body">
         <div className="pub-card__meta">
           <span><CalendarDays aria-hidden="true" /> <time dateTime={item.created_at}>{f.date(item.created_at)}</time></span>
           {featured && <Badge tone="accent" plain>{t("featured")}</Badge>}
         </div>
-        <h3 className="pub-card__title">
+        <Heading className="pub-card__title">
           <Link href={`/actualites/${item.id}`}>{item.title}</Link>
-        </h3>
+        </Heading>
         <p className="pub-card__text">{item.summary || truncate(item.content, featured ? 220 : 140)}</p>
         <div className="pub-card__foot">
           <span className="pub-card__more" aria-hidden="true">
@@ -171,7 +152,8 @@ export function EventDate({ value }) {
   );
 }
 
-export function EventCard({ event, compact }) {
+export function EventCard({ event, compact, headingLevel = 3 }) {
+  const Heading = `h${headingLevel}`;
   const tSpots = useTranslations("site.spots");
   const f = useFormat();
   const spots = spotsStatus(event, tSpots);
@@ -179,12 +161,12 @@ export function EventCard({ event, compact }) {
     <article className="card pub-event card--hover">
       <EventDate value={event.start_at} />
       <div className="pub-event__main">
-        <h3 className="pub-event__title">
+        <Heading className="pub-event__title">
           <Link href={`/evenements/${event.id}`}>
             <span className="visually-hidden">{f.date(event.start_at)} : </span>
             {event.title}
           </Link>
-        </h3>
+        </Heading>
         <div className="pub-card__meta">
           <span><Clock aria-hidden="true" /> {eventTimeRange(event, f)}</span>
           {event.location && <span><MapPin aria-hidden="true" /> {event.location}</span>}

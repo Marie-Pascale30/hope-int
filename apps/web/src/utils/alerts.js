@@ -1,12 +1,13 @@
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import Swal from "sweetalert2";
 
-// Boites de dialogue SweetAlert.
+// Boites de dialogue SweetAlert, chargee a la demande (import dynamique) : la bibliotheque
+// n'alourdit pas le premier chargement des pages qui n'ouvrent jamais de boite de dialogue.
 // - Composants traduits : const alerts = useAlerts(); alerts.confirmAction(title, text, confirmText?, { danger })
 //   (libelles des boutons par defaut dans la langue courante : common.json > ui.alerts).
 // - Fonctions directes (toast, showSuccess, showError, showInfo, confirmAction) : libelles francais
 //   par defaut, surchargeables via le dernier parametre ({ confirmText, cancelText }).
+// Toutes les fonctions renvoient une promesse.
 
 // Libelles francais par defaut (fonctions appelees hors composant / back-office en cours de migration).
 const FR_LABELS = { ok: "OK", close: "Fermer", understood: "J'ai compris", confirm: "Confirmer", cancel: "Annuler" };
@@ -26,33 +27,52 @@ const baseConfig = {
   buttonsStyling: false,
 };
 
-const toastMixin = Swal.mixin({
-  toast: true,
-  position: "bottom-end",
-  showConfirmButton: false,
-  timer: 3200,
-  timerProgressBar: true,
-  customClass: { popup: "hope-swal-toast" },
-});
+let swalPromise = null;
+const loadSwal = () => {
+  if (!swalPromise) {
+    swalPromise = import("sweetalert2").then((module) => module.default).catch((error) => {
+      swalPromise = null;
+      throw error;
+    });
+  }
+  return swalPromise;
+};
 
-export function toast(title, icon = "success") {
+let toastMixin = null;
+
+export async function toast(title, icon = "success") {
+  const Swal = await loadSwal();
+  if (!toastMixin) {
+    toastMixin = Swal.mixin({
+      toast: true,
+      position: "bottom-end",
+      showConfirmButton: false,
+      timer: 3200,
+      timerProgressBar: true,
+      customClass: { popup: "hope-swal-toast" },
+    });
+  }
   return toastMixin.fire({ icon, title });
 }
 
 export async function showSuccess(title, text, { confirmText = FR_LABELS.ok } = {}) {
+  const Swal = await loadSwal();
   await Swal.fire({ ...baseConfig, icon: "success", title, text, confirmButtonText: confirmText });
 }
 
 export async function showError(title, text, { confirmText = FR_LABELS.close } = {}) {
+  const Swal = await loadSwal();
   await Swal.fire({ ...baseConfig, icon: "error", title, text, confirmButtonText: confirmText });
 }
 
 export async function showInfo(title, html, { confirmText = FR_LABELS.understood } = {}) {
+  const Swal = await loadSwal();
   await Swal.fire({ ...baseConfig, icon: "info", title, html, confirmButtonText: confirmText });
 }
 
 // Confirmation avant une action ; `danger` colore le bouton en rouge (suppression...).
 export async function confirmAction(title, text, confirmText, { danger = false, cancelText = FR_LABELS.cancel } = {}) {
+  const Swal = await loadSwal();
   const result = await Swal.fire({
     ...baseConfig,
     icon: danger ? "warning" : "question",

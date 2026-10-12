@@ -5,7 +5,7 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Button } from "../../../components/ui";
+import { Button } from "@/src/components/ui";
 
 export default function LoadError({ title, message }) {
   const t = useTranslations("errors");
@@ -15,7 +15,7 @@ export default function LoadError({ title, message }) {
     <div className="state state--error" role="alert">
       <span className="state__icon"><AlertCircle size={24} aria-hidden="true" /></span>
       <span className="state__title">{title || t("loadTitle")}</span>
-      <p className="muted" style={{ maxWidth: 440, margin: 0 }}>{message || t("loadText")}</p>
+      <p className="muted state__text">{message || t("loadText")}</p>
       <Button variant="secondary" size="sm" loading={pending} onClick={() => startTransition(() => router.refresh())}>
         {t("retry")}
       </Button>

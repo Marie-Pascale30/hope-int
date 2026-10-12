@@ -21,4 +21,22 @@ db.pool.on("connection", (connection) => {
     connection.query("SET time_zone = '+00:00'");
 });
 
+// Execute work(connection) dans une transaction sur une connexion dediee du pool : commit si
+// tout reussit, rollback sinon (une erreur de rollback ne masque jamais l'erreur d'origine).
+async function withTransaction(work) {
+    const connection = await db.getConnection();
+    try {
+        await connection.beginTransaction();
+        const result = await work(connection);
+        await connection.commit();
+        return result;
+    } catch (error) {
+        await connection.rollback().catch(() => {});
+        throw error;
+    } finally {
+        connection.release();
+    }
+}
+
 module.exports = db;
+module.exports.withTransaction = withTransaction;

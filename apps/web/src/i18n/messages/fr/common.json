@@ -1,7 +1,18 @@
 {
   "common": {
     "siteName": "HOPE International",
-    "loading": "Chargement…"
+    "loading": "Chargement…",
+    "share": {
+      "label": "Partager cette page",
+      "share": "Partager",
+      "whatsapp": "WhatsApp",
+      "facebook": "Facebook",
+      "copy": "Copier le lien",
+      "copiedShort": "Lien copié",
+      "copied": "Lien copié : il ne reste plus qu’à le partager",
+      "copyFailed": "Copie impossible : copiez l’adresse depuis la barre du navigateur",
+      "newWindow": "(nouvelle fenêtre)"
+    }
   },
   "nav": {
     "home": "HOPE International — accueil",
@@ -125,8 +136,6 @@
   },
   "ui": {
     "loading": "Chargement…",
-    "loadingShort": "Chargement",
-    "loadingStats": "Chargement des indicateurs…",
     "loadingTable": "Chargement du tableau…",
     "empty": "Rien à afficher",
     "errorTitle": "Chargement impossible",
@@ -160,5 +169,28 @@
       "done": "Vous êtes déconnecté(e). À bientôt !"
     },
     "filters": "Filtres"
-  }
+   },
+    "phone": {
+      "label": "Téléphone",
+      "placeholder": "6 77 12 34 56",
+      "hint": "Numéro camerounais (+237) ou international avec l’indicatif du pays.",
+      "hintMobileMoney": "Numéro Mobile Money camerounais : 9 chiffres commençant par 6.",
+      "operators": {
+        "mtn": "Opérateur probable : MTN Mobile Money",
+        "orange": "Opérateur probable : Orange Money"
+      },
+      "errors": {
+        "required": "Indiquez un numéro de téléphone.",
+        "cm": "Numéro camerounais incomplet : 9 chiffres commençant par 6 (ex. 6 77 12 34 56).",
+        "mobileMoney": "Mobile Money n’accepte que les numéros camerounais (+237 6…). Pour un numéro étranger, choisissez la carte bancaire.",
+        "invalid": "Numéro invalide : saisissez 9 chiffres (Cameroun) ou l’indicatif du pays précédé de +."
+      }
+    },
+    "bulk": {
+      "label": "Actions sur la sélection",
+      "selected": "{count, plural, one {# élément sélectionné} other {# éléments sélectionnés}}",
+      "clear": "Désélectionner",
+      "selectPage": "Sélectionner toutes les lignes de la page",
+      "selectRow": "Sélectionner : {label}"
+    }
 }

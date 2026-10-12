@@ -29,7 +29,7 @@ function normalizePayload(body, file) {
             payload[key] = value ? String(value).slice(0, 10) : null;
         } else if (key === "published") {
             payload[key] = ["1", "true", "on", true, 1].includes(value) ? 1 : 0;
-        } else if (key === "region" || key === "summary" || key === "role_label") {
+        } else if (["region", "summary", "role_label", "image_alt"].includes(key)) {
             payload[key] = value || null;
         } else {
             payload[key] = value;

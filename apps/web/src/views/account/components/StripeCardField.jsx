@@ -5,7 +5,7 @@ import { CardCvcElement, CardExpiryElement, CardNumberElement } from "@stripe/re
 import { ChevronDown, Lock } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { stripeErrorMessage } from "./donationData";
-import { readCssToken, useResolvedTheme } from "../../../utils/theme";
+import { readCssToken, useResolvedTheme } from "@/src/utils/theme";
 
 // Styles appliques dans les iframes Stripe : les iframes ne voient pas nos variables CSS,
 // on leur passe donc les valeurs courantes des tokens (recalculees a chaque changement de theme).

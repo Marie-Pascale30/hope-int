@@ -115,6 +115,10 @@
   margin-bottom: calc(-1 * var(--header-offset));
   background: transparent;
   transition: backdrop-filter 0.2s ease, background-color 0.2s ease;
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter: saturate(1.4) blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--duration) ease, box-shadow var(--duration) ease;
   /* viewport-fit=cover : l'en-tete collant ne passe pas sous l'encoche / la barre d'etat (PWA) */
   padding-top: env(safe-area-inset-top, 0px);
 }
@@ -212,7 +216,7 @@ html.has-mobile-nav .site-header {
   font-size: var(--text-md);
   font-weight: 500;
   color: var(--ink-2);
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
 }
 
 .site-nav a:hover {
@@ -429,7 +433,7 @@ html.has-mobile-nav .site-header {
 .user-menu__trigger .avatar {
   width: 32px;
   height: 32px;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
 }
 
 .user-menu__panel {
@@ -442,7 +446,7 @@ html.has-mobile-nav .site-header {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
-  animation: pop-in 0.15s ease;
+  animation: pop-in var(--duration-fast) ease;
 }
 
 .user-menu__head {

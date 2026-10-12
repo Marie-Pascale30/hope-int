@@ -1,0 +1,27 @@
+"use client";
+
+// Matrice des roles (GET /admin/roles) et regles d'attribution, miroir de canGrantRoles cote backend.
+// Le backend reste l'autorite : ces regles servent seulement a guider l'interface.
+import { adminApi } from "@/src/services";
+import { useAsync } from "@/src/hooks/useAsync";
+
+let cache = null;
+
+export function useRoleMatrix() {
+  return useAsync(async () => {
+    cache = cache || (await adminApi.roles());
+    return cache;
+  }, []);
+}
+
+// Un role est attribuable si l'on possede toutes ses permissions ; le role admin est reserve aux admins.
+export function canGrantRole(user, entry) {
+  if (!entry) return false;
+  if (entry.role === "admin") return Boolean(user?.roles?.includes("admin"));
+  const granted = user?.permissions || [];
+  return entry.permissions.every((permission) => granted.includes(permission));
+}
+
+export function canGrantAll(user, matrix, roles = []) {
+  return roles.every((role) => canGrantRole(user, matrix?.roles.find((entry) => entry.role === role)));
+}

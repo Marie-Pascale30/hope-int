@@ -8,7 +8,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthProvider } from "@/src/context/AuthContext";
 import SiteFooter from "@/src/components/site/SiteFooter";
 import SiteHeader from "@/src/components/site/SiteHeader";
-import { loadMessages } from "@/src/i18n/messages";
+import { FEATURE_FILES, loadMessages } from "@/src/i18n/messages";
 import { routing } from "@/src/i18n/routing";
 import { serverApi, settle } from "@/src/services/server";
 import { SITE_NAME, SITE_URL, languageAlternates } from "@/src/views/site/seo";
@@ -41,7 +41,7 @@ export default async function LocaleLayout({ children, params }) {
 
   const t = await getTranslations({ locale, namespace: "nav" });
   // Messages envoyes au navigateur : habillage, site public et parcours de compte / don.
-  const messages = await loadMessages(locale, ["common", "site", "account"]);
+  const messages = await loadMessages(locale, ["common", "site", "account", ...FEATURE_FILES]);
   const { data: meta } = await settle(serverApi.meta(locale));
 
   return (

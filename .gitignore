@@ -23,3 +23,11 @@ apps/api/uploads/*
 *.log
 .DS_Store
 Thumbs.db
+
+# Outillage : rapports de tests, documentation d'API generee, sauvegardes locales
+apps/web/playwright-report/
+apps/web/test-results/
+apps/web/blob-report/
+apps/api/docs/
+backups/
+infra/backup/backup.env

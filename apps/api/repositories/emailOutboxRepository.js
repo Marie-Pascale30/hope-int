@@ -101,6 +101,20 @@ exports.markFailed = async (id, claimId, error) => {
     );
 };
 
+// Supervision : messages en attente (et anciennete du plus ancien), echecs definitifs.
+exports.getHealth = async () => {
+    const [[row]] = await db.query(
+        `SELECT SUM(status = 'pending') AS pending, SUM(status = 'failed') AS failed,
+                TIMESTAMPDIFF(MINUTE, MIN(CASE WHEN status = 'pending' THEN created_at END), NOW()) AS oldest_pending_minutes
+         FROM email_outbox`
+    );
+    return {
+        pending: Number(row.pending || 0),
+        failed: Number(row.failed || 0),
+        oldestPendingMinutes: row.oldest_pending_minutes === null ? null : Number(row.oldest_pending_minutes),
+    };
+};
+
 exports.countByStatus = async () => {
     const [rows] = await db.query("SELECT status, COUNT(*) AS count FROM email_outbox GROUP BY status");
     return Object.fromEntries(rows.map((row) => [row.status, Number(row.count)]));

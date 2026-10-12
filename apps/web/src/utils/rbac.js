@@ -9,9 +9,4 @@ export function can(user, ...permissions) {
   return permissions.every((permission) => granted.includes(permission));
 }
 
-export function canAny(user, ...permissions) {
-  const granted = user?.permissions || [];
-  return permissions.some((permission) => granted.includes(permission));
-}
-
 export const isStaff = (user) => can(user, PERMISSIONS.ACCESS_ADMIN_DASHBOARD);

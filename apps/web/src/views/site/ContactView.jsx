@@ -3,7 +3,7 @@ import "../../styles/public.css";
 import { Heart, Mail, MapPin, Phone, UsersRound } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { hl } from "../../components/motion/hl";
-import { Card } from "../../components/ui";
+import { Button, Card } from "../../components/ui";
 import { useLocalePath } from "../../i18n/navigation";
 import PageBanner from "../../components/site/PageBanner";
 import { LinkButton, PublicHero } from "./components";
@@ -43,14 +43,14 @@ export default function ContactView({ organization = {} }) {
               </ul>
             </Card>
             <Card className="pub-mini-cta pub-mini-cta--accent">
-              <h3>{t("donateTitle")}</h3>
+              <h2>{t("donateTitle")}</h2>
               <p>{t("donateText")}</p>
-              <LinkButton href={lp("/don")} variant="accent" size="sm" icon={Heart}>{t("donateCta")}</LinkButton>
+              <Button href={lp("/don")} variant="accent" size="sm" icon={Heart}>{t("donateCta")}</Button>
             </Card>
             <Card className="pub-mini-cta pub-mini-cta--brand">
-              <h3>{t("joinTitle")}</h3>
+              <h2>{t("joinTitle")}</h2>
               <p>{t("joinText")}</p>
-              <LinkButton href={lp("/rejoindre")} size="sm" icon={UsersRound}>{t("joinCta")}</LinkButton>
+              <Button href={lp("/rejoindre")} size="sm" icon={UsersRound}>{t("joinCta")}</Button>
             </Card>
           </div>
 

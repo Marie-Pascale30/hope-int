@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 import { Check, Eye, EyeOff, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Field } from "../../../components/ui";
+import { Field } from "@/src/components/ui";
 import { passwordChecks } from "./authHelpers";
 
 // Champ mot de passe avec bouton afficher / masquer.

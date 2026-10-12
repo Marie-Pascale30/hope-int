@@ -1,11 +1,12 @@
 const db = require("../config/db");
 
 const FIELDS = [
-    "title", "description", "location", "region", "start_at", "end_at", "capacity", "image_url", "project_id", "published",
+    "title", "description", "location", "region", "start_at", "end_at", "capacity", "image_url", "image_alt", "project_id", "published",
 ];
 
 const SELECT = `
-  SELECT e.*, pr.title AS project_title, COUNT(r.id) AS registered_count
+  SELECT e.*, pr.title AS project_title, COUNT(r.id) AS registered_count,
+         (SELECT COUNT(*) FROM event_waitlist w WHERE w.event_id = e.id) AS waitlist_count
   FROM events e
   LEFT JOIN projects pr ON pr.id = e.project_id
   LEFT JOIN event_registrations r ON r.event_id = e.id`;
@@ -21,6 +22,7 @@ function mapEvent(row) {
         ...row,
         published: Boolean(row.published),
         registered_count: registered,
+        waitlist_count: Number(row.waitlist_count || 0),
         remaining_spots: row.capacity === null ? null : Math.max(0, Number(row.capacity) - registered),
     };
 }
@@ -64,56 +66,39 @@ exports.update = async (id, payload) => {
     );
 };
 
+// Rappel de la veille a renvoyer (date de debut modifiee).
+exports.resetReminder = async (id) => {
+    await db.query("UPDATE events SET reminder_sent_at = NULL WHERE id = ?", [id]);
+};
+
 exports.remove = async (id) => {
     const [result] = await db.query("DELETE FROM events WHERE id = ?", [id]);
     return result.affectedRows;
 };
 
-// Inscription atomique : verrouille l'evenement pour ne jamais depasser la capacite.
-exports.register = async (eventId, userId) => {
-    const connection = await db.getConnection();
-    try {
-        await connection.beginTransaction();
-        const [events] = await connection.query(
-            "SELECT id, capacity, start_at, published FROM events WHERE id = ? FOR UPDATE",
-            [eventId]
-        );
-        const event = events[0];
-        if (!event || !event.published) {
-            await connection.rollback();
-            return { error: "not_found" };
-        }
-        if (new Date(event.start_at) < new Date()) {
-            await connection.rollback();
-            return { error: "past" };
-        }
-        const [[existing]] = await connection.query(
-            "SELECT id FROM event_registrations WHERE event_id = ? AND user_id = ?",
-            [eventId, userId]
-        );
-        if (existing) {
-            await connection.rollback();
-            return { error: "already" };
-        }
-        if (event.capacity !== null) {
-            const [[count]] = await connection.query(
-                "SELECT COUNT(*) AS total FROM event_registrations WHERE event_id = ?",
-                [eventId]
-            );
-            if (Number(count.total) >= Number(event.capacity)) {
-                await connection.rollback();
-                return { error: "full" };
-            }
-        }
-        await connection.query("INSERT INTO event_registrations (event_id, user_id) VALUES (?, ?)", [eventId, userId]);
-        await connection.commit();
-        return { ok: true };
-    } catch (error) {
-        await connection.rollback();
-        throw error;
-    } finally {
-        connection.release();
-    }
+// Inscription : l'evenement est verrouille (FOR UPDATE) dans la transaction de l'appelant, avec
+// les compteurs utiles aux regles metier (appliquees par eventService). null si introuvable.
+exports.lockForRegistration = async (connection, eventId, userId) => {
+    const [[event]] = await connection.query(
+        "SELECT id, capacity, start_at, published FROM events WHERE id = ? FOR UPDATE",
+        [eventId]
+    );
+    if (!event) return null;
+    const [[counts]] = await connection.query(
+        `SELECT COUNT(*) AS registered, COALESCE(SUM(user_id = ?), 0) AS mine
+         FROM event_registrations WHERE event_id = ?`,
+        [userId, eventId]
+    );
+    return {
+        ...event,
+        published: Boolean(event.published),
+        registered: Number(counts.registered),
+        alreadyRegistered: Number(counts.mine) > 0,
+    };
+};
+
+exports.insertRegistration = async (connection, eventId, userId) => {
+    await connection.query("INSERT INTO event_registrations (event_id, user_id) VALUES (?, ?)", [eventId, userId]);
 };
 
 // Desinscription impossible une fois l'evenement termine (la presence fait foi).
@@ -133,7 +118,8 @@ exports.unregister = async (eventId, userId) => {
 
 exports.getRegistrations = async (eventId) => {
     const [rows] = await db.query(
-        `SELECT r.id, r.created_at, u.id AS user_id, u.name, u.email, u.phone, u.region
+        `SELECT r.id, r.created_at, r.attendance, r.hours, r.attendance_at,
+                u.id AS user_id, u.name, u.email, u.phone, u.region
          FROM event_registrations r JOIN users u ON u.id = r.user_id
          WHERE r.event_id = ? ORDER BY r.created_at ASC`,
         [eventId]
@@ -141,15 +127,53 @@ exports.getRegistrations = async (eventId) => {
     return rows;
 };
 
+// Evenements du membre : inscriptions (avec presence et heures) et listes d'attente (avec rang).
 exports.getForUser = async (userId) => {
     const [rows] = await db.query(
         `${SELECT}
          WHERE e.id IN (SELECT event_id FROM event_registrations WHERE user_id = ?)
+            OR e.id IN (SELECT event_id FROM event_waitlist WHERE user_id = ?)
          GROUP BY e.id ORDER BY e.start_at DESC`,
-        [userId]
+        [userId, userId]
     );
-    return rows.map(mapEvent);
+    const participation = await exports.getParticipation(userId);
+    return rows.map(mapEvent).map((event) => ({ ...event, ...participationFields(participation.get(event.id)) }));
 };
+
+// Statut du membre par evenement : Map eventId -> { status, position?, attendance?, hours? }.
+exports.getParticipation = async (userId, eventIds = null) => {
+    const filter = eventIds ? " AND event_id IN (?)" : "";
+    const ids = eventIds && eventIds.length ? eventIds : [0];
+    const [registered] = await db.query(
+        `SELECT event_id, attendance, hours FROM event_registrations WHERE user_id = ?${filter}`,
+        eventIds ? [userId, ids] : [userId]
+    );
+    const [waiting] = await db.query(
+        `SELECT w.event_id,
+                (SELECT COUNT(*) FROM event_waitlist w2 WHERE w2.event_id = w.event_id AND w2.id <= w.id) AS position
+         FROM event_waitlist w WHERE w.user_id = ?${eventIds ? " AND w.event_id IN (?)" : ""}`,
+        eventIds ? [userId, ids] : [userId]
+    );
+    const map = new Map();
+    waiting.forEach((row) => map.set(row.event_id, { status: "waitlisted", position: Number(row.position) }));
+    registered.forEach((row) => map.set(row.event_id, {
+        status: "registered",
+        attendance: row.attendance || null,
+        hours: row.hours === null ? null : Number(row.hours),
+    }));
+    return map;
+};
+
+// Champs ajoutes a un evenement pour le membre connecte.
+function participationFields(entry) {
+    return {
+        is_registered: entry?.status === "registered",
+        my_status: entry?.status || null,
+        waitlist_position: entry?.status === "waitlisted" ? entry.position : null,
+        ...(entry?.status === "registered" ? { my_attendance: entry.attendance, my_hours: entry.hours } : {}),
+    };
+}
+exports.participationFields = participationFields;
 
 exports.getRegisteredEventIds = async (userId) => {
     const [rows] = await db.query("SELECT event_id FROM event_registrations WHERE user_id = ?", [userId]);

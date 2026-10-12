@@ -8,6 +8,7 @@ import {
 } from "../../components/ui";
 import RequireAuth from "../../components/RequireAuth";
 import { useAsync } from "../../hooks/useAsync";
+import { useUrlFilters } from "../../hooks/useUrlFilters";
 import { useFormat } from "../../i18n/format";
 import { adminApi } from "../../services";
 import { toast, useAlerts } from "../../utils/alerts";
@@ -15,9 +16,53 @@ import { truncate } from "../../utils/format";
 import { STATUS_KEYS, useLabels } from "../../utils/labels";
 import { PERMISSIONS as P } from "../../utils/rbac";
 import { useErrorMessage } from "../../i18n/errors";
-import { PAGE_SIZE, ServerPagination, countOf, toPage } from "./parts-a/paging";
+import { PAGE_SIZE, ServerPagination, countOf, toPage } from "./components/paging";
 
 const STATUS_ORDER = STATUS_KEYS.messageStatus; // nouveau, lu, traite, archive
+// Onglet (statut) et page conserves dans l'URL.
+const URL_DEFAULTS = { status: "nouveau", page: 1 };
+const BULK_MAX = 100;
+
+// Barre d'actions groupees : changement de statut des messages coches (PATCH /admin/messages/bulk).
+function BulkStatusBar({ ids, currentStatus, onDone, onClear }) {
+  const t = useTranslations("admin.messages.bulk");
+  const tUi = useTranslations("ui.bulk");
+  const labels = useLabels();
+  const errorText = useErrorMessage();
+  const { showError } = useAlerts();
+  const options = STATUS_ORDER.filter((value) => value !== currentStatus);
+  const [status, setStatus] = useState(options[0]);
+  const [busy, setBusy] = useState(false);
+
+  const apply = async () => {
+    setBusy(true);
+    try {
+      const result = await adminApi.bulkUpdateMessages(ids.slice(0, BULK_MAX), status);
+      toast(t("done", { count: Number(result?.updated) || 0, status: labels.status("messageStatus", status).label }));
+      onDone();
+    } catch (err) {
+      showError(t("failed"), errorText(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="bulk-bar" role="region" aria-label={tUi("label")}>
+      <span className="bulk-bar__count" aria-live="polite">{tUi("selected", { count: ids.length })}</span>
+      <div className="bulk-bar__actions">
+        <label className="visually-hidden" htmlFor="adm-bulk-status">{t("statusLabel")}</label>
+        <select id="adm-bulk-status" className="select" value={status} onChange={(event) => setStatus(event.target.value)}>
+          {options.map((value) => (
+            <option key={value} value={value}>{labels.status("messageStatus", value).label}</option>
+          ))}
+        </select>
+        <Button size="sm" loading={busy} onClick={apply}>{t("apply")}</Button>
+        <Button size="sm" variant="ghost" onClick={onClear}>{tUi("clear")}</Button>
+      </div>
+    </div>
+  );
+}
 
 function MessagePanel({ message, staff, onBack, onSaved, onDeleted }) {
   const t = useTranslations("admin.messages.panel");
@@ -154,14 +199,21 @@ function MessagesInbox() {
   const labels = useLabels();
   const errorText = useErrorMessage();
   const { showError } = useAlerts();
-  const [tab, setTab] = useState("nouveau");
-  const [page, setPage] = useState(1);
+  const { values, setValues } = useUrlFilters(URL_DEFAULTS);
+  const tab = STATUS_ORDER.includes(values.status) ? values.status : "nouveau";
+  const { page } = values;
+  const setPage = (next) => setValues({ page: next });
+  // Selection groupee, propre a l'onglet et a la page affiches.
+  const viewKey = `${tab}-${page}`;
+  const [checked, setChecked] = useState({ key: viewKey, ids: [] });
+  const checkedIds = checked.key === viewKey ? checked.ids : [];
+  const setCheckedIds = (ids) => setChecked({ key: viewKey, ids });
   const { data, loading, error, reload, setData } = useAsync(
     async () => toPage(await adminApi.messages({ status: tab, page, pageSize: PAGE_SIZE })),
     [tab, page]
   );
   // Compteurs des onglets (total par statut), ajustes localement apres chaque modification.
-  const { data: counts, setData: setCounts } = useAsync(async () => {
+  const { data: counts, setData: setCounts, reload: reloadCounts } = useAsync(async () => {
     const totals = await Promise.all(STATUS_ORDER.map((status) => countOf(adminApi.messages, { status })));
     return Object.fromEntries(STATUS_ORDER.map((status, index) => [status, totals[index]]));
   }, []);
@@ -189,9 +241,17 @@ function MessagesInbox() {
   };
 
   const changeTab = (value) => {
-    setTab(value);
-    setPage(1);
+    setValues({ status: value });
     setSelectedId(null);
+  };
+
+  const toggleChecked = (id) => setCheckedIds(checkedIds.includes(id) ? checkedIds.filter((item) => item !== id) : [...checkedIds, id]);
+  const allChecked = messages.length > 0 && messages.every((message) => checkedIds.includes(message.id));
+  const afterBulk = () => {
+    setCheckedIds([]);
+    setSelectedId(null);
+    reload();
+    reloadCounts();
   };
 
   // Ouvrir un message nouveau le marque comme lu (le statut reste modifiable ensuite).
@@ -242,9 +302,28 @@ function MessagesInbox() {
                     description={tab === "nouveau" ? t("emptyTabNew") : t("emptyTabOther")}
                   />
                 ) : (
+                  <>
+                  {checkedIds.length > 0 ? (
+                    <BulkStatusBar ids={checkedIds} currentStatus={tab} onDone={afterBulk} onClear={() => setCheckedIds([])} />
+                  ) : null}
+                  <label className="adm-mail-selectall">
+                    <input
+                      type="checkbox"
+                      checked={allChecked}
+                      onChange={() => setCheckedIds(allChecked ? [] : messages.map((message) => message.id))}
+                    />
+                    {t("bulk.selectPage")}
+                  </label>
                   <ul aria-label={t("listLabel", { tab: t(`tabs.${tab}`) })}>
                     {messages.map((message) => (
-                      <li key={message.id}>
+                      <li key={message.id} className="adm-mail-item">
+                        <input
+                          type="checkbox"
+                          className="adm-mail-item__check"
+                          checked={checkedIds.includes(message.id)}
+                          onChange={() => toggleChecked(message.id)}
+                          aria-label={t("bulk.selectOne", { name: message.name, subject: message.subject })}
+                        />
                         <button
                           type="button"
                           className={`adm-mail${message.id === selectedId ? " is-active" : ""}${message.status === "nouveau" ? " is-unread" : ""}`}
@@ -270,6 +349,7 @@ function MessagesInbox() {
                       </li>
                     ))}
                   </ul>
+                  </>
                 )}
                 <ServerPagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} disabled={loading} />
               </div>

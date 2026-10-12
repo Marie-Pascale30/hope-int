@@ -5,17 +5,17 @@ const CONTENT_TYPES = {
     projects: {
         table: "projects",
         fields: [
-            "title", "summary", "description", "image_url", "status", "region", "start_date", "end_date",
+            "title", "summary", "description", "image_url", "image_alt", "status", "region", "start_date", "end_date",
             "budget", "goal_amount", "beneficiaries", "trainees", "credits_granted", "published",
         ],
     },
     testimonials: {
         table: "testimonials",
-        fields: ["author", "role_label", "content", "image_url", "project_id", "published"],
+        fields: ["author", "role_label", "content", "image_url", "image_alt", "project_id", "published"],
     },
     news: {
         table: "news",
-        fields: ["title", "summary", "content", "image_url", "project_id", "published"],
+        fields: ["title", "summary", "content", "image_url", "image_alt", "project_id", "published"],
     },
 };
 

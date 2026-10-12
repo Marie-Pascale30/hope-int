@@ -16,14 +16,17 @@ export const IMAGE_SIZES = {
 };
 
 // variant : undefined (3/2) | "wide" (21/9) ; sizes : cle de IMAGE_SIZES ou valeur libre.
-export default function CoverImage({ src, alt = "", variant, className, priority, sizes = "card" }) {
+// alt : texte alternatif saisi dans l'administration (champ image_alt) ; absent, l'image est
+// consideree comme decorative (alt vide) : le titre voisin porte deja l'information.
+// L'illustration de repli est toujours decorative.
+export default function CoverImage({ src, alt, variant, className, priority, sizes = "card" }) {
   const [failedSrc, setFailedSrc] = useState(null);
   const url = failedSrc === src ? PLACEHOLDER : imageSrc(src);
   return (
     <div className={cx("cover pub-cover", variant && `pub-cover--${variant}`, className)}>
       <Image
         src={url}
-        alt={alt}
+        alt={url === PLACEHOLDER ? "" : (alt || "").trim()}
         fill
         sizes={IMAGE_SIZES[sizes] || sizes}
         preload={Boolean(priority)}

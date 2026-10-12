@@ -12,6 +12,7 @@ import { LogoMark } from "../site/Logo";
 import { Avatar } from "../ui";
 import ThemeSwitcher from "../ThemeSwitcher";
 import RequireAuth from "../RequireAuth";
+import KeyboardShortcuts from "./KeyboardShortcuts";
 import { useAuth } from "../../context/AuthContext";
 import { adminApi } from "../../services";
 import { can, PERMISSIONS as P } from "../../utils/rbac";
@@ -237,6 +238,7 @@ function Shell({ children }) {
         </header>
         <main id="admin-contenu" className="admin-content" tabIndex={-1}>{children}</main>
       </div>
+      <KeyboardShortcuts />
     </div>
   );
 }

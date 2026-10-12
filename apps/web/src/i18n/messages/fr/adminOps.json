@@ -26,11 +26,16 @@
       "choose": "Choisir une image",
       "undoNew": "Annuler la nouvelle image",
       "remove": "Retirer l'image",
-      "keep": "Conserver l'image actuelle"
+      "keep": "Conserver l'image actuelle",
+      "altLabel": "Texte alternatif de l’image",
+      "altPlaceholder": "Ex. Des femmes récoltent du maïs dans un champ à Bafoussam",
+      "altHint": "Décrivez ce que montre l’image pour les personnes qui ne la voient pas ({max} caractères max). Laissez vide si elle est purement décorative."
     },
     "common": {
       "exported": "Export CSV téléchargé",
-      "exportFailed": "Export impossible"
+      "exportFailed": "Export impossible",
+      "csvDonations": "dons-hope-{date}.csv",
+      "csvFinance": "dons-hope-{period}-{date}.csv"
     },
     "donations": {
       "eyebrow": "Dons",
@@ -44,7 +49,6 @@
       "rowLabel": "Détail du don de {name}",
       "rowLabelAnonymous": "Détail du don d'un donateur anonyme",
       "rateNote": "Les dons en francs CFA sont convertis à la parité fixe de 1 € = {rate} FCFA.",
-      "limitNote": "Seuls les {limit} dons les plus récents sont affichés : affinez les filtres.",
       "columns": {
         "date": "Date",
         "donor": "Donateur",
@@ -78,7 +82,8 @@
         "donorsHint": "Parmi les dons réussis",
         "pending": "En attente",
         "pendingHint": "Soit {amount} à confirmer",
-        "pendingNone": "Aucun paiement à confirmer"
+        "pendingNone": "Aucun paiement à confirmer",
+        "pageOnly": "sur la page affichée"
       },
       "reviewBanner": {
         "title": "{count, plural, one {# don à vérifier} other {# dons à vérifier}}",
@@ -140,7 +145,11 @@
         "confirmRejectText": "Le don sera annulé et aucun reçu ne sera émis. Un éventuel remboursement se fait dans l'espace du prestataire.",
         "approved": "Don validé",
         "rejected": "Don rejeté",
-        "failed": "Décision impossible"
+        "failed": "Décision impossible",
+        "receivedLabel": "Montant réellement reçu ({currency})",
+        "receivedHint": "Pré-rempli avec le montant attendu ({amount}) : saisissez le montant encaissé indiqué par le prestataire. Il sera repris sur le reçu fiscal.",
+        "receivedInvalid": "Indiquez le montant reçu (nombre supérieur à 0) pour valider le don.",
+        "confirmDiffers": "Attention : le montant attendu était de {expected}."
       }
     },
     "finance": {
@@ -441,7 +450,8 @@
         "eventDeleted": "« {title} » · {count, plural, =0 {aucune inscription} one {# inscription supprimée} other {# inscriptions supprimées}}",
         "recipient": "Destinataire : {to}",
         "attempts": "{count, plural, one {# tentative} other {# tentatives}}"
-      }
+      },
+      "searchPlaceholder": "Rechercher dans la page (action, auteur)…"
     },
     "content": {
       "eyebrow": "Contenus",
@@ -712,6 +722,17 @@
         "phone": "Téléphone",
         "region": "Région",
         "registeredAt": "Inscrit le"
+      },
+      "csvFile": "inscrits-{event}-{date}.csv",
+      "print": "Feuille d’émargement",
+      "sheet": {
+        "title": "Feuille d’émargement",
+        "count": "{count, plural, one {# inscrit} other {# inscrits}}",
+        "number": "N°",
+        "name": "Nom",
+        "contact": "Téléphone / email",
+        "signature": "Signature",
+        "printedAt": "Imprimé le {date} — HOPE International"
       }
     }
   }

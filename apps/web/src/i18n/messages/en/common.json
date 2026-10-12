@@ -1,7 +1,18 @@
 {
   "common": {
     "siteName": "HOPE International",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "share": {
+      "label": "Share this page",
+      "share": "Share",
+      "whatsapp": "WhatsApp",
+      "facebook": "Facebook",
+      "copy": "Copy link",
+      "copiedShort": "Link copied",
+      "copied": "Link copied: now just share it",
+      "copyFailed": "Could not copy: copy the address from the browser bar",
+      "newWindow": "(opens in a new window)"
+    }
   },
   "nav": {
     "home": "HOPE International — home",
@@ -125,8 +136,6 @@
   },
   "ui": {
     "loading": "Loading…",
-    "loadingShort": "Loading",
-    "loadingStats": "Loading indicators…",
     "loadingTable": "Loading table…",
     "empty": "Nothing to show",
     "errorTitle": "Unable to load",
@@ -160,5 +169,28 @@
       "done": "You have been signed out. See you soon!"
     },
     "filters": "Filters"
-  }
+  },
+    "phone": {
+      "label": "Phone",
+      "placeholder": "6 77 12 34 56",
+      "hint": "Cameroonian number (+237) or international number with the country code.",
+      "hintMobileMoney": "Cameroonian Mobile Money number: 9 digits starting with 6.",
+      "operators": {
+        "mtn": "Likely operator: MTN Mobile Money",
+        "orange": "Likely operator: Orange Money"
+      },
+      "errors": {
+        "required": "Enter a phone number.",
+        "cm": "Incomplete Cameroonian number: 9 digits starting with 6 (e.g. 6 77 12 34 56).",
+        "mobileMoney": "Mobile Money only accepts Cameroonian numbers (+237 6…). For a foreign number, choose card payment.",
+        "invalid": "Invalid number: enter 9 digits (Cameroon) or the country code preceded by +."
+      }
+    },
+    "bulk": {
+      "label": "Actions on selection",
+      "selected": "{count, plural, one {# item selected} other {# items selected}}",
+      "clear": "Clear selection",
+      "selectPage": "Select all rows on this page",
+      "selectRow": "Select: {label}"
+    }
 }

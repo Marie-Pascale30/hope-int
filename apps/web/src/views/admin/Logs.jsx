@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { RefreshCw, ScrollText } from "lucide-react";
+import { RefreshCw, ScrollText, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button, EmptyState, ErrorState, PageSkeleton, PageHeader, Select } from "../../components/ui";
 import RequireAuth from "../../components/RequireAuth";
 import { useAsync } from "../../hooks/useAsync";
+import { useUrlFilters } from "../../hooks/useUrlFilters";
 import { useFormat } from "../../i18n/format";
 import { adminApi } from "../../services";
 import { useErrorMessage } from "../../i18n/errors";
@@ -13,6 +13,8 @@ import { useLabels } from "../../utils/labels";
 import { PERMISSIONS as P } from "../../utils/rbac";
 
 const PAGE_SIZE = 50;
+// Domaine d'action, recherche (dans la page affichee) et page conserves dans l'URL.
+const URL_DEFAULTS = { action: "", q: "", page: 1 };
 
 // Domaines d'action (prefixe avant le premier point), filtrables cote API (LIKE "domaine.%").
 const CATEGORIES = ["auth", "admin", "hr", "payment", "finance", "application", "message", "content", "event", "email"];
@@ -126,15 +128,22 @@ function Journal() {
   const t = useTranslations("adminOps.logs");
   const f = useFormat();
   const actionLabel = useActionLabel();
-  const [action, setAction] = useState("");
-  const [offset, setOffset] = useState(0);
+  const { values, setValues } = useUrlFilters(URL_DEFAULTS);
+  const action = CATEGORIES.includes(values.action) ? values.action : "";
+  const offset = (values.page - 1) * PAGE_SIZE;
+  const setOffset = (next) => setValues({ page: Math.floor(next / PAGE_SIZE) + 1 });
   const { data, loading, error, reload } = useAsync(
     () => adminApi.logs({ limit: PAGE_SIZE, offset, action: action || undefined }),
     [offset, action]
   );
 
   const total = data?.total || 0;
-  const items = data?.items || [];
+  const term = values.q.trim().toLowerCase();
+  const pageItems = data?.items || [];
+  const items = term
+    ? pageItems.filter((item) => [actionLabel(item.action), item.action, item.user_name, item.user_email]
+      .some((text) => String(text || "").toLowerCase().includes(term)))
+    : pageItems;
   const categoryOptions = CATEGORIES.map((value) => ({ value, label: t(`categories.${value}`) }));
 
   return (
@@ -152,11 +161,23 @@ function Journal() {
           placeholder={t("allActions")}
           options={categoryOptions}
           value={action}
-          onChange={(event) => {
-            setAction(event.target.value);
-            setOffset(0);
-          }}
+          onChange={(event) => setValues({ action: event.target.value, q: values.q })}
         />
+        <div className="table-search adm-logs__search">
+          <Search size={16} aria-hidden="true" className="table-search__icon" />
+          <input
+            type="search"
+            className="input"
+            inputMode="search"
+            enterKeyHint="search"
+            autoComplete="off"
+            data-page-search=""
+            placeholder={t("searchPlaceholder")}
+            aria-label={t("searchPlaceholder")}
+            value={values.q}
+            onChange={(event) => setValues({ q: event.target.value, page: values.page })}
+          />
+        </div>
         {!loading && !error && <span className="muted adm-small adm-toolbar-note">{t("entries", { count: total })}</span>}
       </div>
 
@@ -168,12 +189,13 @@ function Journal() {
         <EmptyState
           icon={ScrollText}
           title={t("empty.title")}
-          description={action ? t("empty.filtered") : t("empty.text")}
+          description={action || term ? t("empty.filtered") : t("empty.text")}
         />
       ) : (
         <>
           <div className="table-wrap" aria-busy={loading}>
             <table className="table adm-logs">
+              <caption className="visually-hidden">{t("title")}</caption>
               <thead>
                 <tr>
                   <th scope="col">{t("columns.date")}</th>
@@ -217,7 +239,7 @@ function Journal() {
             <span>
               {t("pagination", {
                 from: f.number(offset + 1),
-                to: f.number(Math.min(total, offset + items.length)),
+                to: f.number(Math.min(total, offset + pageItems.length)),
                 total: f.number(total),
               })}
             </span>

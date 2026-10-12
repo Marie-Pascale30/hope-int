@@ -16,7 +16,12 @@
     "seed": "npm run seed -w @hope/api --",
     "db": "docker compose --profile dev up -d mysql phpmyadmin",
     "test": "npm run test --workspaces --if-present",
-    "migrate": "npm run migrate -w @hope/api --"
+    "migrate": "npm run migrate -w @hope/api --",
+    "test:e2e": "npm run test:e2e -w @hope/web",
+    "test:coverage": "npm run test:coverage -w @hope/api",
+    "seed:demo": "npm run seed:demo -w @hope/api --",
+    "docs:api": "npm run docs:api -w @hope/api",
+    "check": "npm run check:i18n -w @hope/web && npm run check:contrast -w @hope/web"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

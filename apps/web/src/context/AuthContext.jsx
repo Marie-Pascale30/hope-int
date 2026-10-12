@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { LOCALES, DEFAULT_LOCALE, localizePath } from "../i18n/config";
 import { authApi } from "../services";
 import { hasSessionHint, setSessionHint } from "../services/api";
-import { toast, useAlerts } from "../utils/alerts";
+import { toast } from "../utils/alerts";
 
 const AuthContext = createContext(null);
 
@@ -21,7 +21,6 @@ export function AuthProvider({ children }) {
   const pathname = usePathname();
   const locale = useLocale();
   const t = useTranslations("ui.logout");
-  const { confirmAction } = useAlerts();
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState("loading"); // loading | anonymous | authenticated
 
@@ -89,16 +88,22 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // Deconnexion demandee par l'utilisateur : confirmation avant de fermer la session.
-  const logout = useCallback(async () => {
-    const confirmed = await confirmAction(t("title"), t("text"), t("confirm"));
-    if (!confirmed) return;
+  // Deconnexion demandee par l'utilisateur (action non destructive : pas de confirmation).
+  // allDevices : ferme aussi les sessions ouvertes sur les autres appareils.
+  const logout = useCallback(async (options) => {
+    // Appele directement en onClick : l'argument peut etre l'evenement du clic.
+    const allDevices = options?.allDevices === true;
     // Le cookie httpOnly ne peut etre efface que par l'API ; la session locale est fermee quoi qu'il arrive.
-    await authApi.logout().catch(() => {});
+    if (allDevices) {
+      // Echec de la revocation globale : l'erreur remonte a l'appelant, la session reste ouverte.
+      await authApi.logoutAll();
+    } else {
+      await authApi.logout().catch(() => {});
+    }
     clear();
     router.push(localizePath(locale, "/"));
-    toast(t("done"));
-  }, [clear, router, locale, t, confirmAction]);
+    toast(allDevices ? t("doneAll") : t("done"));
+  }, [clear, router, locale, t]);
 
   const value = useMemo(
     () => ({ user, status, isAuthenticated: status === "authenticated", login, logout, refresh, updateSession }),

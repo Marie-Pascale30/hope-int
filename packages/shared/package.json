@@ -9,7 +9,8 @@
     ".": "./src/index.js",
     "./constants": "./src/constants.js",
     "./rbac": "./src/rbac.js",
-    "./applications": "./src/applications.js"
+    "./applications": "./src/applications.js",
+    "./*": "./src/*.js"
   },
   "scripts": {
     "test": "node --test \"test/*.test.js\"",

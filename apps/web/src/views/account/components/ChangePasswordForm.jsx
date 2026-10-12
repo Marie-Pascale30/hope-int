@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { KeyRound } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Alert, Button } from "../../../components/ui";
-import { useAuth } from "../../../context/AuthContext";
-import { authApi } from "../../../services";
-import { toast } from "../../../utils/alerts";
+import { Alert, Button } from "@/src/components/ui";
+import { useAuth } from "@/src/context/AuthContext";
+import { authApi } from "@/src/services";
+import { toast } from "@/src/utils/alerts";
 import { PasswordInput, PasswordStrength } from "./PasswordFields";
 import { isStrongPassword } from "./authHelpers";
-import { useErrorMessage } from "../../../i18n/errors";
+import { useErrorMessage } from "@/src/i18n/errors";
 
 const EMPTY = { currentPassword: "", newPassword: "", confirm: "" };
 

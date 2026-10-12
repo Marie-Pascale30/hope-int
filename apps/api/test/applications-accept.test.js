@@ -16,7 +16,9 @@ async function submitApplication(overrides = {}) {
         ...overrides,
     };
     const res = await client().post("/api/applications", body);
-    return { res, email: body.email };
+    // Reponse neutre (sans identifiant) : la candidature est retrouvee par son email.
+    const [[row]] = await db.query("SELECT id FROM applications WHERE email = ? ORDER BY id DESC LIMIT 1", [body.email]);
+    return { res, email: body.email, id: row?.id };
 }
 
 describe("candidatures : poles d'interet et acceptation", () => {
@@ -41,10 +43,10 @@ describe("candidatures : poles d'interet et acceptation", () => {
         });
 
         it("enregistre les poles d'interet et ignore les roles demandes", async () => {
-            const { res } = await submitApplication({ desiredRoles: ["responsable_finance"] });
+            const { res, id } = await submitApplication({ desiredRoles: ["responsable_finance"] });
             assert.equal(res.status, 201);
 
-            const [[row]] = await db.query("SELECT interests, desired_roles FROM applications WHERE id = ?", [res.body.id]);
+            const [[row]] = await db.query("SELECT interests, desired_roles FROM applications WHERE id = ?", [id]);
             assert.deepEqual(JSON.parse(row.interests), ["terrain", "sante"]);
             assert.equal(row.desired_roles, null);
         });
@@ -64,16 +66,16 @@ describe("candidatures : poles d'interet et acceptation", () => {
 
     describe("acceptation", () => {
         it("exige des roles explicites", async () => {
-            const { res } = await submitApplication();
-            const accept = await rhHttp.post(`/api/admin/applications/${res.body.id}/accept`, {});
+            const { id } = await submitApplication();
+            const accept = await rhHttp.post(`/api/admin/applications/${id}/accept`, {});
             assert.equal(accept.status, 422);
-            const empty = await rhHttp.post(`/api/admin/applications/${res.body.id}/accept`, { roles: [] });
+            const empty = await rhHttp.post(`/api/admin/applications/${id}/accept`, { roles: [] });
             assert.equal(empty.status, 422);
         });
 
         it("cree le compte avec les roles choisis et clot la candidature", async () => {
-            const { res, email } = await submitApplication();
-            const accept = await rhHttp.post(`/api/admin/applications/${res.body.id}/accept`, { roles: ["membre"] });
+            const { email, id } = await submitApplication();
+            const accept = await rhHttp.post(`/api/admin/applications/${id}/accept`, { roles: ["membre"] });
 
             assert.equal(accept.status, 200);
             assert.equal(accept.body.linkedExisting, false);
@@ -86,8 +88,8 @@ describe("candidatures : poles d'interet et acceptation", () => {
         });
 
         it("refuse un role que l'acteur ne peut pas attribuer, sans rien creer", async () => {
-            const { res, email } = await submitApplication();
-            const accept = await rhHttp.post(`/api/admin/applications/${res.body.id}/accept`, { roles: ["responsable_finance"] });
+            const { email, id } = await submitApplication();
+            const accept = await rhHttp.post(`/api/admin/applications/${id}/accept`, { roles: ["responsable_finance"] });
 
             assert.equal(accept.status, 403);
             const [users] = await db.query("SELECT id FROM users WHERE email = ?", [email]);
@@ -95,16 +97,16 @@ describe("candidatures : poles d'interet et acceptation", () => {
         });
 
         it("refuse une seconde acceptation", async () => {
-            const { res } = await submitApplication();
-            assert.equal((await rhHttp.post(`/api/admin/applications/${res.body.id}/accept`, { roles: ["membre"] })).status, 200);
-            const again = await rhHttp.post(`/api/admin/applications/${res.body.id}/accept`, { roles: ["membre"] });
+            const { id } = await submitApplication();
+            assert.equal((await rhHttp.post(`/api/admin/applications/${id}/accept`, { roles: ["membre"] })).status, 200);
+            const again = await rhHttp.post(`/api/admin/applications/${id}/accept`, { roles: ["membre"] });
             assert.equal(again.status, 409);
             assert.equal(again.body.code, "APPLICATION_CLOSED");
         });
 
         it("ne cree qu'un seul compte en cas d'acceptations simultanees (transaction)", async () => {
-            const { res, email } = await submitApplication();
-            const url = `/api/admin/applications/${res.body.id}/accept`;
+            const { email, id } = await submitApplication();
+            const url = `/api/admin/applications/${id}/accept`;
             const results = await Promise.all([
                 rhHttp.post(url, { roles: ["membre"] }),
                 adminHttp.post(url, { roles: ["membre"] }),
@@ -114,13 +116,13 @@ describe("candidatures : poles d'interet et acceptation", () => {
             assert.equal(statuses.filter((status) => status === 200).length, 1, `statuts : ${statuses}`);
             const [users] = await db.query("SELECT id FROM users WHERE email = ?", [email]);
             assert.equal(users.length, 1);
-            const [[application]] = await db.query("SELECT status, user_id FROM applications WHERE id = ?", [res.body.id]);
+            const [[application]] = await db.query("SELECT status, user_id FROM applications WHERE id = ?", [id]);
             assert.equal(application.status, "acceptee");
             assert.equal(application.user_id, users[0].id);
         });
 
         it("annule la creation du compte si la candidature a ete close entre-temps", async () => {
-            const { res, email } = await submitApplication();
+            const { email, id } = await submitApplication();
             const applicationRepo = require("../repositories/applicationRepository");
             const original = applicationRepo.updateReview;
             // Simule une decision concurrente juste avant la cloture conditionnelle.
@@ -129,7 +131,7 @@ describe("candidatures : poles d'interet et acceptation", () => {
                 return original(id, data, connection);
             };
             try {
-                const accept = await rhHttp.post(`/api/admin/applications/${res.body.id}/accept`, { roles: ["membre"] });
+                const accept = await rhHttp.post(`/api/admin/applications/${id}/accept`, { roles: ["membre"] });
                 assert.equal(accept.status, 409);
             } finally {
                 applicationRepo.updateReview = original;
@@ -142,8 +144,8 @@ describe("candidatures : poles d'interet et acceptation", () => {
             let existing, applicationId;
 
             before(async () => {
-                const { res, email } = await submitApplication();
-                applicationId = res.body.id;
+                const { email, id } = await submitApplication();
+                applicationId = id;
                 // Compte cree apres le depot (ex. inscription directe).
                 existing = await createUser({ roles: ["membre"], email });
             });

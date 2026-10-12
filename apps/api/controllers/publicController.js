@@ -1,6 +1,5 @@
 const contentService = require("../services/contentService");
-const contentRepo = require("../repositories/contentRepository");
-const statsRepo = require("../repositories/statsRepository");
+const impactService = require("../services/impactService");
 const paymentService = require("../services/paymentService");
 const messageService = require("../services/messageService");
 const applicationService = require("../services/applicationService");
@@ -26,12 +25,9 @@ exports.getMeta = async (_req, res) => {
     });
 };
 
+// Cache memoire de 60 s (voir impactService).
 exports.getImpact = async (_req, res) => {
-    const [impact, donations] = await Promise.all([
-        contentRepo.getImpactTotals(),
-        statsRepo.getPublicDonationTotals(),
-    ]);
-    res.json({ ...impact, ...donations });
+    res.json(await impactService.getImpact());
 };
 
 exports.listContent = async (req, res) => {
@@ -49,8 +45,9 @@ exports.createMessage = async (req, res) => {
 
 exports.createApplication = async (req, res) => {
     const { name, email, phone, region, motivation, interests } = req.body;
-    const id = await applicationService.submit({ name, email, phone, region, motivation, interests });
-    res.status(201).json({ message: "Candidature envoyée", id });
+    // Reponse neutre : identique que l'email corresponde ou non a un compte ou a une candidature.
+    await applicationService.submit({ name, email, phone, region, motivation, interests });
+    res.status(201).json({ message: "Candidature envoyée" });
 };
 
 exports.listEvents = async (req, res) => {

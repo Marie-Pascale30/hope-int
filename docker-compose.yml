@@ -1,4 +1,5 @@
 # Identifiants lus dans le fichier .env a la racine (modele : .env.example).
+# Preproduction : docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d
 services:
   mysql:
     image: mysql:8
@@ -58,6 +59,13 @@ services:
       - "5000:5000"
     volumes:
       - backend_uploads:/app/apps/api/uploads
+    # Meme sonde que le HEALTHCHECK de l'image (apps/api/Dockerfile) ; /api/health interroge MySQL.
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      start_period: 40s
+      retries: 5
 
   frontend:
     build:
@@ -71,10 +79,45 @@ services:
       # Rendu serveur des pages publiques : l'API est jointe par le reseau interne Docker.
       API_INTERNAL_URL: http://backend:5000/api
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
       - "3001:3001"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/',{redirect:'manual'}).then(r=>process.exit(r.status<500?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+
+  # Sauvegardes planifiees (optionnel) : docker compose --profile backup up -d backup
+  # Dump MySQL + archive des images televersees (cron, 02:30 par defaut), rotation 7 quotidiennes /
+  # 4 hebdomadaires, chiffrement et envoi S3 optionnels : voir infra/backup/backup.env.example.
+  backup:
+    image: alpine:3.22
+    profiles: ["backup"]
+    restart: unless-stopped
+    env_file:
+      - path: ./infra/backup/backup.env
+        required: false
+    environment:
+      DB_HOST: mysql
+      DB_USER: ${MYSQL_USER:-hope}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_NAME: hope_platform
+      BACKUP_DIR: /backups
+      UPLOADS_DIR: /data/uploads
+      BACKUP_CRON: ${BACKUP_CRON:-30 2 * * *}
+    volumes:
+      - ./infra/backup:/opt/backup:ro
+      - backend_uploads:/data/uploads:ro
+      - backups:/backups
+    entrypoint: ["/bin/sh", "/opt/backup/cron-entrypoint.sh"]
+    depends_on:
+      mysql:
+        condition: service_healthy
 
 volumes:
   mysql_data:
   backend_uploads:
+  backups:

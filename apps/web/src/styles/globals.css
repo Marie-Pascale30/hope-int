@@ -109,8 +109,10 @@
   --text-xs: 0.78rem;
   --text-sm: 0.85rem;
   --text-md: 0.92rem;
+  --text-body: 0.95rem;
   --text-base: 1rem;
   --text-lg: 1.1rem;
+  --text-title: 1.15rem;
   --text-xl: 1.25rem;
   --text-2xl: 1.5rem;
   --text-3xl: clamp(1.7rem, 3vw, 2.4rem);
@@ -141,6 +143,21 @@
   --shadow: 0 4px 16px rgba(28, 36, 33, 0.07), 0 1px 3px rgba(28, 36, 33, 0.05);
   --shadow-lg: 0 18px 48px rgba(28, 36, 33, 0.12);
   --container: 1180px;
+
+  /* Durees d'animation (neutralisees par prefers-reduced-motion) */
+  --duration-fast: 0.15s;
+  --duration: 0.2s;
+  --duration-slow: 0.6s;
+
+  /* Surtitre clair sur fond de marque fonce */
+  --accent-on-dark: #f3c08c;
+  /* Halos decoratifs des bandeaux (utilises avec transparence via color-mix) */
+  --glow-accent: #e79a52;
+  --glow-accent-deep: #d2772a;
+  --glow-brand: #2f8a68;
+  /* Fin du degrade des jauges */
+  --progress-brand-end: #2f8a68;
+  --progress-accent-end: #e79a52;
   --gutter: clamp(16px, 4vw, 32px);
   --header-h: 72px;
 }
@@ -204,6 +221,10 @@
 
     --focus-color: #93dcbb;
     --focus-on-dark: #f3c08c;
+
+    /* Fin du degrade des jauges (theme sombre : plus clair que --brand / --accent) */
+    --progress-brand-end: #93dcbb;
+    --progress-accent-end: #f2ad6e;
 
     --chart-1: #2fa070;
     --chart-2: #4a8ad6;
@@ -283,6 +304,10 @@
 
   --focus-color: #93dcbb;
   --focus-on-dark: #f3c08c;
+
+  /* Fin du degrade des jauges (theme sombre : plus clair que --brand / --accent) */
+  --progress-brand-end: #93dcbb;
+  --progress-accent-end: #f2ad6e;
 
   --chart-1: #2fa070;
   --chart-2: #4a8ad6;
@@ -542,13 +567,38 @@ p {
   background: var(--btn-bg);
   color: var(--btn-fg);
   font: inherit;
-  font-size: 0.95rem;
+  font-size: var(--text-body);
   font-weight: 600;
   line-height: 1.2;
   text-align: center;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  transition: background var(--duration-fast) ease, border-color var(--duration-fast) ease, color var(--duration-fast) ease, transform var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
   white-space: nowrap;
+  max-width: 100%;
+}
+
+.btn svg {
+  flex-shrink: 0;
+}
+
+/* Libelles longs (espagnol notamment) : retour a la ligne propre plutot qu'un debordement,
+   dans les boutons pleine largeur et les zones etroites (pieds de carte, cotes d'abonnement,
+   barres collantes) et sur petit ecran. */
+.btn--block,
+.btn--wrap,
+.pub-card__foot .btn,
+.acc-sub__side .btn,
+.pub-sticky .btn,
+.don-sticky .btn {
+  white-space: normal;
+  text-wrap: balance;
+}
+
+@media (max-width: 480px) {
+  .btn {
+    white-space: normal;
+    text-wrap: balance;
+  }
 }
 
 .btn:hover {
@@ -674,7 +724,7 @@ p {
 }
 
 .card--hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform var(--duration) ease, box-shadow var(--duration) ease, border-color var(--duration) ease;
 }
 
 .card--hover:hover {
@@ -788,8 +838,8 @@ p {
   background: var(--surface);
   color: var(--ink);
   font: inherit;
-  font-size: 0.95rem;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-size: var(--text-body);
+  transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
 }
 
 .textarea {
@@ -868,7 +918,7 @@ p {
   font-size: var(--text-md);
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--duration-fast) ease;
   user-select: none;
 }
 
@@ -914,7 +964,7 @@ p {
   background: var(--line-input);
   position: relative;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background var(--duration-fast) ease;
   margin: 0;
 }
 
@@ -928,7 +978,7 @@ p {
   border-radius: 50%;
   background: var(--surface);
   box-shadow: var(--shadow-sm);
-  transition: transform 0.15s ease;
+  transition: transform var(--duration-fast) ease;
 }
 
 .switch input:checked {
@@ -1062,9 +1112,18 @@ p {
 
 .state__title {
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: var(--text-title);
   font-weight: 600;
   color: var(--ink);
+}
+
+.state__text {
+  max-width: 440px;
+  margin: 0;
+}
+
+.state__action {
+  margin-top: var(--space-2);
 }
 
 .state--error .state__icon {
@@ -1130,6 +1189,11 @@ p {
   margin-bottom: 0;
 }
 
+.alert__title {
+  display: block;
+  margin-bottom: 2px;
+}
+
 .alert--info {
   background: var(--info-50);
   color: var(--info-ink);
@@ -1166,12 +1230,12 @@ p {
 .progress__bar {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--brand), #2f8a68);
-  transition: width 0.6s ease;
+  background: linear-gradient(90deg, var(--brand), var(--progress-brand-end));
+  transition: width var(--duration-slow) ease;
 }
 
 .progress--accent .progress__bar {
-  background: linear-gradient(90deg, var(--accent), #e79a52);
+  background: linear-gradient(90deg, var(--accent), var(--progress-accent-end));
 }
 
 .progress-meta {
@@ -1304,7 +1368,7 @@ p {
   padding: 0 6px;
   border-radius: var(--radius-pill);
   background: var(--surface-3);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   text-align: center;
 }
 
@@ -1319,7 +1383,7 @@ p {
   padding: 16px;
   background: var(--backdrop);
   backdrop-filter: blur(2px);
-  animation: fade-in 0.15s ease;
+  animation: fade-in var(--duration-fast) ease;
 }
 
 .modal {
@@ -1599,7 +1663,7 @@ p {
   font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
 }
 
 .theme-switch__option input {
@@ -1705,6 +1769,56 @@ p {
   opacity: 0.55;
 }
 
+/* Selection de lignes et barre d'actions groupees */
+.table .table__select {
+  width: 44px;
+  padding-right: 0;
+}
+
+.table__select input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand);
+  cursor: pointer;
+}
+
+.table tbody tr.is-selected td {
+  background: var(--brand-50);
+}
+
+.bulk-bar {
+  position: sticky;
+  top: calc(var(--header-h) + var(--space-2));
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--brand-100);
+  border-radius: var(--radius);
+  background: var(--brand-50);
+  color: var(--ink);
+}
+
+.bulk-bar__count {
+  font-weight: 600;
+}
+
+.bulk-bar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bulk-bar__actions .select {
+  width: auto;
+  min-width: 160px;
+}
+
 .table tr.is-clickable:focus-visible {
   outline: var(--focus-width) solid var(--focus-color);
   outline-offset: -2px;
@@ -1803,6 +1917,12 @@ p {
 
   .table--stack .num {
     text-align: left;
+  }
+
+  .table--stack td.table__select {
+    display: block;
+    width: auto;
+    padding: var(--space-2) 0;
   }
 
   .table--stack tbody tr:hover td {

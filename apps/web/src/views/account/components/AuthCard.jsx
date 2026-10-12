@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
-import { LogoMark } from "../../../components/site/Logo";
-import { Link } from "../../../i18n/navigation";
+import { LogoMark } from "@/src/components/site/Logo";
+import { Link } from "@/src/i18n/navigation";
 
 // Cadre commun des pages d'authentification : carte centree sur fond creme.
 export default function AuthCard({ title, description, children, footer }) {
