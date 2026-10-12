@@ -95,7 +95,7 @@ services:
   # Dump MySQL + archive des images televersees (cron, 02:30 par defaut), rotation 7 quotidiennes /
   # 4 hebdomadaires, chiffrement et envoi S3 optionnels : voir infra/backup/backup.env.example.
   backup:
-    image: alpine:3.22
+    image: alpine:3.24
     profiles: ["backup"]
     restart: unless-stopped
     env_file:
