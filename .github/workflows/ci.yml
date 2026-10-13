@@ -38,8 +38,8 @@ jobs:
       TEST_DB_NAME: hope_test
       JWT_SECRET: ci-secret-ci-secret-ci-secret-ci-secret
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -63,8 +63,8 @@ jobs:
     name: Audit des dependances de production
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
       - run: npm audit --omit=dev --audit-level=high
@@ -73,8 +73,8 @@ jobs:
     name: Build du site
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -120,8 +120,8 @@ jobs:
       NEXT_PUBLIC_SITE_URL: http://localhost:3001
       API_INTERNAL_URL: http://localhost:5000/api
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -139,7 +139,7 @@ jobs:
         run: npm run test:e2e -w @hope/web
       - name: Rapport Playwright
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: |
@@ -151,10 +151,10 @@ jobs:
     name: Images Docker
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: docker/setup-buildx-action@v3
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
       - name: Image de l'API
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: apps/api/Dockerfile
@@ -163,7 +163,7 @@ jobs:
           cache-from: type=gha,scope=hope-api
           cache-to: type=gha,mode=max,scope=hope-api
       - name: Image du site
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: apps/web/Dockerfile
