@@ -12,6 +12,7 @@ import { useLabels } from "@/src/utils/labels";
 import { useErrorMessage } from "@/src/i18n/errors";
 import "@/src/views/engagement/engagement.css";
 import MfaPanel from "@/src/views/engagement/MfaPanel";
+import { MFA_ENABLED } from "@/src/services/engagement";
 import PreferencesPanel from "@/src/views/engagement/PreferencesPanel";
 import PrivacyPanel from "@/src/views/engagement/PrivacyPanel";
 
@@ -98,7 +99,7 @@ export default function ProfileTab() {
       <div className="acc-columns">
         <PreferencesPanel />
         <div className="stack">
-          <MfaPanel />
+          {MFA_ENABLED && <MfaPanel />}
           <PrivacyPanel />
         </div>
       </div>

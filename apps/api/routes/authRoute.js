@@ -2,6 +2,7 @@ const express = require("express");
 const { body } = require("express-validator");
 const createLimiter = require("../utils/rateLimit");
 const authController = require("../controllers/authController");
+const mfaService = require("../services/engagementMfaService");
 const auth = require("../middlewares/authMiddleware");
 const validate = require("../middlewares/validateRequest");
 
@@ -80,6 +81,7 @@ const mfaLimiter = createLimiter({
     max: 30,
     message: "Trop de tentatives : réessayez dans 15 minutes.",
 });
+router.use("/mfa", mfaService.requireActive);
 const mfaCode = body("code").isString().trim().isLength({ min: 6, max: 20 }).withMessage("Code de vérification requis");
 
 // Seconde etape de la connexion (cookie de verification pose par /login).

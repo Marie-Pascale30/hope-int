@@ -24,6 +24,7 @@ import { useErrorMessage } from "../../i18n/errors";
 import { PAGE_SIZE, ServerPagination, toPage } from "./components/paging";
 import { canGrantAll, useRoleMatrix } from "./lib/roles";
 import MfaResetButton from "../engagement/admin/MfaResetButton";
+import { MFA_ENABLED } from "../../services/engagement";
 
 function RoleBadges({ roles }) {
   const labels = useLabels();
@@ -340,7 +341,7 @@ function MemberModal({ member, user, matrix, regions, onClose, onSaved, onDelete
           </dl>
         )}
         {/* Double authentification perdue : reinitialisation par un gestionnaire des comptes. */}
-        {tab === "info" && can(user, P.MANAGE_USER_ROLES) && !isSelf && (
+        {MFA_ENABLED && tab === "info" && can(user, P.MANAGE_USER_ROLES) && !isSelf && (
           <MfaResetButton userId={member.id} name={member.name} onDone={() => {}} />
         )}
         {tab === "roles" && <RolesTab key={member.roles.join()} member={member} user={user} matrix={matrix} onSaved={onSaved} />}

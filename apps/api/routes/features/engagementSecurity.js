@@ -11,7 +11,7 @@ const userRepo = require("../../repositories/userRepository");
 const { PERMISSIONS } = require("@hope/shared/rbac");
 
 const router = express.Router();
-router.use(auth, can(PERMISSIONS.MANAGE_USER_ROLES));
+router.use(mfaService.requireActive, auth, can(PERMISSIONS.MANAGE_USER_ROLES));
 
 // Etat de la double authentification pour une liste de comptes (?ids=1,2,3).
 router.get("/mfa", [query("ids").isString().matches(/^\d+(,\d+){0,199}$/), validate], async (req, res) => {

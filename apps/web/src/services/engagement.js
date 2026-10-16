@@ -23,6 +23,10 @@ export const memberEngagementApi = {
 };
 
 // --- Double authentification ---
+// Double authentification TOTP desactivee tant que NEXT_PUBLIC_MFA_ENABLED n'est pas a "true"
+// (a aligner sur MFA_ENABLED cote API).
+export const MFA_ENABLED = process.env.NEXT_PUBLIC_MFA_ENABLED === "true";
+
 export const mfaApi = {
   verify: (code) => data(API.post("/auth/mfa/verify", { code })),
   setup: () => data(API.post("/auth/mfa/setup")),

@@ -1,4 +1,6 @@
 const { db, request, app, resetDatabase, createUser, client, loginAs, PASSWORD } = require("./helpers");
+// La double authentification est desactivee par defaut : ces tests l'activent explicitement.
+process.env.MFA_ENABLED = "true";
 const { describe, it, before, after, afterEach } = require("node:test");
 const assert = require("node:assert/strict");
 const totp = require("../services/engagementTotp");

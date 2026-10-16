@@ -40,10 +40,17 @@ function isRequiredFor(roles) {
 
 exports.isRequiredFor = isRequiredFor;
 
+// Interrupteur general (MFA_ENABLED=true pour l'activer). Desactive par defaut en attendant son
+// remplacement par une confirmation d'identite par email/SMS : connexion directe, routes /mfa en 404.
+const isActive = () => process.env.MFA_ENABLED === "true";
+exports.isActive = isActive;
+exports.requireActive = (_req, _res, next) => next(isActive() ? undefined : notFound());
+
 const isEnabled = (record) => Boolean(record?.enabled_at);
 
 // Etape demandee apres un mot de passe correct : "verify", "setup" ou null (session directe).
 exports.loginRequirement = async (user) => {
+    if (!isActive()) return null;
     const record = await mfaRepo.find(user.id);
     if (isEnabled(record)) return "verify";
     return isRequiredFor(user.roles || [user.role]) ? "setup" : null;
