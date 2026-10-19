@@ -1,5 +1,5 @@
 # Contexte de build : racine du monorepo (voir docker-compose.yml).
-FROM node:24-alpine
+FROM node:26-alpine
 
 WORKDIR /app
 
