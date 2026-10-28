@@ -1,4 +1,6 @@
 // Mise en page des recus PDF (A4, polices PDF standard) ; les donnees viennent de receiptFormat.
+const fs = require("fs");
+const path = require("path");
 const PDFDocument = require("pdfkit");
 const {
     RECEIPT_TIMEZONE, DONATION_NATURE, formatAmount, formatDate, equivalent, receiptView, methodLabel, frequencyLabel,
@@ -6,12 +8,14 @@ const {
 } = require("./receiptFormat");
 
 const ORG = {
-    name: process.env.ORG_NAME || "HOPE International",
-    address: process.env.ORG_ADDRESS || "",
+    name: process.env.ORG_NAME || "HOPE International Project",
+    address: process.env.ORG_ADDRESS || "Bonadibong, Akwa, Douala, Cameroun",
+    // Ville du "Fait a" (l'adresse commence par le quartier).
+    city: process.env.ORG_CITY ?? "Douala",
     registration: process.env.ORG_REGISTRATION || "",
-    signatory: process.env.ORG_SIGNATORY || "La Direction générale",
-    email: process.env.ORG_CONTACT_EMAIL || "",
-    phone: process.env.ORG_CONTACT_PHONE || "",
+    signatory: process.env.ORG_SIGNATORY || "La Présidente",
+    email: process.env.ORG_CONTACT_EMAIL || "hopeinternationalproject@gmail.com",
+    phone: process.env.ORG_CONTACT_PHONE || "+237 694 63 25 60",
     fiscalMention:
         process.env.RECEIPT_FISCAL_MENTION ||
         "Ce reçu atteste de la réception de votre don. Sa valeur fiscale dépend du statut de l'organisme bénéficiaire et de la législation applicable dans votre pays de résidence.",
@@ -21,21 +25,21 @@ const ORG = {
 // Les polices standard ne couvrent que le jeu WinAnsi : pas de caracteres comme "≈" ou "→".
 
 const COLORS = {
-    brand: "#1f5f4a",
-    brandSoft: "#eaf3ee",
-    accent: "#d2772a",
-    accentSolid: "#a95b1b",
-    accentSoft: "#fcf0e3",
-    accentInk: "#9f5518",
-    accentLight: "#f6c79a",
-    cream: "#faf7f2",
-    surface: "#f4efe7",
-    line: "#e7e0d4",
-    ink: "#1c2421",
-    ink2: "#4a5550",
-    ink3: "#5f6863",
+    brand: "#642b17",
+    brandSoft: "#f9efea",
+    accent: "#f0ba2a",
+    accentSolid: "#c47f0a",
+    accentSoft: "#fdf4dc",
+    accentInk: "#8a5a00",
+    accentLight: "#f0ba2a",
+    cream: "#fbf7f0",
+    surface: "#f6eee3",
+    line: "#eadfd0",
+    ink: "#2a1d17",
+    ink2: "#574740",
+    ink3: "#6b5a51",
     onBrand: "#ffffff",
-    onBrandSoft: "#cfe3d9",
+    onBrandSoft: "#f1ddd2",
 };
 
 const PAGE = { margin: 48, headerHeight: 132, footerHeight: 86 };
@@ -60,14 +64,14 @@ const contentWidth = (doc) => doc.page.width - PAGE.margin * 2;
 // Limite basse du contenu : le pied de page fixe occupe le bas de chaque page.
 const contentBottom = (doc) => doc.page.height - PAGE.footerHeight - 12;
 
-// Embleme du site (pousse dans un cercle), redessine en vectoriel. size : diametre.
-function logoMark(doc, x, y, size, { onDark = false } = {}) {
-    doc.save().translate(x, y).scale(size / 40);
-    doc.circle(20, 20, 20).fill(onDark ? COLORS.cream : COLORS.brand);
-    doc.path("M20 31V19").lineWidth(2.4).lineCap("round").stroke(onDark ? COLORS.brand : COLORS.cream);
-    doc.path("M20 21c0-5.5 3.8-9.2 9.5-9.5-.3 5.7-4 9.5-9.5 9.5Z").fill(COLORS.accent);
-    doc.path("M20 24c0-4.6-3.2-7.7-7.9-7.9.2 4.7 3.3 7.9 7.9 7.9Z").fill(onDark ? COLORS.brand : COLORS.cream);
-    doc.restore();
+// Embleme officiel (soleil du logo HOPE International Project, fond transparent), copie de
+// apps/web/public/images/brand/soleil-hope-detoure.png. size : cote du carre. Sans le fichier,
+// le document reste valide (pas d'embleme).
+const LOGO_PATH = path.join(__dirname, "..", "assets", "soleil-hope.png");
+let logoImage;
+function logoMark(doc, x, y, size) {
+    if (logoImage === undefined) logoImage = fs.existsSync(LOGO_PATH) ? fs.readFileSync(LOGO_PATH) : null;
+    if (logoImage) doc.image(logoImage, x, y, { fit: [size, size], align: "center", valign: "center" });
 }
 
 // Petit titre en capitales espacees.
@@ -88,11 +92,11 @@ function header(doc, { kicker, title, subtitle }) {
     doc.restore();
     doc.rect(0, PAGE.headerHeight, width, 4).fill(COLORS.accent);
 
-    logoMark(doc, left, 40, 46, { onDark: true });
-    doc.font("Helvetica-Bold").fontSize(19).fillColor(COLORS.onBrand).text(ORG.name, left + 60, 44, { lineBreak: false });
+    logoMark(doc, left, 36, 52);
+    doc.font("Helvetica-Bold").fontSize(16).fillColor(COLORS.onBrand).text(ORG.name, left + 62, 46, { width: 230, lineBreak: false, ellipsis: true });
     const identity = [ORG.address, ORG.registration].filter(Boolean).join("  ·  ");
     if (identity) {
-        doc.font("Helvetica").fontSize(8.5).fillColor(COLORS.onBrandSoft).text(identity, left + 60, 69, { width: 260, lineBreak: false });
+        doc.font("Helvetica").fontSize(8.5).fillColor(COLORS.onBrandSoft).text(identity, left + 62, 69, { width: 260, lineBreak: false });
     }
 
     const rightWidth = 200;
@@ -160,7 +164,7 @@ const THANKS = { width: 290, pad: 16 };
 function measureClosing(doc, donorName) {
     const inner = THANKS.width - THANKS.pad * 2;
     const title = donorName ? `Merci, ${donorName} !` : "Merci pour votre générosité !";
-    const text = `Votre soutien permet à ${ORG.name} de poursuivre ses actions auprès des familles. Toute l'équipe vous remercie chaleureusement de votre confiance.`;
+    const text = `Votre soutien permet à ${ORG.name} de scolariser et d'accompagner des enfants défavorisés et de soutenir les personnes les plus vulnérables. Toute l'équipe vous remercie chaleureusement de votre confiance.`;
     doc.font("Helvetica-Bold").fontSize(12);
     const titleHeight = doc.heightOfString(title, { width: inner });
     doc.font("Helvetica").fontSize(9);
@@ -182,8 +186,8 @@ function closing(doc, { donorName, issuedAt, y }) {
     // Signature : lieu et date, ligne, signataire.
     const signX = left + thanksWidth + 30;
     const signWidth = width - thanksWidth - 30;
-    const place = ORG.address
-        ? `Fait à ${ORG.address.split(",")[0].trim()}, le ${formatDate(issuedAt)}`
+    const place = ORG.city
+        ? `Fait à ${ORG.city}, le ${formatDate(issuedAt)}`
         : `Émis le ${formatDate(issuedAt)}`;
     doc.font("Helvetica").fontSize(9).fillColor(COLORS.ink3).text(place, signX, y + 6, { width: signWidth, align: "right" });
     doc.text(`Pour ${ORG.name},`, signX, y + 22, { width: signWidth, align: "right" });

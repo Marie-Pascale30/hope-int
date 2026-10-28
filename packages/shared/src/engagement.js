@@ -1,5 +1,5 @@
-// Referentiels du module "engagement" (consentements, CRM donateurs, campagnes, double
-// authentification), partages par l'API et le site : require("@hope/shared/engagement").
+// Referentiels du module "engagement" (consentements, CRM donateurs, campagnes),
+// partages par l'API et le site : require("@hope/shared/engagement").
 
 // Sujets de communication non transactionnels.
 const CONSENT_TOPICS = ["newsletter", "project_news", "donation_reminders", "event_reminders"];
@@ -35,12 +35,6 @@ const CAMPAIGN_AUDIENCES = ["newsletter", ...DONOR_SEGMENTS.map((segment) => `do
 const CAMPAIGN_STATUSES = ["draft", "sending", "sent"];
 // Variables utilisables dans les modeles et campagnes.
 const TEMPLATE_VARIABLES = ["prenom", "nom"];
-
-// Double authentification (TOTP RFC 6238).
-const TOTP = { digits: 6, period: 30, algorithm: "SHA1", window: 1 };
-// Permissions rendant la double authentification obligatoire (surchargeable par MFA_REQUIRED_PERMISSIONS).
-const DEFAULT_MFA_REQUIRED_PERMISSIONS = ["manage_finance", "manage_user_roles", "delete_users", "manage_it"];
-const BACKUP_CODES_COUNT = 10;
 
 // Remplace {prenom} et {nom} ; une variable inconnue reste telle quelle.
 function renderTemplate(text, { name = "" } = {}) {
@@ -81,9 +75,6 @@ module.exports = {
     CAMPAIGN_AUDIENCES,
     CAMPAIGN_STATUSES,
     TEMPLATE_VARIABLES,
-    TOTP,
-    DEFAULT_MFA_REQUIRED_PERMISSIONS,
-    BACKUP_CODES_COUNT,
     renderTemplate,
     isOptInTopic,
     donorKey,

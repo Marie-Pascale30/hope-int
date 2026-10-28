@@ -205,7 +205,7 @@ exports.createDonation = async (user, input) => {
                 donorEmail,
                 donorName,
                 phone: input.phone,
-                description: project ? `Don pour : ${project.title}` : "Don à HOPE International",
+                description: project ? `Don pour : ${project.title}` : "Don à HOPE International Project",
             });
             await paymentRepo.setTransactionId(paymentId, result.transactionId);
             response.redirectUrl = result.redirectUrl;
@@ -220,7 +220,7 @@ exports.createDonation = async (user, input) => {
                 donorEmail,
                 donorName,
                 phone: input.phone,
-                description: project ? `Don pour : ${project.title}` : "Don à HOPE International",
+                description: project ? `Don pour : ${project.title}` : "Don à HOPE International Project",
             });
         }
     } catch (error) {

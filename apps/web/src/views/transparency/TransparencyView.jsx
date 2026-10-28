@@ -10,6 +10,7 @@ import { EmptyIllustration } from "@/src/components/illustrations";
 import { useFormat } from "@/src/i18n/format";
 import { Link, useLocalePath } from "@/src/i18n/navigation";
 import { resolveImage } from "@/src/utils/format";
+import PageBanner from "@/src/components/site/PageBanner";
 import { PublicHero } from "@/src/views/site/components";
 import LoadError from "@/src/views/site/components/LoadError";
 import { shareRows } from "./helpers";
@@ -98,6 +99,7 @@ export function TransparencyEmpty({ index, error }) {
   const lp = useLocalePath();
   return (
     <>
+      <PageBanner name="transparency" />
       <PublicHero eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
       <section className="section section--tight">
         <div className="container">
@@ -139,6 +141,7 @@ export default function TransparencyView({ data }) {
 
   return (
     <>
+      <PageBanner name="transparency" />
       <PublicHero eyebrow={t("eyebrow")} title={t("yearTitle", { year: data.year })} lead={t("lead")}>
         <YearNav years={data.years} current={data.year} />
       </PublicHero>

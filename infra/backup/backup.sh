@@ -1,5 +1,5 @@
 #!/bin/sh
-# Sauvegarde HOPE International : base MySQL + images televersees.
+# Sauvegarde HOPE International Project : base MySQL + images televersees.
 #
 #   - mysqldump --single-transaction (coherent sans bloquer l'API), compresse (gzip) ;
 #   - archive tar.gz du dossier des uploads ;

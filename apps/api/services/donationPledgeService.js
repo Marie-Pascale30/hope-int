@@ -17,7 +17,7 @@ const { badRequest, notFound } = require("../utils/httpError");
 const { getScopeRegion } = require("../utils/scope");
 const { FRONTEND_URL, randomToken, sha256 } = require("../utils/security");
 
-const ORG_NAME = process.env.ORG_NAME || "HOPE International";
+const ORG_NAME = process.env.ORG_NAME || "HOPE International Project";
 const CURRENCY = "xaf";
 const BATCH = 100;
 

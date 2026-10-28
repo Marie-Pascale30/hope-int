@@ -28,7 +28,7 @@
       "remove": "Remove image",
       "keep": "Keep current image",
       "altLabel": "Image alt text",
-      "altPlaceholder": "E.g. Women harvesting maize in a field in Bafoussam",
+      "altPlaceholder": "E.g. Children receiving their school supplies in Balessing",
       "altHint": "Describe what the image shows for people who cannot see it (max {max} characters). Leave empty if it is purely decorative."
     },
     "common": {
@@ -265,8 +265,8 @@
         "scopeNote": "Reported cumulative figures for projects active in {year}: a multi-year project counts in every year it covers, so these figures do not add up from one year to the next.",
         "scopeNoteRegion": "Reported cumulative figures for projects in the {region} region active in {year}: a multi-year project counts in every year it covers, so these figures do not add up from one year to the next.",
         "beneficiaries": "{count, plural, one {beneficiary} other {beneficiaries}}",
-        "trainees": "{count, plural, one {person trained} other {people trained}}",
-        "credits": "{count, plural, one {loan granted} other {loans granted}}",
+        "trainees": "{count, plural, one {person trained or reached} other {people trained or reached}}",
+        "credits": "{count, plural, one {grant awarded} other {grants awarded}}",
         "activeProjects": "{count, plural, one {ongoing project} other {ongoing projects}}",
         "completedDetail": "{count, plural, one {# completed} other {# completed}} out of {total}",
         "regions": "{count, plural, one {region covered} other {regions covered}}"
@@ -295,7 +295,7 @@
         "region": "Region",
         "beneficiaries": "Beneficiaries",
         "trainees": "Trained",
-        "credits": "Loans",
+        "credits": "Grants",
         "period": "Period",
         "ongoing": "ongoing",
         "empty": "No active projects this year."
@@ -569,7 +569,8 @@
         "content": "Content",
         "frame": "Project details",
         "impact": "Impact indicators",
-        "publication": "Image and publication"
+        "publication": "Image and publication",
+        "gallery": "Photo gallery"
       },
       "status": {
         "planifie": "Planned (coming soon)",
@@ -592,8 +593,8 @@
         "budget": "Total budget (EUR)",
         "goal": "Fundraising target (EUR)",
         "beneficiaries": "Beneficiaries",
-        "trainees": "People trained",
-        "credits": "Loans granted"
+        "trainees": "People trained or reached by awareness campaigns",
+        "credits": "Grants awarded"
       },
       "placeholders": {
         "author": "e.g. Estelle K.",
@@ -612,6 +613,42 @@
       },
       "errors": {
         "dates": "The end date must be after the start date"
+      },
+      "gallery": {
+        "hint": "Photos shown below the content, in this order ({max} maximum). Photos without dimensions default to a 4:3 format.",
+        "count": "{count, plural, =0 {No photos} one {# photo} other {# photos}}",
+        "empty": "No photos in the gallery yet.",
+        "listLabel": "Gallery photos",
+        "position": "Photo {index} of {total}",
+        "photoAlt": "Photo {index}",
+        "moveUp": "Move photo {index} up",
+        "moveDown": "Move photo {index} down",
+        "remove": "Remove photo {index}",
+        "removed": "Photo {index} removed from the gallery.",
+        "moved": "Photo moved to position {index} of {total}.",
+        "added": "{count, plural, one {# photo added} other {# photos added}} to the gallery.",
+        "fromLibrary": "Add from the booklet photo library",
+        "upload": "Upload photos",
+        "uploadHint": "JPG, PNG, WebP or GIF, {max} MB maximum per photo (several files allowed).",
+        "uploading": "Uploading photo {done} of {total}…",
+        "uploadFailed": "Upload incomplete",
+        "uploadFailedText": "{count, plural, one {# photo could not be uploaded} other {# photos could not be uploaded}}: {names}",
+        "full": "The gallery is full ({max} photos maximum).",
+        "library": {
+          "title": "Booklet photo library",
+          "intro": "Tick the photos to add. Photos already in the gallery are marked.",
+          "album": "Album",
+          "allAlbums": "All albums ({count} photos)",
+          "albumOption": "{title} · {place}, {date} ({count})",
+          "listLabel": "Photo library photos",
+          "selected": "{count, plural, =0 {No photos selected} one {# photo selected} other {# photos selected}}",
+          "already": "Already in the gallery",
+          "selectAll": "Select all",
+          "clear": "Clear selection",
+          "add": "{count, plural, =0 {Add} one {Add # photo} other {Add # photos}}",
+          "cancel": "Cancel",
+          "limit": "At most {count, plural, one {# more photo can be added} other {# more photos can be added}}."
+        }
       }
     },
     "events": {
@@ -684,7 +721,7 @@
       },
       "placeholders": {
         "noProject": "No project",
-        "location": "e.g. HOPE Centre, Douala",
+        "location": "e.g. Bonadibong, Akwa, Douala",
         "noRegion": "Not specified"
       },
       "hints": {
@@ -732,7 +769,7 @@
         "name": "Name",
         "contact": "Phone / email",
         "signature": "Signature",
-        "printedAt": "Printed on {date} — HOPE International"
+        "printedAt": "Printed on {date} — HOPE International Project"
       }
     }
   }

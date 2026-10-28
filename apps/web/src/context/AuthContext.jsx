@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { LOCALES, DEFAULT_LOCALE, localizePath } from "../i18n/config";
 import { authApi } from "../services";
 import { hasSessionHint, setSessionHint } from "../services/api";
-import { toast } from "../utils/alerts";
+import { confirmAction, toast } from "../utils/alerts";
 
 const AuthContext = createContext(null);
 
@@ -48,6 +48,8 @@ export function AuthProvider({ children }) {
   }, [clear]);
 
   useEffect(() => {
+    // Lecture de la session apres le montage : le rendu serveur reste en "loading".
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refresh();
   }, [refresh]);
 
@@ -88,11 +90,16 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // Deconnexion demandee par l'utilisateur (action non destructive : pas de confirmation).
-  // allDevices : ferme aussi les sessions ouvertes sur les autres appareils.
+  // Deconnexion demandee par l'utilisateur, apres confirmation (fenetre "Se deconnecter ?").
+  // allDevices : ferme aussi les sessions ouvertes sur les autres appareils (l'appelant a deja
+  // demande sa propre confirmation, plus explicite).
   const logout = useCallback(async (options) => {
     // Appele directement en onClick : l'argument peut etre l'evenement du clic.
     const allDevices = options?.allDevices === true;
+    if (!allDevices) {
+      const ok = await confirmAction(t("title"), t("text"), t("confirm"), { cancelText: t("cancel") });
+      if (!ok) return false;
+    }
     // Le cookie httpOnly ne peut etre efface que par l'API ; la session locale est fermee quoi qu'il arrive.
     if (allDevices) {
       // Echec de la revocation globale : l'erreur remonte a l'appelant, la session reste ouverte.

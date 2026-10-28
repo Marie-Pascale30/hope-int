@@ -7,7 +7,7 @@ const logService = require("./activityLogService");
 const emailService = require("./emailService");
 const { badRequest, conflict, notFound } = require("../utils/httpError");
 
-const ORG_NAME = process.env.ORG_NAME || "HOPE International";
+const ORG_NAME = process.env.ORG_NAME || "HOPE International Project";
 const FRONTEND_URL = (process.env.FRONTEND_URL || "http://localhost:3001").replace(/\/$/, "");
 
 function formatDate(value) {

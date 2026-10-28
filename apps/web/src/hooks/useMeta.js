@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { DONATION_LIMITS, PROJECT_STATUSES, XAF_PER_EUR } from "@hope/shared/constants";
 import { publicApi } from "../services";
+import { ORGANIZATION_FALLBACK } from "../views/site/organization";
 
 // Referentiels (regions, roles proposables, moyens de paiement actifs...) charges une seule fois.
 let cache = null;
@@ -15,7 +16,8 @@ const FALLBACK = {
   providers: { stripe: false, mobileMoney: false, mobileMoneyProvider: null, notchpay: false, flutterwave: false },
   donationLimits: DONATION_LIMITS,
   xafPerEur: XAF_PER_EUR,
-  organization: { name: "HOPE International", email: "", phone: "", address: "" },
+  // Coordonnees reelles de l'association : le site reste utilisable avec une API ancienne ou absente.
+  organization: ORGANIZATION_FALLBACK,
 };
 
 export function useMeta() {

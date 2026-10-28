@@ -1,4 +1,4 @@
-# Application mobile Hope International
+# Application mobile HOPE International Project
 
 Coque native (Capacitor 8) autour du site web `apps/web`, publiee sur le Play Store et l'App Store.
 L'application charge le site en ligne : les contenus, les trois langues et les comptes sont ceux du site,

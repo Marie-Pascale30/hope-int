@@ -50,7 +50,7 @@
   background: linear-gradient(180deg, rgba(8, 14, 11, 0.6) 0%, rgba(8, 14, 11, 0) 60%);
 }
 
-.site-main > .page-banner + :is(.home-hero, .pub-hero, .don-hero, .acc-hero) {
+.site-main > .page-banner + :is(.home-hero, .pub-hero, .don-hero, .acc-hero, .acc-auth, .don-thanks) {
   margin-top: 0;
   border-top: 0;
   padding-top: clamp(8px, 2vw, 24px);
@@ -64,16 +64,23 @@
 
 /* ---------- Logo ---------- */
 
+/* Logo officiel : soleil + "HOPE" (brun de marque) + "International Project" (or fonce).
+   En theme sombre, --brand et --accent-700 basculent sur des teintes claires lisibles. */
 .logo {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: var(--ink);
+  color: var(--brand);
   flex-shrink: 0;
 }
 
 .logo:hover {
-  color: var(--ink);
+  color: var(--brand);
+}
+
+.logo__mark {
+  flex-shrink: 0;
+  object-fit: contain;
 }
 
 .logo__text {
@@ -91,9 +98,9 @@
   font-family: var(--font-sans);
   font-size: 0.62rem; /* sous-titre du logo : logotype, exempte de la taille minimale de texte */
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--accent-700);
 }
 
 .logo--light,
@@ -102,7 +109,7 @@
 }
 
 .logo--light .logo__text small {
-  color: var(--on-dark-3);
+  color: var(--accent-on-dark);
 }
 
 /* ---------- En-tête ---------- */
@@ -114,19 +121,17 @@
   /* Transparent en haut de page, superpose au contenu (voir .site-main) */
   margin-bottom: calc(-1 * var(--header-offset));
   background: transparent;
-  transition: backdrop-filter 0.2s ease, background-color 0.2s ease;
-  background: color-mix(in srgb, var(--bg) 86%, transparent);
-  backdrop-filter: saturate(1.4) blur(12px);
   border-bottom: 1px solid transparent;
-  transition: border-color var(--duration) ease, box-shadow var(--duration) ease;
+  transition: background-color var(--duration) ease, border-color var(--duration) ease, box-shadow var(--duration) ease;
   /* viewport-fit=cover : l'en-tete collant ne passe pas sous l'encoche / la barre d'etat (PWA) */
   padding-top: env(safe-area-inset-top, 0px);
 }
 
-/* Des qu'on defile : toujours transparent, juste un leger flou du contenu qui passe dessous */
+/* Transparent en haut de page ; des qu'on defile, l'en-tete prend un fond leger (le flou est
+   porte par ::before dans glass.css) */
 .site-header.is-scrolled {
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background-color: color-mix(in srgb, var(--bg) 86%, transparent);
+  box-shadow: 0 1px 0 var(--line);
 }
 
 /* Telephone et tablette : sur un petit ecran, le contenu qui passe sous le logo et les boutons
@@ -145,40 +150,49 @@
    Actif des le rendu serveur grace a :has (la page doit commencer par une telle zone) ;
    SiteHeader ajoute is-past-media quand aucune zone sombre n'est sous l'en-tete.
    Les panneaux deroulants (langue, compte) gardent leurs couleurs. */
-html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) {
+html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media):not(.is-scrolled) {
   --header-hover: rgba(255, 255, 255, 0.14);
 }
 
-html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) :is(.logo, .logo:hover, .site-header__login, .site-header__login:hover, .theme-toggle, .theme-toggle:hover, .locale-menu__trigger, .locale-menu__trigger:hover) {
+html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media):not(.is-scrolled) :is(.logo, .logo:hover, .site-header__login, .site-header__login:hover, .theme-toggle, .theme-toggle:hover, .locale-menu__trigger, .locale-menu__trigger:hover) {
   color: #fff;
 }
 
-html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) .logo__text small {
+html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media):not(.is-scrolled) .logo__text small {
   color: rgba(255, 255, 255, 0.75);
 }
 
-html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) :is(.site-header__login:hover, .theme-toggle:hover, .locale-menu__trigger:hover) {
+html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media):not(.is-scrolled) :is(.site-header__login:hover, .theme-toggle:hover, .locale-menu__trigger:hover) {
   background: var(--header-hover);
 }
 
-html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) .site-header__tools {
+html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media):not(.is-scrolled) .site-header__tools {
   border-right-color: rgba(255, 255, 255, 0.3);
 }
 
-html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) :is(.site-header__burger, .user-menu__trigger) {
+html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media):not(.is-scrolled) :is(.site-header__burger, .user-menu__trigger) {
   border-color: rgba(255, 255, 255, 0.35);
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
 }
 
 @media (min-width: 961px) {
-  html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) .site-nav a {
-    color: rgba(255, 255, 255, 0.88);
+  /* Liens de premier niveau seulement : le panneau "L'association" garde ses couleurs */
+  html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media):not(.is-scrolled) :is(.site-nav > ul > li > a, .site-nav__toggle) {
+    color: #fff;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
   }
 
-  html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media) .site-nav a:hover {
+  html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media):not(.is-scrolled) :is(.site-nav > ul > li > a:hover, .site-nav__toggle:hover, .site-nav__group.is-open .site-nav__toggle) {
     background: var(--header-hover);
     color: #fff;
+  }
+
+  /* Onglet actif sur photo : pastille sombre translucide, texte blanc (lisible sur toute image) */
+  html:not(.has-mobile-nav):has([data-header-overlay]) .site-header:not(.is-past-media):not(.is-scrolled) :is(.site-nav > ul > li > a.is-active, .site-nav__toggle.is-active) {
+    background: rgba(20, 10, 5, 0.45);
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
   }
 }
 
@@ -200,7 +214,7 @@ html.has-mobile-nav .site-header {
   flex: 1;
 }
 
-.site-nav ul {
+.site-nav > ul {
   display: flex;
   justify-content: center;
   gap: var(--space-1);
@@ -228,6 +242,138 @@ html.has-mobile-nav .site-header {
   font-weight: 600;
   color: var(--brand-700);
   background: var(--brand-50);
+}
+
+/* Libelles toujours sur une ligne ("Nos projets", "Nous rejoindre") */
+.site-nav ul > li > a,
+.site-nav__toggle {
+  white-space: nowrap;
+}
+
+/* ---- Menu "L'association" ---- */
+.site-nav__group {
+  position: relative;
+}
+
+.site-nav__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px 8px 14px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  font: inherit;
+  font-size: var(--text-md);
+  font-weight: 500;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+
+.site-nav__toggle:hover,
+.site-nav__group.is-open .site-nav__toggle {
+  color: var(--ink);
+  background: var(--surface-2);
+}
+
+.site-nav__toggle.is-active {
+  font-weight: 600;
+  color: var(--brand-700);
+  background: var(--brand-50);
+}
+
+.site-nav__chevron {
+  transition: transform var(--duration-fast) ease;
+}
+
+.site-nav__group.is-open .site-nav__chevron {
+  transform: rotate(180deg);
+}
+
+.site-nav__submenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 60;
+  display: grid;
+  gap: 2px;
+  min-width: 280px;
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.site-nav__submenu[hidden] {
+  display: none;
+}
+
+.site-nav .site-nav__submenu a {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  color: var(--ink);
+  white-space: normal;
+}
+
+.site-nav__label {
+  font-weight: 600;
+}
+
+.site-nav__hint {
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+.site-nav .site-nav__submenu a.is-active {
+  background: var(--brand-50);
+  color: var(--brand-700);
+}
+
+/* Petit bureau (961-1100px) : onglets resserres pour tenir sur une ligne a cote des actions */
+@media (min-width: 961px) and (max-width: 1100px) {
+  .site-header__inner {
+    gap: var(--space-4);
+  }
+
+  .site-nav > ul {
+    gap: 0;
+  }
+
+  .site-nav ul > li > a,
+  .site-nav__toggle {
+    padding: 8px 9px;
+    font-size: var(--text-sm);
+  }
+}
+
+/* Menu mobile : le groupe se deplie dans le flux, en retrait sous son titre */
+@media (max-width: 960px) {
+  .site-nav__toggle {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 1.02rem;
+  }
+
+  .site-nav__submenu {
+    position: static;
+    min-width: 0;
+    margin: 2px 0 6px 14px;
+    padding: 4px 0 4px 10px;
+    border: 0;
+    border-left: 2px solid var(--line);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
 }
 
 .site-nav__mobile-actions {
@@ -533,7 +679,7 @@ html.has-mobile-nav .site-header {
     display: flex;
   }
 
-  .site-nav ul {
+  .site-nav > ul {
     flex-direction: column;
     gap: 2px;
   }
@@ -576,6 +722,38 @@ html.has-mobile-nav .site-header {
 
   .site-header__donate-short {
     display: inline;
+  }
+
+  /* Logo compact : "International / Project" sur deux lignes, sinon le bouton du menu sort de l'ecran a 360px */
+  .site-header .logo {
+    gap: 8px;
+  }
+
+  .site-header .logo__mark {
+    width: 30px;
+    height: 30px;
+  }
+
+  .site-header .logo__text small {
+    width: min-content;
+    letter-spacing: 0.06em;
+    line-height: 1.15;
+  }
+}
+
+/* Tres petits ecrans (320px) : bouton de don reduit au cœur, libelle conserve pour les lecteurs d'ecran */
+@media (max-width: 359px) {
+  .site-header__donate {
+    padding-inline: 10px;
+  }
+
+  .site-header__donate-short {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
   }
 }
 

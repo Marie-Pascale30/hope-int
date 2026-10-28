@@ -9,6 +9,8 @@ export const revalidate = 3600;
 
 const STATIC_PAGES = [
   { path: "/", priority: 1, changeFrequency: "daily" },
+  { path: "/a-propos", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/galerie", priority: 0.7, changeFrequency: "monthly" },
   { path: "/projets", priority: 0.9, changeFrequency: "daily" },
   { path: "/actualites", priority: 0.8, changeFrequency: "daily" },
   { path: "/evenements", priority: 0.8, changeFrequency: "daily" },

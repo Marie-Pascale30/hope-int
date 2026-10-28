@@ -2,7 +2,7 @@ const transport = require("./emailTransport");
 const outbox = require("./emailOutbox");
 
 const isProduction = process.env.NODE_ENV === "production";
-const ORG_NAME = process.env.ORG_NAME || "HOPE International";
+const ORG_NAME = process.env.ORG_NAME || "HOPE International Project";
 
 const { hasMailConfig } = transport;
 

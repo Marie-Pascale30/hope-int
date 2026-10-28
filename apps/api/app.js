@@ -84,7 +84,7 @@ app.use(csrfGuard);
 app.use("/uploads", express.static("uploads", { maxAge: "7d" }));
 
 app.get("/", (_req, res) => {
-  res.send("HOPE INTERNATIONAL BACKEND RUNNING");
+  res.send("HOPE INTERNATIONAL PROJECT BACKEND RUNNING");
 });
 
 app.get("/api/health", async (_req, res) => {

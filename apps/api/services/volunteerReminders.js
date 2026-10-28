@@ -8,7 +8,7 @@ const logService = require("./activityLogService");
 const emailService = require("./emailService");
 const preferences = require("./preferences");
 
-const ORG_NAME = process.env.ORG_NAME || "HOPE International";
+const ORG_NAME = process.env.ORG_NAME || "HOPE International Project";
 const FRONTEND_URL = () => (process.env.FRONTEND_URL || "http://localhost:3001").replace(/\/$/, "");
 
 // Delai avant le debut a partir duquel le rappel part (defaut 24 h : la veille).

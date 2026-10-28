@@ -54,7 +54,7 @@
       "description": "Track your donations, download your receipts and sign up for our community events.",
       "hasAccount": "Already registered? <link>Sign in</link>",
       "submit": "Create my account",
-      "teamNote": "Would you like to join the HOPE International team (as a volunteer, employee or regional coordinator)? A member account is not enough: <link>submit your application</link> and we will get back to you.",
+      "teamNote": "Would you like to join the HOPE International Project team (as a volunteer, employee or regional coordinator)? A member account is not enough: <link>submit your application</link> and we will get back to you.",
       "opening": "Opening your account…",
       "sentTitle": "Check your inbox",
       "sentDescription": "Your sign-up request has been received.",
@@ -115,7 +115,7 @@
         "tipsTitle": "Good practice",
         "tip1": "Choose a unique password, ideally at least 12 characters long.",
         "tip2": "After a change, your other sessions are signed out automatically.",
-        "tip3": "HOPE International will never ask for your password by email or phone.",
+        "tip3": "HOPE International Project will never ask for your password by email or phone.",
         "sessions": {
           "title": "Signed-in devices",
           "text": "Lost phone, shared computer? Sign out everywhere your account is open, including here. You will need to sign in again on each device.",
@@ -232,7 +232,7 @@
       "label": "Allocation of your donation",
       "general": "Where it’s needed most",
       "recommended": "Recommended",
-      "generalText": "Our team directs your donation to the most urgent needs: microloans, training, mutual support.",
+      "generalText": "Our team directs your donation to the most urgent needs: schooling, health, support for the most vulnerable.",
       "country": "Cameroon",
       "regionDonors": "{region} · {count, plural, one {# donor} other {# donors}}",
       "progressLabel": "Progress of the {title} campaign",
@@ -282,8 +282,8 @@
     "donate": {
       "hero": {
         "eyebrow": "Donate",
-        "title": "Give families the means to <hl>succeed</hl>",
-        "lead": "Every donation funds community microloans, training and hands-on support in Cameroon. You choose where your generosity goes, and we show you what it makes possible."
+        "title": "Give children the means to <hl>grow</hl>",
+        "lead": "Every donation funds school supplies, sponsorships, healthcare and practical support for the most vulnerable in Cameroon. You choose where your generosity goes; we show you what it makes possible."
       },
       "general": "Where it’s needed most",
       "perMonthShort": "/ month",
@@ -295,7 +295,7 @@
       "steps": {
         "support": {
           "title": "Your support",
-          "description": "A monthly donation helps us plan our support for families over the long term."
+          "description": "A monthly donation lets us plan sponsorships and support over time."
         },
         "amount": {
           "title": "Amount",
@@ -347,13 +347,13 @@
       },
       "impact": {
         "sentence": "<strong>{amount}{frequency, select, monthly { a month} other {}}</strong>{currency, select, xaf { (≈ {equivalent})} other {}} could provide, for example, {impact}",
-        "cooperative": "the starter stock for a farming cooperative: improved seeds and small tools for five families.",
-        "fieldAgent": "three months of support from a field officer for a group of ten women, training included.",
-        "microcredit": "a first community microloan of {loan} to start a business: fritters, sewing or small-scale livestock.",
-        "training": "a full business management course for a market trader: keeping her cash book, working out her margin, setting her prices.",
-        "education": "a financial literacy session for a group of 20 women: saving, budgeting, repaying.",
-        "savingsBook": "a savings book and a cash book for a new member of a solidarity group.",
-        "fund": "a contribution to the solidarity fund that finances loans for the families we support."
+        "sponsorship": "a year of school sponsorship for a child: school fees, supplies and follow-up throughout the year.",
+        "business": "a cheque of {grant} to help a mother start or grow her small business, as on International Women's Day.",
+        "medical": "medical help for a sick, elderly or disabled person: a consultation and medicines.",
+        "christmas": "a Christmas present and a festive meal for a child in an orphanage.",
+        "schoolKit": "a school kit for a child at the start of the school year: exercise books, pens, a ruler and a slate.",
+        "hygieneKit": "a hygiene kit for a vulnerable person: soap, a toothbrush and toothpaste.",
+        "fund": "a contribution to our work in the field: back-to-school drives, health campaigns and support for the most vulnerable."
       },
       "requestedClosed": "The requested project is no longer accepting donations or is no longer online: you can support another campaign below.",
       "donor": {
@@ -453,8 +453,8 @@
         "receiptNumber": "Receipt no."
       },
       "share": {
-        "text": "I’ve just supported HOPE International, which helps Cameroonian families on their path to independence. Join me!",
-        "textProject": "I just supported “{title}” with HOPE International. Join me!"
+        "text": "I have just supported HOPE International Project, which acts for the education of underprivileged children in Cameroon. Join me!",
+        "textProject": "I just supported “{title}” with HOPE International Project. Join me!"
       },
       "monthly": {
         "stopped": "This monthly donation has been stopped: no further payments will be taken.",
@@ -472,13 +472,13 @@
         "eyebrow": "Donation confirmed",
         "title": "Thank you!",
         "titleNamed": "Thank you, {name}!",
-        "lead": "Your donation of <strong>{amount}</strong>{frequency, select, monthly { a month} other {}} will directly help families build their future. The whole HOPE International team warmly thanks you.",
+        "lead": "Your donation of <strong>{amount}</strong>{frequency, select, monthly { per month} other {}} will directly help children and vulnerable people regain hope. The whole HOPE International Project team warmly thanks you.",
         "partialRefund": "A partial refund of {amount} has been made on this donation. The balance remains with the project.",
         "download": "Download my receipt (PDF)",
         "receiptSent": "A receipt has also been sent to you by email.",
         "next": {
           "projectsTitle": "Discover our projects",
-          "projectsText": "Microloans, training, cooperatives: follow the work you are making possible.",
+          "projectsText": "Education, health, social support: follow the actions you make possible.",
           "projectsButton": "View projects",
           "shareTitle": "Spread the word about HOPE",
           "shareText": "A single share can inspire someone close to you to join the movement.",

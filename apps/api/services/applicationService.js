@@ -9,7 +9,7 @@ const { normalizeInterests } = require("@hope/shared/applications");
 const { HttpError, conflict, forbidden, notFound } = require("../utils/httpError");
 const { FRONTEND_URL } = require("../utils/security");
 
-const ORG_NAME = process.env.ORG_NAME || "HOPE International";
+const ORG_NAME = process.env.ORG_NAME || "HOPE International Project";
 const CLOSED_MESSAGE = "Cette candidature a déjà été clôturée";
 
 // Emails d'information : jamais bloquants pour la reponse (ni en cas d'erreur SMTP).

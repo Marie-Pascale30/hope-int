@@ -8,6 +8,7 @@ import { Card } from "../../components/ui";
 import PageBanner from "../../components/site/PageBanner";
 import { PublicHero } from "./components";
 import JoinForm from "./components/JoinForm";
+import MembershipFees from "./components/MembershipFees";
 import { GuestOnly, MemberWelcome } from "./components/JoinMemberGate";
 
 const WAYS = [
@@ -47,6 +48,9 @@ export default function JoinView({ regions = [], interestAreas = [] }) {
           </ol>
         </div>
       </section>
+
+      {/* Role des membres, prerequis, droit d'adhesion et cotisations (bareme commun avec "Qui sommes-nous") */}
+      <MembershipFees />
 
       <GuestOnly>
         <section className="section section--alt" aria-labelledby="join-form-title">

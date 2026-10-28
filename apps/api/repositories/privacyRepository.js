@@ -110,8 +110,6 @@ exports.eraseRelated = async (connection, { userId, email, placeholderEmail }) =
         [placeholderEmail, address]);
     await run("consents", "DELETE FROM consents WHERE user_id = ? OR email = ?", [userId, address]);
     await run("passwordResets", "DELETE FROM password_resets WHERE user_id = ?", [userId]);
-    await connection.query("DELETE FROM user_mfa_backup_codes WHERE user_id = ?", [userId]);
-    await connection.query("DELETE FROM user_mfa WHERE user_id = ?", [userId]);
     await run("emailsPending", "DELETE FROM email_outbox WHERE LOWER(to_address) = ? AND status IN ('pending', 'retry')", [address]);
     await run("emailsSent",
         "UPDATE email_outbox SET to_address = ?, body_text = '', attachments = NULL WHERE LOWER(to_address) = ?",

@@ -1,0 +1,307 @@
+/* =========================================================
+   Galerie de photos (photo-gallery : PhotoGallery.jsx), visionneuse
+   (lightbox : Lightbox.jsx) et albums de la page Galerie (gallery-).
+   Uniquement des tokens de globals.css : themes clair et sombre.
+   ========================================================= */
+
+/* ---------- Vignettes ---------- */
+
+.photo-gallery {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.photo-gallery__btn {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  cursor: zoom-in;
+}
+
+.photo-gallery__btn:focus-visible {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: var(--focus-offset);
+}
+
+.photo-gallery__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform var(--duration-slow) ease;
+}
+
+.photo-gallery__img--cover {
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-gallery__btn:hover .photo-gallery__img {
+  transform: scale(1.04);
+}
+
+/* Colonnes : chaque photo garde ses proportions (affiches comprises) */
+.photo-gallery--masonry {
+  columns: 4 200px;
+  column-gap: var(--space-3);
+}
+
+.photo-gallery--masonry .photo-gallery__item {
+  margin-bottom: var(--space-3);
+  break-inside: avoid;
+}
+
+/* Grille de carres (accueil) */
+.photo-gallery--mosaic {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.photo-gallery--mosaic .photo-gallery__btn {
+  aspect-ratio: 1;
+}
+
+@media (min-width: 641px) {
+  .photo-gallery--mosaic {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1025px) {
+  .photo-gallery--mosaic {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Bande de petites vignettes (parcours "Qui sommes-nous") */
+.photo-gallery--strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.photo-gallery--strip .photo-gallery__btn {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-sm);
+}
+
+.photo-gallery__more {
+  display: grid;
+  place-items: center;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--brand-700);
+  background: var(--brand-50);
+}
+
+@media (max-width: 640px) {
+  .photo-gallery--masonry {
+    columns: 2;
+    column-gap: var(--space-2);
+  }
+
+  .photo-gallery--masonry .photo-gallery__item {
+    margin-bottom: var(--space-2);
+  }
+
+  .photo-gallery--mosaic {
+    gap: var(--space-2);
+  }
+}
+
+/* ---------- Visionneuse ---------- */
+
+.lightbox {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--on-dark);
+  background: var(--surface-dark);
+}
+
+.lightbox::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Page figee derriere la visionneuse */
+html:has(.lightbox[open]) {
+  overflow: hidden;
+}
+
+.lightbox__frame {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--space-2);
+  height: 100%;
+  padding: max(12px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+}
+
+.lightbox__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.lightbox__counter {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--on-dark-2);
+}
+
+.lightbox__figure {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  min-height: 0;
+  margin: 0;
+}
+
+.lightbox__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  touch-action: pan-y;
+}
+
+.lightbox__img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(100%, calc(100dvh - 170px));
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  user-select: none;
+}
+
+.lightbox__caption {
+  max-width: 70ch;
+  margin-inline: auto;
+  font-size: var(--text-md);
+  text-align: center;
+  color: var(--on-dark);
+}
+
+.lightbox__nav {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  left: 8px;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.lightbox__btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--on-dark) 35%, transparent);
+  border-radius: 50%;
+  color: var(--on-dark);
+  background: color-mix(in srgb, var(--surface-dark) 75%, transparent);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background var(--duration-fast) ease;
+}
+
+.lightbox__btn:hover {
+  background: var(--surface-dark);
+}
+
+.lightbox__btn:focus-visible {
+  outline: var(--focus-width) solid var(--focus-on-dark);
+  outline-offset: 2px;
+}
+
+.lightbox__btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ---------- Page Galerie : albums ---------- */
+
+.gallery-albums {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(36px, 5vw, 64px);
+}
+
+.gallery-album {
+  scroll-margin-top: calc(var(--header-h) + 8px);
+}
+
+.gallery-album__head {
+  max-width: 760px;
+  margin-bottom: var(--space-4);
+}
+
+.gallery-album__head h2 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-2xl);
+}
+
+.gallery-album__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-700);
+}
+
+.gallery-album__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gallery-album__meta svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.gallery-album__caption {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+/* Photos d'une actualite (sous le texte) */
+.pub-article__photos {
+  margin-top: var(--space-8);
+}
+
+.pub-article__photos h2 {
+  margin: 0 0 var(--space-4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-gallery__img {
+    transition: none;
+  }
+
+  .photo-gallery__btn:hover .photo-gallery__img {
+    transform: none;
+  }
+}

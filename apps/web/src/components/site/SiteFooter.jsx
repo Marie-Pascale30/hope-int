@@ -8,13 +8,13 @@ import { DataSaverToggle } from "../eco/DataSaver";
 import { Link, useLocalePath } from "../../i18n/navigation";
 import NewsletterSignup from "../../views/engagement/NewsletterSignup";
 import SocialLinks from "../../views/engagement/SocialLinks";
-
-const DEFAULT_ORGANIZATION = { name: "HOPE International", email: "", phone: "", address: "" };
+import { telHref, withOrganizationDefaults } from "../../views/site/organization";
 
 export default function SiteFooter({ organization }) {
   const t = useTranslations();
   const lp = useLocalePath();
-  const org = { ...DEFAULT_ORGANIZATION, ...(organization || {}) };
+  // Coordonnees de l'API, completees par les valeurs reelles de repli (API ancienne ou absente).
+  const org = withOrganizationDefaults(organization);
 
   return (
     <footer className="site-footer">
@@ -30,6 +30,8 @@ export default function SiteFooter({ organization }) {
         <div>
           <h2 className="site-footer__title">{t("footer.explore")}</h2>
           <ul>
+            <li><Link href="/a-propos">{t("nav.about")}</Link></li>
+            <li><Link href="/galerie">{t("nav.gallery")}</Link></li>
             <li><Link href="/projets">{t("nav.projects")}</Link></li>
             <li><Link href="/actualites">{t("nav.news")}</Link></li>
             <li><Link href="/evenements">{t("nav.events")}</Link></li>
@@ -51,9 +53,12 @@ export default function SiteFooter({ organization }) {
         <div>
           <h2 className="site-footer__title">{t("footer.contact")}</h2>
           <ul className="site-footer__contact">
-            {org.address && <li><MapPin size={16} aria-hidden="true" /> {org.address}</li>}
-            {org.email && <li><Mail size={16} aria-hidden="true" /> <a href={`mailto:${org.email}`}>{org.email}</a></li>}
-            {org.phone && <li><Phone size={16} aria-hidden="true" /> <a href={`tel:${org.phone.replace(/\s+/g, "")}`}>{org.phone}</a></li>}
+            <li>
+              <MapPin size={16} aria-hidden="true" />{" "}
+              <span>{org.address}{org.poBox && <><br />{t("footer.poBox", { number: org.poBox })}</>}</span>
+            </li>
+            <li><Phone size={16} aria-hidden="true" /> <a href={telHref(org.phone)}>{org.phone}</a></li>
+            <li><Mail size={16} aria-hidden="true" /> <a href={`mailto:${org.email}`}>{org.email}</a></li>
             <li><Link href="/contact">{t("nav.contact")} →</Link></li>
           </ul>
         </div>

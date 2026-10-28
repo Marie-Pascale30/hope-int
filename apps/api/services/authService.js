@@ -5,7 +5,6 @@ const userRepo = require("../repositories/userRepository");
 const resetRepo = require("../repositories/passwordResetRepository");
 const attemptRepo = require("../repositories/authAttemptRepository");
 const logService = require("./activityLogService");
-const mfaService = require("./engagementMfaService");
 const consentService = require("./consentService");
 const { sendPasswordResetEmail, sendRegistrationAttemptEmail } = require("./emailService");
 const { getPermissionsForRoles } = require("@hope/shared/rbac");
@@ -104,16 +103,10 @@ exports.login = async (email, password) => {
 
     await attemptRepo.clear("login", identifier);
 
-    // Double authentification : pas de session avant le second facteur (ou son enrolement).
-    const mfa = await mfaService.loginRequirement(user);
-    if (mfa) {
-        await logService.log({ userId: user.id, action: "auth.mfa_challenge", meta: { step: mfa } });
-        return { mfa, challenge: mfaService.signChallenge(user, mfa) };
-    }
     return exports.openSession(user);
 };
 
-// Session ouverte apres authentification complete (mot de passe, puis second facteur si requis).
+// Session ouverte apres authentification (mot de passe correct).
 exports.openSession = async (user) => {
     const fresh = (await userRepo.findAuthById(user.id)) || user;
     await userRepo.touchLogin(fresh.id);

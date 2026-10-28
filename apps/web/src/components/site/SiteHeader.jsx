@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Heart, LayoutDashboard, LogOut, Menu, UserRound, X } from "lucide-react";
+import { ChevronDown, Heart, LayoutDashboard, LogOut, Menu, UserRound, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Logo from "./Logo";
 import LocaleSwitcher from "./LocaleSwitcher";
@@ -12,6 +12,15 @@ import { useAuth } from "../../context/AuthContext";
 import { Link, useLocalePath, usePathname } from "../../i18n/navigation";
 import { isStaff } from "../../utils/rbac";
 
+// Pages de presentation regroupees sous "L'association" (menu deroulant) : l'en-tete garde six
+// entrees courtes, sur une seule ligne.
+const ASSOCIATION = [
+  { href: "/a-propos", key: "about", hint: "aboutHint" },
+  { href: "/galerie", key: "gallery", hint: "galleryHint" },
+  { href: "/equipe", key: "team", hint: "teamHint" },
+  { href: "/transparence", key: "transparency", hint: "transparencyHint" },
+];
+
 const NAV = [
   { href: "/projets", key: "projects" },
   { href: "/actualites", key: "news" },
@@ -19,6 +28,65 @@ const NAV = [
   { href: "/rejoindre", key: "join" },
   { href: "/contact", key: "contact" },
 ];
+
+// Menu "L'association" : bouton a etat (aria-expanded) ; Echap ou un clic a l'exterieur le ferme.
+// Dans le menu mobile, il se deplie sur place (meme composant).
+function AssociationMenu({ t, isActive }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const buttonRef = useRef(null);
+  const active = ASSOCIATION.some((item) => isActive(item.href));
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const close = (event) => !ref.current?.contains(event.target) && setOpen(false);
+    const onKey = (event) => {
+      if (event.key !== "Escape") return;
+      // Echap ferme ce menu sans fermer le menu mobile qui le contient.
+      event.stopPropagation();
+      setOpen(false);
+      buttonRef.current?.focus();
+    };
+    document.addEventListener("mousedown", close);
+    ref.current?.addEventListener("keydown", onKey);
+    const node = ref.current;
+    return () => {
+      document.removeEventListener("mousedown", close);
+      node?.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <li className={`site-nav__group${open ? " is-open" : ""}`} ref={ref}>
+      <button
+        type="button"
+        ref={buttonRef}
+        className={`site-nav__toggle${active ? " is-active" : ""}`}
+        aria-expanded={open}
+        aria-controls="site-nav-association"
+        onClick={() => setOpen((value) => !value)}
+      >
+        {t("association")}
+        <ChevronDown size={16} aria-hidden="true" className="site-nav__chevron" />
+      </button>
+      <ul id="site-nav-association" className="site-nav__submenu" aria-label={t("associationMenu")} hidden={!open}>
+        {ASSOCIATION.map((item) => (
+          <li key={item.href}>
+            <Link
+              href={item.href}
+              className={isActive(item.href) ? "is-active" : undefined}
+              aria-current={isActive(item.href) ? "page" : undefined}
+              onClick={() => setOpen(false)}
+            >
+              <span className="site-nav__label">{t(item.key)}</span>
+              <span className="site-nav__hint">{t(item.hint)}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </li>
+  );
+}
 
 function UserMenu({ user, onLogout, t }) {
   const [open, setOpen] = useState(false);
@@ -59,6 +127,7 @@ function UserMenu({ user, onLogout, t }) {
           </Link>
           {isStaff(user) && (
             // Back-office sans prefixe de langue (langue lue dans le cookie) : lien hors next-intl.
+            // eslint-disable-next-line @next/next/no-html-link-for-pages
             <a href="/admin" role="menuitem" onClick={() => setOpen(false)}>
               <LayoutDashboard size={17} aria-hidden="true" /> {t("admin")}
             </a>
@@ -84,9 +153,12 @@ export default function SiteHeader() {
   const burgerRef = useRef(null);
   const navRef = useRef(null);
 
-  useEffect(() => {
+  // Changement de page : le menu mobile se ferme pendant le rendu, sans effet ni second rendu.
+  const [menuPath, setMenuPath] = useState(pathname);
+  if (menuPath !== pathname) {
+    setMenuPath(pathname);
     setMobileOpen(false);
-  }, [pathname]);
+  }
 
   const closeMenu = useCallback(({ restoreFocus = true } = {}) => {
     setMobileOpen(false);
@@ -150,6 +222,7 @@ export default function SiteHeader() {
 
         <nav id="site-nav" ref={navRef} className={`site-nav${mobileOpen ? " is-open" : ""}`} aria-label={t("main")}>
           <ul>
+            <AssociationMenu key={pathname} t={t} isActive={isActive} />
             {NAV.map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className={isActive(item.href) ? "is-active" : undefined} aria-current={isActive(item.href) ? "page" : undefined}>

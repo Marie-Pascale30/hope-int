@@ -8,6 +8,9 @@ import { Button } from "./Button";
 import { cx, getFocusable } from "./utils";
 
 // Piege de focus, Echap, restauration du focus a la fermeture, titre relie par aria-labelledby.
+// Modales superposees (ex. phototheque ouverte depuis un formulaire) : seule la plus recente
+// gere le clavier.
+const openStack = [];
 
 export function Modal({ open, title, onClose, children, footer, large, closeLabel }) {
   const t = useTranslations("ui");
@@ -24,7 +27,11 @@ export function Modal({ open, title, onClose, children, footer, large, closeLabe
     const dialog = dialogRef.current;
     const previous = document.activeElement;
 
+    const token = {};
+    openStack.push(token);
+
     const onKey = (event) => {
+      if (openStack[openStack.length - 1] !== token) return;
       // Une boite de dialogue SweetAlert ouverte par-dessus gere elle-meme le clavier.
       if (document.querySelector(".swal2-container")) return;
       if (event.key === "Escape") {
@@ -59,6 +66,7 @@ export function Modal({ open, title, onClose, children, footer, large, closeLabe
     (firstField || dialog)?.focus();
 
     return () => {
+      openStack.splice(openStack.indexOf(token), 1);
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = previousOverflow;
       if (previous && typeof previous.focus === "function" && document.contains(previous)) previous.focus();

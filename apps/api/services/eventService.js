@@ -7,7 +7,7 @@ const waitlistRepo = require("../repositories/volunteerWaitlistRepository");
 const { badRequest, conflict, notFound } = require("../utils/httpError");
 const { removeUpload, removeReplacedUpload } = require("../utils/uploads");
 
-const ORG_NAME = process.env.ORG_NAME || "HOPE International";
+const ORG_NAME = process.env.ORG_NAME || "HOPE International Project";
 
 // ISO 8601 (UTC) -> DATETIME MySQL.
 function toSqlDateTime(value) {

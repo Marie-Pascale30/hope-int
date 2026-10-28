@@ -8,7 +8,7 @@ const logService = require("./activityLogService");
 const { singleLine } = require("./donationExtras");
 const { FRONTEND_URL } = require("../utils/security");
 
-const ORG_NAME = process.env.ORG_NAME || "HOPE International";
+const ORG_NAME = process.env.ORG_NAME || "HOPE International Project";
 
 function buildCard(payment) {
     const donor = singleLine(payment.entered_donor_name || payment.donor_name, 150) || "Un donateur";

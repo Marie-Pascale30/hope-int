@@ -27,7 +27,7 @@ fs.writeFileSync(path.join(WWW, "offline.html"), appOffline);
 fs.writeFileSync(
   path.join(WWW, "index.html"),
   `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">` +
-    `<title>Hope International</title><meta http-equiv="refresh" content="0; url=${APP_URL}"></head>` +
-    `<body style="margin:0;background:#1f5f4a"></body></html>\n`,
+    `<title>HOPE International Project</title><meta http-equiv="refresh" content="0; url=${APP_URL}"></head>` +
+    `<body style="margin:0;background:#fbf7f0"></body></html>\n`,
 );
 console.log(`www/ pret (site : ${APP_URL})`);

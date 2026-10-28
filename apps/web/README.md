@@ -1,4 +1,4 @@
-# HOPE International — Site (@hope/web)
+# HOPE International Project — Site (@hope/web)
 
 Application Next.js 16 (App Router) consommant l'API Express/MySQL (`apps/api`). Les référentiels et permissions viennent de `@hope/shared` (`packages/shared`).
 

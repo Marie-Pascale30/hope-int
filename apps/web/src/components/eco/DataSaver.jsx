@@ -6,6 +6,8 @@
 // enregistre). Ce module lit et modifie cet attribut.
 import { useSyncExternalStore } from "react";
 import { Leaf } from "lucide-react";
+// Styles de la bascule (.eco-toggle), affichee aussi dans le pied de page de toutes les pages.
+import "@/src/styles/transparency.css";
 import { useTranslations } from "next-intl";
 
 export const ECO_COOKIE = "hope_eco";

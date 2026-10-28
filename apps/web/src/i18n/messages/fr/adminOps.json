@@ -28,7 +28,7 @@
       "remove": "Retirer l'image",
       "keep": "Conserver l'image actuelle",
       "altLabel": "Texte alternatif de l’image",
-      "altPlaceholder": "Ex. Des femmes récoltent du maïs dans un champ à Bafoussam",
+      "altPlaceholder": "Ex. Des enfants reçoivent leurs fournitures scolaires à Balessing",
       "altHint": "Décrivez ce que montre l’image pour les personnes qui ne la voient pas ({max} caractères max). Laissez vide si elle est purement décorative."
     },
     "common": {
@@ -265,8 +265,8 @@
         "scopeNote": "Cumuls déclarés des projets actifs en {year} : un projet pluriannuel compte dans chaque année qu'il couvre, ces chiffres ne s'additionnent donc pas d'une année à l'autre.",
         "scopeNoteRegion": "Cumuls déclarés des projets de la région {region} actifs en {year} : un projet pluriannuel compte dans chaque année qu'il couvre, ces chiffres ne s'additionnent donc pas d'une année à l'autre.",
         "beneficiaries": "{count, plural, one {bénéficiaire} other {bénéficiaires}}",
-        "trainees": "{count, plural, one {personne formée} other {personnes formées}}",
-        "credits": "{count, plural, one {crédit accordé} other {crédits accordés}}",
+        "trainees": "{count, plural, one {personne formée ou sensibilisée} other {personnes formées ou sensibilisées}}",
+        "credits": "{count, plural, one {aide accordée} other {aides accordées}}",
         "activeProjects": "{count, plural, one {projet en cours} other {projets en cours}}",
         "completedDetail": "{count, plural, one {# terminé} other {# terminés}} sur {total}",
         "regions": "{count, plural, one {région couverte} other {régions couvertes}}"
@@ -295,7 +295,7 @@
         "region": "Région",
         "beneficiaries": "Bénéficiaires",
         "trainees": "Formés",
-        "credits": "Crédits",
+        "credits": "Aides",
         "period": "Période",
         "ongoing": "en cours",
         "empty": "Aucun projet actif sur cette année."
@@ -569,7 +569,8 @@
         "content": "Contenu",
         "frame": "Cadre du projet",
         "impact": "Indicateurs d'impact",
-        "publication": "Image et publication"
+        "publication": "Image et publication",
+        "gallery": "Galerie photos"
       },
       "status": {
         "planifie": "Planifié (bientôt)",
@@ -592,8 +593,8 @@
         "budget": "Budget total (EUR)",
         "goal": "Objectif de collecte (EUR)",
         "beneficiaries": "Bénéficiaires",
-        "trainees": "Personnes formées",
-        "credits": "Crédits accordés"
+        "trainees": "Personnes formées ou sensibilisées",
+        "credits": "Aides accordées"
       },
       "placeholders": {
         "author": "Ex. Estelle K.",
@@ -612,6 +613,42 @@
       },
       "errors": {
         "dates": "La date de fin doit suivre la date de début"
+      },
+      "gallery": {
+        "hint": "Photos affichées sous le contenu, dans cet ordre ({max} au maximum). Photos sans dimensions : format 4/3 par défaut.",
+        "count": "{count, plural, =0 {Aucune photo} one {# photo} other {# photos}}",
+        "empty": "Aucune photo dans la galerie pour l'instant.",
+        "listLabel": "Photos de la galerie",
+        "position": "Photo {index} sur {total}",
+        "photoAlt": "Photo {index}",
+        "moveUp": "Monter la photo {index}",
+        "moveDown": "Descendre la photo {index}",
+        "remove": "Retirer la photo {index}",
+        "removed": "Photo {index} retirée de la galerie.",
+        "moved": "Photo déplacée en position {index} sur {total}.",
+        "added": "{count, plural, one {# photo ajoutée} other {# photos ajoutées}} à la galerie.",
+        "fromLibrary": "Ajouter depuis la photothèque du livret",
+        "upload": "Téléverser des photos",
+        "uploadHint": "JPG, PNG, WebP ou GIF, {max} Mo maximum par photo (plusieurs fichiers possibles).",
+        "uploading": "Envoi de la photo {done} sur {total}…",
+        "uploadFailed": "Envoi incomplet",
+        "uploadFailedText": "{count, plural, one {# photo n'a pas pu être envoyée} other {# photos n'ont pas pu être envoyées}} : {names}",
+        "full": "La galerie est complète ({max} photos maximum).",
+        "library": {
+          "title": "Photothèque du livret",
+          "intro": "Cochez les photos à ajouter. Les photos déjà présentes dans la galerie sont signalées.",
+          "album": "Album",
+          "allAlbums": "Tous les albums ({count} photos)",
+          "albumOption": "{title} · {place}, {date} ({count})",
+          "listLabel": "Photos de la photothèque",
+          "selected": "{count, plural, =0 {Aucune photo sélectionnée} one {# photo sélectionnée} other {# photos sélectionnées}}",
+          "already": "Déjà dans la galerie",
+          "selectAll": "Tout cocher",
+          "clear": "Tout décocher",
+          "add": "{count, plural, =0 {Ajouter} one {Ajouter # photo} other {Ajouter # photos}}",
+          "cancel": "Annuler",
+          "limit": "Au plus {count, plural, one {# photo peut encore être ajoutée} other {# photos peuvent encore être ajoutées}}."
+        }
       }
     },
     "events": {
@@ -684,7 +721,7 @@
       },
       "placeholders": {
         "noProject": "Aucun projet",
-        "location": "Ex. Centre HOPE, Douala",
+        "location": "Ex. Bonadibong, Akwa, Douala",
         "noRegion": "Non précisée"
       },
       "hints": {
@@ -732,7 +769,7 @@
         "name": "Nom",
         "contact": "Téléphone / email",
         "signature": "Signature",
-        "printedAt": "Imprimé le {date} — HOPE International"
+        "printedAt": "Imprimé le {date} — HOPE International Project"
       }
     }
   }

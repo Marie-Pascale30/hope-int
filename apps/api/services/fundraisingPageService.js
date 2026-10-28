@@ -12,7 +12,7 @@ const { badRequest, conflict, notFound } = require("../utils/httpError");
 const { removeUpload } = require("../utils/uploads");
 const { FRONTEND_URL, randomToken } = require("../utils/security");
 
-const ORG_NAME = process.env.ORG_NAME || "HOPE International";
+const ORG_NAME = process.env.ORG_NAME || "HOPE International Project";
 const MAX_DURATION_DAYS = 366;
 
 // Histoire : texte brut multiligne (rendu en texte par le site, jamais en HTML).

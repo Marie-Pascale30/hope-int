@@ -2,7 +2,7 @@
   "transparency": {
     "categories": {
       "training": "Training",
-      "microcredit": "Microcredit fund",
+      "microcredit": "Economic integration support",
       "equipment": "Equipment and supplies",
       "field_staff": "Field staff",
       "transport": "Transport and logistics",
@@ -23,17 +23,17 @@
     },
     "meta": {
       "title": "Financial transparency",
-      "description": "Where does your donation go? Income, spending by project and category, impact and annual reports of HOPE International, published every year.",
+      "description": "Where does your donation go? Income, spending by project and category, impact and annual reports of HOPE International Project, published every year.",
       "yearTitle": "Transparency {year}",
-      "yearDescription": "HOPE International’s {year} accounts: donations received, spending by project and category, impact in the field and annual report.",
+      "yearDescription": "HOPE International Project’s {year} accounts: donations received, spending by project and category, impact in the field and annual report.",
       "teamTitle": "Our team and volunteers",
-      "teamDescription": "Meet the people of HOPE International: the team and volunteers supporting families across the regions of Cameroon.",
+      "teamDescription": "Meet the women and men of HOPE International Project: the team and volunteers committed to children and the most vulnerable in Douala, Yaoundé, Dschang and the West region.",
       "offlineTitle": "Offline",
       "offlineDescription": "You are offline: pages you have already visited remain available."
     },
     "map": {
       "eyebrow": "In the field",
-      "title": "Our work across the 10 regions",
+      "title": "Where we work in Cameroon",
       "text": "{covered, plural, =0 {Our projects are gradually expanding.} one {# region already hosts our work} other {# regions already host our work}}: {projects, plural, =0 {no published project yet} one {# project} other {# projects}} and {events, plural, =0 {no upcoming event} one {# upcoming event} other {# upcoming events}}.",
       "hint": "Pick a region on the map or in the list to see its projects.",
       "regionLabel": "{region}: {projects, plural, =0 {no project} one {# project} other {# projects}}, {events, plural, =0 {no upcoming event} one {# upcoming event} other {# upcoming events}}",
@@ -121,8 +121,8 @@
         "scope": "Reported totals for projects active during the year: a multi-year project counts in each year it covers.",
         "projects": "Active projects",
         "beneficiaries": "Beneficiaries",
-        "trainees": "People trained",
-        "credits": "Microloans granted",
+        "trainees": "People trained and reached",
+        "credits": "Grants awarded",
         "regions": "Regions covered"
       },
       "documents": {
@@ -150,11 +150,11 @@
     "team": {
       "eyebrow": "Who we are",
       "title": "Our team and volunteers",
-      "lead": "Behind every project are committed women and men working alongside families in every region of Cameroon.",
+      "lead": "Behind every action are women and men committed to children and the most vulnerable, in Douala, Yaoundé, Dschang and the villages of the West region.",
       "teamTitle": "The team",
-      "teamText": "Management, coordination, finance and support units.",
+      "teamText": "Presidency, coordination, finance and support units.",
       "volunteersTitle": "Volunteers",
-      "volunteersText": "They give their time to run groups, train and support families.",
+      "volunteersText": "They give their time for back-to-school drives, orphanage visits, health campaigns and collections.",
       "photoAlt": "Portrait of {name}",
       "emptyTitle": "Portraits coming soon",
       "emptyText": "Team members freely choose whether to appear on this page.",

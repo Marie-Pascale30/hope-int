@@ -13,7 +13,7 @@ const logService = require("./activityLogService");
 const emailService = require("./emailService");
 const { conflict, notFound } = require("../utils/httpError");
 
-const ORG_NAME = process.env.ORG_NAME || "HOPE International";
+const ORG_NAME = process.env.ORG_NAME || "HOPE International Project";
 const ADMIN_URL = () => `${(process.env.FRONTEND_URL || "http://localhost:3001").replace(/\/$/, "")}/admin`;
 
 const TYPE_LABELS = { projects: "projet", news: "actualité", testimonials: "témoignage" };

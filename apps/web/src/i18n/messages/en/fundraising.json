@@ -56,7 +56,7 @@
       "organizer": "Organised by {name}",
       "endsOn": "until {date}",
       "storyTitle": "The story",
-      "projectNote": "Every donation goes to HOPE International's project “{project}” and comes with a receipt.",
+      "projectNote": "Every donation goes to the “{project}” project run by HOPE International Project and comes with a receipt.",
       "goal": "raised of a {goal} goal ({percent}%)",
       "progressLabel": "{percent}% of the goal reached",
       "supporters": "{count, plural, =0 {No supporters yet} one {# supporter} other {# supporters}}",
@@ -64,20 +64,20 @@
       "donate": "Support this fundraiser",
       "closedTitle": "Fundraiser ended",
       "closedText": "Thank you to all donors! You can still support the project from its page.",
-      "shareText": "I'm supporting the fundraiser “{title}” for HOPE International:",
+      "shareText": "I'm supporting the fundraiser “{title}” for HOPE International Project:",
       "shareLabel": "Share the fundraiser",
       "recentTitle": "Latest supporters",
       "anonymous": "Anonymous",
       "noSupporters": "Be the first to support this fundraiser!",
       "metaTitle": "Charity fundraiser",
-      "metaDescription": "Support a charity fundraiser for a HOPE International project in Cameroon."
+      "metaDescription": "Support a charity fundraiser for a project run by HOPE International Project in Cameroon."
     },
     "meta": {
       "pledgeTitle": "Monthly donation by Mobile Money",
       "pledgeDescription": "Commit to giving every month by Mobile Money: a reminder and a ready-to-use payment link, editable at any time.",
       "pledgeManageTitle": "Manage my monthly donation",
       "createTitle": "Create a fundraiser",
-      "createDescription": "Create a fundraising page for a HOPE International project and share it with your friends and family."
+      "createDescription": "Create a fundraising page for a project run by HOPE International Project and share it with your friends and family."
     },
     "pledge": {
       "summary": "{amount} per month, around day {day}",
@@ -159,7 +159,7 @@
       "eyebrow": "Charity fundraiser",
       "title": "Create my fundraiser",
       "editTitle": "Edit my fundraiser",
-      "lead": "A birthday, a race, an event? Create a fundraising page for a HOPE International project and invite your friends and family to give.",
+      "lead": "A birthday, a race, an event? Create a fundraising page for a project run by HOPE International Project and invite your friends and family to give.",
       "rejectedTitle": "Message from the team",
       "locked": "This fundraiser is published: it can no longer be edited. Contact the team for any correction.",
       "project": "Project supported",
@@ -221,7 +221,7 @@
         "closeText": "The page will stay visible but will no longer accept donations.",
         "closeConfirm": "Close",
         "closed": "Fundraiser closed",
-        "shareText": "Support my fundraiser “{title}” for HOPE International:"
+        "shareText": "Support my fundraiser “{title}” for HOPE International Project:"
       }
     },
     "admin": {

@@ -2,7 +2,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { serverApi, settle } from "@/src/services/server";
 import { transparencyServer } from "@/src/services/transparencyServer";
 import HomeView from "@/src/views/site/HomeView";
-import { SITE_NAME, SITE_URL, buildMetadata, jsonLdProps } from "@/src/views/site/seo";
+import { FACEBOOK_URL, withOrganizationDefaults } from "@/src/views/site/organization";
+import { SITE_URL, buildMetadata, jsonLdProps } from "@/src/views/site/seo";
 
 export const revalidate = 60;
 
@@ -29,19 +30,30 @@ export default async function HomePage({ params }) {
     settle(transparencyServer.regions(locale)),
   ]);
   const failed = [impact, projects, testimonials, news, events].some((source) => source.error);
-  const org = meta.data?.organization || {};
+  const org = withOrganizationDefaults(meta.data?.organization);
+  const tAbout = await getTranslations({ locale, namespace: "site.about" });
+  const facebook = process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK || FACEBOOK_URL;
 
   const organization = {
     "@context": "https://schema.org",
     "@type": "NGO",
-    name: org.name || SITE_NAME,
+    name: org.name,
+    alternateName: "HOPE Intl Project",
     url: SITE_URL,
     logo: `${SITE_URL}/icon.svg`,
     description: t("home.description"),
+    slogan: tAbout("motto.slogan"),
     areaServed: { "@type": "Country", name: "Cameroon" },
-    ...(org.email ? { email: org.email } : {}),
-    ...(org.phone ? { telephone: org.phone } : {}),
-    ...(org.address ? { address: { "@type": "PostalAddress", streetAddress: org.address, addressCountry: "CM" } } : {}),
+    email: org.email,
+    telephone: org.phone,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: org.address,
+      postOfficeBoxNumber: org.poBox,
+      addressLocality: "Douala",
+      addressCountry: "CM",
+    },
+    sameAs: [facebook],
   };
 
   return (

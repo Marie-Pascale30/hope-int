@@ -8,7 +8,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/src/components/ui";
 import { useFormat } from "@/src/i18n/format";
 import { useLocalePath } from "@/src/i18n/navigation";
-import { impactKey, toEur } from "@/src/views/account/components/donationData";
+import { GRANT_XAF, impactKey, toEur } from "@/src/views/account/components/donationData";
 
 // Bornes du curseur par devise (le franc CFA a une parite fixe avec l'euro).
 export const CALCULATOR_RANGES = {
@@ -16,8 +16,6 @@ export const CALCULATOR_RANGES = {
   xaf: { min: 2500, max: 200000, step: 2500, initial: 15000 },
 };
 
-// Montant de microcredit cite dans les textes d'impact (FCFA), comme sur la page de don.
-const LOAN_XAF = 30000;
 const DEFAULT_XAF_PER_EUR = 655.957;
 
 // Equivalence d'un montant : cle de texte (account.donate.impact.<cle>) et montant en euros.
@@ -82,7 +80,7 @@ export default function ImpactCalculator({ xafPerEur = DEFAULT_XAF_PER_EUR }) {
             strong: (chunks) => <strong>{chunks}</strong>,
           })}
         </p>
-        <p className="impact-calc__impact">{tImpact(key, { loan: f.money(LOAN_XAF, "xaf") })}</p>
+        <p className="impact-calc__impact">{tImpact(key, { grant: f.money(GRANT_XAF, "xaf") })}</p>
         <Button href={lp(`/don?montant=${amount}&devise=${currency}`)} variant="accent" icon={Heart}>
           {t("cta", { amount: formatted })}
         </Button>

@@ -56,7 +56,7 @@
       "organizer": "Organisée par {name}",
       "endsOn": "jusqu'au {date}",
       "storyTitle": "Son histoire",
-      "projectNote": "Chaque don est reversé au projet « {project} » de HOPE International et donne droit à un reçu.",
+      "projectNote": "Chaque don est reversé au projet « {project} » de HOPE International Project et donne droit à un reçu.",
       "goal": "collectés sur un objectif de {goal} ({percent} %)",
       "progressLabel": "{percent} % de l'objectif atteint",
       "supporters": "{count, plural, =0 {Aucun soutien pour l'instant} one {# soutien} other {# soutiens}}",
@@ -64,20 +64,20 @@
       "donate": "Je soutiens cette collecte",
       "closedTitle": "Collecte terminée",
       "closedText": "Merci à tous les donateurs ! Vous pouvez toujours soutenir le projet depuis sa page.",
-      "shareText": "Je soutiens la collecte « {title} » pour HOPE International :",
+      "shareText": "Je soutiens la collecte « {title} » pour HOPE International Project :",
       "shareLabel": "Partager la collecte",
       "recentTitle": "Derniers soutiens",
       "anonymous": "Anonyme",
       "noSupporters": "Soyez la première personne à soutenir cette collecte !",
       "metaTitle": "Collecte solidaire",
-      "metaDescription": "Soutenez une collecte solidaire au profit d'un projet de HOPE International au Cameroun."
+      "metaDescription": "Soutenez une collecte solidaire au profit d'un projet de HOPE International Project au Cameroun."
     },
     "meta": {
       "pledgeTitle": "Don mensuel par Mobile Money",
       "pledgeDescription": "Engagez-vous à donner chaque mois par Mobile Money : un rappel et un lien de paiement prêt à l'emploi, modifiable à tout moment.",
       "pledgeManageTitle": "Gérer mon don mensuel",
       "createTitle": "Créer une collecte",
-      "createDescription": "Créez une page de collecte pour un projet de HOPE International et partagez-la avec vos proches."
+      "createDescription": "Créez une page de collecte pour un projet de HOPE International Project et partagez-la avec vos proches."
     },
     "pledge": {
       "summary": "{amount} par mois, autour du {day}",
@@ -159,7 +159,7 @@
       "eyebrow": "Collecte solidaire",
       "title": "Créer ma collecte",
       "editTitle": "Modifier ma collecte",
-      "lead": "Un anniversaire, une course, un événement ? Créez une page de collecte pour un projet de HOPE International et invitez vos proches à donner.",
+      "lead": "Un anniversaire, une course, un événement ? Créez une page de collecte pour un projet de HOPE International Project et invitez vos proches à donner.",
       "rejectedTitle": "Message de l'équipe",
       "locked": "Cette collecte est publiée : elle ne peut plus être modifiée. Contactez l'équipe pour toute correction.",
       "project": "Projet soutenu",
@@ -221,7 +221,7 @@
         "closeText": "La page restera visible mais n'acceptera plus de dons.",
         "closeConfirm": "Clôturer",
         "closed": "Collecte clôturée",
-        "shareText": "Soutenez ma collecte « {title} » pour HOPE International :"
+        "shareText": "Soutenez ma collecte « {title} » pour HOPE International Project :"
       }
     },
     "admin": {

@@ -1,5 +1,5 @@
 // Appels API du module engagement : preferences et consentements, newsletter, droits RGPD,
-// double authentification, CRM donateurs et campagnes. Chaque fonction renvoie res.data.
+// CRM donateurs et campagnes. Chaque fonction renvoie res.data.
 import API from "./api";
 
 const data = (promise) => promise.then((res) => res.data);
@@ -20,18 +20,6 @@ export const memberEngagementApi = {
   supportedProjects: () => data(API.get("/engagement/me/supported-projects")),
   exportData: () => data(API.get("/engagement/privacy/export")),
   erase: (password) => data(API.post("/engagement/privacy/erasure", { password, confirmation: true })),
-};
-
-// --- Double authentification ---
-export const mfaApi = {
-  verify: (code) => data(API.post("/auth/mfa/verify", { code })),
-  setup: () => data(API.post("/auth/mfa/setup")),
-  enable: (code) => data(API.post("/auth/mfa/enable", { code })),
-  status: () => data(API.get("/auth/mfa/status")),
-  disable: (payload) => data(API.post("/auth/mfa/disable", payload)),
-  regenerateBackupCodes: (code) => data(API.post("/auth/mfa/backup-codes", { code })),
-  adminStatus: (ids) => data(API.get("/engagement/security/mfa", { params: { ids: ids.join(",") } })),
-  adminReset: (userId) => data(API.post(`/engagement/security/users/${userId}/mfa/reset`)),
 };
 
 // --- CRM donateurs (MANAGE_DONORS) ---

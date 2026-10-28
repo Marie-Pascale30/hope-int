@@ -2,7 +2,7 @@
   "transparency": {
     "categories": {
       "training": "Formación",
-      "microcredit": "Fondo de microcréditos",
+      "microcredit": "Ayudas a la inserción económica",
       "equipment": "Equipamiento y material",
       "field_staff": "Personal de terreno",
       "transport": "Transporte y logística",
@@ -23,17 +23,17 @@
     },
     "meta": {
       "title": "Transparencia financiera",
-      "description": "¿A dónde va tu donación? Ingresos, gastos por proyecto y por categoría, impacto e informes anuales de HOPE International, publicados cada año.",
+      "description": "¿A dónde va tu donación? Ingresos, gastos por proyecto y por categoría, impacto e informes anuales de HOPE International Project, publicados cada año.",
       "yearTitle": "Transparencia {year}",
-      "yearDescription": "Las cuentas {year} de HOPE International: donaciones recibidas, gastos por proyecto y por categoría, impacto sobre el terreno e informe anual.",
+      "yearDescription": "Las cuentas {year} de HOPE International Project: donaciones recibidas, gastos por proyecto y por categoría, impacto sobre el terreno e informe anual.",
       "teamTitle": "El equipo y los voluntarios",
-      "teamDescription": "Conoce a las personas de HOPE International: el equipo y los voluntarios que acompañan a las familias en las regiones de Camerún.",
+      "teamDescription": "Conoce a las mujeres y los hombres de HOPE International Project: el equipo y los voluntarios comprometidos con los niños y los más vulnerables en Duala, Yaundé, Dschang y la región Oeste.",
       "offlineTitle": "Sin conexión",
       "offlineDescription": "Estás sin conexión: las páginas ya visitadas siguen disponibles."
     },
     "map": {
       "eyebrow": "Sobre el terreno",
-      "title": "Nuestras acciones en las 10 regiones",
+      "title": "Dónde actuamos en Camerún",
       "text": "{covered, plural, =0 {Nuestros proyectos se despliegan poco a poco.} one {# región ya acoge nuestras acciones} other {# regiones ya acogen nuestras acciones}}: {projects, plural, =0 {ningún proyecto publicado por ahora} one {# proyecto} other {# proyectos}} y {events, plural, =0 {ningún evento próximo} one {# evento próximo} other {# eventos próximos}}.",
       "hint": "Elige una región en el mapa o en la lista para ver sus proyectos.",
       "regionLabel": "{region}: {projects, plural, =0 {ningún proyecto} one {# proyecto} other {# proyectos}}, {events, plural, =0 {ningún evento próximo} one {# evento próximo} other {# eventos próximos}}",
@@ -121,8 +121,8 @@
         "scope": "Totales declarados de los proyectos activos durante el año: un proyecto plurianual cuenta en cada año que abarca.",
         "projects": "Proyectos activos",
         "beneficiaries": "Beneficiarios",
-        "trainees": "Personas formadas",
-        "credits": "Microcréditos concedidos",
+        "trainees": "Personas formadas y sensibilizadas",
+        "credits": "Ayudas concedidas",
         "regions": "Regiones cubiertas"
       },
       "documents": {
@@ -150,11 +150,11 @@
     "team": {
       "eyebrow": "Quiénes somos",
       "title": "El equipo y los voluntarios",
-      "lead": "Detrás de cada proyecto, mujeres y hombres comprometidos con las familias en todas las regiones de Camerún.",
+      "lead": "Detrás de cada acción, mujeres y hombres comprometidos con los niños y los más vulnerables, en Duala, Yaundé, Dschang y los pueblos de la región Oeste.",
       "teamTitle": "El equipo",
-      "teamText": "Dirección, coordinación, finanzas y áreas de apoyo.",
+      "teamText": "Presidencia, coordinación, finanzas y áreas de apoyo.",
       "volunteersTitle": "Los voluntarios",
-      "volunteersText": "Dan su tiempo para animar los grupos, formar y acompañar.",
+      "volunteersText": "Dedican su tiempo a las vueltas al cole, las visitas a orfanatos, las campañas de salud y las colectas.",
       "photoAlt": "Retrato de {name}",
       "emptyTitle": "Los retratos llegarán pronto",
       "emptyText": "Los miembros del equipo eligen libremente aparecer en esta página.",

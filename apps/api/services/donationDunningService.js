@@ -11,7 +11,7 @@ const receiptFormat = require("./receiptFormat");
 const { badRequest, notFound } = require("../utils/httpError");
 const { FRONTEND_URL } = require("../utils/security");
 
-const ORG_NAME = process.env.ORG_NAME || "HOPE International";
+const ORG_NAME = process.env.ORG_NAME || "HOPE International Project";
 
 const updateCardUrl = (receiptToken) => `${FRONTEND_URL}/don/merci?ref=${receiptToken}&carte=1`;
 

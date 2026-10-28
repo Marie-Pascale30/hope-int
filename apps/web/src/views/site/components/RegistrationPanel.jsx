@@ -37,6 +37,8 @@ export default function RegistrationPanel({ initialEvent }) {
   }, [initialEvent.id]);
 
   useEffect(() => {
+    // Connecte : relit l'evenement pour afficher son inscription (mise a jour apres la requete).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (status === "authenticated") refresh();
   }, [status, refresh]);
 

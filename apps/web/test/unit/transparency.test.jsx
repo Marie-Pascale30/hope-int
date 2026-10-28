@@ -86,9 +86,9 @@ describe("carte des regions", () => {
 
 describe("calculateur d'impact", () => {
   it("reprend les paliers d'impact du parcours de don, en euros ou en francs CFA", () => {
-    expect(impactFor(25, "eur").key).toBe("training");
-    expect(impactFor(65595.7, "xaf").key).toBe("fieldAgent");
-    expect(impactFor(5, "eur").key).toBe("savingsBook");
+    expect(impactFor(25, "eur").key).toBe("christmas");
+    expect(impactFor(65595.7, "xaf").key).toBe("business");
+    expect(impactFor(5, "eur").key).toBe("hygieneKit");
     expect(CALCULATOR_RANGES.xaf.min).toBeGreaterThanOrEqual(500);
   });
 
@@ -96,7 +96,9 @@ describe("calculateur d'impact", () => {
     renderWithIntl(<ImpactCalculator />, { messages });
     const slider = screen.getByRole("slider");
     fireEvent.change(slider, { target: { value: "100" } });
-    expect(screen.getByText(messages.account.donate.impact.fieldAgent)).toBeInTheDocument();
+    // Texte ICU avec montant formate ({grant}) : comparaison sur le debut de la phrase.
+    const [before] = messages.account.donate.impact.business.split("{grant}");
+    expect(screen.getByText((content) => content.startsWith(before))).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Francs CFA" }));
     expect(screen.getByRole("slider").getAttribute("max")).toBe(String(CALCULATOR_RANGES.xaf.max));
   });

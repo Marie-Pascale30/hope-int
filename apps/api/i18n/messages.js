@@ -198,7 +198,7 @@ const MESSAGES = {
     "Webhook refusé": ["Webhook rejected", "Webhook rechazado"],
     "Signature de webhook invalide": ["Invalid webhook signature", "Firma de webhook no válida"],
 
-    // Engagement : preferences, newsletter, RGPD, double authentification, CRM, campagnes
+    // Engagement : preferences, newsletter, RGPD, CRM, campagnes
     "Ce lien n'est plus valide. Utilisez le lien d'un email plus récent.": ["This link is no longer valid. Please use the link from a more recent email.", "Este enlace ya no es válido. Usa el enlace de un correo más reciente."],
     "Sujet de communication inconnu": ["Unknown communication topic", "Tema de comunicación desconocido"],
     "Choix de consentement invalide": ["Invalid consent choice", "Opción de consentimiento no válida"],
@@ -207,18 +207,6 @@ const MESSAGES = {
     "Adresse email invalide": ["Invalid email address", "Dirección de correo electrónico no válida"],
     "Trop de requêtes : réessayez dans 15 minutes.": ["Too many requests: try again in 15 minutes.", "Demasiadas solicitudes: vuelve a intentarlo en 15 minutos."],
     "Vérifiez votre boîte de réception pour confirmer votre inscription.": ["Check your inbox to confirm your subscription.", "Revisa tu bandeja de entrada para confirmar tu suscripción."],
-    "Code de vérification requis": ["Verification code required", "Se requiere un código de verificación"],
-    "Code de vérification incorrect": ["Incorrect verification code", "Código de verificación incorrecto"],
-    "Vérification expirée : reconnectez-vous": ["Verification expired: please sign in again", "Verificación caducada: vuelve a iniciar sesión"],
-    "Trop de codes incorrects : réessayez dans 15 minutes.": ["Too many incorrect codes: try again in 15 minutes.", "Demasiados códigos incorrectos: vuelve a intentarlo en 15 minutos."],
-    "La double authentification est déjà activée": ["Two-factor authentication is already enabled", "La verificación en dos pasos ya está activada"],
-    "Commencez par générer un secret": ["Start by generating a secret", "Empieza por generar un secreto"],
-    "La double authentification n'est pas activée": ["Two-factor authentication is not enabled", "La verificación en dos pasos no está activada"],
-    "La double authentification est obligatoire pour votre rôle": ["Two-factor authentication is mandatory for your role", "La verificación en dos pasos es obligatoria para tu rol"],
-    "Vous ne pouvez pas réinitialiser votre propre double authentification": ["You cannot reset your own two-factor authentication", "No puedes restablecer tu propia verificación en dos pasos"],
-    "Double authentification activée": ["Two-factor authentication enabled", "Verificación en dos pasos activada"],
-    "Double authentification désactivée": ["Two-factor authentication disabled", "Verificación en dos pasos desactivada"],
-    "Double authentification réinitialisée": ["Two-factor authentication reset", "Verificación en dos pasos restablecida"],
     "Confirmez la suppression définitive de vos données": ["Please confirm the permanent deletion of your data", "Confirma la eliminación definitiva de tus datos"],
     "Compte de l'équipe : demandez d'abord le retrait de vos rôles à l'administration": ["Team account: first ask the administration to remove your roles", "Cuenta del equipo: pide primero a la administración que retire tus roles"],
     "Impossible d'arrêter vos dons mensuels pour le moment : réessayez plus tard ou contactez-nous.": ["Your monthly donations cannot be stopped right now: try again later or contact us.", "No es posible detener tus donaciones mensuales en este momento: inténtalo más tarde o contáctanos."],

@@ -62,7 +62,7 @@
     },
     "verify": {
       "metaTitle": "Vérifier une attestation de bénévolat",
-      "metaDescription": "Contrôlez l'authenticité d'une attestation de bénévolat HOPE International à l'aide de son code.",
+      "metaDescription": "Contrôlez l'authenticité d'une attestation de bénévolat HOPE International Project à l'aide de son code.",
       "eyebrow": "Attestation de bénévolat",
       "title": "Vérifier une attestation",
       "intro": "Saisissez le code imprimé sur l'attestation (format HOPE-XXXX-XXXX-XXXX).",
@@ -71,7 +71,7 @@
       "format": "Ce code n'a pas le bon format : HOPE suivi de trois groupes de quatre caractères.",
       "checking": "Vérification en cours…",
       "valid": "Attestation authentique",
-      "validText": "Cette attestation a bien été délivrée par HOPE International.",
+      "validText": "Cette attestation a bien été délivrée par HOPE International Project.",
       "invalid": "Attestation introuvable",
       "invalidText": "Aucune attestation ne correspond au code {code}. Vérifiez la saisie.",
       "errorTitle": "Vérification indisponible",

@@ -42,7 +42,7 @@ export function buildIcs(event, url) {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//HOPE International//Agenda//FR",
+    "PRODID:-//HOPE International Project//Agenda//FR",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VTIMEZONE",

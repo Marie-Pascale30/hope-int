@@ -1,6 +1,6 @@
 {
   "common": {
-    "siteName": "HOPE International",
+    "siteName": "HOPE International Project",
     "loading": "Chargement…",
     "share": {
       "label": "Partager cette page",
@@ -15,7 +15,7 @@
     }
   },
   "nav": {
-    "home": "HOPE International — accueil",
+    "home": "HOPE International Project — accueil",
     "main": "Navigation principale",
     "projects": "Nos projets",
     "news": "Actualités",
@@ -33,7 +33,15 @@
     "donateShort": "Don",
     "skip": "Aller au contenu",
     "transparency": "Transparence",
-    "team": "L’équipe"
+    "team": "L’équipe",
+    "about": "Qui sommes‑nous",
+    "gallery": "Galerie",
+    "association": "L’association",
+    "associationMenu": "Découvrir l’association",
+    "aboutHint": "Mission, valeurs et parcours",
+    "galleryHint": "Nos actions en 145 photos",
+    "teamHint": "Membres et bénévoles",
+    "transparencyHint": "Comptes et utilisation des dons"
   },
   "pwa": {
     "install": "Installer l'application",
@@ -48,7 +56,8 @@
     "switchToLight": "Passer au thème clair"
   },
   "footer": {
-    "tagline": "Microfinance solidaire, formation et entraide au service des familles camerounaises.",
+    "tagline": "Aimer. Éduquer. Soigner. Espérer. Un avenir meilleur commence avec un acte de compassion.",
+    "poBox": "B.P. {number}",
     "explore": "Découvrir",
     "act": "Agir",
     "contact": "Nous contacter",
@@ -166,12 +175,12 @@
     },
     "logout": {
       "title": "Se déconnecter ?",
-      "text": "Vous allez être déconnecté(e) de votre compte HOPE International. Vous pourrez vous reconnecter à tout moment.",
+      "text": "Vous allez être déconnecté(e) de votre compte HOPE International Project. Vous pourrez vous reconnecter à tout moment.",
       "confirm": "Se déconnecter",
+      "cancel": "Rester connecté(e)",
       "done": "Vous êtes déconnecté(e). À bientôt !"
     },
-    "filters": "Filtres"
-   },
+    "filters": "Filtres",
     "phone": {
       "label": "Téléphone",
       "placeholder": "6 77 12 34 56",
@@ -195,4 +204,5 @@
       "selectPage": "Sélectionner toutes les lignes de la page",
       "selectRow": "Sélectionner : {label}"
     }
+  }
 }

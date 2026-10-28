@@ -2,36 +2,36 @@
   "site": {
     "meta": {
       "home": {
-        "absoluteTitle": "HOPE International — Invertir en los sueños de las familias",
-        "description": "Microfinanzas solidarias, formación y ayuda mutua: HOPE International acompaña a mujeres, jóvenes y comunidades rurales de Camerún hacia la autonomía. Haz un donativo o hazte voluntario."
+        "absoluteTitle": "HOPE International Project — Actuar por la educación de los niños desfavorecidos",
+        "description": "ONG humanitaria de inspiración cristiana con sede en Duala: educación de los niños desfavorecidos, salud y apoyo a madres solas, huérfanos y a los más vulnerables en Camerún. Haz un donativo, hazte miembro."
       },
       "projects": {
         "title": "Nuestros proyectos",
-        "description": "Microcréditos, formación, agricultura, agua, salud: descubre los proyectos de HOPE International en Camerún y apoya el que prefieras."
+        "description": "Educación, salud, apoyo social, acceso al agua: descubre los proyectos de HOPE International Project en Camerún y apoya el que prefieras."
       },
       "news": {
         "title": "Noticias",
-        "description": "Las últimas noticias de los proyectos de HOPE International: lanzamientos, historias sobre el terreno y vida de la asociación."
+        "description": "Las últimas noticias de HOPE International Project: vueltas al cole solidarias, visitas a orfanatos, campañas de salud y vida de la asociación."
       },
       "events": {
         "title": "Agenda",
-        "description": "Talleres, jornadas de recaudación, visitas sobre el terreno: la agenda de los próximos eventos de HOPE International."
+        "description": "Vueltas al cole solidarias, campañas de salud, colectas, asamblea general: la agenda de los próximos eventos de HOPE International Project."
       },
       "join": {
         "title": "Únete",
-        "description": "Hazte voluntario o miembro de HOPE International: indica tus áreas de interés y envía tu candidatura en línea."
+        "description": "Hazte miembro o voluntario/a de HOPE International Project: papel de los miembros, cuota de adhesión, cuotas anuales y candidatura en línea."
       },
       "contact": {
         "title": "Contacto",
-        "description": "Contacta con HOPE International: preguntas, alianzas, prensa. Nuestro equipo te responde rápidamente."
+        "description": "Contacta con HOPE International Project en Duala: teléfonos, email, dirección, donativos por Mobile Money. Preguntas, alianzas, apadrinamientos."
       },
       "donate": {
         "title": "Donar",
-        "description": "Apoya a las familias de Camerún: microcréditos solidarios, formación y ayuda mutua. Donativo puntual o mensual, con tarjeta o Mobile Money, con recibo enviado por correo electrónico."
+        "description": "Apoya la educación de los niños desfavorecidos y a los más vulnerables en Camerún. Donativo puntual o mensual, con tarjeta o Mobile Money, recibo enviado por email."
       },
       "thanks": {
         "title": "Gracias por tu donativo",
-        "description": "Confirmación de tu donativo a HOPE International y recibo para descargar."
+        "description": "Confirmación de tu donativo a HOPE International Project y recibo para descargar."
       },
       "account": {
         "title": "Mi espacio",
@@ -39,15 +39,15 @@
       },
       "login": {
         "title": "Iniciar sesión",
-        "description": "Inicia sesión en tu espacio de HOPE International."
+        "description": "Inicia sesión en tu espacio de HOPE International Project."
       },
       "register": {
         "title": "Crear una cuenta",
-        "description": "Crea tu cuenta de donante o de miembro de HOPE International."
+        "description": "Crea tu cuenta de donante o de miembro de HOPE International Project."
       },
       "changePassword": {
         "title": "Cambiar mi contraseña",
-        "description": "Cambia la contraseña de tu cuenta de HOPE International."
+        "description": "Cambia la contraseña de tu cuenta de HOPE International Project."
       },
       "forgotPassword": {
         "title": "Contraseña olvidada",
@@ -59,15 +59,23 @@
       },
       "project": {
         "title": "Proyecto",
-        "description": "Descubre este proyecto de HOPE International y apóyalo con un donativo."
+        "description": "Descubre este proyecto de HOPE International Project y apóyalo con un donativo."
       },
       "article": {
         "title": "Noticia",
-        "description": "Una noticia de HOPE International."
+        "description": "Una noticia de HOPE International Project."
       },
       "event": {
         "title": "Evento",
-        "description": "Un evento de HOPE International: información práctica e inscripción."
+        "description": "Un evento de HOPE International Project: información práctica e inscripción."
+      },
+      "about": {
+        "title": "Quiénes somos",
+        "description": "HOPE International Project, ONG humanitaria de inspiración cristiana en Duala: misión, visión, valores, acciones desde 2021, próximos proyectos y adhesión."
+      },
+      "gallery": {
+        "title": "Galería de fotos",
+        "description": "Las fotos de las acciones de HOPE International Project desde 2021: vuelta al cole, Navidades en orfanatos de Duala y Yaundé, apoyo a las mujeres, apadrinamientos y campañas de salud."
       }
     },
     "status": {
@@ -96,49 +104,53 @@
       "registered": "Estás inscrito/a"
     },
     "home": {
-      "eyebrow": "Asociación de solidaridad internacional",
-      "title": "Invertir en los sueños de las familias",
-      "titleLead": "Invertir en los sueños de",
+      "eyebrow": "ONG humanitaria de inspiración cristiana · Duala, Camerún",
+      "title": "Devolver la esperanza a los más vulnerables",
+      "titleLead": "Devolver la esperanza a",
       "titleWords": [
-        "las familias",
-        "las mujeres",
-        "los jóvenes",
-        "las comunidades"
+        "los niños",
+        "las madres solas",
+        "los huérfanos",
+        "los más vulnerables"
       ],
-      "lead": "En Camerún, acompañamos a mujeres, jóvenes y comunidades rurales hacia la autonomía con microfinanzas solidarias, formación y ayuda mutua.",
+      "lead": "Actuamos por la educación de los niños desfavorecidos y el apoyo a los más vulnerables en Duala, Yaundé, Dschang y los pueblos de la región Oeste, con acciones concretas inspiradas por nuestra fe.",
       "ctaDonate": "Donar",
       "ctaDiscover": "Descubrir los proyectos",
       "ctaTitle": "Cambiemos vidas, <hl>juntos</hl>",
-      "ctaText": "Cada contribución fortalece a una familia, un barrio y una generación. Dona una vez o cada mes, con tarjeta o Mobile Money.",
+      "ctaText": "Cada contribución ofrece un cuaderno, un cuidado, una sonrisa. Dona una vez o cada mes, con tarjeta o Mobile Money.",
       "ctaJoin": "Hazte voluntario",
-      "heroFloat": "{count, plural, one {<strong>{value}</strong> persona acompañada hacia la autonomía} other {<strong>{value}</strong> personas acompañadas hacia la autonomía}}",
+      "heroFloat": "{count, plural, one {<strong>{value}</strong> persona acompañada} other {<strong>{value}</strong> personas acompañadas}}",
       "partialError": "No se ha podido cargar parte de la información",
       "impact": {
         "eyebrow": "Nuestro impacto",
         "title": "Resultados <hl>concretos</hl>, sobre el terreno",
-        "text": "Cifras consolidadas de todos nuestros programas en Camerún, actualizadas de forma continua.",
+        "text": "Cifras consolidadas de nuestras acciones en Camerún, actualizadas continuamente.",
         "beneficiaries": "Personas beneficiarias acompañadas",
-        "trainees": "Personas formadas",
-        "credits": "Microcréditos concedidos",
-        "regions": "Regiones cubiertas",
+        "trainees": "Personas formadas y sensibilizadas",
+        "credits": "Ayudas concedidas",
+        "regions": "Regiones de intervención",
         "raised": "Recaudados gracias a ti",
         "donors": "Donantes comprometidos"
       },
       "approach": {
-        "eyebrow": "Nuestro enfoque",
-        "title": "Dar los medios para <hl>avanzar</hl>, no solo ayuda",
-        "text": "Tres palancas complementarias, pensadas con las comunidades, para cambios que perduran más allá de nuestros programas.",
-        "training": {
-          "title": "Formación",
-          "text": "Gestión, contabilidad básica, técnicas agrícolas, emprendimiento: transmitimos los conocimientos que hacen sostenible una actividad."
+        "eyebrow": "Nuestros ámbitos de acción",
+        "title": "Educar, cuidar, <hl>acompañar</hl>",
+        "text": "Cada una de nuestras acciones es una respuesta de amor y de fe, pensada con las familias y las comunidades a las que servimos.",
+        "education": {
+          "title": "Educación",
+          "text": "Material escolar, ayuda con las tasas escolares y apadrinamiento individualizado hasta la inserción profesional; apoyo a los docentes en su vocación."
         },
-        "microfinance": {
-          "title": "Microfinanzas solidarias",
-          "text": "Microcréditos a un tipo solidario, con un seguimiento mensual. Cada préstamo devuelto financia una nueva actividad."
+        "health": {
+          "title": "Salud y sensibilización",
+          "text": "Campañas contra la hepatitis, el VIH, el cáncer o la drepanocitosis, asistencia médica a los enfermos y distribución de kits de higiene."
         },
-        "solidarity": {
-          "title": "Grupos solidarios y ayuda mutua",
-          "text": "Cooperativas, cajas de ahorro comunitarias, mentoría: la fuerza del grupo protege a las familias ante los imprevistos."
+        "social": {
+          "title": "Apoyo social y humanitario",
+          "text": "Madres jóvenes solas, huérfanos, personas mayores, enfermas o con discapacidad, familias vulnerables: acompañamiento, formación práctica y ayuda de emergencia."
+        },
+        "community": {
+          "title": "Agua y desarrollo comunitario",
+          "text": "Pozos y perforaciones en pueblos aislados, higiene comunitaria y, mañana, la Academia HOPE: escuela, biblioteca, comedor y enfermería."
         }
       },
       "campaigns": {
@@ -160,20 +172,22 @@
       "events": {
         "eyebrow": "Agenda",
         "title": "Próximas citas",
-        "text": "Talleres, jornadas de recaudación, visitas sobre el terreno: ven a conocernos.",
+        "text": "Vueltas al cole solidarias, campañas de salud, colectas: ven a conocernos.",
         "all": "Toda la agenda"
       },
       "partners": {
         "eyebrow": "Socios",
         "title": "Confían en nosotros"
-      }
+      },
+      "heroAlt": "Una voluntaria de HOPE International Project sostiene en brazos a una niña sonriente",
+      "ctaAbout": "Quiénes somos"
     },
     "projects": {
       "eyebrow": "Nuestros proyectos",
       "title": "Proyectos <hl>arraigados</hl> en las comunidades",
-      "lead": "Microcréditos, formación, agricultura, acceso al agua, ahorro para la salud: descubre nuestras acciones en las regiones de Camerún y elige la que quieres apoyar.",
+      "lead": "Educación, salud, apoyo social, acceso al agua: descubre nuestras acciones en Duala, Yaundé, Dschang y el oeste de Camerún, y elige la que quieres apoyar.",
       "emptyTitle": "Todavía no hay proyectos publicados",
-      "emptyText": "Nuestros equipos preparan nuevas acciones. Vuelve pronto o apoya desde ahora el conjunto de nuestros programas.",
+      "emptyText": "Nuestros equipos preparan nuevas acciones. Vuelve pronto o apoya desde ya el conjunto de nuestras misiones.",
       "donate": "Donar",
       "tabs": {
         "all": "Todos",
@@ -194,8 +208,8 @@
       "about": "El proyecto",
       "impact": "Impacto",
       "beneficiaries": "Personas beneficiarias",
-      "trainees": "Personas formadas",
-      "credits": "Microcréditos concedidos",
+      "trainees": "Personas formadas y sensibilizadas",
+      "credits": "Ayudas concedidas",
       "upcoming": "Próximamente",
       "start": "Inicio",
       "end": "Fin previsto",
@@ -209,16 +223,16 @@
         "doneTitle": "Proyecto finalizado",
         "doneThanks": "Gracias por tu apoyo",
         "doneText": "Este proyecto ha finalizado y sigue su camino de forma autónoma. ¡Gracias a todas las personas que lo han hecho posible!",
-        "doneMore": "Apoya nuestras otras acciones en curso para que más familias se beneficien.",
+        "doneMore": "Apoya nuestras otras acciones en curso para que más niños y familias se beneficien.",
         "doneCta": "Ver los proyectos en curso",
         "supportTitle": "Apoyar este proyecto",
-        "noCampaign": "Este proyecto no tiene una campaña propia: se financia con los donativos generales a HOPE International.",
+        "noCampaign": "Este proyecto no tiene una campaña propia: se financia con los donativos generales a HOPE International Project.",
         "donate": "Donar",
         "campaign": "Campaña de recaudación",
         "donateProject": "Donar a este proyecto",
         "note": "Tu donativo se destina a este proyecto. Recibirás un recibo en cuanto se confirme el pago."
       },
-      "shareText": "Apoyo «{title}» con HOPE International:",
+      "shareText": "Apoyo «{title}» con HOPE International Project:",
       "stickyLabel": "Apoyar este proyecto",
       "stickyProgress": "{percent} % del objetivo alcanzado",
       "stickySupport": "Apoyar"
@@ -240,7 +254,7 @@
     "events": {
       "eyebrow": "Agenda",
       "title": "Nuestras próximas <hl>citas</hl>",
-      "lead": "Talleres de formación, jornadas de recaudación, visitas sobre el terreno, asamblea general: inscríbete y ven a actuar con nosotros.",
+      "lead": "Vueltas al cole solidarias, visitas a orfanatos, campañas de sensibilización, colectas, asamblea general: inscríbete y ven a actuar a nuestro lado.",
       "emptyTitle": "No hay eventos programados",
       "emptyText": "Pronto anunciaremos nuevas citas. Sigue nuestras noticias o únete a la asociación para enterarte antes que nadie.",
       "emptyCta": "Únete",
@@ -303,14 +317,14 @@
       },
       "map": "Ver en el mapa",
       "mapNewWindow": "(OpenStreetMap, nueva ventana)",
-      "shareText": "Acompáñame en «{title}» con HOPE International:",
+      "shareText": "Acompáñame en «{title}» con HOPE International Project:",
       "stickyLabel": "Inscripción rápida",
       "stickyRegister": "Inscribirse"
     },
     "join": {
       "eyebrow": "Únete",
       "title": "<hl>Comprométete</hl> con nosotros",
-      "lead": "Voluntarios, miembros, profesionales: cada persona puede contribuir a la autonomía de las familias cameruneses, según su tiempo y sus competencias.",
+      "lead": "Miembros, voluntarios, profesionales: cada persona puede contribuir a la educación de los niños desfavorecidos y al apoyo a los más vulnerables, según su tiempo, sus talentos y sus medios.",
       "welcome": {
         "eyebrow": "Miembro de la comunidad",
         "title": "¡Genial {name}, ya formas parte de la gran <hl>familia HOPE</hl>!",
@@ -325,15 +339,15 @@
         "text": "Unas horas para dar, ganas de participar en las decisiones o competencias para compartir: cada persona encuentra su lugar en la asociación.",
         "volunteer": {
           "title": "Voluntario/a",
-          "text": "Dedica unas horas: acogida en las campañas de recaudación, apoyo en los talleres, logística, comunicación."
+          "text": "Dedica unas horas: vueltas al cole, visitas a orfanatos, colectas «Una prenda = Una sonrisa», campañas de sensibilización, logística."
         },
         "member": {
           "title": "Miembro",
-          "text": "Hazte socio/a de la asociación, participa en la asamblea general y en las decisiones, y accede a tu espacio de miembro."
+          "text": "Hazte socio/a de la asociación (cuota de adhesión y cuota anual), participa en las misiones, las reuniones y la asamblea general, y accede a tu espacio de miembro."
         },
         "responsibility": {
           "title": "Competencias y responsabilidades",
-          "text": "Finanzas, comunicación, informática, coordinación regional: pon tus competencias al servicio del proyecto."
+          "text": "Salud, enseñanza, finanzas, comunicación, informática: pon tus talentos al servicio de nuestras misiones."
         }
       },
       "steps": {
@@ -345,7 +359,7 @@
         },
         "s2": {
           "title": "Estudiamos tu solicitud",
-          "text": "El equipo de recursos humanos lee tu candidatura y puede ponerse en contacto contigo para conversar."
+          "text": "La dirección evalúa cada candidatura y puede contactarte para conversar: toda adhesión está sujeta a su aprobación."
         },
         "s3": {
           "title": "Te proponemos un rol",
@@ -357,7 +371,7 @@
         "terrain": "Acciones sobre el terreno y logística",
         "sante": "Salud y acompañamiento social",
         "education": "Educación y formación",
-        "entrepreneuriat": "Microcréditos y emprendimiento",
+        "entrepreneuriat": "Emprendimiento solidario e inserción económica",
         "communication": "Comunicación y redes sociales",
         "collecte": "Recaudación de fondos y alianzas",
         "informatique": "Informática y digital",
@@ -379,7 +393,7 @@
         "counter": "{count} / {min} caracteres como mínimo",
         "notSent": "Candidatura no enviada",
         "duplicate": "Si ya tienes una cuenta, inicia sesión en tu espacio; si no, ten paciencia: tu candidatura anterior está en estudio.",
-        "legal": "Al enviar este formulario, aceptas que HOPE International se ponga en contacto contigo.",
+        "legal": "Al enviar este formulario, aceptas que HOPE International Project se ponga en contacto contigo.",
         "submit": "Enviar mi candidatura",
         "errors": {
           "name": "Indica tu nombre completo.",
@@ -409,7 +423,7 @@
     "contact": {
       "eyebrow": "Contacto",
       "title": "<hl>Hablemos</hl>",
-      "lead": "¿Una pregunta sobre nuestros proyectos, una alianza, una solicitud de prensa? Escríbenos: nuestro equipo te responderá lo antes posible.",
+      "lead": "¿Una pregunta sobre nuestras acciones, una alianza, un apadrinamiento? Escríbenos o llámanos: nuestro equipo te responderá lo antes posible.",
       "details": "Nuestros datos de contacto",
       "email": "Correo electrónico",
       "phone": "Teléfono",
@@ -441,14 +455,495 @@
           "subject": "Indica el asunto de tu mensaje (3 caracteres como mínimo).",
           "content": "Tu mensaje debe tener al menos {min} caracteres."
         }
+      },
+      "phones": "Teléfonos",
+      "poBox": "Apartado postal",
+      "poBoxValue": "Apdo. {number}",
+      "facebook": "Facebook",
+      "facebookName": "Hope International Cameroon",
+      "mobileMoney": {
+        "title": "Donar por Mobile Money",
+        "text": "También puedes enviar tu donativo directamente desde tu teléfono. Después, escríbenos para recibir un recibo.",
+        "mtn": "MTN Mobile Money",
+        "mtnNumber": "Número",
+        "orange": "Orange Money",
+        "orangeUssd": "Marca",
+        "orangeCode": "Código de comercio",
+        "sara": "SARA",
+        "saraAccount": "Número de cuenta"
       }
     },
     "notFound": {
-      "metaTitle": "Página no encontrada · HOPE International",
+      "metaTitle": "Página no encontrada · HOPE International Project",
       "title": "Página no encontrada",
       "text": "Esta página no existe, se ha movido o ya no está publicada. Descubre nuestros proyectos o vuelve al inicio.",
       "home": "Volver al inicio",
       "projects": "Ver nuestros proyectos"
+    },
+    "membership": {
+      "eyebrow": "Hazte miembro",
+      "title": "Adhesión y <hl>cuotas</hl>",
+      "text": "Los miembros dan vida a la asociación: participan en las misiones, las reuniones y la asamblea general, y la apoyan con su cuota anual.",
+      "prerequisiteTitle": "Requisito previo",
+      "prerequisite": "Toda adhesión está sujeta a la evaluación y la aprobación de la dirección.",
+      "entryFee": "Cuota de adhesión",
+      "entryFeeHint": "Se abona una sola vez, al ingresar en la asociación.",
+      "tableCaption": "Cuotas anuales, en francos CFA y en euros",
+      "level": "Nivel",
+      "amount": "Cuota anual",
+      "levels": {
+        "bronze": "Bronce",
+        "silver": "Plata",
+        "vermeil": "Vermeil",
+        "gold": "Oro",
+        "diamond": "Diamante"
+      },
+      "range": "De {min} a {max}",
+      "atLeast": "{min} o más",
+      "cta": "Enviar mi candidatura",
+      "roleTitle": "Tu papel como miembro",
+      "roleIntro": "Ser miembro de HOPE International Project significa:",
+      "roles": [
+        "Estar debidamente inscrito y haber pagado las cuotas anuales",
+        "Representar nuestros valores con integridad y benevolencia",
+        "Participar activamente en las misiones, reuniones, asambleas generales y eventos",
+        "Compartir tu tiempo, tus talentos y tus ideas para reforzar nuestro impacto colectivo",
+        "Apoyar la visibilidad y el desarrollo de la organización",
+        "Promover una cultura de respeto, unidad y compromiso",
+        "Orar con regularidad por los beneficiarios, los miembros y las misiones de la ONG, según tus convicciones"
+      ],
+      "eurEquivalent": "unos {amount}",
+      "amountEur": "Equivalente en euros",
+      "rateNote": "Equivalentes en euros redondeados, al tipo fijo de 1 € = 655,957 francos CFA."
+    },
+    "about": {
+      "eyebrow": "Quiénes somos",
+      "title": "Actuar por la educación de los niños <hl>desfavorecidos</hl>",
+      "lead": "Devolver la esperanza a los más vulnerables.",
+      "quote": "Creemos que el amor de Dios, manifestado en actos concretos, transforma vidas.",
+      "nav": "En esta página",
+      "who": {
+        "eyebrow": "¿Quiénes somos?",
+        "title": "Una ONG humanitaria, apolítica y de inspiración cristiana",
+        "text": "HOPE International Project es una organización humanitaria, sin ánimo de lucro, apolítica e inspirada por principios cristianos universales como el amor, la compasión y la misericordia. Con sede en Duala, actúa también en Yaundé, en Dschang y en los pueblos del oeste de Camerún.",
+        "welcome": "Invertimos en los sueños, la salud y la dignidad de las personas más desfavorecidas, con benevolencia, experiencia y un compromiso duradero. Juntos somos más que una organización: un grupo de personas unidas por la compasión, la acción y la esperanza.",
+        "commitmentsTitle": "Nos comprometemos a:",
+        "commitments": [
+          "Promover una educación inclusiva y equitativa para los niños desfavorecidos",
+          "Brindar apoyo médico, psicológico y social a los más vulnerables (enfermos, personas con discapacidad, personas mayores)",
+          "Apoyar a las madres jóvenes solas mediante el empoderamiento y la formación",
+          "Ayudar a las comunidades que necesitan acceso al agua potable y a los servicios básicos",
+          "Responder a los grandes retos humanitarios con campañas y acciones sobre el terreno"
+        ],
+        "verse": "«Ama a tu prójimo como a ti mismo»",
+        "verseRef": "Mateo 22:39",
+        "verseIntro": "Fundada en los valores cristianos del amor al prójimo, la justicia y el servicio, nuestra ONG actúa en respuesta al llamado bíblico:",
+        "imageAlt": "Los miembros de HOPE International Project, con polos y gorras blancos, ante la pancarta «Invertimos por la humanidad»"
+      },
+      "mission": {
+        "title": "Nuestra misión",
+        "text": "Favorecer el acceso a una educación de calidad para los niños desfavorecidos y responder a las necesidades esenciales de los más vulnerables, para devolverles la esperanza, la dignidad y la sonrisa. Mediante acciones concretas y humanas, motivadas por nuestra fe cristiana, trabajamos por un futuro más justo e inclusivo."
+      },
+      "vision": {
+        "title": "Nuestra visión",
+        "text": "Creemos en un mundo en el que cada ser humano, sin distinción, pueda acceder a una educación equitativa, a una atención sanitaria de calidad y a un entorno favorable a su desarrollo personal y comunitario.",
+        "education": "Para nosotros, la educación es una palanca de transformación individual y colectiva.",
+        "faith": "Nuestra fe en Dios nos lleva a ver en cada persona una vida valiosa, creada con un propósito y digna de amor."
+      },
+      "values": {
+        "eyebrow": "Nuestros valores",
+        "title": "Lo que nos <hl>mueve</hl>",
+        "faith": {
+          "title": "Fe",
+          "text": "Nuestras acciones están guiadas por nuestra confianza en Dios y nuestro compromiso de hacer Su voluntad."
+        },
+        "equity": {
+          "title": "Equidad",
+          "text": "Reducir las desigualdades en el acceso a los derechos fundamentales."
+        },
+        "compassion": {
+          "title": "Benevolencia",
+          "text": "El ser humano está en el centro de nuestra acción."
+        },
+        "commitment": {
+          "title": "Compromiso",
+          "text": "El cambio nace de una acción duradera."
+        },
+        "transparency": {
+          "title": "Transparencia",
+          "text": "Somos responsables y honestos."
+        }
+      },
+      "motto": {
+        "eyebrow": "Lema y eslogan",
+        "mottoLabel": "Nuestro lema",
+        "motto": "Amar. Educar. Cuidar. Esperar.",
+        "verse": "Porque «la fe sin obras está muerta»",
+        "verseRef": "Santiago 2:17",
+        "sloganLabel": "Nuestro eslogan",
+        "slogan": "Un futuro mejor comienza con un acto de compasión."
+      },
+      "actions": {
+        "eyebrow": "Nuestras principales acciones",
+        "title": "Cinco ámbitos de <hl>acción</hl>",
+        "text": "Cada una de nuestras acciones es una respuesta de amor y de fe, inspirada por el Evangelio y el modelo de servicio de Cristo.",
+        "education": {
+          "title": "Educación",
+          "items": [
+            "Distribución de material escolar y educativo",
+            "Becas y ayudas para las tasas escolares",
+            "Apadrinamiento educativo individualizado hasta la inserción profesional",
+            "Apoyo a los docentes en el ejercicio de su vocación"
+          ]
+        },
+        "health": {
+          "title": "Salud y sensibilización",
+          "items": [
+            "Campañas de sensibilización (hepatitis, VIH, cáncer, nutrición…)",
+            "Asistencia médica a los enfermos",
+            "Distribución de kits de higiene",
+            "Participación en los días internacionales de la salud"
+          ]
+        },
+        "social": {
+          "title": "Apoyo social y humanitario",
+          "items": [
+            "Apoyo a las madres jóvenes solas",
+            "Acompañamiento social y psicológico",
+            "Formación práctica (costura, peluquería, agricultura, mecánica, construcción…)",
+            "Inserción económica, para cubrir dignamente sus necesidades y las de sus hijos",
+            "Asistencia a personas mayores, enfermas o con discapacidad (inserción en la sociedad)",
+            "Apoyo a las familias vulnerables",
+            "Intervenciones de emergencia (kits de alimentos, ropa…)"
+          ]
+        },
+        "water": {
+          "title": "Acceso al agua y saneamiento",
+          "items": [
+            "Construcción de pozos y perforaciones",
+            "Sensibilización sobre la higiene comunitaria",
+            "Acceso al agua potable en los pueblos aislados"
+          ]
+        },
+        "community": {
+          "title": "Desarrollo comunitario",
+          "items": [
+            "Proyecto de creación de la Academia HOPE (escuela, biblioteca, espacio de ocio, comedor, enfermería…)",
+            "Formación de voluntarios y líderes locales",
+            "Promoción del emprendimiento solidario"
+          ]
+        }
+      },
+      "timeline": {
+        "eyebrow": "Nuestro recorrido",
+        "title": "Desde 2021, actos <hl>concretos</hl>",
+        "text": "Vueltas al cole, Navidades en orfanatos, apadrinamientos, apoyo a mujeres y campañas de salud: algunas etapas de nuestra acción sobre el terreno.",
+        "items": {
+          "balessing": {
+            "date": "Curso 2021-2022",
+            "title": "Vuelta al cole en Balessing",
+            "text": "Primera gran acción: distribución de material escolar a los niños del pueblo de Balessing, en el oeste de Camerún.",
+            "alt": "Entrega de material escolar a los niños de Balessing"
+          },
+          "teachers": {
+            "date": "5 de octubre de 2022",
+            "title": "Día Mundial de los Docentes en Duala",
+            "text": "Homenaje y apoyo a los docentes, al servicio de su vocación junto a los niños.",
+            "alt": "Docentes reunidos en Duala por el Día Mundial de los Docentes"
+          },
+          "christmas2022": {
+            "date": "Diciembre de 2022",
+            "title": "Navidad en los orfanatos",
+            "text": "Regalos y momentos compartidos en el orfanato Petit Dan & Sarah, en Yaundé, y en un orfanato de Duala.",
+            "alt": "Entrega de regalos de Navidad en el orfanato Petit Dan & Sarah, en Yaundé"
+          },
+          "clothes": {
+            "date": "2022 y 2023",
+            "title": "Colectas «Una prenda = Una sonrisa»",
+            "text": "Dos colectas de ropa, del 20 de noviembre al 20 de diciembre de 2022 y del 15 de noviembre al 15 de diciembre de 2023, redistribuida a familias y niños necesitados."
+          },
+          "women2023": {
+            "date": "8 de marzo de 2023",
+            "title": "Día Internacional de la Mujer",
+            "text": "Una jornada dedicada al empoderamiento de las mujeres."
+          },
+          "sickleCell": {
+            "date": "19 de junio de 2023",
+            "title": "Día Mundial de la Drepanocitosis",
+            "text": "Campaña de sensibilización y pruebas de electroforesis de hemoglobina, con GEDREPACAM."
+          },
+          "dieuMerci": {
+            "date": "Curso 2023-2024",
+            "title": "Primer ahijado: Dieu Merci",
+            "text": "En Yaundé, HOPE apadrina la escolarización de Dieu Merci, del orfanato Petit Dan & Sarah. Un apadrinamiento renovado cada año desde entonces.",
+            "alt": "Vuelta al cole 2023 en Yaundé con Dieu Merci, primer ahijado de HOPE"
+          },
+          "christmas2023": {
+            "date": "Diciembre de 2023",
+            "title": "Navidad en Duala y Yaundé",
+            "text": "Visitas al orfanato Mère Teresa la Vénérable (ASENDEF) en Duala, a una familia de Bonabéri Mabanda y al orfanato Le Bon Berger en Nkoabang (Yaundé).",
+            "alt": "Momento compartido en el orfanato Mère Teresa la Vénérable, en Duala"
+          },
+          "women2024": {
+            "date": "8 de marzo de 2024",
+            "title": "Apoyo a cuatro mujeres emprendedoras",
+            "text": "Cheques de 50 000 FCFA para desarrollar su actividad: dos mujeres en Yaundé (aperitivos de soja, aceite de palma) y, en Duala, Irène Kameni y Armelle Rofanie Bogning Nambou.",
+            "alt": "Entrega de un cheque de apoyo a una mujer emprendedora en Duala"
+          },
+          "street": {
+            "date": "Junio de 2024",
+            "title": "Junto a las personas que viven en la calle",
+            "text": "Un apoyo de 100 000 FCFA a Noël Clinton, antiguo sin techo que ayuda a las personas que viven en la calle en Duala.",
+            "alt": "Entrega del apoyo a Noël Clinton, en Duala"
+          },
+          "school2024": {
+            "date": "Agosto de 2024",
+            "title": "Dos niños apadrinados",
+            "text": "Segundo año de apadrinamiento para Dieu Merci y primer año para Divine Folifack, en Dschang.",
+            "alt": "Vuelta al cole 2024 en Dschang con Divine Folifack"
+          },
+          "december2024": {
+            "date": "Diciembre de 2024",
+            "title": "VIH y «La magia de la Navidad para los huérfanos»",
+            "text": "Campaña de sensibilización por el Día Mundial de la Lucha contra el Sida, el 1 de diciembre, y después Navidad con los huérfanos."
+          },
+          "women2025": {
+            "date": "8 de marzo de 2025",
+            "title": "Apoyo a Sophie Besong",
+            "text": "75 000 FCFA para el comercio de Sophie Besong, mujer con discapacidad, en Yaundé.",
+            "alt": "Sophie Besong recibe el apoyo de HOPE en Yaundé"
+          },
+          "school2025": {
+            "date": "Agosto de 2025",
+            "title": "Vuelta al cole «Una sonrisa para todos»",
+            "text": "Una tercera ahijada, Massoh Ndah Abigail, del orfanato Buisson Ardent (ASEEODRCAM, Yaundé), tercer año para Dieu Merci y segundo año para Divine en Dschang.",
+            "alt": "Vuelta al cole 2025 en el orfanato Buisson Ardent, en Yaundé"
+          },
+          "aids2025": {
+            "date": "1 de diciembre de 2025",
+            "title": "Día Mundial de la Lucha contra el Sida",
+            "text": "Una nueva campaña de sensibilización sobre el VIH."
+          }
+        }
+      },
+      "upcoming": {
+        "eyebrow": "Próximos proyectos",
+        "title": "Lo que estamos <hl>preparando</hl>",
+        "text": "Para ir más lejos, la asociación prepara nuevas acciones, que verán la luz con el apoyo de sus miembros, donantes y socios.",
+        "academy": {
+          "title": "La Academia HOPE",
+          "text": "Una escuela con biblioteca, espacio de ocio, comedor y enfermería, para ofrecer a los niños desfavorecidos un entorno de aprendizaje completo."
+        },
+        "water": {
+          "title": "Pozos y perforaciones",
+          "text": "Construir puntos de agua potable en los pueblos aislados y sensibilizar sobre la higiene comunitaria."
+        },
+        "entrepreneurship": {
+          "title": "Emprendimiento solidario",
+          "text": "Prolongar los cheques entregados a las mujeres el 8 de marzo: pequeños fondos de arranque, seguimiento de la actividad y, a largo plazo, grupos solidarios de ahorro y microcrédito para las madres solas."
+        },
+        "training": {
+          "title": "Formación e inserción económica",
+          "text": "Costura, peluquería, agricultura, mecánica, construcción: formación práctica para que las madres jóvenes solas cubran dignamente sus necesidades, y formación de voluntarios y líderes locales."
+        }
+      },
+      "president": {
+        "eyebrow": "La presidenta",
+        "name": "Mabelle NZEMTCHOU FOTSO",
+        "role": "Presidenta de HOPE International Project",
+        "text": "Dirige la asociación junto con la junta, los miembros y los voluntarios, al servicio de los niños y de los más vulnerables.",
+        "team": "Conocer al equipo"
+      },
+      "closing": {
+        "title": "Juntos, damos vida a <hl>HOPE</hl>",
+        "text": "Gracias por formar parte de esta hermosa aventura humana. Cada miembro es esencial para llevar luz, educación y dignidad a quienes más lo necesitan.",
+        "blessing": "Que Dios bendiga cada paso que damos al servicio de los demás.",
+        "donate": "Hacer un donativo",
+        "join": "Únete a nosotros"
+      }
+    },
+    "gallery": {
+      "eyebrow": "Galería de fotos",
+      "title": "Nuestras acciones <hl>en imágenes</hl>",
+      "lead": "{photos} fotos sobre el terreno repartidas en {albums} álbumes: vuelta al cole, Navidades en orfanatos, apoyo a las mujeres y campañas de salud, desde 2021.",
+      "filterLabel": "Filtrar los álbumes por año",
+      "allYears": "Todos",
+      "status": "{albums, plural, one {# álbum} other {# álbumes}} · {photos, plural, one {# foto} other {# fotos}}",
+      "photoCount": "{count, plural, one {# foto} other {# fotos}}",
+      "albumLabel": "Fotos: {title}",
+      "stripLabel": "Fotos: {title}",
+      "caption": "{title} — {place}, {date}",
+      "alt": {
+        "photo": "{title}, {place} — foto {index}",
+        "affiche": "Cartel: {poster}",
+        "document": "Cheque regalo / justificante: {title}, {place} — foto {index}",
+        "logo": "Logotipo oficial de HOPE International Project"
+      },
+      "lightbox": {
+        "label": "Visor de fotos",
+        "counter": "Imagen {current} / {total}",
+        "close": "Cerrar el visor",
+        "previous": "Foto anterior",
+        "next": "Foto siguiente",
+        "more": "Ver {count, plural, one {# foto más} other {# fotos más}}"
+      },
+      "home": {
+        "eyebrow": "En imágenes",
+        "title": "La vida de HOPE <hl>sobre el terreno</hl>",
+        "text": "Algunos momentos compartidos con los niños, las familias y las mujeres a quienes acompañamos. Toque una foto para ampliarla.",
+        "all": "Ver toda la galería",
+        "label": "Selección de fotos de nuestras acciones"
+      },
+      "about": {
+        "all": "Ver todas las fotos en la galería"
+      },
+      "detail": {
+        "title": "Fotos",
+        "label": "Fotos: {title}",
+        "photoAlt": "{title} — foto {index}"
+      },
+      "cta": {
+        "title": "Escribamos lo que sigue, <hl>juntos</hl>",
+        "text": "Cada donativo hace posibles nuevas vueltas al cole, nuevas Navidades y nuevas sonrisas.",
+        "donate": "Hacer un donativo",
+        "join": "Únase a nosotros"
+      },
+      "albums": {
+        "equipe": {
+          "title": "El equipo de HOPE International Project",
+          "place": "Duala",
+          "caption": "Los miembros de la asociación, con polos y gorras blancos, unidos para devolver la esperanza a los más vulnerables."
+        },
+        "vetements-2022": {
+          "title": "Colecta «Una prenda = Una sonrisa» 2022",
+          "place": "Duala",
+          "caption": "Colecta de ropa de todo tipo del 20 de noviembre al 20 de diciembre de 2022, para orfanatos, campos de refugiados y prisiones."
+        },
+        "rentree-2021-balessing": {
+          "title": "Vuelta al cole en Balessing",
+          "place": "Balessing (Oeste)",
+          "caption": "Primera gran acción: reparto de material escolar a los niños del pueblo de Balessing para el curso 2021-2022."
+        },
+        "enseignants-2022-douala": {
+          "title": "Día Mundial de los Docentes",
+          "place": "Duala",
+          "caption": "Homenaje y regalos a los docentes, al servicio de su vocación con los niños."
+        },
+        "noel-2022-yaounde": {
+          "title": "Navidad en el orfanato Petit Dan & Sarah",
+          "place": "Yaundé",
+          "caption": "Regalos, golosinas y momentos compartidos con los niños de la fundación Petit Dan & Sarah."
+        },
+        "noel-2022-douala": {
+          "title": "Navidad en un orfanato de Duala",
+          "place": "Duala",
+          "caption": "Juguetes y regalos para los niños de un orfanato de Duala, bajo la pancarta «Una sonrisa para todos»."
+        },
+        "campagnes-2023": {
+          "title": "Las campañas de 2023",
+          "place": "Duala y Yaundé",
+          "caption": "Carteles del año: colecta «Una prenda = Una sonrisa», Día Mundial de la Drepanocitosis con el GEDREPACAM y 8 de marzo."
+        },
+        "rentree-2023-yaounde": {
+          "title": "Vuelta al cole 2023: Dieu Merci, primer ahijado",
+          "place": "Yaundé",
+          "caption": "En el orfanato Petit Dan & Sarah, HOPE asume la escolarización de Dieu Merci y entrega víveres y material a los niños."
+        },
+        "noel-2023-mere-teresa": {
+          "title": "Navidad en el orfanato Mère Teresa la Vénérable",
+          "place": "Duala",
+          "caption": "Visita navideña al orfanato de ASENDEF: regalos, víveres y momentos de alegría con los niños."
+        },
+        "noel-2023-bonaberi": {
+          "title": "Navidad con una familia de Bonabéri",
+          "place": "Bonabéri Mabanda, Duala",
+          "caption": "Los miembros de HOPE llevan paquetes y sonrisas a una familia de Bonabéri Mabanda."
+        },
+        "noel-2023-bon-berger": {
+          "title": "Navidad en el orfanato Le Bon Berger",
+          "place": "Nkoabang, Yaundé",
+          "caption": "Gorros navideños, regalos y ropa para los niños del orfanato Le Bon Berger."
+        },
+        "campagnes-2024": {
+          "title": "Las campañas de 2024",
+          "place": "Duala y Yaundé",
+          "caption": "Carteles del año: 8 de marzo, «Back to school», lucha contra el VIH y «La magia de la Navidad para los huérfanos»."
+        },
+        "femmes-2024-yaounde": {
+          "title": "8 de marzo: dos emprendedoras en Yaundé",
+          "place": "Yaundé",
+          "caption": "Cheques de 50 000 FCFA para dos mujeres de Yaundé y su actividad: aperitivos de soja y aceite de palma."
+        },
+        "femmes-2024-douala-irene": {
+          "title": "8 de marzo: apoyo a Irène Kameni",
+          "place": "Duala",
+          "caption": "Entrega de un cheque regalo de 50 000 FCFA a Irène Kameni para desarrollar su comercio."
+        },
+        "femmes-2024-douala-armelle": {
+          "title": "8 de marzo: apoyo a Armelle Rofanie Bogning Nambou",
+          "place": "Duala",
+          "caption": "Entrega de un cheque regalo de 50 000 FCFA a Armelle Rofanie Bogning Nambou para desarrollar su actividad."
+        },
+        "solidarite-rue-2024": {
+          "title": "Junto a Noël Clinton",
+          "place": "Duala",
+          "caption": "Un apoyo de 100 000 FCFA a Noël Clinton, antiguo sin techo que ayuda a las personas que viven en la calle."
+        },
+        "rentree-2024-yaounde": {
+          "title": "Vuelta al cole 2024: segundo año de Dieu Merci",
+          "place": "Yaundé",
+          "caption": "De vuelta en el orfanato Petit Dan & Sarah para el segundo año de apadrinamiento de Dieu Merci, con material para los niños."
+        },
+        "rentree-2024-dschang": {
+          "title": "Vuelta al cole 2024: Divine Folifack en Dschang",
+          "place": "Dschang",
+          "caption": "Primer año de apadrinamiento de Divine Folifack: mochila, uniforme y material, junto a su familia."
+        },
+        "campagnes-2025": {
+          "title": "Las campañas de 2025",
+          "place": "Duala y Yaundé",
+          "caption": "Carteles del año: 8 de marzo, vuelta al cole «Una sonrisa para todos» y Día Mundial de la Lucha contra el Sida."
+        },
+        "femmes-2025-yaounde": {
+          "title": "8 de marzo: apoyo a Sophie Besong",
+          "place": "Yaundé",
+          "caption": "75 000 FCFA y material para el comercio de Sophie Besong, mujer con discapacidad."
+        },
+        "rentree-2025-buisson-ardent": {
+          "title": "Vuelta al cole 2025: Abigail, en el Buisson Ardent",
+          "place": "Yaundé",
+          "caption": "Massoh Ndah Abigail, del orfanato del Buisson Ardent (ASEEODRCAM), se convierte en la tercera ahijada de HOPE; material y mochilas para los niños."
+        },
+        "rentree-2025-yaounde": {
+          "title": "Vuelta al cole 2025: tercer año de Dieu Merci",
+          "place": "Yaundé",
+          "caption": "Tercer año de apadrinamiento de Dieu Merci y momentos compartidos con los niños del orfanato Petit Dan & Sarah."
+        },
+        "rentree-2025-dschang": {
+          "title": "Vuelta al cole 2025: segundo año de Divine",
+          "place": "Dschang",
+          "caption": "Segundo año de apadrinamiento de Divine Folifack: matrícula pagada, mochila y material."
+        },
+        "sida-2025": {
+          "title": "Día Mundial de la Lucha contra el Sida",
+          "place": "Duala",
+          "caption": "Campaña del 1 de diciembre de 2025: sensibilizar sobre las vías de transmisión y los medios de prevención del VIH."
+        }
+      },
+      "posters": {
+        "p05_01": "«Una prenda = Una sonrisa», colecta de ropa del 20 de noviembre al 20 de diciembre de 2022",
+        "p10_01": "«Una prenda = Una sonrisa», colecta de ropa del 15 de noviembre al 15 de diciembre de 2023",
+        "p10_02": "Día Mundial de la Lucha contra la Drepanocitosis, 19 de junio de 2023: hágase la prueba de electroforesis",
+        "p10_03": "8 de marzo de 2023, invertir en las mujeres: HOPE acompaña a las mujeres hacia su independencia",
+        "p15_00": "Día Internacional de la Lucha contra el VIH, 1 de diciembre de 2024",
+        "p15_02": "8 de marzo de 2024, Día Internacional de la Mujer",
+        "p15_03": "«La magia de la Navidad para los huérfanos»: ropa, comidas, golosinas, juguetes y tiovivo",
+        "p15_04": "«Back to school», vuelta al cole solidaria del 1 al 30 de agosto de 2024",
+        "p22_01": "«Back to school» 2025, vuelta al cole «Una sonrisa para todos» del 1 de agosto al 1 de septiembre",
+        "p22_02": "Día Mundial de la Lucha contra el Sida, 1 de diciembre de 2025: movilicémonos con HOPE",
+        "p22_03": "8 de marzo de 2025: feliz día a todas las valientes mujeres del mundo",
+        "p27_01": "Día Mundial de la Lucha contra el Sida, 1 de diciembre de 2025: haga su donativo ahora"
+      }
     }
   }
 }

@@ -23,6 +23,7 @@ import {
   DEFAULT_PRESET_INDEX,
   PRESET_AMOUNTS,
   convertAmount,
+  GRANT_XAF,
   impactKey,
   parseAmount,
   stripeErrorMessage,
@@ -420,7 +421,7 @@ function DonateForm({ meta, metaLoaded, stripeReady, onCardSelected }) {
                   frequency: frequencyKey,
                   currency,
                   equivalent: f.money(Math.round(toEur(amount, currency, rate))),
-                  impact: t(`impact.${impactKey(toEur(amount, currency, rate))}`, { loan: f.money(30000, "xaf") }),
+                  impact: t(`impact.${impactKey(toEur(amount, currency, rate))}`, { grant: f.money(GRANT_XAF, "xaf") }),
                   strong: (chunks) => <strong>{chunks}</strong>,
                 })}
               </p>

@@ -107,7 +107,7 @@
       "greetingEvening": "Bonsoir {name}",
       "greetingDayAnonymous": "Bonjour",
       "greetingEveningAnonymous": "Bonsoir",
-      "description": "Voici où en est HOPE International aujourd’hui : dons, communauté et demandes à traiter.",
+      "description": "Voici où en est HOPE International Project aujourd’hui : dons, communauté et demandes à traiter.",
       "loading": "Chargement des indicateurs…",
       "scopeRegion": "Données de la région {region}",
       "scopeRegionHint": "Votre rôle est limité à la région de votre fiche : les indicateurs ci-dessous ne concernent que ce territoire.",
@@ -334,7 +334,7 @@
       "terrain": "Actions de terrain et logistique",
       "sante": "Santé et accompagnement social",
       "education": "Éducation et formation",
-      "entrepreneuriat": "Microcrédit et entrepreneuriat",
+      "entrepreneuriat": "Entrepreneuriat solidaire et insertion économique",
       "communication": "Communication et réseaux sociaux",
       "collecte": "Collecte de fonds et partenariats",
       "informatique": "Informatique et numérique",
@@ -461,8 +461,8 @@
         "projectsHint": "{active, number} en cours · {completed, plural, one {# terminé} other {# terminés}}",
         "beneficiaries": "Bénéficiaires",
         "beneficiariesHint": "Personnes accompagnées",
-        "trainees": "Personnes formées",
-        "credits": "Microcrédits accordés",
+        "trainees": "Personnes formées et sensibilisées",
+        "credits": "Aides accordées",
         "donations": "Dons collectés",
         "donationsHint": "{count, plural, one {# don} other {# dons}} · {donors, plural, one {# donateur} other {# donateurs}}",
         "members": "Membres"
@@ -488,7 +488,7 @@
         "raised": "<strong>{raised}</strong> sur {goal}",
         "percent": "{progress, number} %",
         "noCampaign": "Pas de campagne de collecte",
-        "impact": "{beneficiaries, number} bénéficiaires · {trainees, number} formés · {credits, number} crédits",
+        "impact": "{beneficiaries, number} bénéficiaires · {trainees, number} formés ou sensibilisés · {credits, number} aides",
         "empty": "Aucun projet dans ce périmètre."
       },
       "members": {

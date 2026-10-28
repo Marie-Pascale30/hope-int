@@ -1,8 +1,10 @@
 // Reseaux sociaux affiches dans le pied de page. URL configurables par variables d'environnement
 // publiques (inlinees au build : chaque variable doit etre ecrite en toutes lettres).
-// Un reseau sans URL (ou avec une URL non https) n'est pas affiche.
+// Un reseau sans URL (ou avec une URL non https) n'est pas affiche. Facebook : page officielle par defaut.
+import { FACEBOOK_URL } from "../site/organization";
+
 const RAW = [
-  ["facebook", "Facebook", process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK],
+  ["facebook", "Facebook", process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK || FACEBOOK_URL],
   ["instagram", "Instagram", process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM],
   ["linkedin", "LinkedIn", process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN],
   ["x", "X", process.env.NEXT_PUBLIC_SOCIAL_X],

@@ -10,7 +10,7 @@ const receiptFormat = require("./receiptFormat");
 const { SOURCES } = require("@hope/shared/fundraising");
 const { FRONTEND_URL } = require("../utils/security");
 
-const ORG_NAME = process.env.ORG_NAME || "HOPE International";
+const ORG_NAME = process.env.ORG_NAME || "HOPE International Project";
 const FIRST_HOURS = Number(process.env.DONATION_REMINDER_FIRST_HOURS || 2);
 const SECOND_HOURS = Number(process.env.DONATION_REMINDER_SECOND_HOURS || 24);
 // Au-dela, un don abandonne n'est plus relance.

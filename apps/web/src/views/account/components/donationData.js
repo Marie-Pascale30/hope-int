@@ -7,17 +7,21 @@ export const PRESET_AMOUNTS = {
 
 export const DEFAULT_PRESET_INDEX = 1;
 
-// Equivalences indicatives, exprimees en euros (seuil minimal du palier), du plus eleve au plus faible.
-// Textes : account.donate.impact.<cle> (ICU, variable {amount} = montant du microcredit en FCFA).
+// Equivalences indicatives tirees des actions de l'association, exprimees en euros (seuil minimal
+// du palier), du plus eleve au plus faible. Textes : account.donate.impact.<cle> (ICU, variable
+// {grant} = montant du cheque remis a une mere pour son commerce, voir GRANT_XAF).
 const IMPACT_TIERS = [
-  { min: 250, key: "cooperative" },
-  { min: 100, key: "fieldAgent" },
-  { min: 50, key: "microcredit" },
-  { min: 25, key: "training" },
-  { min: 10, key: "education" },
-  { min: 5, key: "savingsBook" },
+  { min: 250, key: "sponsorship" },
+  { min: 75, key: "business" },
+  { min: 50, key: "medical" },
+  { min: 25, key: "christmas" },
+  { min: 10, key: "schoolKit" },
+  { min: 5, key: "hygieneKit" },
   { min: 0, key: "fund" },
 ];
+
+// Cheque de soutien a l'activite d'une mere (Journee internationale des droits des femmes), en FCFA.
+export const GRANT_XAF = 50000;
 
 // Cle de traduction de l'equivalence d'impact d'un montant en euros.
 export function impactKey(amountEur) {

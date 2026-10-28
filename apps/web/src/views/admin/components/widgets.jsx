@@ -119,9 +119,9 @@ export function MonthTable({ months }) {
 }
 
 // Formats acceptes par l'API (verification de la signature binaire du fichier) : JPG, PNG, WebP, GIF.
-const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-const IMAGE_ACCEPT = [...IMAGE_TYPES, ".jpg", ".jpeg", ".png", ".webp", ".gif"].join(",");
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+export const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+export const IMAGE_ACCEPT = [...IMAGE_TYPES, ".jpg", ".jpeg", ".png", ".webp", ".gif"].join(",");
+export const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
 // Choix d'une image avec apercu. `currentUrl` : image deja enregistree ;
 // `removed` : l'utilisateur a demande de la retirer (envoye comme remove_image: "1").

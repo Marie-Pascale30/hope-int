@@ -62,7 +62,7 @@
     },
     "verify": {
       "metaTitle": "Verificar un certificado de voluntariado",
-      "metaDescription": "Comprueba la autenticidad de un certificado de voluntariado de HOPE International con su código.",
+      "metaDescription": "Comprueba la autenticidad de un certificado de voluntariado de HOPE International Project con su código.",
       "eyebrow": "Certificado de voluntariado",
       "title": "Verificar un certificado",
       "intro": "Introduce el código impreso en el certificado (formato HOPE-XXXX-XXXX-XXXX).",
@@ -71,7 +71,7 @@
       "format": "Este código no tiene el formato correcto: HOPE seguido de tres grupos de cuatro caracteres.",
       "checking": "Verificando…",
       "valid": "Certificado auténtico",
-      "validText": "Este certificado fue emitido por HOPE International.",
+      "validText": "Este certificado fue emitido por HOPE International Project.",
       "invalid": "Certificado no encontrado",
       "invalidText": "Ningún certificado corresponde al código {code}. Revisa lo que has escrito.",
       "errorTitle": "Verificación no disponible",

@@ -11,6 +11,7 @@ const {
 } = require("@hope/shared/constants");
 const { MAX_PAGE_SIZE } = require("../utils/pagination");
 const { CONTENT_TYPES } = require("../repositories/contentRepository");
+const { parseGalleryInput } = require("../utils/gallery");
 
 const router = express.Router();
 
@@ -67,6 +68,11 @@ const contentValidation = (isCreate) => [
     optionalText("author", 150),
     optionalText("role_label", 150),
     optionalText("image_alt", 255),
+    // Galerie photos (projets, actualites) : tableau ou chaine JSON (formulaire multipart).
+    body("gallery").optional({ values: "null" }).custom((value) => {
+        parseGalleryInput(value);
+        return true;
+    }),
     validate,
 ];
 
@@ -243,6 +249,8 @@ router.post(
 router.post("/donations/:id/resend-receipt", can(P.MANAGE_FINANCE), [idParam, validate], adminController.resendDonationReceipt);
 
 // Contenus (projets / campagnes, actualites, temoignages)
+// Image seule (galeries photos) : renvoie son adresse /uploads, a enregistrer dans gallery.
+router.post("/uploads/images", can(P.MANAGE_CONTENT), upload.single("image"), adminController.uploadContentImage);
 router.get("/content/:type", can(P.MANAGE_CONTENT), [param("type").isIn(CONTENT_TYPES), validate], adminController.getContent);
 router.post("/content/:type", can(P.MANAGE_CONTENT), upload.single("image"), contentValidation(true), adminController.createContent);
 router.patch(

@@ -1,5 +1,7 @@
 /* =========================================================
-   HOPE International — systeme de design
+   HOPE International Project — systeme de design
+   Palette issue du logo : brun #642b17 (marque), or #f0ba2a
+   (accent) et orange du soleil (halos, graphiques).
    Tokens, base typographique et composants partages.
 
    Themes : clair par defaut ; sombre via la preference systeme
@@ -16,50 +18,50 @@
   color-scheme: light;
 
   /* Couleurs : surfaces */
-  --bg: #faf7f2;
+  --bg: #fbf7f0;
   --surface: #ffffff;
-  --surface-2: #f4efe7;
-  --surface-3: #ebe4d8;
-  --surface-hover: #fcfaf6;
+  --surface-2: #f6eee3;
+  --surface-3: #ede2d3;
+  --surface-hover: #fdfaf5;
   /* Fonds sombres fixes (pied de page, barre laterale admin) */
-  --surface-dark: #14261f;
+  --surface-dark: #24140d;
   /* Fonds de marque pleins (bandeaux, appels a l'action) */
-  --surface-brand: #1f5f4a;
-  --surface-brand-deep: #164736;
+  --surface-brand: #642b17;
+  --surface-brand-deep: #4a1f10;
 
   /* Couleurs : textes */
-  --ink: #1c2421;
-  --ink-2: #4a5550;
-  --ink-3: #5f6863;
+  --ink: #2a1d17;
+  --ink-2: #574740;
+  --ink-3: #6b5a51;
   /* Textes sur fonds sombres fixes */
   --on-dark: #ffffff;
-  --on-dark-2: #ccd5d0;
-  --on-dark-3: #a3b1aa;
+  --on-dark-2: #e2d4c9;
+  --on-dark-3: #bfaea2;
   --on-dark-line: rgba(255, 255, 255, 0.12);
   --on-dark-hover: rgba(255, 255, 255, 0.07);
   --on-dark-active: rgba(255, 255, 255, 0.12);
 
   /* Couleurs : filets */
-  --line: #e7e0d4;
-  --line-strong: #d6cdbd;
+  --line: #eadfd0;
+  --line-strong: #dacbb6;
   /* Bordure des controles de formulaire (>= 3:1 sur bg, surface et surface-2) */
-  --line-input: #857e70;
+  --line-input: #8a7a6c;
 
-  --brand: #1f5f4a;
-  --brand-700: #164736;
-  --brand-600: #1a5241;
-  --brand-100: #d5e7de;
-  --brand-50: #eaf3ee;
+  --brand: #642b17;
+  --brand-700: #4e200f;
+  --brand-600: #5a2613;
+  --brand-100: #f1ddd2;
+  --brand-50: #f9efea;
   --on-brand: #ffffff;
 
   /* --accent : decoratif (icones, pastilles, bordures) ; --accent-700 : texte ;
      --accent-solid : fond des boutons (texte --on-accent >= 4,5:1) */
-  --accent: #d2772a;
-  --accent-700: #9f5518;
-  --accent-solid: #a95b1b;
-  --accent-solid-hover: #8c4a14;
-  --accent-50: #fcf0e3;
-  --on-accent: #ffffff;
+  --accent: #c47f0a;
+  --accent-700: #8a5a00;
+  --accent-solid: #f0ba2a;
+  --accent-solid-hover: #e3a514;
+  --accent-50: #fdf4dc;
+  --on-accent: #3a1a08;
 
   --success: #1d7648;
   --success-ink: #145535;
@@ -75,31 +77,31 @@
   --info: #1f5d86;
   --info-ink: #174a6b;
   --info-50: #e6f0f7;
-  --neutral-50: #f1eee8;
+  --neutral-50: #f2ece4;
 
-  --backdrop: rgba(20, 30, 26, 0.5);
+  --backdrop: rgba(36, 20, 13, 0.5);
 
   /* Focus : contour plein >= 3:1 sur le fond adjacent */
-  --focus-color: #1f5f4a;
-  --focus-on-dark: #f3c08c;
+  --focus-color: #642b17;
+  --focus-on-dark: #f0ba2a;
   --focus-width: 2px;
   --focus-offset: 2px;
 
   /* Graphiques : palette categorielle validee (ordre fixe), grille, textes */
-  --chart-1: #1f8a5f;
+  --chart-1: #8a3e22;
   --chart-2: #2f74b5;
-  --chart-3: #d2772a;
+  --chart-3: #c97a0e;
   --chart-4: #7b5cc4;
   --chart-5: #c2477a;
-  --chart-6: #8a7a1a;
-  --chart-grid: #efe9df;
-  --chart-ink: #1c2421;
-  --chart-muted: #5f6863;
-  --chart-tooltip-bg: #14261f;
+  --chart-6: #4f7d3a;
+  --chart-grid: #f0e7da;
+  --chart-ink: #2a1d17;
+  --chart-muted: #6b5a51;
+  --chart-tooltip-bg: #24140d;
   --chart-tooltip-ink: #ffffff;
 
   /* Fleche des listes deroulantes */
-  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234a5550' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23574740' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 
   /* Typographie */
   --font-sans: var(--font-inter, "Inter"), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -139,9 +141,9 @@
   --radius-lg: 18px;
   --radius-xl: 28px;
   --radius-pill: 999px;
-  --shadow-sm: 0 1px 2px rgba(28, 36, 33, 0.06);
-  --shadow: 0 4px 16px rgba(28, 36, 33, 0.07), 0 1px 3px rgba(28, 36, 33, 0.05);
-  --shadow-lg: 0 18px 48px rgba(28, 36, 33, 0.12);
+  --shadow-sm: 0 1px 2px rgba(42, 29, 23, 0.06);
+  --shadow: 0 4px 16px rgba(42, 29, 23, 0.07), 0 1px 3px rgba(42, 29, 23, 0.05);
+  --shadow-lg: 0 18px 48px rgba(42, 29, 23, 0.12);
   --container: 1180px;
 
   /* Durees d'animation (neutralisees par prefers-reduced-motion) */
@@ -150,14 +152,14 @@
   --duration-slow: 0.6s;
 
   /* Surtitre clair sur fond de marque fonce */
-  --accent-on-dark: #f3c08c;
+  --accent-on-dark: #f0ba2a;
   /* Halos decoratifs des bandeaux (utilises avec transparence via color-mix) */
-  --glow-accent: #e79a52;
-  --glow-accent-deep: #d2772a;
-  --glow-brand: #2f8a68;
+  --glow-accent: #f39a2b;
+  --glow-accent-deep: #e07f12;
+  --glow-brand: #8a3e22;
   /* Fin du degrade des jauges */
-  --progress-brand-end: #2f8a68;
-  --progress-accent-end: #e79a52;
+  --progress-brand-end: #8a3e22;
+  --progress-accent-end: #f6c64f;
   --gutter: clamp(16px, 4vw, 32px);
   --header-h: 72px;
 }
@@ -167,39 +169,39 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
 
-    --bg: #101915;
-    --surface: #17221e;
-    --surface-2: #1d2a25;
-    --surface-3: #27362f;
-    --surface-hover: #1b2722;
-    --surface-dark: #0a120f;
-    --surface-brand: #1d4a3b;
-    --surface-brand-deep: #163a2e;
+    --bg: #17110e;
+    --surface: #201814;
+    --surface-2: #281f1a;
+    --surface-3: #352922;
+    --surface-hover: #241b17;
+    --surface-dark: #0f0a08;
+    --surface-brand: #4a2214;
+    --surface-brand-deep: #3a1a0f;
 
-    --ink: #ecf0ec;
-    --ink-2: #c3ccc7;
-    --ink-3: #9ba7a1;
-    --on-dark: #f4f7f4;
-    --on-dark-2: #ccd5d0;
-    --on-dark-3: #a3b1aa;
+    --ink: #f3ece6;
+    --ink-2: #d3c6bc;
+    --ink-3: #ad9e93;
+    --on-dark: #faf5f0;
+    --on-dark-2: #d9ccc2;
+    --on-dark-3: #b3a397;
 
-    --line: #2b3a34;
-    --line-strong: #3a4b44;
-    --line-input: #74867e;
+    --line: #3a2e27;
+    --line-strong: #4a3b32;
+    --line-input: #8f7f73;
 
-    --brand: #6cc79f;
-    --brand-700: #93dcbb;
-    --brand-600: #7fd2ad;
-    --brand-100: #2a5345;
-    --brand-50: #19322a;
-    --on-brand: #0c1d16;
+    --brand: #e6a47f;
+    --brand-700: #f2c3a5;
+    --brand-600: #ecb391;
+    --brand-100: #4a2a1c;
+    --brand-50: #2e1d15;
+    --on-brand: #1f0e07;
 
-    --accent: #e08c3e;
-    --accent-700: #f2ad6e;
-    --accent-solid: #e8954a;
-    --accent-solid-hover: #f2ad6e;
-    --accent-50: #33251a;
-    --on-accent: #1f1206;
+    --accent: #f0ba2a;
+    --accent-700: #f6cd5e;
+    --accent-solid: #f0ba2a;
+    --accent-solid-hover: #f6cd5e;
+    --accent-50: #33270f;
+    --on-accent: #2a1606;
 
     --success: #72d19e;
     --success-ink: #9be0bb;
@@ -215,30 +217,30 @@
     --info: #85bde8;
     --info-ink: #a9d1f0;
     --info-50: #152a3a;
-    --neutral-50: #233029;
+    --neutral-50: #2c231e;
 
     --backdrop: rgba(0, 0, 0, 0.6);
 
-    --focus-color: #93dcbb;
-    --focus-on-dark: #f3c08c;
+    --focus-color: #f2c3a5;
+    --focus-on-dark: #f0ba2a;
 
     /* Fin du degrade des jauges (theme sombre : plus clair que --brand / --accent) */
-    --progress-brand-end: #93dcbb;
-    --progress-accent-end: #f2ad6e;
+    --progress-brand-end: #f2c3a5;
+    --progress-accent-end: #f6cd5e;
 
-    --chart-1: #2fa070;
+    --chart-1: #c8693f;
     --chart-2: #4a8ad6;
-    --chart-3: #cf7a2a;
+    --chart-3: #e8a42a;
     --chart-4: #8f78e0;
     --chart-5: #d45e90;
-    --chart-6: #a8952a;
-    --chart-grid: #2b3a34;
-    --chart-ink: #ecf0ec;
-    --chart-muted: #9ba7a1;
-    --chart-tooltip-bg: #0a120f;
-    --chart-tooltip-ink: #f4f7f4;
+    --chart-6: #6f9e55;
+    --chart-grid: #3a2e27;
+    --chart-ink: #f3ece6;
+    --chart-muted: #ad9e93;
+    --chart-tooltip-bg: #0f0a08;
+    --chart-tooltip-ink: #faf5f0;
 
-    --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c3ccc7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d3c6bc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
     --shadow: 0 4px 16px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -250,39 +252,39 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --bg: #101915;
-  --surface: #17221e;
-  --surface-2: #1d2a25;
-  --surface-3: #27362f;
-  --surface-hover: #1b2722;
-  --surface-dark: #0a120f;
-  --surface-brand: #1d4a3b;
-  --surface-brand-deep: #163a2e;
+  --bg: #17110e;
+  --surface: #201814;
+  --surface-2: #281f1a;
+  --surface-3: #352922;
+  --surface-hover: #241b17;
+  --surface-dark: #0f0a08;
+  --surface-brand: #4a2214;
+  --surface-brand-deep: #3a1a0f;
 
-  --ink: #ecf0ec;
-  --ink-2: #c3ccc7;
-  --ink-3: #9ba7a1;
-  --on-dark: #f4f7f4;
-  --on-dark-2: #ccd5d0;
-  --on-dark-3: #a3b1aa;
+  --ink: #f3ece6;
+  --ink-2: #d3c6bc;
+  --ink-3: #ad9e93;
+  --on-dark: #faf5f0;
+  --on-dark-2: #d9ccc2;
+  --on-dark-3: #b3a397;
 
-  --line: #2b3a34;
-  --line-strong: #3a4b44;
-  --line-input: #74867e;
+  --line: #3a2e27;
+  --line-strong: #4a3b32;
+  --line-input: #8f7f73;
 
-  --brand: #6cc79f;
-  --brand-700: #93dcbb;
-  --brand-600: #7fd2ad;
-  --brand-100: #2a5345;
-  --brand-50: #19322a;
-  --on-brand: #0c1d16;
+  --brand: #e6a47f;
+  --brand-700: #f2c3a5;
+  --brand-600: #ecb391;
+  --brand-100: #4a2a1c;
+  --brand-50: #2e1d15;
+  --on-brand: #1f0e07;
 
-  --accent: #e08c3e;
-  --accent-700: #f2ad6e;
-  --accent-solid: #e8954a;
-  --accent-solid-hover: #f2ad6e;
-  --accent-50: #33251a;
-  --on-accent: #1f1206;
+  --accent: #f0ba2a;
+  --accent-700: #f6cd5e;
+  --accent-solid: #f0ba2a;
+  --accent-solid-hover: #f6cd5e;
+  --accent-50: #33270f;
+  --on-accent: #2a1606;
 
   --success: #72d19e;
   --success-ink: #9be0bb;
@@ -298,30 +300,30 @@
   --info: #85bde8;
   --info-ink: #a9d1f0;
   --info-50: #152a3a;
-  --neutral-50: #233029;
+  --neutral-50: #2c231e;
 
   --backdrop: rgba(0, 0, 0, 0.6);
 
-  --focus-color: #93dcbb;
-  --focus-on-dark: #f3c08c;
+  --focus-color: #f2c3a5;
+  --focus-on-dark: #f0ba2a;
 
   /* Fin du degrade des jauges (theme sombre : plus clair que --brand / --accent) */
-  --progress-brand-end: #93dcbb;
-  --progress-accent-end: #f2ad6e;
+  --progress-brand-end: #f2c3a5;
+  --progress-accent-end: #f6cd5e;
 
-  --chart-1: #2fa070;
+  --chart-1: #c8693f;
   --chart-2: #4a8ad6;
-  --chart-3: #cf7a2a;
+  --chart-3: #e8a42a;
   --chart-4: #8f78e0;
   --chart-5: #d45e90;
-  --chart-6: #a8952a;
-  --chart-grid: #2b3a34;
-  --chart-ink: #ecf0ec;
-  --chart-muted: #9ba7a1;
-  --chart-tooltip-bg: #0a120f;
-  --chart-tooltip-ink: #f4f7f4;
+  --chart-6: #6f9e55;
+  --chart-grid: #3a2e27;
+  --chart-ink: #f3ece6;
+  --chart-muted: #ad9e93;
+  --chart-tooltip-bg: #0f0a08;
+  --chart-tooltip-ink: #faf5f0;
 
-  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c3ccc7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d3c6bc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
   --shadow: 0 4px 16px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -1729,18 +1731,18 @@ p {
     color-scheme: light;
     --bg: #ffffff;
     --surface: #ffffff;
-    --surface-2: #f4efe7;
-    --surface-3: #ebe4d8;
-    --ink: #1c2421;
-    --ink-2: #4a5550;
-    --ink-3: #5f6863;
-    --line: #e7e0d4;
-    --line-strong: #d6cdbd;
-    --brand: #1f5f4a;
-    --brand-700: #164736;
-    --brand-50: #eaf3ee;
-    --accent-700: #9f5518;
-    --accent-50: #fcf0e3;
+    --surface-2: #f6eee3;
+    --surface-3: #ede2d3;
+    --ink: #2a1d17;
+    --ink-2: #574740;
+    --ink-3: #6b5a51;
+    --line: #eadfd0;
+    --line-strong: #dacbb6;
+    --brand: #642b17;
+    --brand-700: #4e200f;
+    --brand-50: #f9efea;
+    --accent-700: #8a5a00;
+    --accent-50: #fdf4dc;
   }
 }
 
@@ -2111,4 +2113,14 @@ p {
   .table-toolbar .mobile-collapse {
     margin-bottom: 0;
   }
+}
+
+/* =========================================================
+   Page "Qui sommes-nous" : ajustements globaux (en-tete et pied de page)
+   Les styles de la page elle-meme sont dans about.css.
+   ========================================================= */
+
+/* Adresse email longue : retour a la ligne plutot que debordement */
+.site-footer__contact a {
+  overflow-wrap: anywhere;
 }

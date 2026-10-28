@@ -16,14 +16,33 @@ exports.getMeta = async (_req, res) => {
         providers: paymentService.getProviders(),
         donationLimits: DONATION_LIMITS,
         xafPerEur: XAF_PER_EUR,
-        organization: {
-            name: process.env.ORG_NAME || "HOPE International",
-            email: process.env.ORG_CONTACT_EMAIL || "contact@hope-international.org",
-            phone: process.env.ORG_CONTACT_PHONE || "",
-            address: process.env.ORG_ADDRESS || "Douala, Cameroun",
-        },
+        organization: organization(),
     });
 };
+
+// Coordonnees publiques de l'association (page contact, pied de page) ; chaque valeur est surchargeable.
+const list = (raw) => (raw || "").split(",").map((value) => value.trim()).filter(Boolean);
+
+function organization() {
+    const env = process.env;
+    const phones = list(env.ORG_CONTACT_PHONES ?? "+237 694 63 25 60, +237 699 94 33 29, +237 677 86 57 43, +237 699 91 33 77, +1 630-597-5049");
+    return {
+        name: env.ORG_NAME || "HOPE International Project",
+        email: env.ORG_CONTACT_EMAIL || "hopeinternationalproject@gmail.com",
+        phone: env.ORG_CONTACT_PHONE || phones[0] || "",
+        phones,
+        address: env.ORG_ADDRESS || "Bonadibong, Akwa, Douala, Cameroun",
+        poBox: env.ORG_PO_BOX ?? "B.P. 12695",
+        president: env.ORG_PRESIDENT ?? "Mabelle NZEMTCHOU FOTSO",
+        // Dons directs hors plateforme (numeros publies par l'association).
+        mobileMoney: {
+            mtn: env.ORG_MOMO_MTN ?? "679 15 22 53",
+            orangeUssd: env.ORG_MOMO_ORANGE_USSD ?? "#150*47#",
+            orangeMerchantCode: env.ORG_MOMO_ORANGE_CODE ?? "747603",
+            sara: env.ORG_SARA_ACCOUNT ?? "07881731101 26",
+        },
+    };
+}
 
 // Cache memoire de 60 s (voir impactService).
 exports.getImpact = async (_req, res) => {

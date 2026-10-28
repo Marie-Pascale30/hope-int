@@ -17,7 +17,7 @@ const { CAMPAIGN_AUDIENCES, CONSENT_TOPICS, renderTemplate } = require("@hope/sh
 const { badRequest, conflict, notFound } = require("../utils/httpError");
 const { FRONTEND_URL } = require("../utils/security");
 
-const ORG_NAME = () => process.env.ORG_NAME || "HOPE International";
+const ORG_NAME = () => process.env.ORG_NAME || "HOPE International Project";
 const BATCH_SIZE = () => Math.max(1, Number(process.env.CAMPAIGN_BATCH_SIZE) || 200);
 
 // --- Modeles ---

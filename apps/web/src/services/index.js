@@ -109,6 +109,8 @@ export const adminApi = {
   createContent: (type, payload) => data(API.post(`/admin/content/${type}`, toFormData(payload))),
   updateContent: (type, id, payload) => data(API.patch(`/admin/content/${type}/${id}`, toFormData(payload))),
   deleteContent: (type, id) => data(API.delete(`/admin/content/${type}/${id}`)),
+  // Image seule pour une galerie photos : renvoie { url } (/uploads/...).
+  uploadImage: (file) => data(API.post("/admin/uploads/images", toFormData({ image: file }))),
 
   events: () => data(API.get("/admin/events")),
   createEvent: (payload) => data(API.post("/admin/events", toFormData(payload))),

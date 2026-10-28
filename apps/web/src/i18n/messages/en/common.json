@@ -1,6 +1,6 @@
 {
   "common": {
-    "siteName": "HOPE International",
+    "siteName": "HOPE International Project",
     "loading": "Loading…",
     "share": {
       "label": "Share this page",
@@ -15,7 +15,7 @@
     }
   },
   "nav": {
-    "home": "HOPE International — home",
+    "home": "HOPE International Project — home",
     "main": "Main navigation",
     "projects": "Our projects",
     "news": "News",
@@ -33,7 +33,15 @@
     "donateShort": "Give",
     "skip": "Skip to content",
     "transparency": "Transparency",
-    "team": "Our team"
+    "team": "Our team",
+    "about": "About us",
+    "gallery": "Gallery",
+    "association": "About HOPE",
+    "associationMenu": "Discover the organisation",
+    "aboutHint": "Mission, values and journey",
+    "galleryHint": "Our work in 145 photos",
+    "teamHint": "Members and volunteers",
+    "transparencyHint": "Accounts and use of donations"
   },
   "pwa": {
     "install": "Install the app",
@@ -48,7 +56,8 @@
     "switchToLight": "Switch to light theme"
   },
   "footer": {
-    "tagline": "Solidarity microfinance, training and mutual support for Cameroonian families.",
+    "tagline": "Love. Educate. Heal. Hope. A better future begins with an act of compassion.",
+    "poBox": "P.O. Box {number}",
     "explore": "Explore",
     "act": "Take action",
     "contact": "Contact us",
@@ -166,12 +175,12 @@
     },
     "logout": {
       "title": "Sign out?",
-      "text": "You are about to sign out of your HOPE International account. You can sign back in at any time.",
+      "text": "You are about to sign out of your HOPE International Project account. You can sign back in at any time.",
       "confirm": "Sign out",
+      "cancel": "Stay signed in",
       "done": "You have been signed out. See you soon!"
     },
-    "filters": "Filters"
-  },
+    "filters": "Filters",
     "phone": {
       "label": "Phone",
       "placeholder": "6 77 12 34 56",
@@ -195,4 +204,5 @@
       "selectPage": "Select all rows on this page",
       "selectRow": "Select: {label}"
     }
+  }
 }

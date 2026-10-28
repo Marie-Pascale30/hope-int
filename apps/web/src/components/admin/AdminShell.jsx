@@ -187,9 +187,12 @@ function Shell({ children }) {
     adminApi.stats().then(setCounts).catch(() => {});
   }, [user, pathname]);
 
-  useEffect(() => {
+  // Changement de page : le tiroir se ferme pendant le rendu, sans effet ni second rendu.
+  const [drawerPath, setDrawerPath] = useState(pathname);
+  if (drawerPath !== pathname) {
+    setDrawerPath(pathname);
     setDrawerOpen(false);
-  }, [pathname]);
+  }
 
   // Fermeture du tiroir : le focus revient au bouton qui l'a ouvert
   // (apres le rendu, une fois le contenu principal sorti de l'etat inert).

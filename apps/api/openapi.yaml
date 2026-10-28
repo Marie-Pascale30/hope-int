@@ -1,9 +1,9 @@
 openapi: 3.1.0
 info:
-  title: API HOPE International
+  title: API HOPE International Project
   version: 1.0.0
   description: |
-    API REST de la plateforme HOPE International (Express 5 + MySQL).
+    API REST de la plateforme HOPE International Project (Express 5 + MySQL).
     Document ecrit a la main a partir de `apps/api/routes/*.js` : a mettre a jour avec les routes.
     Validation et page HTML : `npm run docs:api -w @hope/api` (genere `apps/api/docs/index.html`).
 
@@ -20,7 +20,7 @@ info:
     **Limites** : 500 requetes / 15 min par IP en production ; connexion et inscription 20 / 15 min ;
     dons 30 / 15 min ; formulaires publics 10 / heure.
   contact:
-    name: HOPE International
+    name: HOPE International Project
   license:
     name: Proprietaire
     identifier: LicenseRef-Proprietary
@@ -1149,6 +1149,35 @@ paths:
               schema: { $ref: "#/components/schemas/Content" }
         "400": { $ref: "#/components/responses/ValidationError" }
         "403": { $ref: "#/components/responses/Forbidden" }
+  /admin/uploads/images:
+    post:
+      tags: [Administration]
+      summary: Envoyer une image seule pour une galerie photos (manage_content, 5 Mo max, JPG/PNG/WebP/GIF)
+      description: Renvoie l'adresse /uploads de l'image, a enregistrer ensuite dans le champ gallery d'un projet ou d'une actualite.
+      operationId: adminUploadContentImage
+      security: [{ cookieAuth: [] }, { bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Csrf"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image: { type: string, format: binary }
+      responses:
+        "201":
+          description: Image enregistree
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url: { type: string, example: /uploads/1700000000000-123.jpg }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/Forbidden" }
   /admin/content/{type}/{id}:
     patch:
       tags: [Administration]
@@ -1537,6 +1566,10 @@ components:
         role_label: { type: [string, "null"] }
         image_url: { type: [string, "null"] }
         image_alt: { type: [string, "null"] }
+        gallery:
+          type: [array, "null"]
+          description: Galerie photos (projets et actualites), dans l'ordre d'affichage
+          items: { $ref: "#/components/schemas/GalleryPhoto" }
         status: { type: string, enum: [planifie, en_cours, termine] }
         region: { type: [string, "null"] }
         goal_amount: { type: [number, "null"] }
@@ -1565,6 +1598,23 @@ components:
         end_date: { type: string, format: date }
         project_id: { type: integer, minimum: 1 }
         published: { type: boolean }
+        gallery:
+          type: [array, "null"]
+          maxItems: 200
+          description: Projets et actualites. Remplace toute la galerie (null ou liste vide = aucune photo). En multipart, chaine JSON du tableau.
+          items: { $ref: "#/components/schemas/GalleryPhoto" }
+    GalleryPhoto:
+      type: object
+      required: [src]
+      properties:
+        src:
+          type: string
+          maxLength: 500
+          pattern: "^/(images|uploads)/[A-Za-z0-9._/-]+$"
+          description: Photo du livret (/images/livret/...) ou image envoyee (/uploads/..., voir POST /admin/uploads/images)
+        width: { type: integer, minimum: 1, maximum: 20000 }
+        height: { type: integer, minimum: 1, maximum: 20000 }
+        kind: { type: string, enum: [photo, affiche, document, logo] }
     Event:
       type: object
       properties:

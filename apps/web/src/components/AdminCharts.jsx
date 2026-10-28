@@ -25,11 +25,11 @@ ChartJS.defaults.font.size = 12;
 // Ordre fixe, jamais cycle : une serie garde toujours la meme couleur. Au-dela de 3 series, regrouper en "Autres".
 // Les valeurs de repli correspondent au theme clair (rendu serveur, tests).
 const FALLBACK = {
-  series: ["#1f8a5f", "#2f74b5", "#d2772a", "#7b5cc4", "#c2477a", "#8a7a1a"],
-  grid: "#efe9df",
-  ink: "#1c2421",
-  muted: "#5f6863",
-  tooltipBg: "#14261f",
+  series: ["#8a3e22", "#2f74b5", "#c97a0e", "#7b5cc4", "#c2477a", "#4f7d3a"],
+  grid: "#f0e7da",
+  ink: "#2a1d17",
+  muted: "#6b5a51",
+  tooltipBg: "#24140d",
   tooltipInk: "#ffffff",
   surface: "#ffffff",
 };

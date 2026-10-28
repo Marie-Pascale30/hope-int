@@ -15,8 +15,8 @@ import { useResolvedTheme } from "../../utils/theme";
 const HOME_PATH = /^\/(?:fr|en|es)?\/?$/;
 
 const STATUS_BAR = {
-  light: { style: "LIGHT", color: "#faf7f2" },
-  dark: { style: "DARK", color: "#101915" },
+  light: { style: "LIGHT", color: "#fbf7f0" },
+  dark: { style: "DARK", color: "#17110e" },
 };
 
 export default function NativeBridge() {

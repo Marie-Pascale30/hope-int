@@ -30,6 +30,8 @@ export function useAsync(fetcher, deps = [], { enabled = true } = {}) {
   }, []);
 
   useEffect(() => {
+    // Chargement des donnees : passer en "loading" au lancement est voulu.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (enabled) reload();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, ...deps]);

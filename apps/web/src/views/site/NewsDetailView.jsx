@@ -4,14 +4,19 @@ import { ArrowRight, CalendarDays } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useFormat } from "../../i18n/format";
 import ShareButtons from "../../components/ShareButtons";
+import PhotoGallery from "../../components/site/PhotoGallery";
 import { Link, useLocalePath } from "../../i18n/navigation";
 import { BackLink, CoverImage } from "./components";
 import { paragraphs } from "./components/helpers";
+import { contentGallery } from "./gallery";
 
 export default function NewsDetailView({ item, linked }) {
   const t = useTranslations("site.newsDetail");
   const f = useFormat();
   const lp = useLocalePath();
+  const tGallery = useTranslations("site.gallery");
+  // Photos de l'actualite (champ gallery : tableau, chaine JSON ou null).
+  const photos = contentGallery(tGallery, f, item.gallery, item.title);
 
   return (
     <section className="section section--tight">
@@ -34,6 +39,13 @@ export default function NewsDetailView({ item, linked }) {
         <div className="prose">
           {paragraphs(item.content).map((text, index) => <p key={index}>{text}</p>)}
         </div>
+
+        {photos.length > 0 && (
+          <section className="pub-article__photos" aria-labelledby="news-photos-title">
+            <h2 id="news-photos-title">{tGallery("detail.title")}</h2>
+            <PhotoGallery items={photos} label={tGallery("detail.label", { title: item.title })} />
+          </section>
+        )}
 
         {linked && (
           <Link href={`/projets/${linked.id}`} className="card card--hover pub-linked">

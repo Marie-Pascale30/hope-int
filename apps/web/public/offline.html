@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#1f5f4a">
-  <title>Hors connexion · Hope International</title>
+  <meta name="theme-color" content="#642b17">
+  <title>Hors connexion · HOPE International Project</title>
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <style>
-    :root { --bg: #faf7f2; --surface: #ffffff; --text: #1d2a24; --muted: #5b6b63; --brand: #1f5f4a; --on-brand: #faf7f2; --line: #e7e0d4; }
+    :root { --bg: #fbf7f0; --surface: #ffffff; --text: #2a1d17; --muted: #574740; --brand: #642b17; --on-brand: #ffffff; --line: #eadfd0; }
     @media (prefers-color-scheme: dark) {
-      :root { --bg: #101915; --surface: #17221e; --text: #eef3ef; --muted: #a7b6ae; --brand: #6cc79f; --on-brand: #0c1d16; --line: #2b3a34; }
+      :root { --bg: #17110e; --surface: #201814; --text: #f3ece6; --muted: #d3c6bc; --brand: #e6a47f; --on-brand: #1f0e07; --line: #3a2e27; }
     }
     * { box-sizing: border-box; }
     body {
@@ -50,7 +50,7 @@
         document.getElementById("title").textContent = c[0];
         document.getElementById("text").textContent = c[1];
         document.getElementById("retry").textContent = c[2];
-        document.title = c[3] + " · Hope International";
+        document.title = c[3] + " · HOPE International Project";
       }
       document.getElementById("retry").addEventListener("click", function () { location.reload(); });
       window.addEventListener("online", function () { location.reload(); });

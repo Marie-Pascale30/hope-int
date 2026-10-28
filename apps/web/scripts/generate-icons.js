@@ -1,141 +1,27 @@
-// Genere les icones PNG de l'application installable (manifest, apple-touch-icon) a partir de
-// l'embleme HOPE (pousse dans un cercle, voir app/icon.svg), sans dependance : rasterisation
-// analytique sur-echantillonnee (4x4) et encodage PNG avec zlib (Node).
-// Usage : node scripts/generate-icons.js   (ecrit dans public/icons/)
+// Genere les icones de l'application installable (manifest, apple-touch-icon) et le favicon.ico
+// a partir de l'embleme officiel HOPE (soleil, public/images/brand/soleil-hope.png), avec sharp.
+// Les fichiers fournis ont un fond blanc opaque : on en tire d'abord des versions detourees
+// (soleil-hope-detoure.png, logo-hope-detoure.png) utilisables sur fond creme ou sombre.
+// Usage : node scripts/generate-icons.js
+//   (ecrit dans public/icons/, public/images/brand/ et app/favicon.ico)
 const fs = require("fs");
 const path = require("path");
-const zlib = require("zlib");
+const sharp = require("sharp");
 
-const OUT = path.join(__dirname, "..", "public", "icons");
-const BRAND = [0x1f, 0x5f, 0x4a];
-const CREAM = [0xfa, 0xf7, 0xf2];
-const OCHRE = [0xd2, 0x77, 0x2a];
+const ROOT = path.join(__dirname, "..");
+const OUT = path.join(ROOT, "public", "icons");
+const BRAND_DIR = path.join(ROOT, "public", "images", "brand");
+const SUN_SOURCE = path.join(BRAND_DIR, "soleil-hope.png");
+const LOGO_SOURCE = path.join(BRAND_DIR, "logo-hope.png");
+const SUN = path.join(BRAND_DIR, "soleil-hope-detoure.png");
+const LOGO = path.join(BRAND_DIR, "logo-hope-detoure.png");
+const FAVICON = path.join(ROOT, "app", "favicon.ico");
+// Fond creme de la charte (--bg du theme clair).
+const CREAM = { r: 0xfb, g: 0xf7, b: 0xf0, alpha: 1 };
+const TRANSPARENT = { r: 0, g: 0, b: 0, alpha: 0 };
 
-// ---------- Geometrie de l'embleme (repere 40 x 40 de app/icon.svg) ----------
-
-function cubic(p0, p1, p2, p3, steps = 24) {
-    const points = [];
-    for (let i = 0; i <= steps; i += 1) {
-        const t = i / steps;
-        const u = 1 - t;
-        points.push([
-            u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0],
-            u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1],
-        ]);
-    }
-    return points;
-}
-
-// Feuille ocre : M20 21 c0-5.5 3.8-9.2 9.5-9.5 -.3 5.7-4 9.5-9.5 9.5Z
-const LEAF_RIGHT = [...cubic([20, 21], [20, 15.5], [23.8, 11.8], [29.5, 11.5]), ...cubic([29.5, 11.5], [29.2, 17.2], [25.5, 21], [20, 21])];
-// Feuille claire : M20 24 c0-4.6-3.2-7.7-7.9-7.9 .2 4.7 3.3 7.9 7.9 7.9Z
-const LEAF_LEFT = [...cubic([20, 24], [20, 19.4], [16.8, 16.3], [12.1, 16.1]), ...cubic([12.1, 16.1], [12.3, 20.8], [15.4, 24], [20, 24])];
-
-function inPolygon(x, y, polygon) {
-    let inside = false;
-    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i, i += 1) {
-        const [xi, yi] = polygon[i];
-        const [xj, yj] = polygon[j];
-        if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
-    }
-    return inside;
-}
-
-// Tige : segment (20,19)-(20,31), epaisseur 2.4, extremites arrondies.
-function inStem(x, y) {
-    const cy = Math.min(31, Math.max(19, y));
-    return (x - 20) ** 2 + (y - cy) ** 2 <= 1.2 ** 2;
-}
-
-// Couleur de l'embleme en (x, y) du repere 40 x 40, ou null hors embleme.
-function markColor(x, y, { circle }) {
-    if (inPolygon(x, y, LEAF_RIGHT)) return OCHRE;
-    if (inPolygon(x, y, LEAF_LEFT) || inStem(x, y)) return CREAM;
-    if (!circle || (x - 20) ** 2 + (y - 20) ** 2 <= 400) return BRAND;
-    return null;
-}
-
-// variant : "any" (cercle sur fond transparent) ou "full" (fond plein, embleme dans la zone
-// sure des icones masquables : 80 % centraux).
-function render(size, variant) {
-    const SS = 4;
-    const pixels = Buffer.alloc(size * size * 4);
-    const scale = variant === "full" ? 1.25 : 1;
-    for (let py = 0; py < size; py += 1) {
-        for (let px = 0; px < size; px += 1) {
-            let r = 0;
-            let g = 0;
-            let b = 0;
-            let a = 0;
-            for (let sy = 0; sy < SS; sy += 1) {
-                for (let sx = 0; sx < SS; sx += 1) {
-                    const nx = (px + (sx + 0.5) / SS) / size;
-                    const ny = (py + (sy + 0.5) / SS) / size;
-                    const x = 20 + (nx - 0.5) * 40 / scale;
-                    const y = 20 + (ny - 0.5) * 40 / scale;
-                    const color = markColor(x, y, { circle: variant !== "full" }) || (variant === "full" ? BRAND : null);
-                    if (color) {
-                        r += color[0];
-                        g += color[1];
-                        b += color[2];
-                        a += 1;
-                    }
-                }
-            }
-            const offset = (py * size + px) * 4;
-            if (a) {
-                pixels[offset] = Math.round(r / a);
-                pixels[offset + 1] = Math.round(g / a);
-                pixels[offset + 2] = Math.round(b / a);
-            }
-            pixels[offset + 3] = Math.round((a / (SS * SS)) * 255);
-        }
-    }
-    return pixels;
-}
-
-// ---------- Encodage PNG (RGBA 8 bits) ----------
-
-const CRC_TABLE = Array.from({ length: 256 }, (_, n) => {
-    let c = n;
-    for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
-    return c >>> 0;
-});
-
-function crc32(buffer) {
-    let c = 0xffffffff;
-    for (const byte of buffer) c = CRC_TABLE[(c ^ byte) & 0xff] ^ (c >>> 8);
-    return (c ^ 0xffffffff) >>> 0;
-}
-
-function chunk(type, data) {
-    const length = Buffer.alloc(4);
-    length.writeUInt32BE(data.length);
-    const body = Buffer.concat([Buffer.from(type, "latin1"), data]);
-    const crc = Buffer.alloc(4);
-    crc.writeUInt32BE(crc32(body));
-    return Buffer.concat([length, body, crc]);
-}
-
-function encodePng(size, pixels) {
-    const header = Buffer.alloc(13);
-    header.writeUInt32BE(size, 0);
-    header.writeUInt32BE(size, 4);
-    header[8] = 8;
-    header[9] = 6;
-    const raw = Buffer.alloc(size * (size * 4 + 1));
-    for (let y = 0; y < size; y += 1) {
-        raw[y * (size * 4 + 1)] = 0;
-        pixels.copy(raw, y * (size * 4 + 1) + 1, y * size * 4, (y + 1) * size * 4);
-    }
-    return Buffer.concat([
-        Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
-        chunk("IHDR", header),
-        chunk("IDAT", zlib.deflateSync(raw, { level: 9 })),
-        chunk("IEND", Buffer.alloc(0)),
-    ]);
-}
-
+// variant : "any" (carre creme a coins arrondis, soleil a 84 %), "full" (fond creme plein,
+// soleil dans la zone sure des icones masquables : 80 % centraux, ici 72 %).
 const ICONS = [
     { file: "icon-192.png", size: 192, variant: "any" },
     { file: "icon-512.png", size: 512, variant: "any" },
@@ -144,13 +30,131 @@ const ICONS = [
     { file: "apple-touch-icon.png", size: 180, variant: "full" },
 ];
 
-if (require.main === module) {
+// Detourage : le fond blanc relie aux bords (remplissage par diffusion) devient transparent ;
+// la frange anticrenelee (2 px autour du fond) est "demelangee" du blanc. L'interieur
+// (reflets) reste intact. keep : disque {cx, cy, r} protege (globe du logo, ses nuages sont
+// blancs) ; hors de ce disque, tout blanc est retire (contreformes des lettres O, P, R, A...).
+async function removeWhiteBackground(source, target, { keep } = {}) {
+    const { data, info } = await sharp(source).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    const { width, height } = info;
+    const at = (x, y) => (y * width + x) * 4;
+    const isWhite = (i) => Math.min(data[i], data[i + 1], data[i + 2]) >= 235;
+    const background = new Uint8Array(width * height);
+    const stack = [];
+    for (let x = 0; x < width; x += 1) stack.push(x, 0, x, height - 1);
+    for (let y = 0; y < height; y += 1) stack.push(0, y, width - 1, y);
+    while (stack.length) {
+        const y = stack.pop();
+        const x = stack.pop();
+        if (x < 0 || y < 0 || x >= width || y >= height || background[y * width + x] || !isWhite(at(x, y))) continue;
+        background[y * width + x] = 1;
+        stack.push(x + 1, y, x - 1, y, x, y + 1, x, y - 1);
+    }
+    if (keep) {
+        for (let y = 0; y < height; y += 1) {
+            for (let x = 0; x < width; x += 1) {
+                if ((x - keep.cx) ** 2 + (y - keep.cy) ** 2 > keep.r ** 2 && isWhite(at(x, y))) background[y * width + x] = 1;
+            }
+        }
+    }
+    const nearBackground = (x, y) => {
+        for (let dy = -2; dy <= 2; dy += 1) {
+            for (let dx = -2; dx <= 2; dx += 1) {
+                const nx = x + dx;
+                const ny = y + dy;
+                if (nx >= 0 && ny >= 0 && nx < width && ny < height && background[ny * width + nx]) return true;
+            }
+        }
+        return false;
+    };
+    for (let y = 0; y < height; y += 1) {
+        for (let x = 0; x < width; x += 1) {
+            const i = at(x, y);
+            if (background[y * width + x]) {
+                data[i + 3] = 0;
+            } else if (nearBackground(x, y)) {
+                const alpha = (255 - Math.min(data[i], data[i + 1], data[i + 2])) / 255;
+                if (alpha <= 0) {
+                    data[i + 3] = 0;
+                    continue;
+                }
+                for (let c = 0; c < 3; c += 1) {
+                    data[i + c] = Math.round(Math.min(255, Math.max(0, (data[i + c] - 255 * (1 - alpha)) / alpha)));
+                }
+                data[i + 3] = Math.round(alpha * 255);
+            }
+        }
+    }
+    await sharp(data, { raw: { width, height, channels: 4 } }).trim().png({ compressionLevel: 9 }).toFile(target);
+}
+
+// Soleil detoure redimensionne, centre dans un carre de `size` pixels.
+async function sunLayer(size, ratio) {
+    const inner = Math.round(size * ratio);
+    const sun = await sharp(SUN).resize(inner, inner, { fit: "contain", background: TRANSPARENT }).png().toBuffer();
+    const offset = Math.round((size - inner) / 2);
+    return { input: sun, top: offset, left: offset };
+}
+
+async function renderIcon(size, variant) {
+    const ratio = variant === "full" ? 0.72 : 0.84;
+    const base =
+        variant === "full"
+            ? sharp({ create: { width: size, height: size, channels: 4, background: CREAM } })
+            : sharp(
+                  Buffer.from(
+                      `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><rect width="${size}" height="${size}" rx="${Math.round(size * 0.22)}" fill="#fbf7f0"/></svg>`
+                  )
+              );
+    return base.composite([await sunLayer(size, ratio)]).png({ compressionLevel: 9 }).toBuffer();
+}
+
+// Favicon multi-resolution : fichier ICO contenant des images PNG (16, 32 et 48 px), soleil seul.
+async function renderFavicon() {
+    const sizes = [16, 32, 48];
+    const images = await Promise.all(
+        sizes.map((size) => sharp(SUN).resize(size, size, { fit: "contain", background: TRANSPARENT }).png().toBuffer())
+    );
+    const header = Buffer.alloc(6);
+    header.writeUInt16LE(0, 0);
+    header.writeUInt16LE(1, 2);
+    header.writeUInt16LE(sizes.length, 4);
+    let offset = 6 + 16 * sizes.length;
+    const entries = sizes.map((size, index) => {
+        const entry = Buffer.alloc(16);
+        entry[0] = size;
+        entry[1] = size;
+        entry.writeUInt16LE(1, 4);
+        entry.writeUInt16LE(32, 6);
+        entry.writeUInt32LE(images[index].length, 8);
+        entry.writeUInt32LE(offset, 12);
+        offset += images[index].length;
+        return entry;
+    });
+    return Buffer.concat([header, ...entries, ...images]);
+}
+
+async function main() {
+    await removeWhiteBackground(SUN_SOURCE, SUN);
+    // Globe du logo officiel (1178 x 458) : centre (777, 180), rayon 100 px.
+    await removeWhiteBackground(LOGO_SOURCE, LOGO, { keep: { cx: 777, cy: 180, r: 103 } });
+    console.log("soleil-hope-detoure.png, logo-hope-detoure.png");
     fs.mkdirSync(OUT, { recursive: true });
     for (const icon of ICONS) {
-        const png = encodePng(icon.size, render(icon.size, icon.variant));
+        const png = await renderIcon(icon.size, icon.variant);
         fs.writeFileSync(path.join(OUT, icon.file), png);
         console.log(`${icon.file} (${icon.size}px, ${png.length} octets)`);
     }
+    const ico = await renderFavicon();
+    fs.writeFileSync(FAVICON, ico);
+    console.log(`favicon.ico (16/32/48px, ${ico.length} octets)`);
 }
 
-module.exports = { render, encodePng, ICONS };
+if (require.main === module) {
+    main().catch((error) => {
+        console.error(error);
+        process.exit(1);
+    });
+}
+
+module.exports = { removeWhiteBackground, renderIcon, renderFavicon, ICONS };

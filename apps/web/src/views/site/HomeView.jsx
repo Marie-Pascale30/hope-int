@@ -1,13 +1,15 @@
 // Accueil (composant serveur) : les donnees sont chargees par app/[locale]/page.jsx.
 // Une source en erreur n'empeche pas l'affichage des autres (contenu partiel + message).
 import "../../styles/public.css";
-import { ArrowRight, GraduationCap, HandCoins, Heart, Quote, Users } from "lucide-react";
+import { ArrowRight, Droplets, GraduationCap, HandHeart, Heart, Quote, Stethoscope, Users } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { hl } from "../../components/motion/hl";
 import Marquee from "../../components/motion/Marquee";
 import NumberTicker from "../../components/motion/NumberTicker";
 import PageBanner from "../../components/site/PageBanner";
+import PhotoGallery from "../../components/site/PhotoGallery";
+import { photoUrl } from "@hope/shared/photos";
 import WordRotate from "../../components/motion/WordRotate";
 import { Avatar, Button, Card } from "../../components/ui";
 import { useFormat } from "../../i18n/format";
@@ -19,11 +21,14 @@ import RegionMapSection from "./components/RegionMapSection";
 import { DataSaverToggle } from "../../components/eco/DataSaver";
 import { hasCampaign } from "./components/helpers";
 import { PARTNERS } from "./partners";
+import { HOME_PHOTOS, galleryItems, selectPhotos } from "./gallery";
 
+// Domaines d'action de l'association (guide de bienvenue) ; detail sur la page "Qui sommes-nous".
 const APPROACH = [
-  { icon: GraduationCap, key: "training" },
-  { icon: HandCoins, key: "microfinance", accent: true },
-  { icon: Users, key: "solidarity" },
+  { icon: GraduationCap, key: "education", accent: true },
+  { icon: Stethoscope, key: "health" },
+  { icon: HandHeart, key: "social" },
+  { icon: Droplets, key: "community" },
 ];
 
 function ImpactBand({ impact }) {
@@ -55,6 +60,29 @@ function ImpactBand({ impact }) {
             </li>
           ))}
         </ul>
+      </div>
+    </section>
+  );
+}
+
+// "En images" : une selection de photos du livret, qui s'ouvrent dans la visionneuse, et le lien
+// vers la galerie complete.
+function GallerySection() {
+  const t = useTranslations("site.gallery");
+  const f = useFormat();
+  const lp = useLocalePath();
+  return (
+    <section className="section" aria-labelledby="home-gallery-title">
+      <div className="container">
+        <div className="pub-head-row">
+          <div className="section-head">
+            <span className="eyebrow">{t("home.eyebrow")}</span>
+            <h2 id="home-gallery-title">{t.rich("home.title", { hl })}</h2>
+            <p>{t("home.text")}</p>
+          </div>
+          <Button href={lp("/galerie")} variant="secondary" iconRight={ArrowRight}>{t("home.all")}</Button>
+        </div>
+        <PhotoGallery items={galleryItems(t, f, selectPhotos(...HOME_PHOTOS))} variant="mosaic" label={t("home.label")} />
       </div>
     </section>
   );
@@ -95,7 +123,7 @@ export default function HomeView({ impact, projects, testimonials, news, events,
         <div className="container home-hero__grid">
           <div>
             <span className="eyebrow">{t("eyebrow")}</span>
-            {/* Titre complet pour les lecteurs d'ecran ; a l'ecran, le dernier mot change (familles, femmes...). */}
+            {/* Titre complet pour les lecteurs d'ecran ; a l'ecran, le dernier mot change (enfants, meres seules...). */}
             <h1>
               <span className="visually-hidden">{t("title")}</span>
               <span aria-hidden="true">
@@ -109,7 +137,7 @@ export default function HomeView({ impact, projects, testimonials, news, events,
             </div>
           </div>
           <div className="home-hero__visual">
-            <CoverImage src="/images/hero.svg" className="home-hero__frame" priority sizes="hero" />
+            <CoverImage src={photoUrl("p02_01")} alt={t("heroAlt")} className="home-hero__frame" priority sizes="hero" />
             {impact?.beneficiaries > 0 && (
               <div className="home-hero__float">
                 <span className="pub-feature__icon"><Users aria-hidden="true" /></span>
@@ -134,13 +162,14 @@ export default function HomeView({ impact, projects, testimonials, news, events,
         </div>
       )}
 
-      {/* Approche : titre fixe a gauche, les trois etapes s'empilent au defilement (Stacking Cards). */}
+      {/* Domaines d'action : titre fixe a gauche, les quatre cartes s'empilent au defilement (Stacking Cards). */}
       <section className="section" aria-labelledby="home-approach-title">
         <div className="container home-approach-layout">
           <div className="section-head home-approach__head">
             <span className="eyebrow">{t("approach.eyebrow")}</span>
             <h2 id="home-approach-title">{t.rich("approach.title", { hl })}</h2>
             <p>{t("approach.text")}</p>
+            <Button href={lp("/a-propos")} variant="secondary" iconRight={ArrowRight}>{t("ctaAbout")}</Button>
           </div>
           <ol className="home-approach stack-cards">
             {APPROACH.map(({ icon: Icon, key, accent }, index) => (
@@ -157,6 +186,8 @@ export default function HomeView({ impact, projects, testimonials, news, events,
       </section>
 
       <CalculatorSection xafPerEur={xafPerEur} />
+
+      <GallerySection />
 
       {campaigns.length > 0 && (
         <section className="section" aria-labelledby="home-campaigns-title">

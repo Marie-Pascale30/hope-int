@@ -4,7 +4,7 @@ import { DEFAULT_LOCALE, LOCALES, OG_LOCALES, localizePath } from "../../i18n/co
 import { resolveImage } from "../../utils/format";
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001").replace(/\/$/, "");
-export const SITE_NAME = "HOPE International";
+export const SITE_NAME = "HOPE International Project";
 
 export const absoluteUrl = (path) => `${SITE_URL}${path}`;
 
@@ -23,7 +23,7 @@ export function shareImage(url, alt) {
   return { url: /^https?:\/\//.test(resolved) ? resolved : absoluteUrl(resolved), alt: alt || SITE_NAME };
 }
 
-// title : titre de la page (le gabarit " · HOPE International" est ajoute par le layout) ;
+// title : titre de la page (le gabarit " · HOPE International Project" est ajoute par le layout) ;
 // absoluteTitle : titre complet sans gabarit (accueil). image : { url, alt } facultative,
 // sinon l'image Open Graph generee par defaut.
 // Image Open Graph generee (app/[locale]/opengraph-image.jsx), declaree explicitement : un objet

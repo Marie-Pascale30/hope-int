@@ -7,10 +7,12 @@ import NumberTicker from "../../components/motion/NumberTicker";
 import { useFormat } from "../../i18n/format";
 import { useLocalePath } from "../../i18n/navigation";
 import ShareButtons from "../../components/ShareButtons";
+import PhotoGallery from "../../components/site/PhotoGallery";
 import { BackLink, CampaignProgress, CoverImage, useProjectStatus } from "./components";
 import FieldJournal from "./components/FieldJournal";
 import StickyAction from "./components/StickyAction";
 import { campaignPercent, euros, hasCampaign, paragraphs } from "./components/helpers";
+import { contentGallery } from "./gallery";
 
 function CampaignAside({ project }) {
   const t = useTranslations("site.projectDetail.aside");
@@ -55,6 +57,9 @@ export default function ProjectDetailView({ project, related = [] }) {
   const lp = useLocalePath();
   const campaign = hasCampaign(project);
   const percent = campaignPercent(project);
+  const tGallery = useTranslations("site.gallery");
+  // Photos du projet (champ gallery : tableau, chaine JSON ou null).
+  const photos = contentGallery(tGallery, f, project.gallery, project.title);
 
   return (
     <>
@@ -114,6 +119,13 @@ export default function ProjectDetailView({ project, related = [] }) {
                 )}
               </dl>
             </div>
+
+            {photos.length > 0 && (
+              <div className="pub-block">
+                <h2>{tGallery("detail.title")}</h2>
+                <PhotoGallery items={photos} label={tGallery("detail.label", { title: project.title })} />
+              </div>
+            )}
           </div>
 
           <aside id="soutenir" className="pub-aside" aria-label={t("asideLabel")}>

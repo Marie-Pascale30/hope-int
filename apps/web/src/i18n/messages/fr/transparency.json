@@ -2,7 +2,7 @@
   "transparency": {
     "categories": {
       "training": "Formations",
-      "microcredit": "Fonds de microcrédit",
+      "microcredit": "Aides à l’insertion économique",
       "equipment": "Équipement et matériel",
       "field_staff": "Personnel de terrain",
       "transport": "Transport et logistique",
@@ -23,17 +23,17 @@
     },
     "meta": {
       "title": "Transparence financière",
-      "description": "Où va l’argent de vos dons ? Recettes, dépenses par projet et par catégorie, impact et rapports annuels de HOPE International, publiés chaque année.",
+      "description": "Où va l’argent de vos dons ? Recettes, dépenses par projet et par catégorie, impact et rapports annuels de HOPE International Project, publiés chaque année.",
       "yearTitle": "Transparence {year}",
-      "yearDescription": "Les comptes {year} de HOPE International : dons reçus, dépenses par projet et par catégorie, impact sur le terrain et rapport annuel.",
+      "yearDescription": "Les comptes {year} de HOPE International Project : dons reçus, dépenses par projet et par catégorie, impact sur le terrain et rapport annuel.",
       "teamTitle": "L’équipe et les bénévoles",
-      "teamDescription": "Rencontrez les femmes et les hommes de HOPE International : l’équipe et les bénévoles qui accompagnent les familles dans les régions du Cameroun.",
+      "teamDescription": "Rencontrez les femmes et les hommes de HOPE International Project : l’équipe et les bénévoles engagés auprès des enfants et des plus vulnérables, à Douala, Yaoundé, Dschang et dans l’Ouest.",
       "offlineTitle": "Hors ligne",
       "offlineDescription": "Vous êtes hors ligne : les pages déjà consultées restent disponibles."
     },
     "map": {
       "eyebrow": "Sur le terrain",
-      "title": "Nos actions dans les 10 régions",
+      "title": "Où nous agissons au Cameroun",
       "text": "{covered, plural, =0 {Nos projets se déploient progressivement.} one {# région accueille déjà nos actions} other {# régions accueillent déjà nos actions}} : {projects, plural, =0 {aucun projet publié pour l’instant} one {# projet} other {# projets}} et {events, plural, =0 {aucun événement à venir} one {# événement à venir} other {# événements à venir}}.",
       "hint": "Choisissez une région sur la carte ou dans la liste pour voir ses projets.",
       "regionLabel": "{region} : {projects, plural, =0 {aucun projet} one {# projet} other {# projets}}, {events, plural, =0 {aucun événement à venir} one {# événement à venir} other {# événements à venir}}",
@@ -121,8 +121,8 @@
         "scope": "Cumuls déclarés des projets actifs pendant l’année : un projet pluriannuel compte dans chaque année couverte.",
         "projects": "Projets actifs",
         "beneficiaries": "Bénéficiaires",
-        "trainees": "Personnes formées",
-        "credits": "Microcrédits accordés",
+        "trainees": "Personnes formées et sensibilisées",
+        "credits": "Aides accordées",
         "regions": "Régions couvertes"
       },
       "documents": {
@@ -150,11 +150,11 @@
     "team": {
       "eyebrow": "Qui sommes-nous",
       "title": "L’équipe et les bénévoles",
-      "lead": "Derrière chaque projet, des femmes et des hommes engagés auprès des familles, dans toutes les régions du Cameroun.",
+      "lead": "Derrière chaque action, des femmes et des hommes engagés auprès des enfants et des plus vulnérables, à Douala, Yaoundé, Dschang et dans les villages de l’Ouest.",
       "teamTitle": "L’équipe",
-      "teamText": "Direction, coordination, finance et pôles d’appui.",
+      "teamText": "Présidence, coordination, finances et pôles d’appui.",
       "volunteersTitle": "Les bénévoles",
-      "volunteersText": "Ils donnent de leur temps pour animer les groupes, former et accompagner.",
+      "volunteersText": "Ils donnent de leur temps pour les rentrées scolaires, les visites aux orphelinats, les campagnes de santé et les collectes.",
       "photoAlt": "Portrait de {name}",
       "emptyTitle": "Les portraits arrivent bientôt",
       "emptyText": "Les membres de l’équipe choisissent librement d’apparaître sur cette page.",

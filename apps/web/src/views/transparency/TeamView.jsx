@@ -6,6 +6,7 @@ import { MapPin, Quote, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Avatar, Button, Card } from "@/src/components/ui";
 import { EmptyIllustration } from "@/src/components/illustrations";
+import PageBanner from "@/src/components/site/PageBanner";
 import { useLocalePath } from "@/src/i18n/navigation";
 import { CoverImage, PublicHero } from "@/src/views/site/components";
 import LoadError from "@/src/views/site/components/LoadError";
@@ -51,6 +52,7 @@ export default function TeamView({ members, testimonials = [], error }) {
 
   return (
     <>
+      <PageBanner name="team" />
       <PublicHero eyebrow={t("eyebrow")} title={t("title")} lead={t("lead")} />
       <section className="section section--tight">
         <div className="container">

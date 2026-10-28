@@ -11,7 +11,7 @@ const { dateParts } = require("../utils/timezone");
 const { badRequest } = require("../utils/httpError");
 const { FRONTEND_URL } = require("../utils/security");
 
-const ORG_NAME = process.env.ORG_NAME || "HOPE International";
+const ORG_NAME = process.env.ORG_NAME || "HOPE International Project";
 // Comptes traites par passage : la file d'emails absorbe l'envoi, la generation PDF reste bornee.
 const BATCH = Number(process.env.ANNUAL_SUMMARY_BATCH || 25);
 

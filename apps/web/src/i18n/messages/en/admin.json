@@ -107,7 +107,7 @@
       "greetingEvening": "Good evening {name}",
       "greetingDayAnonymous": "Hello",
       "greetingEveningAnonymous": "Good evening",
-      "description": "Here is where HOPE International stands today: donations, community and requests to handle.",
+      "description": "Here is where HOPE International Project stands today: donations, community and requests to handle.",
       "loading": "Loading indicators…",
       "scopeRegion": "Data for the {region} region",
       "scopeRegionHint": "Your role is limited to the region on your profile: the indicators below only cover that area.",
@@ -334,7 +334,7 @@
       "terrain": "Field work and logistics",
       "sante": "Health and social support",
       "education": "Education and training",
-      "entrepreneuriat": "Microcredit and entrepreneurship",
+      "entrepreneuriat": "Social entrepreneurship and economic integration",
       "communication": "Communication and social media",
       "collecte": "Fundraising and partnerships",
       "informatique": "IT and digital",
@@ -461,8 +461,8 @@
         "projectsHint": "{active, number} ongoing · {completed, plural, one {# completed} other {# completed}}",
         "beneficiaries": "Beneficiaries",
         "beneficiariesHint": "People supported",
-        "trainees": "People trained",
-        "credits": "Microcredits granted",
+        "trainees": "People trained and reached",
+        "credits": "Grants awarded",
         "donations": "Donations raised",
         "donationsHint": "{count, plural, one {# donation} other {# donations}} · {donors, plural, one {# donor} other {# donors}}",
         "members": "Members"
@@ -488,7 +488,7 @@
         "raised": "<strong>{raised}</strong> of {goal}",
         "percent": "{progress, number}%",
         "noCampaign": "No fundraising campaign",
-        "impact": "{beneficiaries, number} beneficiaries · {trainees, number} trained · {credits, number} loans",
+        "impact": "{beneficiaries, number} beneficiaries · {trainees, number} trained or reached · {credits, number} grants",
         "empty": "No projects in this scope."
       },
       "members": {

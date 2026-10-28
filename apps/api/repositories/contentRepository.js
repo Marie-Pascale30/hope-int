@@ -1,12 +1,13 @@
 const db = require("../config/db");
 const { DONOR_KEY_SQL, NET_EUR_SQL } = require("../utils/sql");
+const { readGallery } = require("../utils/gallery");
 
 const CONTENT_TYPES = {
     projects: {
         table: "projects",
         fields: [
             "title", "summary", "description", "image_url", "image_alt", "status", "region", "start_date", "end_date",
-            "budget", "goal_amount", "beneficiaries", "trainees", "credits_granted", "published",
+            "budget", "goal_amount", "beneficiaries", "trainees", "credits_granted", "published", "gallery",
         ],
     },
     testimonials: {
@@ -15,9 +16,12 @@ const CONTENT_TYPES = {
     },
     news: {
         table: "news",
-        fields: ["title", "summary", "content", "image_url", "image_alt", "project_id", "published"],
+        fields: ["title", "summary", "content", "image_url", "image_alt", "project_id", "published", "gallery"],
     },
 };
+
+// Colonnes JSON : ecrites en texte (JSON.stringify), relues en tableau (ou null).
+const JSON_FIELDS = ["gallery"];
 
 // Montant collecte converti en EUR (le XAF a une parite fixe).
 const RAISED_EUR_SQL = `COALESCE(SUM(${NET_EUR_SQL}), 0)`;
@@ -60,10 +64,16 @@ function withReviewStatus(row) {
     return { ...row, review_status: row.published ? "published" : "draft" };
 }
 
+// Galerie toujours renvoyee en tableau (ou null), quel que soit le format rendu par mysql2.
+function withGallery(row) {
+    if (!("gallery" in row)) return row;
+    return { ...row, gallery: readGallery(row.gallery) };
+}
+
 function mapRow(type, row) {
     if (!row) return row;
-    if (type === "projects") return withReviewStatus(mapProject(row));
-    return withReviewStatus({ ...row, published: Boolean(row.published) });
+    if (type === "projects") return withReviewStatus(withGallery(mapProject(row)));
+    return withReviewStatus(withGallery({ ...row, published: Boolean(row.published) }));
 }
 
 function projectSelect(where = "") {
@@ -117,13 +127,18 @@ function pickFields(fields, payload) {
     return fields.filter((field) => Object.prototype.hasOwnProperty.call(payload, field) && payload[field] !== undefined);
 }
 
+function toColumn(field, value) {
+    if (!JSON_FIELDS.includes(field) || value === null || typeof value === "string") return value;
+    return JSON.stringify(value);
+}
+
 exports.create = async (type, payload) => {
     const { table, fields } = resolve(type);
     const present = pickFields(fields, payload);
     const placeholders = present.map(() => "?").join(", ");
     const [result] = await db.query(
         `INSERT INTO ${table} (${present.join(", ")}) VALUES (${placeholders})`,
-        present.map((field) => payload[field])
+        present.map((field) => toColumn(field, payload[field]))
     );
     return result.insertId;
 };
@@ -134,7 +149,7 @@ exports.update = async (type, id, payload) => {
     if (!present.length) return;
     await db.query(
         `UPDATE ${table} SET ${present.map((field) => `${field} = ?`).join(", ")} WHERE id = ?`,
-        [...present.map((field) => payload[field]), id]
+        [...present.map((field) => toColumn(field, payload[field])), id]
     );
 };
 

@@ -2,36 +2,36 @@
   "site": {
     "meta": {
       "home": {
-        "absoluteTitle": "HOPE International — Investing in families' dreams",
-        "description": "Solidarity microfinance, training and mutual support: HOPE International helps women, young people and rural communities in Cameroon become self-reliant. Donate or become a volunteer."
+        "absoluteTitle": "HOPE International Project — Acting for the education of underprivileged children",
+        "description": "A Christian-inspired humanitarian NGO based in Douala: education for underprivileged children, health, and support for single mothers, orphans and the most vulnerable in Cameroon. Donate or become a member."
       },
       "projects": {
         "title": "Our projects",
-        "description": "Microcredit, training, farming, water, health: discover HOPE International's projects in Cameroon and support the one that matters most to you."
+        "description": "Education, health, social support, access to water: discover HOPE International Project's projects in Cameroon and support the one that matters most to you."
       },
       "news": {
         "title": "News",
-        "description": "The latest news from HOPE International's projects: launches, stories from the field and life in our organisation."
+        "description": "The latest news from HOPE International Project: back-to-school drives, orphanage visits, health campaigns and life in our organisation."
       },
       "events": {
         "title": "Events",
-        "description": "Workshops, fundraising days, field visits: the calendar of HOPE International's upcoming events."
+        "description": "Back-to-school drives, health campaigns, collections, general assembly: the calendar of upcoming HOPE International Project events."
       },
       "join": {
         "title": "Join us",
-        "description": "Become a volunteer or a member of HOPE International: tell us what you are interested in and apply online."
+        "description": "Become a member or volunteer of HOPE International Project: members' role, entry fee, annual dues and online application."
       },
       "contact": {
         "title": "Contact",
-        "description": "Get in touch with HOPE International: questions, partnerships, press. Our team will get back to you quickly."
+        "description": "Contact HOPE International Project in Douala: phone numbers, email, address, Mobile Money donations. Questions, partnerships, sponsorships."
       },
       "donate": {
         "title": "Donate",
-        "description": "Support families in Cameroon: solidarity microcredit, training and mutual support. One-off or monthly donation, by card or Mobile Money, with a receipt sent by email."
+        "description": "Support the education of underprivileged children and the most vulnerable in Cameroon. One-off or monthly donation, by card or Mobile Money, receipt sent by email."
       },
       "thanks": {
         "title": "Thank you for your donation",
-        "description": "Confirmation of your donation to HOPE International and receipt to download."
+        "description": "Confirmation of your donation to HOPE International Project and receipt to download."
       },
       "account": {
         "title": "My account",
@@ -39,15 +39,15 @@
       },
       "login": {
         "title": "Sign in",
-        "description": "Sign in to your HOPE International account."
+        "description": "Sign in to your HOPE International Project account."
       },
       "register": {
         "title": "Create an account",
-        "description": "Create your HOPE International donor or member account."
+        "description": "Create your HOPE International Project donor or member account."
       },
       "changePassword": {
         "title": "Change my password",
-        "description": "Change the password of your HOPE International account."
+        "description": "Change the password of your HOPE International Project account."
       },
       "forgotPassword": {
         "title": "Forgotten password",
@@ -59,15 +59,23 @@
       },
       "project": {
         "title": "Project",
-        "description": "Discover this HOPE International project and support it with a donation."
+        "description": "Discover this project by HOPE International Project and support it with a donation."
       },
       "article": {
         "title": "News",
-        "description": "News from HOPE International."
+        "description": "News from HOPE International Project."
       },
       "event": {
         "title": "Event",
-        "description": "A HOPE International event: practical information and registration."
+        "description": "A HOPE International Project event: practical information and registration."
+      },
+      "about": {
+        "title": "About us",
+        "description": "HOPE International Project, a Christian-inspired humanitarian NGO in Douala: mission, vision, values, actions since 2021, upcoming projects and membership."
+      },
+      "gallery": {
+        "title": "Photo gallery",
+        "description": "Photos of HOPE International Project's work since 2021: back-to-school drives, Christmas in orphanages in Douala and Yaoundé, support for women, sponsorships and health campaigns."
       }
     },
     "status": {
@@ -96,49 +104,53 @@
       "registered": "You are registered"
     },
     "home": {
-      "eyebrow": "International solidarity organisation",
-      "title": "Investing in families' dreams",
-      "titleLead": "Investing in the dreams of",
+      "eyebrow": "Christian-inspired humanitarian NGO · Douala, Cameroon",
+      "title": "Restoring hope to the most vulnerable",
+      "titleLead": "Restoring hope to",
       "titleWords": [
-        "families",
-        "women",
-        "young people",
-        "communities"
+        "children",
+        "single mothers",
+        "orphans",
+        "the most vulnerable"
       ],
-      "lead": "In Cameroon, we help women, young people and rural communities become self-reliant through solidarity microfinance, training and mutual support.",
+      "lead": "We act for the education of underprivileged children and support the most vulnerable in Douala, Yaoundé, Dschang and the villages of the West region, through tangible actions inspired by our faith.",
       "ctaDonate": "Donate",
       "ctaDiscover": "Discover our projects",
       "ctaTitle": "Let's change lives, <hl>together</hl>",
-      "ctaText": "Every contribution strengthens a family, a neighbourhood and a generation. Give once or monthly, by card or Mobile Money.",
+      "ctaText": "Every contribution brings a notebook, care, a smile. Give once or monthly, by card or Mobile Money.",
       "ctaJoin": "Volunteer",
-      "heroFloat": "{count, plural, one {<strong>{value}</strong> person supported towards self-reliance} other {<strong>{value}</strong> people supported towards self-reliance}}",
+      "heroFloat": "{count, plural, one {<strong>{value}</strong> person supported} other {<strong>{value}</strong> people supported}}",
       "partialError": "Some information could not be loaded",
       "impact": {
         "eyebrow": "Our impact",
         "title": "<hl>Real results</hl>, on the ground",
-        "text": "Consolidated figures from all our programmes in Cameroon, continuously updated.",
+        "text": "Consolidated figures from our actions in Cameroon, continuously updated.",
         "beneficiaries": "Beneficiaries supported",
-        "trainees": "People trained",
-        "credits": "Microcredits granted",
-        "regions": "Regions covered",
+        "trainees": "People trained and reached by awareness campaigns",
+        "credits": "Grants awarded",
+        "regions": "Regions where we work",
         "raised": "Raised thanks to you",
         "donors": "Committed donors"
       },
       "approach": {
-        "eyebrow": "Our approach",
-        "title": "Giving people the means to <hl>move forward</hl>, not just aid",
-        "text": "Three complementary levers, designed with communities, for changes that last beyond our programmes.",
-        "training": {
-          "title": "Training",
-          "text": "Management, basic bookkeeping, farming techniques, entrepreneurship: we pass on the skills that make an activity sustainable."
+        "eyebrow": "Our areas of action",
+        "title": "Educate, heal, <hl>support</hl>",
+        "text": "Each of our actions is a response of love and faith, designed with the families and communities we serve.",
+        "education": {
+          "title": "Education",
+          "text": "School supplies, help with school fees and individual sponsorship through to job integration; support for teachers in their vocation."
         },
-        "microfinance": {
-          "title": "Solidarity microfinance",
-          "text": "Microcredits at solidarity rates, with monthly follow-up. Every loan repaid funds a new activity."
+        "health": {
+          "title": "Health and awareness",
+          "text": "Campaigns on hepatitis, HIV, cancer and sickle cell disease, medical assistance for the sick and distribution of hygiene kits."
         },
-        "solidarity": {
-          "title": "Solidarity groups and mutual support",
-          "text": "Cooperatives, village savings groups, mentoring: the strength of the group protects families when the unexpected happens."
+        "social": {
+          "title": "Social and humanitarian support",
+          "text": "Young single mothers, orphans, the elderly, sick or disabled, vulnerable families: personal support, practical training and emergency aid."
+        },
+        "community": {
+          "title": "Water and community development",
+          "text": "Wells and boreholes in remote villages, community hygiene and, tomorrow, the HOPE Academy: school, library, canteen and infirmary."
         }
       },
       "campaigns": {
@@ -160,20 +172,22 @@
       "events": {
         "eyebrow": "Events",
         "title": "Upcoming events",
-        "text": "Workshops, fundraising days, field visits: come and meet us.",
+        "text": "Back-to-school drives, health campaigns, collections: come and meet us.",
         "all": "All events"
       },
       "partners": {
         "eyebrow": "Partners",
         "title": "They trust us"
-      }
+      },
+      "heroAlt": "A HOPE International Project volunteer holding a smiling little girl in her arms",
+      "ctaAbout": "About us"
     },
     "projects": {
       "eyebrow": "Our projects",
       "title": "Projects <hl>rooted</hl> in communities",
-      "lead": "Microcredit, training, farming, access to water, health savings: discover our work across the regions of Cameroon and choose the action you would like to support.",
+      "lead": "Education, health, social support, access to water: discover our actions in Douala, Yaoundé, Dschang and western Cameroon, and choose the one you would like to support.",
       "emptyTitle": "No projects published yet",
-      "emptyText": "Our teams are preparing new initiatives. Come back soon, or support all our programmes today.",
+      "emptyText": "Our teams are preparing new actions. Come back soon, or support all our missions right now.",
       "donate": "Donate",
       "tabs": {
         "all": "All",
@@ -194,8 +208,8 @@
       "about": "About the project",
       "impact": "Impact",
       "beneficiaries": "Beneficiaries",
-      "trainees": "People trained",
-      "credits": "Microcredits granted",
+      "trainees": "People trained and reached",
+      "credits": "Grants awarded",
       "upcoming": "Coming soon",
       "start": "Start",
       "end": "Planned end",
@@ -209,16 +223,16 @@
         "doneTitle": "Project completed",
         "doneThanks": "Thank you for your support",
         "doneText": "This project is complete and now continues on its own. Thank you to everyone who made it possible!",
-        "doneMore": "Support our other ongoing projects so that more families can benefit.",
+        "doneMore": "Support our other ongoing actions so that more children and families can benefit.",
         "doneCta": "See ongoing projects",
         "supportTitle": "Support this project",
-        "noCampaign": "This project has no dedicated campaign: it is funded by general donations to HOPE International.",
+        "noCampaign": "This project has no dedicated campaign: it is funded by general donations to HOPE International Project.",
         "donate": "Donate",
         "campaign": "Fundraising campaign",
         "donateProject": "Donate to this project",
         "note": "Your donation goes to this project. A receipt is issued as soon as the payment is confirmed."
       },
-      "shareText": "I support “{title}” with HOPE International:",
+      "shareText": "I support “{title}” with HOPE International Project:",
       "stickyLabel": "Support this project",
       "stickyProgress": "{percent}% of the goal reached",
       "stickySupport": "Support"
@@ -240,7 +254,7 @@
     "events": {
       "eyebrow": "Events",
       "title": "Our upcoming <hl>events</hl>",
-      "lead": "Training workshops, fundraising days, field visits, general assembly: sign up and come and take action with us.",
+      "lead": "Back-to-school drives, orphanage visits, awareness campaigns, collections, general assembly: sign up and come and act with us.",
       "emptyTitle": "No events scheduled",
       "emptyText": "New events will be announced soon. Follow our news or join the organisation to be the first to know.",
       "emptyCta": "Join us",
@@ -303,14 +317,14 @@
       },
       "map": "View on map",
       "mapNewWindow": "(OpenStreetMap, opens in a new window)",
-      "shareText": "Join me at “{title}” with HOPE International:",
+      "shareText": "Join me at “{title}” with HOPE International Project:",
       "stickyLabel": "Quick registration",
       "stickyRegister": "Register"
     },
     "join": {
       "eyebrow": "Join us",
       "title": "<hl>Get involved</hl> with us",
-      "lead": "Volunteers, members, professionals: everyone can help Cameroonian families become self-reliant, according to their time and skills.",
+      "lead": "Members, volunteers, professionals: everyone can contribute to the education of underprivileged children and to supporting the most vulnerable, according to their time, talents and means.",
       "welcome": {
         "eyebrow": "Community member",
         "title": "Great {name}, you're already part of the big <hl>HOPE family</hl>!",
@@ -325,15 +339,15 @@
         "text": "A few hours to give, a wish to take part in decisions or skills to share: everyone has a place in the association.",
         "volunteer": {
           "title": "Volunteer",
-          "text": "Give a few hours: welcoming the public at fundraising events, supporting workshops, logistics, communication."
+          "text": "Give a few hours: back-to-school drives, orphanage visits, “One garment = One smile” collections, awareness campaigns, logistics."
         },
         "member": {
           "title": "Member",
-          "text": "Join the organisation, take part in the general assembly and in decisions, and access your member area."
+          "text": "Join the organisation (entry fee and annual dues), take part in missions, meetings and the general assembly, and access your member area."
         },
         "responsibility": {
           "title": "Skills and responsibilities",
-          "text": "Finance, communication, IT, regional coordination: put your skills to work for the project."
+          "text": "Health, teaching, finance, communication, IT: put your talents to work for our missions."
         }
       },
       "steps": {
@@ -345,7 +359,7 @@
         },
         "s2": {
           "title": "We review your application",
-          "text": "Our human resources team reads your application and may contact you for a chat."
+          "text": "The management assesses each application and may contact you for a chat: every membership is subject to its approval."
         },
         "s3": {
           "title": "We offer you a role",
@@ -357,7 +371,7 @@
         "terrain": "Field work and logistics",
         "sante": "Health and social support",
         "education": "Education and training",
-        "entrepreneuriat": "Microcredit and entrepreneurship",
+        "entrepreneuriat": "Social entrepreneurship and economic integration",
         "communication": "Communication and social media",
         "collecte": "Fundraising and partnerships",
         "informatique": "IT and digital",
@@ -379,7 +393,7 @@
         "counter": "{count} / {min} characters minimum",
         "notSent": "Application not sent",
         "duplicate": "If you already have an account, sign in to your account; otherwise, please be patient: your previous application is being reviewed.",
-        "legal": "By sending this form, you agree to be contacted by HOPE International.",
+        "legal": "By sending this form, you agree to be contacted by HOPE International Project.",
         "submit": "Send my application",
         "errors": {
           "name": "Please enter your full name.",
@@ -409,7 +423,7 @@
     "contact": {
       "eyebrow": "Contact",
       "title": "Let's <hl>talk</hl>",
-      "lead": "A question about our projects, a partnership, a press enquiry? Write to us: our team will reply as soon as possible.",
+      "lead": "A question about our actions, a partnership, a sponsorship? Write to us or call us: our team will reply as soon as possible.",
       "details": "Our contact details",
       "email": "Email",
       "phone": "Phone",
@@ -441,14 +455,495 @@
           "subject": "Please give your message a subject (at least 3 characters).",
           "content": "Your message must contain at least {min} characters."
         }
+      },
+      "phones": "Phone numbers",
+      "poBox": "P.O. Box",
+      "poBoxValue": "P.O. Box {number}",
+      "facebook": "Facebook",
+      "facebookName": "Hope International Cameroon",
+      "mobileMoney": {
+        "title": "Give by Mobile Money",
+        "text": "You can also send your donation directly from your phone. Then write to us to receive a receipt.",
+        "mtn": "MTN Mobile Money",
+        "mtnNumber": "Number",
+        "orange": "Orange Money",
+        "orangeUssd": "Dial",
+        "orangeCode": "Merchant code",
+        "sara": "SARA",
+        "saraAccount": "Account number"
       }
     },
     "notFound": {
-      "metaTitle": "Page not found · HOPE International",
+      "metaTitle": "Page not found · HOPE International Project",
       "title": "Page not found",
       "text": "This page does not exist, has been moved or is no longer published. Discover our projects or go back to the home page.",
       "home": "Back to home",
       "projects": "See our projects"
+    },
+    "membership": {
+      "eyebrow": "Become a member",
+      "title": "Membership and <hl>dues</hl>",
+      "text": "Members bring the organisation to life: they take part in missions, meetings and the general assembly, and support it through their annual dues.",
+      "prerequisiteTitle": "Prerequisite",
+      "prerequisite": "Every membership is subject to evaluation and approval by the management.",
+      "entryFee": "Entry fee",
+      "entryFeeHint": "Paid once, when joining the organisation.",
+      "tableCaption": "Annual dues, in CFA francs and euros",
+      "level": "Level",
+      "amount": "Annual dues",
+      "levels": {
+        "bronze": "Bronze",
+        "silver": "Silver",
+        "vermeil": "Vermeil",
+        "gold": "Gold",
+        "diamond": "Diamond"
+      },
+      "range": "{min} to {max}",
+      "atLeast": "{min} or more",
+      "cta": "Apply now",
+      "roleTitle": "Your role as a member",
+      "roleIntro": "Being a member of HOPE International Project means:",
+      "roles": [
+        "Being properly registered and paying your annual membership dues",
+        "Representing our values with integrity and compassion",
+        "Actively participating in missions, meetings, general assemblies and events",
+        "Sharing your time, talents and ideas to strengthen our collective impact",
+        "Supporting the visibility and development of the organisation",
+        "Promoting a culture of respect, unity and commitment",
+        "Praying regularly for the beneficiaries, members and missions of the NGO, in accordance with your beliefs"
+      ],
+      "eurEquivalent": "about {amount}",
+      "amountEur": "In euros",
+      "rateNote": "Euro equivalents are rounded, at the fixed rate of €1 = 655.957 CFA francs."
+    },
+    "about": {
+      "eyebrow": "About us",
+      "title": "Acting for the education of <hl>underprivileged</hl> children",
+      "lead": "Restoring hope to the most vulnerable.",
+      "quote": "We believe that God's love, expressed through tangible actions, transforms lives.",
+      "nav": "On this page",
+      "who": {
+        "eyebrow": "Who we are",
+        "title": "A humanitarian, apolitical, Christian-inspired NGO",
+        "text": "HOPE International Project is a humanitarian, non-profit, apolitical organisation inspired by universal Christian principles such as love, compassion and mercy. Based in Douala, it also works in Yaoundé, Dschang and the villages of western Cameroon.",
+        "welcome": "We invest in the dreams, health and dignity of the most underprivileged, with compassion, expertise and sustainable commitment. Together, we are more than an organisation — we are a community united by compassion, action and hope.",
+        "commitmentsTitle": "We are committed to:",
+        "commitments": [
+          "Promoting inclusive and equitable education for underprivileged children",
+          "Providing medical, psychological and social support to the most vulnerable (sick people, people with disabilities, the elderly)",
+          "Supporting young single mothers through empowerment and training",
+          "Assisting communities in gaining access to clean water and basic services",
+          "Addressing major humanitarian challenges through campaigns and fieldwork"
+        ],
+        "verse": "“Love your neighbour as yourself”",
+        "verseRef": "Matthew 22:39",
+        "verseIntro": "Founded on Christian values of love for one's neighbour, justice and service, our NGO acts in response to the biblical call:",
+        "imageAlt": "Members of HOPE International Project, in white polo shirts and caps, in front of the banner “We invest in humanity”"
+      },
+      "mission": {
+        "title": "Our mission",
+        "text": "To promote access to quality education for underprivileged children and meet the essential needs of the most vulnerable, restoring hope, dignity and joy. Through tangible, compassionate actions inspired by our Christian faith, we work toward a more just and inclusive future."
+      },
+      "vision": {
+        "title": "Our vision",
+        "text": "We believe in a world where every human being, without distinction, has access to equitable education, quality healthcare, and an environment that fosters personal and community development.",
+        "education": "We view education as a powerful tool for individual and collective transformation.",
+        "faith": "Our faith in God drives us to see each person as precious, created with purpose, and worthy of love."
+      },
+      "values": {
+        "eyebrow": "Our values",
+        "title": "What <hl>drives</hl> us",
+        "faith": {
+          "title": "Faith",
+          "text": "Our actions are guided by our trust in God and our commitment to doing His will."
+        },
+        "equity": {
+          "title": "Equity",
+          "text": "Reducing inequalities in access to fundamental rights."
+        },
+        "compassion": {
+          "title": "Compassion",
+          "text": "People are at the heart of everything we do."
+        },
+        "commitment": {
+          "title": "Commitment",
+          "text": "Sustainable action is the foundation of change."
+        },
+        "transparency": {
+          "title": "Transparency",
+          "text": "We act with integrity and accountability."
+        }
+      },
+      "motto": {
+        "eyebrow": "Motto and slogan",
+        "mottoLabel": "Our motto",
+        "motto": "Love. Educate. Heal. Hope.",
+        "verse": "“For faith without works is dead”",
+        "verseRef": "James 2:17",
+        "sloganLabel": "Our slogan",
+        "slogan": "A better future begins with an act of compassion."
+      },
+      "actions": {
+        "eyebrow": "Our main actions",
+        "title": "Five areas of <hl>action</hl>",
+        "text": "Each of our actions is a response of love and faith, inspired by the Gospel and Christ's example of service.",
+        "education": {
+          "title": "Education",
+          "items": [
+            "Distribution of school supplies and educational materials",
+            "Scholarships and school fee support",
+            "Individual educational sponsorship through to job integration",
+            "Support for teachers in fulfilling their vocation"
+          ]
+        },
+        "health": {
+          "title": "Health and awareness",
+          "items": [
+            "Awareness campaigns (hepatitis, HIV, cancer, nutrition…)",
+            "Medical assistance for the sick",
+            "Distribution of hygiene kits",
+            "Participation in international health days"
+          ]
+        },
+        "social": {
+          "title": "Social and humanitarian support",
+          "items": [
+            "Support for young single mothers",
+            "Social and psychological support",
+            "Practical training (sewing, hairdressing, farming, mechanics, construction…)",
+            "Economic integration to help them meet their own and their children's needs",
+            "Assistance for the elderly, sick and disabled (social inclusion)",
+            "Support for vulnerable families",
+            "Emergency interventions (food kits, clothing…)"
+          ]
+        },
+        "water": {
+          "title": "Water access and sanitation",
+          "items": [
+            "Construction of wells and boreholes",
+            "Community hygiene awareness",
+            "Access to drinking water in remote villages"
+          ]
+        },
+        "community": {
+          "title": "Community development",
+          "items": [
+            "Project to create the HOPE Academy (school, library, recreation area, canteen, infirmary…)",
+            "Training for volunteers and local leaders",
+            "Promotion of social entrepreneurship"
+          ]
+        }
+      },
+      "timeline": {
+        "eyebrow": "Our journey",
+        "title": "Since 2021, <hl>tangible</hl> actions",
+        "text": "Back-to-school drives, Christmas in orphanages, sponsorships, support for women and health campaigns: some milestones of our work in the field.",
+        "items": {
+          "balessing": {
+            "date": "School year 2021-2022",
+            "title": "Back to school in Balessing",
+            "text": "Our first major action: distributing school supplies to the children of Balessing village, in western Cameroon.",
+            "alt": "School supplies being handed out to children in Balessing"
+          },
+          "teachers": {
+            "date": "5 October 2022",
+            "title": "World Teachers' Day in Douala",
+            "text": "Tribute to and support for teachers, serving their vocation to children.",
+            "alt": "Teachers gathered in Douala for World Teachers' Day"
+          },
+          "christmas2022": {
+            "date": "December 2022",
+            "title": "Christmas in orphanages",
+            "text": "Gifts and time together at the Petit Dan & Sarah orphanage in Yaoundé and at an orphanage in Douala.",
+            "alt": "Christmas gifts being handed out at the Petit Dan & Sarah orphanage in Yaoundé"
+          },
+          "clothes": {
+            "date": "2022 and 2023",
+            "title": "“One garment = One smile” collections",
+            "text": "Two clothing drives, from 20 November to 20 December 2022 and from 15 November to 15 December 2023, redistributed to families and children in need."
+          },
+          "women2023": {
+            "date": "8 March 2023",
+            "title": "International Women's Day",
+            "text": "A day dedicated to women's empowerment."
+          },
+          "sickleCell": {
+            "date": "19 June 2023",
+            "title": "World Sickle Cell Day",
+            "text": "Awareness campaign and haemoglobin electrophoresis tests, with GEDREPACAM."
+          },
+          "dieuMerci": {
+            "date": "School year 2023-2024",
+            "title": "Our first sponsored child: Dieu Merci",
+            "text": "In Yaoundé, HOPE sponsors the schooling of Dieu Merci, from the Petit Dan & Sarah orphanage. The sponsorship has been renewed every year since.",
+            "alt": "Back to school 2023 in Yaoundé with Dieu Merci, HOPE's first sponsored child"
+          },
+          "christmas2023": {
+            "date": "December 2023",
+            "title": "Christmas in Douala and Yaoundé",
+            "text": "Visits to the Mère Teresa la Vénérable orphanage (ASENDEF) in Douala, to a family in Bonabéri Mabanda and to the Le Bon Berger orphanage in Nkoabang (Yaoundé).",
+            "alt": "Time together at the Mère Teresa la Vénérable orphanage in Douala"
+          },
+          "women2024": {
+            "date": "8 March 2024",
+            "title": "Support for four women entrepreneurs",
+            "text": "Cheques of 50,000 FCFA to grow their businesses: two women in Yaoundé (soy snacks, palm oil) and, in Douala, Irène Kameni and Armelle Rofanie Bogning Nambou.",
+            "alt": "A support cheque being handed to a woman entrepreneur in Douala"
+          },
+          "street": {
+            "date": "June 2024",
+            "title": "Standing with people living on the street",
+            "text": "Support of 100,000 FCFA for Noël Clinton, a former homeless man who helps people living on the streets of Douala.",
+            "alt": "Support being handed to Noël Clinton in Douala"
+          },
+          "school2024": {
+            "date": "August 2024",
+            "title": "Two sponsored children",
+            "text": "A second year of sponsorship for Dieu Merci and a first year for Divine Folifack, in Dschang.",
+            "alt": "Back to school 2024 in Dschang with Divine Folifack"
+          },
+          "december2024": {
+            "date": "December 2024",
+            "title": "HIV and “Christmas magic for orphans”",
+            "text": "Awareness campaign for World AIDS Day on 1 December, followed by Christmas with orphans."
+          },
+          "women2025": {
+            "date": "8 March 2025",
+            "title": "Support for Sophie Besong",
+            "text": "75,000 FCFA for the business of Sophie Besong, a woman living with a disability, in Yaoundé.",
+            "alt": "Sophie Besong receiving HOPE's support in Yaoundé"
+          },
+          "school2025": {
+            "date": "August 2025",
+            "title": "“A smile for everyone” back-to-school drive",
+            "text": "A third sponsored child, Massoh Ndah Abigail, from the Buisson Ardent orphanage (ASEEODRCAM, Yaoundé), a third year for Dieu Merci and a second year for Divine in Dschang.",
+            "alt": "Back to school 2025 at the Buisson Ardent orphanage in Yaoundé"
+          },
+          "aids2025": {
+            "date": "1 December 2025",
+            "title": "World AIDS Day",
+            "text": "A new HIV awareness campaign."
+          }
+        }
+      },
+      "upcoming": {
+        "eyebrow": "Upcoming projects",
+        "title": "What we are <hl>preparing</hl>",
+        "text": "To go further, the organisation is preparing new actions, which will come to life with the support of its members, donors and partners.",
+        "academy": {
+          "title": "The HOPE Academy",
+          "text": "A school with a library, recreation area, canteen and infirmary, giving underprivileged children a complete learning environment."
+        },
+        "water": {
+          "title": "Wells and boreholes",
+          "text": "Building drinking water points in remote villages and raising awareness of community hygiene."
+        },
+        "entrepreneurship": {
+          "title": "Social entrepreneurship",
+          "text": "Building on the cheques given to women on 8 March: small start-up funds, business follow-up and, in time, solidarity savings and microcredit groups for single mothers."
+        },
+        "training": {
+          "title": "Training and economic integration",
+          "text": "Sewing, hairdressing, farming, mechanics, construction: practical training so that young single mothers can meet their needs with dignity, and training for volunteers and local leaders."
+        }
+      },
+      "president": {
+        "eyebrow": "Our president",
+        "name": "Mabelle NZEMTCHOU FOTSO",
+        "role": "President of HOPE International Project",
+        "text": "She leads the organisation with the board, members and volunteers, in the service of children and the most vulnerable.",
+        "team": "Meet the team"
+      },
+      "closing": {
+        "title": "Together, we bring <hl>HOPE</hl> to life",
+        "text": "Thank you for being part of this beautiful human journey. Each member is essential to bringing light, education and dignity to those who need it most.",
+        "blessing": "May God bless every step we take in service of others.",
+        "donate": "Donate",
+        "join": "Join us"
+      }
+    },
+    "gallery": {
+      "eyebrow": "Photo gallery",
+      "title": "Our work <hl>in pictures</hl>",
+      "lead": "{photos} photos from the field in {albums} albums: back-to-school drives, Christmas in orphanages, support for women and health campaigns, since 2021.",
+      "filterLabel": "Filter albums by year",
+      "allYears": "All",
+      "status": "{albums, plural, one {# album} other {# albums}} · {photos, plural, one {# photo} other {# photos}}",
+      "photoCount": "{count, plural, one {# photo} other {# photos}}",
+      "albumLabel": "Photos: {title}",
+      "stripLabel": "Photos: {title}",
+      "caption": "{title} — {place}, {date}",
+      "alt": {
+        "photo": "{title}, {place} — photo {index}",
+        "affiche": "Poster: {poster}",
+        "document": "Gift voucher / receipt: {title}, {place} — photo {index}",
+        "logo": "Official logo of HOPE International Project"
+      },
+      "lightbox": {
+        "label": "Photo viewer",
+        "counter": "Image {current} / {total}",
+        "close": "Close the viewer",
+        "previous": "Previous photo",
+        "next": "Next photo",
+        "more": "See {count, plural, one {# more photo} other {# more photos}}"
+      },
+      "home": {
+        "eyebrow": "In pictures",
+        "title": "Life at HOPE <hl>in the field</hl>",
+        "text": "A few moments shared with the children, families and women we support. Tap a photo to enlarge it.",
+        "all": "See the full gallery",
+        "label": "A selection of photos of our work"
+      },
+      "about": {
+        "all": "See all the photos in the gallery"
+      },
+      "detail": {
+        "title": "Photos",
+        "label": "Photos: {title}",
+        "photoAlt": "{title} — photo {index}"
+      },
+      "cta": {
+        "title": "Let's write what comes next, <hl>together</hl>",
+        "text": "Every donation makes new school years, new Christmases and new smiles possible.",
+        "donate": "Donate",
+        "join": "Join us"
+      },
+      "albums": {
+        "equipe": {
+          "title": "The HOPE International Project team",
+          "place": "Douala",
+          "caption": "Members of the association, in white polo shirts and caps, united to restore hope to the most vulnerable."
+        },
+        "vetements-2022": {
+          "title": "“One garment = One smile” drive 2022",
+          "place": "Douala",
+          "caption": "A drive for all kinds of clothing from 20 November to 20 December 2022, for orphanages, refugee camps and prisons."
+        },
+        "rentree-2021-balessing": {
+          "title": "Back to school in Balessing",
+          "place": "Balessing (West)",
+          "caption": "Our first major action: school supplies handed out to the children of Balessing village for the 2021-2022 school year."
+        },
+        "enseignants-2022-douala": {
+          "title": "World Teachers' Day",
+          "place": "Douala",
+          "caption": "Tribute and gifts for teachers, in support of their calling to serve children."
+        },
+        "noel-2022-yaounde": {
+          "title": "Christmas at the Petit Dan & Sarah orphanage",
+          "place": "Yaoundé",
+          "caption": "Gifts, treats and time together with the children of the Petit Dan & Sarah foundation."
+        },
+        "noel-2022-douala": {
+          "title": "Christmas at an orphanage in Douala",
+          "place": "Douala",
+          "caption": "Toys and gifts for the children of an orphanage in Douala, under the “A smile for everyone” banner."
+        },
+        "campagnes-2023": {
+          "title": "2023 campaigns",
+          "place": "Douala and Yaoundé",
+          "caption": "Posters of the year: the “One garment = One smile” drive, World Sickle Cell Day with GEDREPACAM, and 8 March."
+        },
+        "rentree-2023-yaounde": {
+          "title": "Back to school 2023: Dieu Merci, our first sponsored child",
+          "place": "Yaoundé",
+          "caption": "At the Petit Dan & Sarah orphanage, HOPE takes on Dieu Merci's schooling and hands out food and supplies to the children."
+        },
+        "noel-2023-mere-teresa": {
+          "title": "Christmas at the Mère Teresa la Vénérable orphanage",
+          "place": "Douala",
+          "caption": "A Christmas visit to the ASENDEF orphanage: gifts, food and moments of joy with the children."
+        },
+        "noel-2023-bonaberi": {
+          "title": "Christmas with a family in Bonabéri",
+          "place": "Bonabéri Mabanda, Douala",
+          "caption": "HOPE members bring parcels and smiles to a family in Bonabéri Mabanda."
+        },
+        "noel-2023-bon-berger": {
+          "title": "Christmas at the Le Bon Berger orphanage",
+          "place": "Nkoabang, Yaoundé",
+          "caption": "Christmas hats, gifts and clothes for the children of the Le Bon Berger orphanage."
+        },
+        "campagnes-2024": {
+          "title": "2024 campaigns",
+          "place": "Douala and Yaoundé",
+          "caption": "Posters of the year: 8 March, “Back to school”, the fight against HIV and “Christmas magic for orphans”."
+        },
+        "femmes-2024-yaounde": {
+          "title": "8 March: two women entrepreneurs in Yaoundé",
+          "place": "Yaoundé",
+          "caption": "Cheques of 50,000 FCFA for two women in Yaoundé and their businesses: soy snacks and palm oil."
+        },
+        "femmes-2024-douala-irene": {
+          "title": "8 March: support for Irène Kameni",
+          "place": "Douala",
+          "caption": "A 50,000 FCFA gift voucher presented to Irène Kameni to grow her business."
+        },
+        "femmes-2024-douala-armelle": {
+          "title": "8 March: support for Armelle Rofanie Bogning Nambou",
+          "place": "Douala",
+          "caption": "A 50,000 FCFA gift voucher presented to Armelle Rofanie Bogning Nambou to grow her business."
+        },
+        "solidarite-rue-2024": {
+          "title": "Standing with Noël Clinton",
+          "place": "Douala",
+          "caption": "100,000 FCFA in support for Noël Clinton, a former homeless man who helps people living on the street."
+        },
+        "rentree-2024-yaounde": {
+          "title": "Back to school 2024: Dieu Merci's second year",
+          "place": "Yaoundé",
+          "caption": "Back at the Petit Dan & Sarah orphanage for Dieu Merci's second year of sponsorship, with supplies for the children."
+        },
+        "rentree-2024-dschang": {
+          "title": "Back to school 2024: Divine Folifack in Dschang",
+          "place": "Dschang",
+          "caption": "Divine Folifack's first year of sponsorship: bag, uniform and supplies, with her family."
+        },
+        "campagnes-2025": {
+          "title": "2025 campaigns",
+          "place": "Douala and Yaoundé",
+          "caption": "Posters of the year: 8 March, the “A smile for everyone” back-to-school drive and World AIDS Day."
+        },
+        "femmes-2025-yaounde": {
+          "title": "8 March: support for Sophie Besong",
+          "place": "Yaoundé",
+          "caption": "75,000 FCFA and equipment for the business of Sophie Besong, a woman living with a disability."
+        },
+        "rentree-2025-buisson-ardent": {
+          "title": "Back to school 2025: Abigail at Buisson Ardent",
+          "place": "Yaoundé",
+          "caption": "Massoh Ndah Abigail, from the Buisson Ardent orphanage (ASEEODRCAM), becomes HOPE's third sponsored child; supplies and bags for the children."
+        },
+        "rentree-2025-yaounde": {
+          "title": "Back to school 2025: Dieu Merci's third year",
+          "place": "Yaoundé",
+          "caption": "Dieu Merci's third year of sponsorship and time together with the children of the Petit Dan & Sarah orphanage."
+        },
+        "rentree-2025-dschang": {
+          "title": "Back to school 2025: Divine's second year",
+          "place": "Dschang",
+          "caption": "Divine Folifack's second year of sponsorship: school fees paid, bag and supplies."
+        },
+        "sida-2025": {
+          "title": "World AIDS Day",
+          "place": "Douala",
+          "caption": "1 December 2025 campaign: raising awareness of how HIV is transmitted and how to prevent it."
+        }
+      },
+      "posters": {
+        "p05_01": "“One garment = One smile”, clothing drive from 20 November to 20 December 2022",
+        "p10_01": "“One garment = One smile”, clothing drive from 15 November to 15 December 2023",
+        "p10_02": "World Sickle Cell Day, 19 June 2023: get your electrophoresis test",
+        "p10_03": "8 March 2023, investing in women: HOPE supports women on their way to independence",
+        "p15_00": "International day against HIV, 1 December 2024",
+        "p15_02": "8 March 2024, International Women's Day",
+        "p15_03": "“Christmas magic for orphans”: clothes, meals, treats, toys and a merry-go-round",
+        "p15_04": "“Back to school”, solidarity drive from 1 to 30 August 2024",
+        "p22_01": "“Back to school” 2025, the “A smile for everyone” drive from 1 August to 1 September",
+        "p22_02": "World AIDS Day, 1 December 2025: let's mobilise with HOPE",
+        "p22_03": "8 March 2025: happy Women's Day to all the brave women of the world",
+        "p27_01": "World AIDS Day, 1 December 2025: donate now"
+      }
     }
   }
 }

@@ -4,6 +4,7 @@ const contentReview = require("./contentReviewService");
 const { badRequest, forbidden, notFound } = require("../utils/httpError");
 const { getScopeRegion } = require("../utils/scope");
 const { removeUpload, removeReplacedUpload } = require("../utils/uploads");
+const { parseGalleryInput, galleryUploads } = require("../utils/gallery");
 
 const NUMERIC_FIELDS = ["budget", "goal_amount"];
 const INTEGER_FIELDS = ["beneficiaries", "trainees", "credits_granted", "project_id"];
@@ -11,9 +12,20 @@ const DATE_FIELDS = ["start_date", "end_date"];
 
 const OUT_OF_SCOPE = "Ce contenu ne relève pas de votre région";
 
+function readGalleryInput(value) {
+    try {
+        return parseGalleryInput(value);
+    } catch (error) {
+        throw badRequest(error.message);
+    }
+}
+
 // Les formulaires multipart envoient tout en texte : normalisation des types avant ecriture.
 function normalizePayload(body, file) {
     const payload = { ...body };
+    // Galerie : chaine JSON (multipart) ou tableau (JSON), deja validee par la route.
+    const gallery = "gallery" in payload ? readGalleryInput(payload.gallery) : undefined;
+    delete payload.gallery;
     delete payload.image;
     // L'image ne vient que d'un fichier envoye (jamais d'une URL fournie par le client).
     delete payload.image_url;
@@ -37,10 +49,21 @@ function normalizePayload(body, file) {
         }
     });
 
+    if (gallery !== undefined) payload.gallery = gallery;
     if (file) payload.image_url = `/uploads/${file.filename}`;
     if (payload.remove_image === "1" || payload.remove_image === true) payload.image_url = null;
     delete payload.remove_image;
     return payload;
+}
+
+// Images envoyees retirees de la galerie : fichiers supprimes, sauf s'ils restent utilises
+// par le contenu (galerie ou image principale).
+async function removeDroppedGalleryUploads(existing, payload) {
+    const imageUrl = "image_url" in payload ? payload.image_url : existing.image_url;
+    const kept = new Set([...galleryUploads(payload.gallery), imageUrl]);
+    for (const src of galleryUploads(existing.gallery)) {
+        if (!kept.has(src)) await removeUpload(src);
+    }
 }
 
 // --- Portee regionale (acteur restreint a sa region) ---
@@ -115,8 +138,18 @@ exports.update = async (actor, type, id, body, file) => {
     await contentRepo.update(type, id, payload);
     await contentReview.record(actor, type, id, review, { previous: existing.review_status });
     if ("image_url" in payload) await removeReplacedUpload(existing.image_url, payload.image_url);
+    if ("gallery" in payload) await removeDroppedGalleryUploads(existing, payload);
     await logService.log({ userId: actor.id, action: `content.update.${type}`, meta: { id } });
     return contentRepo.getById(type, id);
+};
+
+// Image envoyee seule (galeries photos) : le fichier est verifie et enregistre par le middleware
+// d'upload ; son adresse est ensuite enregistree avec le contenu (champ gallery).
+exports.uploadImage = async (actor, file) => {
+    if (!file) throw badRequest("Aucune image envoyée");
+    const url = `/uploads/${file.filename}`;
+    await logService.log({ userId: actor.id, action: "content.upload", meta: { url } });
+    return { url };
 };
 
 // Soumission explicite d'un brouillon ou d'un contenu refuse (portee regionale verifiee).
@@ -129,5 +162,6 @@ exports.remove = async (actor, type, id) => {
     const existing = await getForActor(actor, type, id);
     if (!(await contentRepo.remove(type, id))) throw notFound("Contenu introuvable");
     if (existing.image_url) await removeUpload(existing.image_url);
+    for (const src of galleryUploads(existing.gallery)) await removeUpload(src);
     await logService.log({ userId: actor.id, action: `content.delete.${type}`, meta: { id } });
 };

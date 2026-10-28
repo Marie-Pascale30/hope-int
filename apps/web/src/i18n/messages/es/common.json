@@ -1,6 +1,6 @@
 {
   "common": {
-    "siteName": "HOPE International",
+    "siteName": "HOPE International Project",
     "loading": "Cargando…",
     "share": {
       "label": "Compartir esta página",
@@ -15,7 +15,7 @@
     }
   },
   "nav": {
-    "home": "HOPE International — inicio",
+    "home": "HOPE International Project — inicio",
     "main": "Navegación principal",
     "projects": "Proyectos",
     "news": "Noticias",
@@ -33,7 +33,15 @@
     "donateShort": "Donar",
     "skip": "Ir al contenido",
     "transparency": "Transparencia",
-    "team": "El equipo"
+    "team": "El equipo",
+    "about": "Quiénes somos",
+    "gallery": "Galería",
+    "association": "La asociación",
+    "associationMenu": "Conocer la asociación",
+    "aboutHint": "Misión, valores y trayectoria",
+    "galleryHint": "Nuestras acciones en 145 fotos",
+    "teamHint": "Miembros y voluntarios",
+    "transparencyHint": "Cuentas y uso de las donaciones"
   },
   "pwa": {
     "install": "Instalar la aplicación",
@@ -48,7 +56,8 @@
     "switchToLight": "Cambiar al tema claro"
   },
   "footer": {
-    "tagline": "Microfinanzas solidarias, formación y ayuda mutua para las familias cameruneses.",
+    "tagline": "Amar. Educar. Cuidar. Esperar. Un futuro mejor comienza con un acto de compasión.",
+    "poBox": "Apdo. {number}",
     "explore": "Descubrir",
     "act": "Actuar",
     "contact": "Contacto",
@@ -166,13 +175,12 @@
     },
     "logout": {
       "title": "¿Cerrar sesión?",
-      "text": "Vas a cerrar la sesión de tu cuenta de HOPE International. Podrás volver a iniciarla en cualquier momento.",
+      "text": "Vas a cerrar la sesión de tu cuenta de HOPE International Project. Podrás volver a iniciarla en cualquier momento.",
       "confirm": "Cerrar sesión",
+      "cancel": "Seguir conectado",
       "done": "Has cerrado sesión. ¡Hasta pronto!"
     },
-    "filters": "Filtros"
-
-   },
+    "filters": "Filtros",
     "phone": {
       "label": "Teléfono",
       "placeholder": "6 77 12 34 56",
@@ -196,4 +204,5 @@
       "selectPage": "Seleccionar todas las filas de la página",
       "selectRow": "Seleccionar: {label}"
     }
+  }
 }

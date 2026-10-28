@@ -10,7 +10,9 @@ import { adminApi } from "@/src/services";
 import { useErrorMessage } from "@/src/i18n/errors";
 import { STATUS_KEYS } from "@/src/utils/labels";
 import { useAlerts } from "@/src/utils/alerts";
+import { parseGallery } from "@/src/views/site/gallery";
 import { ImageField } from "./widgets";
+import GalleryEditor from "./GalleryEditor";
 
 const FORM_ID = "adm-content-form";
 const SUMMARY_MAX = 500;
@@ -19,6 +21,12 @@ const SUMMARY_MAX = 500;
 const INTEGER_PROPS = { inputMode: "numeric", pattern: "[0-9]*", autoComplete: "off" };
 const DECIMAL_PROPS = { inputMode: "decimal", pattern: "[0-9]+([.,][0-9]{1,2})?", autoComplete: "off" };
 const DECIMAL_FIELDS = ["budget"];
+// Types de contenu avec galerie photos (champ gallery).
+const GALLERY_TYPES = ["projects", "news"];
+
+// Entrees de galerie limitees aux champs geres par l'API.
+const galleryEntries = (value) =>
+  parseGallery(value).map(({ src, width, height, kind }) => ({ src, width, height, kind }));
 
 // Champs editables par type (valeurs vides par defaut).
 export const CONTENT_FIELDS = {
@@ -67,6 +75,9 @@ export default function ContentForm({ type, item, projects = [], scopedRegion = 
     item ? Boolean(item.published) || (!canPublish && item.review_status === "submitted") : false
   );
   const [file, setFile] = useState(null);
+  const hasGallery = GALLERY_TYPES.includes(type);
+  const [initialGallery] = useState(() => JSON.stringify(galleryEntries(item?.gallery)));
+  const [gallery, setGallery] = useState(() => galleryEntries(item?.gallery));
   const [removeImage, setRemoveImage] = useState(false);
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
@@ -105,6 +116,8 @@ export default function ContentForm({ type, item, projects = [], scopedRegion = 
     DECIMAL_FIELDS.forEach((key) => {
       if (key in payload) payload[key] = payload[key].replace(",", ".");
     });
+    // Galerie envoyee seulement si elle a change (chaine JSON en multipart ; vide = aucune photo).
+    if (hasGallery && JSON.stringify(gallery) !== initialGallery) payload.gallery = JSON.stringify(gallery);
     if (file) payload.image = file;
     else if (removeImage) payload.remove_image = "1";
     try {
@@ -248,6 +261,15 @@ export default function ContentForm({ type, item, projects = [], scopedRegion = 
               <Input label={t("fields.beneficiaries")} {...INTEGER_PROPS} value={values.beneficiaries} onChange={set("beneficiaries")} />
               <Input label={t("fields.trainees")} {...INTEGER_PROPS} value={values.trainees} onChange={set("trainees")} />
               <Input label={t("fields.credits")} {...INTEGER_PROPS} value={values.credits_granted} onChange={set("credits_granted")} />
+            </div>
+          </>
+        )}
+
+        {hasGallery && (
+          <>
+            <h3 className="adm-form-section">{t("sections.gallery")}</h3>
+            <div className="form-grid">
+              <GalleryEditor value={gallery} onChange={setGallery} title={values.title.trim()} />
             </div>
           </>
         )}

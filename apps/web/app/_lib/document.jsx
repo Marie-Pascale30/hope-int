@@ -39,7 +39,7 @@ export const appMetadata = {
     icon: [{ url: "/icon.svg", type: "image/svg+xml" }, { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
-  appleWebApp: { capable: true, title: "Hope", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "HOPE", statusBarStyle: "default" },
   formatDetection: { telephone: false },
 };
 
@@ -47,7 +47,7 @@ export const rootViewport = {
   // viewport-fit=cover : env(safe-area-inset-*) disponible (barre de don collante, encoches).
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#1f5f4a" },
-    { media: "(prefers-color-scheme: dark)", color: "#101915" },
+    { media: "(prefers-color-scheme: light)", color: "#642b17" },
+    { media: "(prefers-color-scheme: dark)", color: "#17110e" },
   ],
 };

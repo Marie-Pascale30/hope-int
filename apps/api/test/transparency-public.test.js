@@ -19,7 +19,7 @@ const jwt = require("jsonwebtoken");
 const PDF_BYTES = Buffer.from("%PDF-1.7\n%%EOF\n", "latin1");
 
 // Session par jeton Bearer (accepte par l'API pour les scripts) : les tests ne dependent pas du
-// parcours de connexion (double authentification des roles de direction, module separe).
+// parcours de connexion.
 function asUser(user) {
     const token = jwt.sign({ id: user.id, tv: 0 }, process.env.JWT_SECRET, { expiresIn: 3600 });
     const raw = (method, url) => request(app)[method](url).set("Authorization", `Bearer ${token}`);

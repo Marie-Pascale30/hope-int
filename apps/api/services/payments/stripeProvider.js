@@ -21,7 +21,7 @@ async function getMonthlyProductId() {
     const cached = await settingsRepo.get(PRODUCT_SETTING_KEY);
     if (cached) return cached;
     const product = await client().products.create({
-        name: "Don mensuel HOPE International",
+        name: "Don mensuel HOPE International Project",
         metadata: { hope_key: "monthly_donation" },
     });
     await settingsRepo.set(PRODUCT_SETTING_KEY, product.id);
@@ -42,7 +42,7 @@ exports.createOneTimeIntent = async ({ amount, currency, paymentId, projectId })
         currency,
         payment_method_types: ["card"],
         metadata: { paymentId: String(paymentId), projectId: projectId ? String(projectId) : "" },
-        description: "Don HOPE International",
+        description: "Don HOPE International Project",
     });
     return { transactionId: intent.id, clientSecret: intent.client_secret };
 };

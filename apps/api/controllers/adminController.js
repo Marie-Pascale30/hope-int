@@ -142,6 +142,10 @@ exports.updateContent = async (req, res) => {
     res.json(await contentService.update(req.user, req.params.type, req.params.id, req.body, req.file));
 };
 
+exports.uploadContentImage = async (req, res) => {
+    res.status(201).json(await contentService.uploadImage(req.user, req.file));
+};
+
 exports.deleteContent = async (req, res) => {
     await contentService.remove(req.user, req.params.type, req.params.id);
     res.json({ message: "Contenu supprimé" });

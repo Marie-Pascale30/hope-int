@@ -2,9 +2,10 @@
   "name": "@hope/mobile",
   "version": "1.0.0",
   "private": true,
-  "description": "Application mobile Hope International (coque Capacitor du site web)",
+  "description": "Application mobile HOPE International Project (coque Capacitor du site web)",
   "scripts": {
     "sync": "node scripts/prepare-www.js && cap sync",
+    "assets:source": "node scripts/generate-assets.js",
     "assets": "capacitor-assets generate --android --ios --assetPath assets",
     "android": "cap open android",
     "ios": "cap open ios",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
-    "@capacitor/cli": "^8.5.3"
+    "@capacitor/cli": "^8.5.3",
+    "sharp": "^0.32.6"
   }
 }

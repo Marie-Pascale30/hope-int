@@ -1,4 +1,4 @@
-// Configuration Capacitor : l'application charge le site Hope International en ligne
+// Configuration Capacitor : l'application charge le site HOPE International Project en ligne
 // (rendu serveur, donnees a jour, trois langues) dans une coque native. Les fonctions
 // natives (barre d'etat, ecran de demarrage, retour Android, partage, liens externes)
 // sont branchees cote site dans apps/web/src/components/native/NativeBridge.jsx.
@@ -12,7 +12,7 @@ const isHttp = APP_URL.startsWith("http://");
 /** @type {import('@capacitor/cli').CapacitorConfig} */
 module.exports = {
   appId: "org.hopeinternational.app",
-  appName: "Hope International",
+  appName: "HOPE International Project",
   // Page locale de secours, affichee si le site ne se charge pas (pas de reseau au lancement).
   webDir: "www",
   server: {
@@ -36,12 +36,12 @@ module.exports = {
       // Masque par le site une fois la premiere page affichee (NativeBridge), 6 s au plus.
       launchAutoHide: true,
       launchShowDuration: 6000,
-      backgroundColor: "#1f5f4a",
+      backgroundColor: "#fbf7f0",
       showSpinner: false,
       androidScaleType: "CENTER_CROP",
     },
     StatusBar: {
-      backgroundColor: "#faf7f2",
+      backgroundColor: "#fbf7f0",
       style: "LIGHT",
       overlaysWebView: false,
     },

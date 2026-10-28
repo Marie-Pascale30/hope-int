@@ -56,7 +56,7 @@
       "organizer": "Organizada por {name}",
       "endsOn": "hasta el {date}",
       "storyTitle": "Su historia",
-      "projectNote": "Cada donación se destina al proyecto «{project}» de HOPE International y da derecho a un recibo.",
+      "projectNote": "Cada donación se destina al proyecto «{project}» de HOPE International Project y da derecho a un recibo.",
       "goal": "recaudados de un objetivo de {goal} ({percent} %)",
       "progressLabel": "{percent} % del objetivo alcanzado",
       "supporters": "{count, plural, =0 {Aún no hay apoyos} one {# apoyo} other {# apoyos}}",
@@ -64,20 +64,20 @@
       "donate": "Apoyo esta recaudación",
       "closedTitle": "Recaudación terminada",
       "closedText": "¡Gracias a todos los donantes! Todavía puedes apoyar el proyecto desde su página.",
-      "shareText": "Apoyo la recaudación «{title}» para HOPE International:",
+      "shareText": "Apoyo la recaudación «{title}» para HOPE International Project:",
       "shareLabel": "Compartir la recaudación",
       "recentTitle": "Últimos apoyos",
       "anonymous": "Anónimo",
       "noSupporters": "¡Sé la primera persona en apoyar esta recaudación!",
       "metaTitle": "Recaudación solidaria",
-      "metaDescription": "Apoya una recaudación solidaria a favor de un proyecto de HOPE International en Camerún."
+      "metaDescription": "Apoya una recaudación solidaria a favor de un proyecto de HOPE International Project en Camerún."
     },
     "meta": {
       "pledgeTitle": "Donación mensual por Mobile Money",
       "pledgeDescription": "Comprométete a donar cada mes por Mobile Money: un recordatorio y un enlace de pago listo para usar, modificable en cualquier momento.",
       "pledgeManageTitle": "Gestionar mi donación mensual",
       "createTitle": "Crear una recaudación",
-      "createDescription": "Crea una página de recaudación para un proyecto de HOPE International y compártela con tus seres queridos."
+      "createDescription": "Crea una página de recaudación para un proyecto de HOPE International Project y compártela con tus seres queridos."
     },
     "pledge": {
       "summary": "{amount} al mes, hacia el día {day}",
@@ -159,7 +159,7 @@
       "eyebrow": "Recaudación solidaria",
       "title": "Crear mi recaudación",
       "editTitle": "Modificar mi recaudación",
-      "lead": "¿Un cumpleaños, una carrera, un evento? Crea una página de recaudación para un proyecto de HOPE International e invita a tus seres queridos a donar.",
+      "lead": "¿Un cumpleaños, una carrera, un evento? Crea una página de recaudación para un proyecto de HOPE International Project e invita a tus seres queridos a donar.",
       "rejectedTitle": "Mensaje del equipo",
       "locked": "Esta recaudación está publicada: ya no se puede modificar. Contacta con el equipo para cualquier corrección.",
       "project": "Proyecto apoyado",
@@ -221,7 +221,7 @@
         "closeText": "La página seguirá visible pero ya no aceptará donaciones.",
         "closeConfirm": "Cerrar",
         "closed": "Recaudación cerrada",
-        "shareText": "Apoya mi recaudación «{title}» para HOPE International:"
+        "shareText": "Apoya mi recaudación «{title}» para HOPE International Project:"
       }
     },
     "admin": {

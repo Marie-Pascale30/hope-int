@@ -42,7 +42,7 @@ exports.createPaymentLink = async ({ txRef, amount, currency, redirectUrl, donor
             redirect_url: redirectUrl,
             payment_options: "mobilemoneyfranco,card",
             customer: { email: donorEmail, name: donorName, phonenumber: phone || undefined },
-            customizations: { title: "HOPE International", description },
+            customizations: { title: "HOPE International Project", description },
         }),
     });
     return data.link;

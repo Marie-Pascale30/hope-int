@@ -1,4 +1,4 @@
-# HOPE International
+# HOPE International Project
 
 Plateforme de l'association : site public (projets, campagnes de dons, actualités, agenda, candidatures), dons par carte (Stripe, EUR) et Mobile Money Orange / MTN (Notch Pay ou Flutterwave, XAF) avec reçus PDF, espace membre, et administration par rôles.
 
@@ -116,6 +116,8 @@ Les droits sont définis dans `packages/shared/src/rbac.js` et relus en base à 
 Portée régionale : une directrice régionale (permission régionale sans portée globale) ne gère que les projets de sa région, ne publie actualités et témoignages que rattachés à un projet de sa région, et ne voit que les statistiques, dons et rapports de sa région. Les candidats indiquent des pôles d'intérêt indicatifs : la personne qui accepte une candidature choisit explicitement les rôles, parmi ceux qu'elle peut attribuer.
 
 Session : l'API pose le JWT dans un cookie `httpOnly` (`SameSite=Lax`, `Secure` en production), inaccessible au JavaScript du site. Toute requête d'écriture authentifiée par cookie doit porter l'en-tête `X-Requested-With: XMLHttpRequest` (protection CSRF). Un changement de mot de passe ferme les autres sessions ; `POST /api/auth/logout` efface le cookie. L'en-tête `Authorization: Bearer` reste accepté pour les scripts.
+
+Double authentification : une vérification par code à usage unique envoyé par email ou SMS est prévue (la connexion se fait aujourd'hui par email et mot de passe uniquement).
 
 ## Base de données et migrations
 

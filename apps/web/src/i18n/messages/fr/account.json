@@ -54,7 +54,7 @@
       "description": "Suivez vos dons, téléchargez vos reçus et inscrivez-vous à nos événements solidaires.",
       "hasAccount": "Déjà inscrit(e) ? <link>Se connecter</link>",
       "submit": "Créer mon compte",
-      "teamNote": "Vous souhaitez rejoindre l’équipe de HOPE International (bénévole, salarié, responsable régional) ? Le compte membre ne suffit pas : <link>déposez votre candidature</link>, nous vous recontacterons.",
+      "teamNote": "Vous souhaitez rejoindre l’équipe de HOPE International Project (bénévole, salarié, responsable régional) ? Le compte membre ne suffit pas : <link>déposez votre candidature</link>, nous vous recontacterons.",
       "opening": "Ouverture de votre espace…",
       "sentTitle": "Vérifiez vos emails",
       "sentDescription": "Votre demande d’inscription a bien été reçue.",
@@ -115,7 +115,7 @@
         "tipsTitle": "Bonnes pratiques",
         "tip1": "Choisissez un mot de passe unique, d’au moins 12 caractères idéalement.",
         "tip2": "Après un changement, vos autres sessions sont automatiquement déconnectées.",
-        "tip3": "HOPE International ne vous demandera jamais votre mot de passe par email ou par téléphone.",
+        "tip3": "HOPE International Project ne vous demandera jamais votre mot de passe par email ou par téléphone.",
         "sessions": {
           "title": "Appareils connectés",
           "text": "Un téléphone perdu, un ordinateur partagé ? Fermez votre session partout où elle est ouverte, y compris ici. Il faudra vous reconnecter sur chaque appareil.",
@@ -232,7 +232,7 @@
       "label": "Affectation de votre don",
       "general": "Là où c’est le plus utile",
       "recommended": "Recommandé",
-      "generalText": "Notre équipe oriente votre don vers les besoins les plus urgents : microcrédits, formations, entraide.",
+      "generalText": "Notre équipe oriente votre don vers les besoins les plus urgents : scolarité, santé, soutien aux plus vulnérables.",
       "country": "Cameroun",
       "regionDonors": "{region} · {count, plural, one {# donateur} other {# donateurs}}",
       "progressLabel": "Progression de la campagne {title}",
@@ -282,8 +282,8 @@
     "donate": {
       "hero": {
         "eyebrow": "Faire un don",
-        "title": "Donnez aux familles les moyens de <hl>réussir</hl>",
-        "lead": "Chaque don finance des microcrédits solidaires, des formations et un accompagnement de proximité au Cameroun. Vous choisissez où va votre générosité, nous vous montrons ce qu’elle permet."
+        "title": "Donnez aux enfants les moyens de <hl>grandir</hl>",
+        "lead": "Chaque don finance des fournitures scolaires, des parrainages, des soins et un soutien concret aux plus vulnérables au Cameroun. Vous choisissez où va votre générosité, nous vous montrons ce qu’elle permet."
       },
       "general": "Là où c’est le plus utile",
       "perMonthShort": "/ mois",
@@ -295,7 +295,7 @@
       "steps": {
         "support": {
           "title": "Votre soutien",
-          "description": "Un don mensuel nous permet de planifier l’accompagnement des familles sur la durée."
+          "description": "Un don mensuel nous permet de planifier les parrainages et l’accompagnement dans la durée."
         },
         "amount": {
           "title": "Montant",
@@ -347,13 +347,13 @@
       },
       "impact": {
         "sentence": "<strong>{amount}{frequency, select, monthly { par mois} other {}}</strong>{currency, select, xaf { (≈ {equivalent})} other {}}, c’est par exemple {impact}",
-        "cooperative": "le stock de démarrage d’une coopérative agricole : semences améliorées et petit outillage pour cinq familles.",
-        "fieldAgent": "trois mois de suivi par un agent de terrain pour un groupement de dix femmes, formations comprises.",
-        "microcredit": "un premier microcrédit solidaire de {loan} pour lancer une activité : beignets, couture ou petit élevage.",
-        "training": "une formation complète en gestion pour une commerçante : tenir sa caisse, calculer sa marge, fixer ses prix.",
-        "education": "une séance d’éducation financière pour un groupe de 20 femmes : épargner, budgéter, rembourser.",
-        "savingsBook": "un carnet d’épargne et un cahier de caisse pour une nouvelle membre d’un groupe solidaire.",
-        "fund": "une contribution au fonds solidaire qui finance les prêts des familles accompagnées."
+        "sponsorship": "une année de parrainage scolaire pour un enfant : frais de scolarité, fournitures et suivi tout au long de l’année.",
+        "business": "un chèque de {grant} pour aider une mère à lancer ou à renforcer son petit commerce, comme lors de la Journée internationale des droits des femmes.",
+        "medical": "une aide médicale pour une personne malade, âgée ou handicapée : consultation et médicaments.",
+        "christmas": "un cadeau de Noël et un repas de fête pour un enfant d’orphelinat.",
+        "schoolKit": "un kit scolaire pour un enfant à la rentrée : cahiers, stylos, règle et ardoise.",
+        "hygieneKit": "un kit d’hygiène pour une personne vulnérable : savon, brosse à dents et dentifrice.",
+        "fund": "une contribution à nos actions de terrain : rentrées scolaires, campagnes de santé et soutien aux plus vulnérables."
       },
       "requestedClosed": "Le projet demandé ne reçoit plus de dons ou n’est plus en ligne : vous pouvez soutenir une autre campagne ci-dessous.",
       "donor": {
@@ -453,8 +453,8 @@
         "receiptNumber": "N° de reçu"
       },
       "share": {
-        "text": "Je viens de soutenir HOPE International, qui accompagne les familles camerounaises vers l’autonomie. Rejoignez-moi !",
-        "textProject": "Je viens de soutenir « {title} » avec HOPE International. Rejoignez-moi !"
+        "text": "Je viens de soutenir HOPE International Project, qui agit pour l’éducation des enfants défavorisés au Cameroun. Rejoignez-moi !",
+        "textProject": "Je viens de soutenir « {title} » avec HOPE International Project. Rejoignez-moi !"
       },
       "monthly": {
         "stopped": "Ce don mensuel est arrêté : plus aucun prélèvement ne sera effectué.",
@@ -472,13 +472,13 @@
         "eyebrow": "Don confirmé",
         "title": "Merci !",
         "titleNamed": "Merci, {name} !",
-        "lead": "Votre don de <strong>{amount}</strong>{frequency, select, monthly { par mois} other {}} va directement aider des familles à construire leur avenir. Toute l’équipe de HOPE International vous remercie chaleureusement.",
+        "lead": "Votre don de <strong>{amount}</strong>{frequency, select, monthly { par mois} other {}} va directement aider des enfants et des personnes vulnérables à retrouver l’espoir. Toute l’équipe de HOPE International Project vous remercie chaleureusement.",
         "partialRefund": "Un remboursement partiel de {amount} a été effectué sur ce don. Le solde reste acquis au projet.",
         "download": "Télécharger mon reçu (PDF)",
         "receiptSent": "Un reçu vous a également été envoyé par email.",
         "next": {
           "projectsTitle": "Découvrir nos projets",
-          "projectsText": "Microcrédit, formation, coopératives : suivez les actions que vous rendez possibles.",
+          "projectsText": "Éducation, santé, soutien social : suivez les actions que vous rendez possibles.",
           "projectsButton": "Voir les projets",
           "shareTitle": "Faire connaître HOPE",
           "shareText": "Un partage peut inspirer un proche à rejoindre le mouvement.",

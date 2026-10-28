@@ -103,7 +103,7 @@ async function main() {
         env: { NEXT_PUBLIC_API_BASE_URL: apiUrl, API_INTERNAL_URL: apiUrl, NEXT_PUBLIC_SITE_URL: webUrl },
     });
 
-    console.log("\nHOPE International - développement");
+    console.log("\nHOPE International Project - développement");
     if (mode !== "web") console.log(`  ${describe("API ", wantedApi, apiPort, "/api")}`);
     else console.log(`  API  : ${apiUrl}  (doit déjà être lancée)`);
     console.log(`  ${describe("Site", wantedWeb, webPort)}\n`);

@@ -29,6 +29,7 @@ import { toast, useAlerts } from "../../utils/alerts";
 import { useLabels } from "../../utils/labels";
 import { useErrorMessage } from "../../i18n/errors";
 import ShareButtons from "../../components/ShareButtons";
+import PageBanner from "../../components/site/PageBanner";
 import "../../styles/fundraising.css";
 import { fundraisingApi } from "../../services/fundraising";
 import { SOURCES } from "@hope/shared/fundraising";
@@ -245,7 +246,7 @@ function Success({ payment, isAuthenticated, onSubscriptionCanceled, cardHighlig
               de paiement. La source (?ref=partage-<canal>) suit le visiteur jusqu'a son don. */}
           <ShareButtons
             path={lp(payment.fundraiser_slug ? `/collecte/${payment.fundraiser_slug}` : payment.project_id ? `/projets/${payment.project_id}` : "/")}
-            title={payment.fundraiser_title || payment.project_title || "HOPE International"}
+            title={payment.fundraiser_title || payment.project_title || "HOPE International Project"}
             text={payment.project_title ? tShare("textProject", { title: payment.fundraiser_title || payment.project_title }) : tShare("text")}
             label={t("next.shareButton")}
             source={SOURCES.shareNative}
@@ -411,17 +412,20 @@ export default function DonationThanksView() {
   }
 
   return (
-    <section className="section--tight don-thanks">
-      <div className="container don-thanks__inner">
-        <p className="visually-hidden" aria-live="polite" aria-atomic="true">{announcement}</p>
-        {content}
-        {(!valid || (!payment && !loading)) && (
-          <div className="don-thanks__actions don-thanks__actions--center">
-            <Button href={lp("/don")} variant="accent" icon={Heart}>{t("donate")}</Button>
-            <Button href={lp("/espace")} variant="ghost">{t("account")}</Button>
-          </div>
-        )}
-      </div>
-    </section>
+    <>
+      <PageBanner name="thanks" />
+      <section className="section--tight don-thanks">
+        <div className="container don-thanks__inner">
+          <p className="visually-hidden" aria-live="polite" aria-atomic="true">{announcement}</p>
+          {content}
+          {(!valid || (!payment && !loading)) && (
+            <div className="don-thanks__actions don-thanks__actions--center">
+              <Button href={lp("/don")} variant="accent" icon={Heart}>{t("donate")}</Button>
+              <Button href={lp("/espace")} variant="ghost">{t("account")}</Button>
+            </div>
+          )}
+        </div>
+      </section>
+    </>
   );
 }

@@ -1,5 +1,5 @@
 /* Module engagement : pied de page (newsletter, reseaux), consentements, preferences,
-   double authentification, CRM donateurs et campagnes. Utilise les jetons de globals.css. */
+   CRM donateurs et campagnes. Utilise les jetons de globals.css. */
 
 /* ---------- Pied de page ---------- */
 .eng-footer-band {
@@ -146,49 +146,6 @@
 .eng-topic__text span {
   font-size: var(--text-sm);
   color: var(--ink-3, var(--line-input));
-}
-
-/* ---------- Double authentification ---------- */
-.eng-secret {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.eng-secret code {
-  padding: 8px 10px;
-  border-radius: 6px;
-  background: var(--surface-hover);
-  border: 1px solid var(--line);
-  font-size: var(--text-md);
-  letter-spacing: 0.08em;
-  word-break: break-all;
-}
-
-.eng-codes {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-}
-
-.eng-codes li {
-  padding: 6px 10px;
-  border-radius: 6px;
-  background: var(--surface-hover);
-  border: 1px solid var(--line);
-  text-align: center;
-}
-
-.eng-steps {
-  margin: 0;
-  padding-left: 20px;
-  display: grid;
-  gap: 6px;
 }
 
 /* ---------- Projets soutenus ---------- */

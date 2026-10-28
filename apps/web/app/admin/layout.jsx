@@ -27,7 +27,13 @@ export const viewport = rootViewport;
 
 export default async function AdminLayout({ children }) {
   const locale = await getLocale();
-  const messages = await loadMessages(locale, ["common", "admin", "adminOps", ...FEATURE_FILES]);
+  const [messages, siteMessages] = await Promise.all([
+    loadMessages(locale, ["common", "admin", "adminOps", ...FEATURE_FILES]),
+    loadMessages(locale, ["site"]),
+  ]);
+  // Editeur des galeries photos (projets, actualites) : seuls les textes des albums du livret
+  // (site.gallery) sont repris du site public, pas tout le dictionnaire.
+  messages.site = { gallery: siteMessages.site.gallery };
   return (
     <RootDocument locale={locale}>
       <NextIntlClientProvider locale={locale} messages={messages}>

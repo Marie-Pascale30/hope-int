@@ -1,34 +1,38 @@
 // Mise en page des attestations de benevolat (A4, polices PDF standard), dans le style des recus
 // de don (services/receiptPdf.js, non modifie) : bandeau, encadres, signature et pied de page.
 // Les polices standard ne couvrent que le jeu WinAnsi : pas de caracteres comme "≈" ou "→".
+const fs = require("fs");
+const path = require("path");
 const PDFDocument = require("pdfkit");
 const { formatDate } = require("../utils/timezone");
 
 const ORG = {
-    name: process.env.ORG_NAME || "HOPE International",
-    address: process.env.ORG_ADDRESS || "",
+    name: process.env.ORG_NAME || "HOPE International Project",
+    address: process.env.ORG_ADDRESS || "Bonadibong, Akwa, Douala, Cameroun",
+    // Ville du "Fait a" (l'adresse commence par le quartier).
+    city: process.env.ORG_CITY ?? "Douala",
     registration: process.env.ORG_REGISTRATION || "",
-    signatory: process.env.ORG_SIGNATORY || "La Direction générale",
-    email: process.env.ORG_CONTACT_EMAIL || "",
-    phone: process.env.ORG_CONTACT_PHONE || "",
+    signatory: process.env.ORG_SIGNATORY || "La Présidente",
+    email: process.env.ORG_CONTACT_EMAIL || "hopeinternationalproject@gmail.com",
+    phone: process.env.ORG_CONTACT_PHONE || "+237 694 63 25 60",
 };
 
 const FRONTEND_URL = () => (process.env.FRONTEND_URL || "http://localhost:3001").replace(/\/$/, "");
 
 const COLORS = {
-    brand: "#1f5f4a",
-    brandSoft: "#eaf3ee",
-    accent: "#d2772a",
-    accentSolid: "#a95b1b",
-    accentLight: "#f6c79a",
-    surface: "#f4efe7",
-    line: "#e7e0d4",
-    ink: "#1c2421",
-    ink2: "#4a5550",
-    ink3: "#5f6863",
+    brand: "#642b17",
+    brandSoft: "#f9efea",
+    accent: "#f0ba2a",
+    accentSolid: "#c47f0a",
+    accentLight: "#f0ba2a",
+    surface: "#f6eee3",
+    line: "#eadfd0",
+    ink: "#2a1d17",
+    ink2: "#574740",
+    ink3: "#6b5a51",
     onBrand: "#ffffff",
-    onBrandSoft: "#cfe3d9",
-    cream: "#faf7f2",
+    onBrandSoft: "#f1ddd2",
+    cream: "#fbf7f0",
 };
 
 const PAGE = { margin: 48, headerHeight: 132, footerHeight: 70 };
@@ -71,13 +75,14 @@ function createDoc(title) {
 
 const contentWidth = (doc) => doc.page.width - PAGE.margin * 2;
 
+// Embleme officiel (soleil du logo HOPE International Project, fond transparent), copie de
+// apps/web/public/images/brand/soleil-hope-detoure.png. size : cote du carre. Sans le fichier,
+// le document reste valide (pas d'embleme).
+const LOGO_PATH = path.join(__dirname, "..", "assets", "soleil-hope.png");
+let logoImage;
 function logoMark(doc, x, y, size) {
-    doc.save().translate(x, y).scale(size / 40);
-    doc.circle(20, 20, 20).fill(COLORS.cream);
-    doc.path("M20 31V19").lineWidth(2.4).lineCap("round").stroke(COLORS.brand);
-    doc.path("M20 21c0-5.5 3.8-9.2 9.5-9.5-.3 5.7-4 9.5-9.5 9.5Z").fill(COLORS.accent);
-    doc.path("M20 24c0-4.6-3.2-7.7-7.9-7.9.2 4.7 3.3 7.9 7.9 7.9Z").fill(COLORS.brand);
-    doc.restore();
+    if (logoImage === undefined) logoImage = fs.existsSync(LOGO_PATH) ? fs.readFileSync(LOGO_PATH) : null;
+    if (logoImage) doc.image(logoImage, x, y, { fit: [size, size], align: "center", valign: "center" });
 }
 
 function eyebrow(doc, text, x, y, { color = COLORS.ink3, width, align = "left", size = 7.5 } = {}) {
@@ -95,11 +100,11 @@ function header(doc, { kicker, title, subtitle }) {
     doc.restore();
     doc.rect(0, PAGE.headerHeight, width, 4).fill(COLORS.accent);
 
-    logoMark(doc, left, 40, 46);
-    doc.font("Helvetica-Bold").fontSize(19).fillColor(COLORS.onBrand).text(ORG.name, left + 60, 44, { lineBreak: false });
+    logoMark(doc, left, 36, 52);
+    doc.font("Helvetica-Bold").fontSize(16).fillColor(COLORS.onBrand).text(ORG.name, left + 62, 46, { width: 230, lineBreak: false, ellipsis: true });
     const identity = [ORG.address, ORG.registration].filter(Boolean).join("  ·  ");
     if (identity) {
-        doc.font("Helvetica").fontSize(8.5).fillColor(COLORS.onBrandSoft).text(identity, left + 60, 69, { width: 260, lineBreak: false });
+        doc.font("Helvetica").fontSize(8.5).fillColor(COLORS.onBrandSoft).text(identity, left + 62, 69, { width: 260, lineBreak: false });
     }
     const rightWidth = 210;
     const rightX = width - PAGE.margin - rightWidth;
@@ -241,8 +246,8 @@ exports.generate = (certificate) => {
     // Signature.
     const signWidth = 230;
     const signX = left + width - signWidth;
-    const place = ORG.address
-        ? `Fait à ${ORG.address.split(",")[0].trim()}, le ${formatDate(certificate.issued_at)}`
+    const place = ORG.city
+        ? `Fait à ${ORG.city}, le ${formatDate(certificate.issued_at)}`
         : `Émise le ${formatDate(certificate.issued_at)}`;
     doc.font("Helvetica").fontSize(9).fillColor(COLORS.ink3).text(place, signX, y, { width: signWidth, align: "right" });
     doc.text(`Pour ${ORG.name},`, signX, y + 16, { width: signWidth, align: "right" });

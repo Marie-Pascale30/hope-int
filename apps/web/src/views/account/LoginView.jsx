@@ -9,7 +9,6 @@ import { Alert, Button, Input, LoadingState } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { authApi } from "../../services";
 import { setSessionHint } from "../../services/api";
-import MfaLoginStep from "../engagement/MfaLoginStep";
 import { Link } from "../../i18n/navigation";
 import AuthCard from "./components/AuthCard";
 import { PasswordInput } from "./components/PasswordFields";
@@ -18,7 +17,6 @@ import { useErrorMessage } from "../../i18n/errors";
 
 export default function LoginView() {
   const { status, user, updateSession } = useAuth();
-  const tm = useTranslations("engagement.mfa");
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("account.login");
@@ -32,13 +30,6 @@ export default function LoginView() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  // Double authentification : "verify" (code) ou "setup" (enrolement obligatoire), sinon null.
-  const [mfaStep, setMfaStep] = useState(null);
-
-  const openSession = (sessionUser) => {
-    setSessionHint(true);
-    updateSession(sessionUser);
-  };
 
   // Deja connecte (ou connexion reussie) : redirection vers la bonne page.
   useEffect(() => {
@@ -57,12 +48,8 @@ export default function LoginView() {
     setLoading(true);
     try {
       const result = await authApi.login({ email: form.email.trim(), password: form.password });
-      if (result.mfaRequired) {
-        setMfaStep(result.mfaRequired);
-        setLoading(false);
-        return;
-      }
-      openSession(result.user);
+      setSessionHint(true);
+      updateSession(result.user);
     } catch (err) {
       setError(errorText(err));
       setLoading(false);
@@ -71,23 +58,6 @@ export default function LoginView() {
 
   if (status === "authenticated") {
     return <LoadingState label={t("redirecting")} />;
-  }
-
-  if (mfaStep) {
-    return (
-      <AuthCard
-        title={mfaStep === "setup" ? tm("loginSetupTitle") : tm("loginVerifyTitle")}
-      >
-        <MfaLoginStep
-          step={mfaStep}
-          onDone={openSession}
-          onBack={() => {
-            setMfaStep(null);
-            setForm((prev) => ({ ...prev, password: "" }));
-          }}
-        />
-      </AuthCard>
-    );
   }
 
   return (

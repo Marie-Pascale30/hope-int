@@ -7,15 +7,16 @@ import { message, translator } from "../intl";
 describe("impactKey", () => {
   it("choisit le palier d'impact le plus eleve atteint", () => {
     expect(impactKey(0)).toBe("fund");
-    expect(impactKey(5)).toBe("savingsBook");
-    expect(impactKey(24.99)).toBe("education");
-    expect(impactKey(50)).toBe("microcredit");
-    expect(impactKey(1000)).toBe("cooperative");
+    expect(impactKey(5)).toBe("hygieneKit");
+    expect(impactKey(24.99)).toBe("schoolKit");
+    expect(impactKey(50)).toBe("medical");
+    expect(impactKey(75)).toBe("business");
+    expect(impactKey(1000)).toBe("sponsorship");
     expect(impactKey("abc")).toBe("fund");
   });
 
   it("a un texte francais pour chaque palier", () => {
-    for (const amount of [0, 5, 10, 25, 50, 100, 250]) {
+    for (const amount of [0, 5, 10, 25, 50, 75, 250]) {
       expect(message(`account.donate.impact.${impactKey(amount)}`)).toBeTypeOf("string");
     }
   });

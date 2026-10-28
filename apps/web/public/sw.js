@@ -1,4 +1,4 @@
-/* Service worker HOPE International (ecrit a la main, sans bibliotheque).
+/* Service worker HOPE International Project (ecrit a la main, sans bibliotheque).
  *
  * - Precache : pages hors ligne (fr / en / es) et quelques ressources statiques essentielles.
  * - Pages publiques : reseau d'abord, copie en cache, puis repli sur la copie puis sur la page
