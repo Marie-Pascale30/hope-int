@@ -17,7 +17,8 @@ const PWA_SCRIPT = pwaInitScript({ registerWorker: false });
 export default async function RootDocument({ locale, children }) {
   const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
-    <html lang={locale} className={fontVariables} suppressHydrationWarning>
+    // data-scroll-behavior : Next desactive le defilement doux (globals.css) pendant les changements de page.
+    <html lang={locale} className={fontVariables} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         {/* Mode eco donnees (app/_lib/pwa.js) ; icones et manifest : appMetadata ci-dessous. */}

@@ -224,7 +224,9 @@ async function seedPayments(projectIds, userIds) {
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 row.donor.userId, row.amount, row.currency, row.method, row.provider, row.status,
-                `${row.provider === "stripe" ? "pi_demo" : "HOPE-demo"}_${crypto.randomBytes(6).toString("hex")}`,
+                // Reference fictive seulement pour les dons aboutis : le rapprochement relit les dons en attente
+                // ou echoues aupres du prestataire, qui ne connait pas ces references de demonstration.
+                row.status === "succeeded" ? `${row.provider === "stripe" ? "pi_demo" : "HOPE-demo"}_${crypto.randomBytes(6).toString("hex")}` : null,
                 row.donor.name, row.donor.email, row.projectId, row.frequency,
                 row.frequency === "monthly" ? "sub_demoAliceMonthly" : null,
                 receiptNumber, crypto.randomBytes(24).toString("hex"),
