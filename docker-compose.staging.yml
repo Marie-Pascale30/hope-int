@@ -35,11 +35,12 @@ services:
       NOTCHPAY_PUBLIC_KEY: ${NOTCHPAY_TEST_PUBLIC_KEY:-}
       NOTCHPAY_WEBHOOK_HASH: ${NOTCHPAY_TEST_WEBHOOK_HASH:-}
       MOBILE_MONEY_PROVIDER: notchpay
-      # Emails : SMTP de test (ex. Mailpit, Mailtrap) pour ne jamais ecrire a de vrais donateurs.
-      SMTP_HOST: ${STAGING_SMTP_HOST:-}
+      # Emails : SMTP de test (ex. Mailtrap) pour ne jamais ecrire a de vrais donateurs. Obligatoire :
+      # l'API refuse de demarrer en production sans SMTP (codes de connexion de l'equipe par email).
+      SMTP_HOST: ${STAGING_SMTP_HOST:?Definir STAGING_SMTP_HOST}
       SMTP_PORT: ${STAGING_SMTP_PORT:-587}
-      SMTP_USER: ${STAGING_SMTP_USER:-}
-      SMTP_PASS: ${STAGING_SMTP_PASS:-}
+      SMTP_USER: ${STAGING_SMTP_USER:?Definir STAGING_SMTP_USER}
+      SMTP_PASS: ${STAGING_SMTP_PASS:?Definir STAGING_SMTP_PASS}
       SENTRY_DSN: ${SENTRY_DSN:-}
       SENTRY_ENVIRONMENT: staging
       LOG_LEVEL: ${LOG_LEVEL:-info}

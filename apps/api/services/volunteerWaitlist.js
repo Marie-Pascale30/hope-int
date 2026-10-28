@@ -5,7 +5,8 @@ const eventRepo = require("../repositories/eventRepository");
 const waitlistRepo = require("../repositories/volunteerWaitlistRepository");
 const logService = require("./activityLogService");
 const emailService = require("./emailService");
-const { badRequest, conflict, notFound } = require("../utils/httpError");
+const { badRequest, conflict, forbidden, notFound } = require("../utils/httpError");
+const { canJoinAudience } = require("@hope/shared/volunteering");
 
 const ORG_NAME = process.env.ORG_NAME || "HOPE International Project";
 const FRONTEND_URL = (process.env.FRONTEND_URL || "http://localhost:3001").replace(/\/$/, "");
@@ -74,11 +75,26 @@ exports.promote = async (eventId, actorId = null) => {
 exports.promoteWithin = promoteWithin;
 exports.afterPromotion = afterPromotion;
 
+// Public de l'evenement : benevolat reserve aux invites, evenements internes aux membres.
+// Le site explique alors a qui l'evenement est reserve (code EVENT_AUDIENCE).
+function assertAudience(user, event) {
+    if (canJoinAudience(user.roles || [], event.audience)) return;
+    throw forbidden(
+        event.audience === "members"
+            ? "Cet événement est réservé aux membres de l'association"
+            : "Le bénévolat est réservé aux invités : les membres participent aux événements internes",
+        { code: "EVENT_AUDIENCE", audience: event.audience }
+    );
+}
+
+exports.assertAudience = assertAudience;
+
 // Inscription sur la liste d'attente. S'il reste une place, le membre est directement inscrit.
 exports.join = async (user, eventId) => {
     const status = await withTransaction(async (connection) => {
         const event = await eventRepo.lockForRegistration(connection, eventId, user.id);
         if (!event || !event.published) throw notFound("Événement introuvable");
+        assertAudience(user, event);
         if (new Date(event.start_at) < new Date()) throw badRequest("Cet événement a déjà commencé");
         if (event.alreadyRegistered) throw conflict("Vous êtes déjà inscrit(e) à cet événement");
         if (event.capacity === null || event.registered < Number(event.capacity)) {

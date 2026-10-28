@@ -95,7 +95,8 @@
       "responsable_it": "Responsable de TI",
       "directrice_regionale": "Directora regional",
       "secretaire_generale": "Secretaria general",
-      "membre": "Miembro"
+      "membre": "Miembro",
+      "invite": "Invitado"
     },
     "projectStatus": {
       "planifie": "Próximamente",

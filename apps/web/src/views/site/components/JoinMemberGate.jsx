@@ -1,9 +1,10 @@
 "use client";
 
-// Page "Nous rejoindre" selon la session : un visiteur voit la candidature, une personne connectee
-// (deja membre de l'association) voit un message d'accueil a la place.
+// Page "Nous rejoindre" selon la session : un visiteur ou un invite (compte cree depuis le site,
+// pas encore membre) voit la candidature ; un membre connecte voit un message d'accueil a la place.
 // Pendant la verification de session, la candidature reste affichee (cas le plus frequent, et
 // contenu present des le rendu serveur).
+import { isGuestOnly } from "@hope/shared/volunteering";
 import { CalendarDays, HeartHandshake, UserRound } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { hl } from "../../../components/motion/hl";
@@ -11,12 +12,18 @@ import { useAuth } from "../../../context/AuthContext";
 import { useLocalePath } from "../../../i18n/navigation";
 import { Button } from "../../../components/ui";
 
-// Bandeau "Vous faites deja partie de la famille HOPE" (rien pour un visiteur).
+// Membre connecte (au moins un role autre qu'invite).
+function useIsMember() {
+  const { status, user } = useAuth();
+  return status === "authenticated" && !isGuestOnly(user?.roles || []);
+}
+
+// Bandeau "Vous faites deja partie de la famille HOPE" (rien pour un visiteur ou un invite).
 export function MemberWelcome() {
   const t = useTranslations("site.join.welcome");
   const lp = useLocalePath();
-  const { status, user } = useAuth();
-  if (status !== "authenticated") return null;
+  const { user } = useAuth();
+  if (!useIsMember()) return null;
   const firstName = user?.name?.trim().split(/\s+/)[0];
 
   return (
@@ -41,8 +48,7 @@ export function MemberWelcome() {
   );
 }
 
-// Contenu reserve aux visiteurs non connectes (la candidature).
+// Contenu reserve aux non-membres : visiteurs et invites (la candidature).
 export function GuestOnly({ children }) {
-  const { status } = useAuth();
-  return status === "authenticated" ? null : children;
+  return useIsMember() ? null : children;
 }

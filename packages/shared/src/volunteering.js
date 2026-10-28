@@ -13,6 +13,20 @@ const ATTENDANCE_STATUSES = ["present", "absent"];
 // Statut d'un membre vis-a-vis d'un evenement.
 const EVENT_PARTICIPATION_STATUSES = ["registered", "waitlisted"];
 
+// Public d'un evenement : les evenements benevoles sont reserves aux invites (comptes crees depuis le
+// site par des non-membres) ; les evenements internes (assemblee generale, reunions) aux membres.
+const EVENT_AUDIENCES = ["volunteers", "members"];
+const GUEST_ROLE = "invite";
+
+// Un compte est membre des qu'il a un role autre qu'invite (membre, equipe).
+const isGuestOnly = (roles = []) => roles.length > 0 && roles.every((role) => role === GUEST_ROLE);
+
+// Le compte peut-il s'inscrire a un evenement de ce public ?
+function canJoinAudience(roles = [], audience = "volunteers") {
+    if (audience === "members") return roles.some((role) => role !== GUEST_ROLE);
+    return roles.includes(GUEST_ROLE);
+}
+
 // Bornes de saisie des heures.
 const HOURS_LIMITS = {
     // Heures hors evenement : une saisie par mission et par jour.
@@ -99,6 +113,10 @@ module.exports = {
     REVIEWABLE_CONTENT_TYPES,
     ATTENDANCE_STATUSES,
     EVENT_PARTICIPATION_STATUSES,
+    EVENT_AUDIENCES,
+    GUEST_ROLE,
+    isGuestOnly,
+    canJoinAudience,
     HOURS_LIMITS,
     DEFAULT_EVENT_HOURS,
     BADGES,

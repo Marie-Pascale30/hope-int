@@ -65,6 +65,7 @@ const ROLE_LABELS = {
     directrice_regionale: "Directrice régionale",
     secretaire_generale: "Secrétaire générale",
     membre: "Membre",
+    invite: "Invité",
 };
 
 const ROLE_PERMISSIONS = {
@@ -139,6 +140,8 @@ const ROLE_PERMISSIONS = {
         PERMISSIONS.MANAGE_CAMPAIGNS,
     ],
     membre: [],
+    // Compte cree depuis le site par une personne qui n'est pas (encore) membre : peut etre benevole.
+    invite: [],
 };
 
 // Roles dont la vue regionale n'est pas limitee a la region de leur fiche.

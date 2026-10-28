@@ -22,6 +22,13 @@ const MESSAGES = {
     "Inscription enregistrée : vous pouvez vous connecter. Si un compte existait déjà avec cet email, son titulaire vient d'être prévenu.": ["Registration recorded: you can now sign in. If an account already existed with this email, its owner has just been notified.", "Registro completado: ya puedes iniciar sesión. Si ya existía una cuenta con este correo, su titular acaba de ser avisado."],
     "Trop de tentatives sur ce compte : réessayez dans 15 minutes.": ["Too many attempts on this account: try again in 15 minutes.", "Demasiados intentos en esta cuenta: vuelve a intentarlo en 15 minutos."],
     "Requête refusée (protection CSRF)": ["Request rejected (CSRF protection)", "Solicitud rechazada (protección CSRF)"],
+    "Ce code a expiré ou n'est plus valable. Reconnectez-vous.": ["This code has expired or is no longer valid. Please sign in again.", "Este código ha caducado o ya no es válido. Vuelve a iniciar sesión."],
+    "Code incorrect. Vérifiez le dernier code reçu par email.": ["Incorrect code. Check the latest code you received by email.", "Código incorrecto. Comprueba el último código recibido por correo electrónico."],
+    "Trop de codes envoyés : réessayez dans 15 minutes.": ["Too many codes sent: try again in 15 minutes.", "Se han enviado demasiados códigos: vuelve a intentarlo en 15 minutos."],
+    "Patientez avant de demander un nouveau code.": ["Please wait before requesting a new code.", "Espera antes de solicitar un nuevo código."],
+    "Un nouveau code vient d'être envoyé.": ["A new code has just been sent.", "Acabamos de enviar un nuevo código."],
+    "Connexion expirée : reconnectez-vous": ["Sign-in expired: please sign in again", "Inicio de sesión caducado: vuelve a iniciar sesión"],
+    "Le code comporte 6 chiffres": ["The code has 6 digits", "El código tiene 6 dígitos"],
 
     // Droits
     "Action non autorisée": ["Action not allowed", "Acción no permitida"],
@@ -80,6 +87,8 @@ const MESSAGES = {
     "La date de fin doit être après la date de début": ["The end date must be after the start date", "La fecha de fin debe ser posterior a la de inicio"],
     "Cet événement a déjà commencé": ["This event has already started", "Este evento ya ha comenzado"],
     "Cet événement est complet": ["This event is full", "Este evento está completo"],
+    "Cet événement est réservé aux membres de l'association": ["This event is reserved for members of the association", "Este evento está reservado a los miembros de la asociación"],
+    "Le bénévolat est réservé aux invités : les membres participent aux événements internes": ["Volunteering is reserved for guests: members take part in internal events", "El voluntariado está reservado a los invitados: los miembros participan en los eventos internos"],
     "Cet événement est terminé : la désinscription n'est plus possible": ["This event is over: you can no longer cancel your registration", "Este evento ha terminado: ya no es posible cancelar la inscripción"],
     "Vous êtes déjà inscrit(e) à cet événement": ["You are already registered for this event", "Ya estás inscrito/a en este evento"],
     "Inscription annulée": ["Registration cancelled", "Inscripción cancelada"],

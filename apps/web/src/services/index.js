@@ -32,7 +32,11 @@ export const publicApi = {
 
 // --- Authentification / compte ---
 export const authApi = {
+  // { user } ou, pour un compte de l'equipe sur un appareil non reconnu, { mfaRequired, challenge, resendIn }
   login: (payload) => data(API.post("/auth/login", payload)),
+  // Seconde etape : { challenge, code, trustDevice } -> { user } (cookie de session pose)
+  verifyLogin: (payload) => data(API.post("/auth/login/verify", payload)),
+  resendLoginCode: (challenge) => data(API.post("/auth/login/resend", { challenge })),
   logout: () => data(API.post("/auth/logout")),
   // Revoque toutes les sessions du compte (tous les appareils), y compris la session courante.
   logoutAll: () => data(API.post("/auth/logout-all")),

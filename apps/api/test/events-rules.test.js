@@ -8,7 +8,8 @@ describe("evenements : dates, desinscription, suppression", () => {
     before(async () => {
         await resetDatabase();
         orga = await createUser({ roles: ["organisatrice"] });
-        member = await createUser({ roles: ["membre"] });
+        // Evenements benevoles : reserves aux comptes invites.
+        member = await createUser({ roles: ["invite"] });
         orgaHttp = await loginAs(orga);
         memberHttp = await loginAs(member);
     });
@@ -91,5 +92,39 @@ describe("evenements : dates, desinscription, suppression", () => {
         const log = await lastLog("event.delete");
         assert.equal(log.meta.registrations, 1);
         assert.equal(log.meta.notified, 1);
+    });
+
+    describe("public des evenements", () => {
+        let realMember, realMemberHttp;
+
+        before(async () => {
+            realMember = await createUser({ roles: ["membre"] });
+            realMemberHttp = await loginAs(realMember);
+        });
+
+        it("reserve le benevolat aux invites", async () => {
+            const id = await insertEvent({ startAt: hoursFromNow(48) });
+            const refused = await realMemberHttp.post(`/api/events/${id}/registration`);
+            assert.equal(refused.status, 403);
+            assert.equal(refused.body.code, "EVENT_AUDIENCE");
+            assert.equal((await realMemberHttp.post(`/api/volunteering/events/${id}/waitlist`)).status, 403);
+            assert.equal((await memberHttp.post(`/api/events/${id}/registration`)).status, 201);
+        });
+
+        it("reserve les evenements internes aux membres", async () => {
+            const id = await insertEvent({ startAt: hoursFromNow(48), audience: "members" });
+            const refused = await memberHttp.post(`/api/events/${id}/registration`);
+            assert.equal(refused.status, 403);
+            assert.equal(refused.body.code, "EVENT_AUDIENCE");
+            assert.equal((await realMemberHttp.post(`/api/events/${id}/registration`)).status, 201);
+        });
+
+        it("laisse l'equipe choisir le public et refuse une valeur inconnue", async () => {
+            const id = await insertEvent({ startAt: hoursFromNow(48) });
+            const ok = await orgaHttp.patch(`/api/admin/events/${id}`, { audience: "members" });
+            assert.equal(ok.status, 200);
+            assert.equal(ok.body.audience, "members");
+            assert.equal((await orgaHttp.patch(`/api/admin/events/${id}`, { audience: "tous" })).status, 422);
+        });
     });
 });

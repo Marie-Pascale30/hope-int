@@ -22,6 +22,7 @@ export const BANNERS = {
   auth: banner("p20_07", "center 40%"), // rentree 2024 a Yaounde
   team: banner("p11_07", "center 30%"), // membres de HOPE avec Dieu Merci
   transparency: banner("p17_01", "center 35%"), // remise d'un cheque de soutien, 8 mars 2024
+  legal: banner("p03_12", "center 30%"), // l'equipe HOPE (mentions legales, confidentialite)
 };
 
 export default function PageBanner({ name }) {

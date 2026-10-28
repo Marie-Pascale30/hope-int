@@ -33,7 +33,7 @@ describe("evenements : liste d'attente, promotion, rappels", () => {
         await resetDatabase();
         orgaHttp = await loginAs(await createUser({ roles: ["organisatrice"] }));
         members = [];
-        for (let i = 0; i < 5; i += 1) members.push(await createUser({ roles: ["membre"], name: `Membre ${i}` }));
+        for (let i = 0; i < 5; i += 1) members.push(await createUser({ roles: ["invite"], name: `Invite ${i}` }));
         https = await Promise.all(members.map((member) => loginAs(member)));
     });
 

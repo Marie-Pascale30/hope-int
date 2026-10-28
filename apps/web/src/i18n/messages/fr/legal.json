@@ -1,0 +1,206 @@
+{
+  "legal": {
+    "links": {
+      "label": "Informations légales",
+      "notice": "Mentions légales",
+      "privacy": "Politique de confidentialité",
+      "privacyNote": "Voir notre politique de confidentialité"
+    },
+    "common": {
+      "toc": "Sommaire",
+      "updated": "Dernière mise à jour : <time>{date, date, long}</time>"
+    },
+    "notice": {
+      "meta": {
+        "title": "Mentions légales",
+        "description": "Éditeur, direction de la publication, hébergement et conditions d’utilisation du site de HOPE International Project."
+      },
+      "eyebrow": "Informations légales",
+      "title": "Mentions légales",
+      "lead": "Qui édite le site <site>{host}</site> et dans quelles conditions son contenu peut être utilisé.",
+      "publisher": {
+        "title": "Éditeur du site",
+        "name": "Dénomination",
+        "form": "Forme juridique",
+        "formValue": "Association à but non lucratif, organisation humanitaire d’inspiration chrétienne",
+        "registration": "Numéro d’enregistrement",
+        "seat": "Siège",
+        "email": "Email",
+        "phones": "Téléphones",
+        "facebook": "Facebook",
+        "facebookLink": "Page officielle de l’association",
+        "site": "Site internet",
+        "director": "Direction de la publication",
+        "president": "{name}, présidente de l’association"
+      },
+      "hosting": {
+        "title": "Hébergement",
+        "name": "Hébergeur",
+        "address": "Adresse",
+        "contact": "Contact"
+      },
+      "sections": {
+        "purpose": {
+          "title": "Objet du site",
+          "p1": "Le site <site>{host}</site> présente l’association {name}, ses projets, ses actualités et ses événements. Il permet de faire un don en ligne, de créer un espace membre, de s’inscrire aux événements et aux missions de bénévolat, de proposer sa candidature pour rejoindre l’association et de la contacter.",
+          "p2": "Le site peut également être installé comme application sur un téléphone ou un ordinateur."
+        },
+        "property": {
+          "title": "Propriété intellectuelle",
+          "p1": "Les textes, photographies, logos et éléments graphiques du site sont la propriété de {name}, sauf mention contraire. Les photographies illustrent les actions menées par l’association, ses membres et ses bénévoles.",
+          "p2": "Toute reproduction, représentation ou diffusion, totale ou partielle, de ces contenus sans l’autorisation écrite préalable de l’association est interdite. Les demandes d’autorisation peuvent être adressées à <mail>{email}</mail>.",
+          "p3": "Si vous apparaissez sur une photographie publiée sur le site et souhaitez qu’elle soit retirée, écrivez-nous à la même adresse : nous traiterons votre demande dans les meilleurs délais.",
+          "p4": "Les icônes du site proviennent de la bibliothèque libre Lucide (licence ISC)."
+        },
+        "links": {
+          "title": "Liens externes",
+          "p1": "Le site contient des liens vers des services tiers, notamment la page Facebook de l’association et les pages de paiement de nos prestataires. {name} n’exerce aucun contrôle sur ces services et ne peut être tenue responsable de leur contenu ni de leurs pratiques en matière de données personnelles."
+        },
+        "liability": {
+          "title": "Responsabilité",
+          "p1": "L’association s’efforce de publier des informations exactes et à jour, sans pouvoir en garantir l’exhaustivité. Le site peut être momentanément indisponible, notamment pour des opérations de maintenance ou en cas d’incident technique.",
+          "p2": "Pour signaler une erreur ou un contenu inapproprié, utilisez la page <contact>Contact</contact>."
+        },
+        "data": {
+          "title": "Données personnelles et cookies",
+          "p1": "Les données personnelles collectées sur le site, les cookies utilisés et la manière d’exercer vos droits sont décrits dans notre <privacy>politique de confidentialité</privacy>."
+        },
+        "contact": {
+          "title": "Contact",
+          "p1": "Pour toute question concernant le site ou ces mentions légales : <mail>{email}</mail> ou la page <contact>Contact</contact>."
+        }
+      }
+    },
+    "privacy": {
+      "meta": {
+        "title": "Politique de confidentialité",
+        "description": "Données collectées par HOPE International Project, finalités, durées de conservation, cookies et exercice de vos droits (accès, export, effacement)."
+      },
+      "eyebrow": "Informations légales",
+      "title": "Politique de confidentialité",
+      "lead": "Quelles données nous collectons, pourquoi, combien de temps nous les conservons et comment exercer vos droits.",
+      "sections": {
+        "intro": {
+          "title": "Présentation",
+          "p1": "{name} (« HOPE », « nous ») attache une grande importance à la protection des données personnelles de ses membres, bénévoles, donateurs et de toutes les personnes qui la contactent. Cette politique décrit les données traitées par le site <site>{host}</site> et ses services associés : espace membre, dons en ligne, inscriptions aux événements et application installable.",
+          "p2": "<strong>HOPE ne vend, ne loue et n’échange jamais vos données personnelles.</strong>"
+        },
+        "controller": {
+          "title": "Responsable du traitement",
+          "p1": "Le responsable du traitement est l’association {name}, dont le siège se trouve à {address}. Pour toute question relative à vos données, écrivez à <mail>{email}</mail> ou utilisez la page <contact>Contact</contact>. Les coordonnées complètes de l’association figurent dans les <notice>mentions légales</notice>."
+        },
+        "collected": {
+          "title": "Données collectées",
+          "p1": "Nous collectons uniquement les données que vous nous transmettez ou qui résultent de votre utilisation des services :",
+          "list": {
+            "account": "<strong>Compte membre</strong> : nom, adresse email et mot de passe (enregistré uniquement sous forme d’empreinte chiffrée avec l’algorithme bcrypt, jamais en clair) ; si vous les renseignez, téléphone, région, compétences et disponibilités ; rôles au sein de l’association et date de dernière connexion.",
+            "donations": "<strong>Dons</strong> : nom, email, montant et devise, fréquence (ponctuel ou mensuel), projet ou collecte soutenus, moyen de paiement, statut et références de la transaction ; le cas échéant, numéro de téléphone Mobile Money, dédicace (nom et email du proche à prévenir, message), promesse de don et justificatif d’un don remis hors ligne.",
+            "receipts": "<strong>Reçus</strong> : chaque don confirmé donne lieu à un reçu au format PDF, envoyé par email et disponible dans l’espace membre, qui reprend le nom, l’email, le montant et l’objet du don.",
+            "fundraisers": "<strong>Collectes solidaires</strong> : si vous créez une collecte, son titre, sa présentation et votre prénom sont publiés. Les donateurs y apparaissent sous la forme « prénom et initiale du nom », sauf s’ils choisissent l’anonymat.",
+            "volunteering": "<strong>Événements et bénévolat</strong> : inscriptions aux événements et listes d’attente, présences et heures de bénévolat enregistrées par l’équipe, attestations de bénévolat (nom du titulaire et code de vérification).",
+            "applications": "<strong>Candidatures</strong> (page « Nous rejoindre ») : nom, email, téléphone, région, rôles souhaités et motivation, ainsi que le statut et les notes de suivi de l’équipe.",
+            "messages": "<strong>Messages</strong> envoyés depuis la page Contact : nom, email, objet et contenu.",
+            "consents": "<strong>Préférences de communication</strong> : vos choix pour chaque type d’email et l’historique horodaté de vos accords et retraits.",
+            "team": "<strong>Membres de l’équipe</strong> : portrait public facultatif (photo et courte présentation), publié sur la page Équipe uniquement avec leur accord explicite.",
+            "security": "<strong>Sécurité</strong> : journal des actions importantes (connexions, modifications, exports…), tentatives de connexion et, pour les comptes de l’équipe, codes de vérification envoyés par email et appareils de confiance."
+          }
+        },
+        "purposes": {
+          "title": "Finalités et fondements",
+          "p1": "Vos données sont utilisées pour :",
+          "list": {
+            "account": "gérer votre compte et votre espace membre ;",
+            "donations": "encaisser vos dons, émettre vos reçus, gérer vos dons mensuels et respecter nos obligations comptables ;",
+            "volunteering": "organiser les événements et le bénévolat, suivre les présences et délivrer les attestations ;",
+            "applications": "étudier votre candidature et vous recontacter ;",
+            "messages": "répondre à vos messages ;",
+            "communication": "vous envoyer la lettre d’information si vous l’avez demandée, ainsi que les nouvelles et rappels que vous n’avez pas refusés ;",
+            "security": "assurer la sécurité du site et des comptes, et prévenir la fraude et les abus."
+          },
+          "p2": "Selon les cas, le traitement repose sur votre consentement (lettre d’information), sur la démarche que vous avez engagée (création de compte, don, inscription, candidature, message), sur le respect de nos obligations légales (comptabilité des dons) ou sur l’intérêt légitime de l’association (sécurité, information de ses membres et donateurs)."
+        },
+        "communications": {
+          "title": "Communications et consentements",
+          "list": {
+            "newsletter": "La <strong>lettre d’information</strong> n’est envoyée qu’avec votre accord explicite : la case correspondante n’est jamais précochée, et toute inscription depuis le pied de page doit être confirmée par un lien reçu par email.",
+            "others": "Les <strong>nouvelles des projets que vous soutenez</strong>, les <strong>rappels liés à vos dons</strong> (don non finalisé, promesse de don) et les <strong>rappels des événements</strong> auxquels vous êtes inscrit peuvent vous être envoyés tant que vous ne les avez pas refusés.",
+            "manage": "Chacun de ces emails contient un lien pour gérer vos choix ou vous désinscrire, sans avoir à vous connecter. Vous pouvez aussi les modifier à tout moment dans vos <prefs>préférences de communication</prefs> ou dans votre <account>espace membre</account>.",
+            "proof": "Chaque accord ou retrait est enregistré avec sa date et son heure, son origine (inscription, don, espace membre, lien d’un email…) et la version du texte qui vous était présenté, afin de garder la preuve de votre choix.",
+            "transactional": "Les emails directement liés à vos démarches (reçu de don, réinitialisation du mot de passe, code de vérification…) ne dépendent pas de ces préférences."
+          }
+        },
+        "payments": {
+          "title": "Paiements",
+          "p1": "Les paiements en ligne sont traités par des prestataires spécialisés :",
+          "list": {
+            "stripe": "<strong>Stripe</strong> pour les paiements par carte bancaire, en euros (dons ponctuels et mensuels) ;",
+            "mobileMoney": "<strong>Notch Pay</strong> ou <strong>Flutterwave</strong> pour les paiements Mobile Money, en francs CFA (XAF)."
+          },
+          "p2": "Vos données de carte sont saisies directement auprès du prestataire : HOPE ne les reçoit pas et ne les conserve jamais. Nous conservons uniquement les informations nécessaires au suivi du don (montant, devise, statut, référence de la transaction). Ces prestataires traitent les données de paiement conformément à leurs propres politiques de confidentialité."
+        },
+        "recipients": {
+          "title": "Destinataires des données",
+          "p1": "Vos données ne sont accessibles qu’aux membres habilités de l’équipe de HOPE, en fonction de leur rôle (par exemple la trésorerie pour les dons, la coordination pour les événements et le bénévolat).",
+          "p2": "Elles sont également traitées, pour notre compte et dans la limite de leur mission, par nos prestataires techniques : hébergement du site et de la base de données, envoi des emails, prestataires de paiement et outil de suivi des erreurs, paramétré pour masquer les mots de passe, adresses email, numéros de téléphone et cookies.",
+          "p3": "Vos données ne sont jamais vendues, louées ni cédées à des fins commerciales. Elles ne sont communiquées à une autorité que lorsque la loi l’exige."
+        },
+        "transfers": {
+          "title": "Transferts hors du Cameroun",
+          "p1": "Certains prestataires (paiement, envoi des emails, hébergement, suivi des erreurs) peuvent traiter des données en dehors du Cameroun ou de l’Union européenne. Nous limitons les données qui leur sont transmises au strict nécessaire et les choisissons pour les garanties de sécurité qu’ils offrent."
+        },
+        "retention": {
+          "title": "Durées de conservation",
+          "p1": "Les données sont conservées le temps nécessaire aux finalités décrites ci-dessus, puis supprimées ou anonymisées. Une purge automatique est exécutée chaque jour :",
+          "list": {
+            "account": "<strong>compte membre</strong> : tant que le compte existe ; vous pouvez le supprimer à tout moment (voir « Vos droits ») ;",
+            "receipts": "<strong>dons et reçus</strong> : conservés {accountingYears, plural, one {# an} other {# ans}} au titre de nos obligations comptables, y compris après la suppression du compte, puis anonymisés ;",
+            "applications": "<strong>candidatures refusées</strong> : supprimées {refusedMonths} mois après la décision ;",
+            "logs": "<strong>journal de sécurité</strong> : adresses email, noms et numéros de téléphone retirés au-delà de {logsMonths} mois ;",
+            "emails": "<strong>emails envoyés</strong> : contenu et pièces jointes effacés {outboxDays, plural, one {# jour} other {# jours}} après l’envoi ;",
+            "auth": "<strong>tentatives de connexion</strong> et <strong>liens de réinitialisation</strong> du mot de passe expirés : supprimés après 24 heures ;",
+            "consents": "<strong>historique des consentements</strong> : conservé comme preuve de vos choix, puis supprimé avec vos données ;",
+            "messages": "<strong>messages et candidatures</strong> : conservés le temps nécessaire au suivi de votre demande, et anonymisés lors de la suppression de vos données."
+          }
+        },
+        "rights": {
+          "title": "Vos droits",
+          "p1": "Vous disposez d’un droit d’accès, de rectification, d’effacement et de portabilité de vos données, du droit de vous opposer à certains traitements ou d’en demander la limitation, et du droit de retirer votre consentement à tout moment.",
+          "p2": "La plupart de ces droits s’exercent directement en ligne, depuis votre <account>espace membre</account> :",
+          "list": {
+            "rectify": "<strong>Rectification</strong> : modifiez vos informations dans l’onglet « Mon profil ».",
+            "export": "<strong>Accès et portabilité</strong> : dans l’onglet « Mon profil », section « Mes données personnelles », le bouton « Télécharger mes données (JSON) » fournit une copie de votre profil, de vos dons, inscriptions, candidatures, messages et de l’historique de vos consentements.",
+            "erase": "<strong>Effacement</strong> : dans la même section, « Supprimer mon compte et mes données » anonymise votre compte et efface vos données personnelles, après confirmation de votre mot de passe. Vos dons mensuels en cours sont arrêtés ; les reçus déjà émis sont conservés pendant la durée comptable indiquée ci-dessus, puis anonymisés. Un compte de l’équipe doit d’abord se voir retirer ses rôles par l’administration.",
+            "object": "<strong>Opposition et retrait du consentement</strong> : modifiez vos <prefs>préférences de communication</prefs> ou utilisez le lien présent dans chaque email concerné."
+          },
+          "p3": "Si vous n’avez pas de compte, ou pour toute autre demande, écrivez-nous à <mail>{email}</mail>. Nous pourrons vous demander de justifier de votre identité avant d’y donner suite. Si vous estimez que vos droits ne sont pas respectés, vous pouvez saisir l’autorité de protection des données compétente."
+        },
+        "cookies": {
+          "title": "Cookies et stockage local",
+          "p1": "Le site n’utilise ni cookie publicitaire ni outil de mesure d’audience. Il dépose uniquement les éléments nécessaires à son fonctionnement ou à la mémorisation de vos choix :",
+          "list": {
+            "session": "<strong>hope_session</strong> : cookie de session sécurisé (httpOnly, inaccessible aux scripts du site), déposé à la connexion et valable 12 heures au plus ;",
+            "device": "<strong>hope_device</strong> : pour les comptes de l’équipe, mémorise un appareil de confiance pendant 30 jours après la vérification par code ;",
+            "locale": "<strong>NEXT_LOCALE</strong> : langue choisie, conservée un an ;",
+            "eco": "<strong>hope_eco</strong> : mode économie de données, conservé un an ;",
+            "storage": "<strong>stockage local du navigateur</strong> : thème clair ou sombre (hope_theme), dernier moyen de paiement utilisé (hope_don_method), indicateur de session sans donnée personnelle (hope_session) et, le temps de la visite, l’origine d’un lien de don (hope_don_ref) ;",
+            "stripe": "<strong>Stripe</strong> : lors d’un paiement par carte, ce prestataire peut déposer ses propres cookies, nécessaires à la sécurité du paiement et à la prévention de la fraude."
+          },
+          "p2": "Vous pouvez supprimer ces éléments à tout moment depuis les réglages de votre navigateur ; la suppression du cookie de session vous déconnecte."
+        },
+        "security": {
+          "title": "Sécurité",
+          "p1": "Nous mettons en œuvre des mesures adaptées pour protéger vos données : connexion chiffrée (HTTPS), mots de passe chiffrés de façon irréversible, cookie de session inaccessible aux scripts, protection contre les requêtes intersites, limitation des tentatives de connexion, accès réservé aux membres habilités selon leur rôle et vérification par code envoyé par email pour les comptes de l’équipe."
+        },
+        "law": {
+          "title": "Cadre légal",
+          "p1": "Les traitements décrits sont soumis à la loi camerounaise n° 2024/017 du 23 décembre 2024 relative à la protection des données à caractère personnel.",
+          "p2": "Pour les donateurs et utilisateurs situés dans l’Union européenne, les traitements les concernant respectent également le règlement général sur la protection des données (règlement (UE) 2016/679, « RGPD »), dans la mesure où celui-ci est applicable."
+        },
+        "changes": {
+          "title": "Modifications",
+          "p1": "Cette politique peut être mise à jour pour tenir compte de l’évolution du site ou de la réglementation. La date de dernière mise à jour figure en haut de la page ; en cas de changement important, nous vous en informerons sur le site."
+        }
+      }
+    }
+  }
+}

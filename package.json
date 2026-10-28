@@ -20,6 +20,8 @@
     "test:e2e": "npm run test:e2e -w @hope/web",
     "test:coverage": "npm run test:coverage -w @hope/api",
     "seed:demo": "npm run seed:demo -w @hope/api --",
+    "content:import": "npm run content:import -w @hope/api --",
+    "admin:create": "npm run admin:create -w @hope/api --",
     "docs:api": "npm run docs:api -w @hope/api",
     "check": "npm run check:i18n -w @hope/web && npm run check:contrast -w @hope/web"
   },

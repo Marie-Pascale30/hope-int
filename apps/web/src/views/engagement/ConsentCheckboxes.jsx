@@ -6,8 +6,10 @@
 //   - inscription : POST /auth/register { ..., consents } ;
 //   - don : l'API des dons appelle preferences.recordConsents({ email, userId, consents, source: "donation" }).
 // La newsletter n'est jamais precochee (accord explicite, confirme par email).
+import Link from "next/link";
 import { useId } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { localizePath } from "../../i18n/config";
 
 export const DEFAULT_CONSENT_TOPICS = ["newsletter", "project_news"];
 
@@ -18,6 +20,8 @@ export function initialConsents(topics = DEFAULT_CONSENT_TOPICS) {
 
 export default function ConsentCheckboxes({ value, onChange, topics = DEFAULT_CONSENT_TOPICS, disabled = false }) {
   const t = useTranslations("engagement.consent");
+  const tLegal = useTranslations("legal.links");
+  const locale = useLocale();
   const id = useId();
   const current = value || initialConsents(topics);
   return (
@@ -34,7 +38,9 @@ export default function ConsentCheckboxes({ value, onChange, topics = DEFAULT_CO
           <span>{t(topic)}</span>
         </label>
       ))}
-      <p id={`${id}-note`} className="eng-consents__note">{t("note")}</p>
+      <p id={`${id}-note`} className="eng-consents__note">
+        {t("note")} <Link href={localizePath(locale, "/confidentialite")}>{tLegal("privacyNote")}</Link>
+      </p>
     </fieldset>
   );
 }

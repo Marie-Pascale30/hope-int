@@ -9,6 +9,9 @@ info:
 
     **Authentification** : `POST /auth/login` pose le JWT dans le cookie httpOnly `hope_session`
     (`SameSite=Lax`, `Secure` en production). L'en-tete `Authorization: Bearer <jwt>` reste accepte (scripts).
+    Comptes de l'equipe (permission `access_admin_dashboard`) : depuis un appareil non reconnu, la connexion
+    renvoie `{ mfaRequired: true, challenge }` et un code a 6 chiffres est envoye par email ; la session
+    s'ouvre avec `POST /auth/login/verify` (cookie `hope_device` de 30 jours si `trustDevice`).
 
     **CSRF** : toute requete d'ecriture (POST, PUT, PATCH, DELETE) authentifiee par cookie doit porter
     `X-Requested-With: XMLHttpRequest`, sinon 403.
@@ -271,8 +274,11 @@ paths:
   /auth/register:
     post:
       tags: [Authentification]
-      summary: Creer un compte membre
-      description: Reponse identique que l'email existe ou non (pas d'enumeration des comptes).
+      summary: Creer un compte invite
+      description: |
+        Reponse identique que l'email existe ou non (pas d'enumeration des comptes). Un compte cree
+        est invite (benevolat, candidature pour devenir membre) et recoit un email de bienvenue ;
+        le titulaire d'un compte existant est prevenu par email.
       operationId: register
       requestBody:
         required: true
@@ -293,7 +299,18 @@ paths:
     post:
       tags: [Authentification]
       summary: Connexion (pose le cookie de session)
+      description: |
+        Compte de l'equipe (permission `access_admin_dashboard`) sans cookie `hope_device` valide :
+        aucune session n'est ouverte, un code a 6 chiffres (10 minutes, usage unique) est envoye par
+        email et la reponse est `{ mfaRequired: true, challenge, expiresIn, resendIn }`. Les autres
+        comptes sont connectes directement. 429 `LOGIN_CODE_THROTTLED` au-dela de 5 codes en 15 minutes.
       operationId: login
+      parameters:
+        - in: cookie
+          name: hope_device
+          required: false
+          schema: { type: string }
+          description: Appareil de confiance (pose par POST /auth/login/verify avec trustDevice)
       requestBody:
         required: true
         content:
@@ -306,11 +323,51 @@ paths:
                 password: { type: string }
       responses:
         "200":
-          description: Connecte ; cookie `hope_session` pose
+          description: Connecte (cookie `hope_session` pose) ou code envoye par email (`mfaRequired`)
           headers:
             Set-Cookie:
               schema: { type: string }
-              description: "hope_session=<jwt>; HttpOnly; SameSite=Lax"
+              description: "hope_session=<jwt>; HttpOnly; SameSite=Lax (absent si mfaRequired)"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required: [user]
+                    properties:
+                      user: { $ref: "#/components/schemas/User" }
+                  - $ref: "#/components/schemas/LoginChallenge"
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+  /auth/login/verify:
+    post:
+      tags: [Authentification]
+      summary: Valider le code de connexion recu par email (ouvre la session)
+      description: |
+        Code errone : 400 `LOGIN_CODE_INVALID` (`details.attemptsLeft`). Au 5e code errone, defi expire
+        ou deja utilise : 400 `LOGIN_CODE_EXPIRED` (recommencer la connexion). `trustDevice` pose le
+        cookie `hope_device` (30 jours, revoque par un changement de mot de passe ou
+        POST /auth/logout-all).
+      operationId: verifyLoginCode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challenge, code]
+              properties:
+                challenge: { type: string, pattern: "^[a-f0-9]{64}$" }
+                code: { type: string, pattern: "^[0-9]{6}$" }
+                trustDevice: { type: boolean, default: false }
+      responses:
+        "200":
+          description: Connecte ; cookie `hope_session` (et `hope_device` si trustDevice) pose
+          headers:
+            Set-Cookie:
+              schema: { type: string }
+              description: "hope_session=<jwt>; HttpOnly ; hope_device=<jeton>; HttpOnly; Path=/api/auth"
           content:
             application/json:
               schema:
@@ -318,7 +375,36 @@ paths:
                 properties:
                   user: { $ref: "#/components/schemas/User" }
         "400": { $ref: "#/components/responses/ValidationError" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+  /auth/login/resend:
+    post:
+      tags: [Authentification]
+      summary: Envoyer un nouveau code de connexion
+      description: |
+        Remplace le code precedent. 429 `LOGIN_CODE_COOLDOWN` moins de 60 s apres le dernier envoi
+        (`details.retryAfter` en secondes), `LOGIN_CODE_THROTTLED` au-dela de 5 codes en 15 minutes.
+      operationId: resendLoginCode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challenge]
+              properties:
+                challenge: { type: string, pattern: "^[a-f0-9]{64}$" }
+      responses:
+        "200":
+          description: Nouveau code envoye
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  expiresIn: { type: integer, description: Validite du code en secondes }
+                  resendIn: { type: integer, description: Delai avant un nouvel envoi en secondes }
+        "400": { $ref: "#/components/responses/ValidationError" }
         "429": { $ref: "#/components/responses/TooManyRequests" }
   /auth/forgot-password:
     post:
@@ -1466,6 +1552,14 @@ components:
           schema: { $ref: "#/components/schemas/Error" }
 
   schemas:
+    LoginChallenge:
+      type: object
+      required: [mfaRequired, challenge]
+      properties:
+        mfaRequired: { type: boolean, const: true }
+        challenge: { type: string, description: Jeton opaque a renvoyer a /auth/login/verify }
+        expiresIn: { type: integer, description: Validite du code en secondes }
+        resendIn: { type: integer, description: Delai avant un nouvel envoi en secondes }
     Error:
       type: object
       required: [error]

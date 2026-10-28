@@ -115,7 +115,46 @@ exports.sendRegistrationAttemptEmail = ({ to, fullName, loginUrl, resetUrl }) =>
         ].join("\n"),
     }, { kind: "registration_attempt" });
 
-exports.sendApplicationReceivedEmail = ({ to, fullName }) =>
+// Bienvenue d'un compte cree par inscription (compte invite, pas encore membre).
+exports.sendWelcomeEmail = ({ to, fullName, loginUrl, eventsUrl, joinUrl }) =>
+    send({
+        to,
+        subject: `${ORG_NAME} - Bienvenue`,
+        text: [
+            `Bonjour ${fullName || ""},`.trim(),
+            "",
+            `Votre compte invité sur la plateforme ${ORG_NAME} est créé : vous pouvez vous connecter dès maintenant.`,
+            loginUrl ? `Connexion : ${loginUrl}` : "",
+            "",
+            "Avec ce compte, vous pouvez :",
+            `- vous inscrire comme bénévole aux événements de bénévolat${eventsUrl ? ` : ${eventsUrl}` : ""}`,
+            "- suivre vos dons et télécharger vos reçus.",
+            "",
+            `Vous souhaitez devenir membre de l'association ? Déposez votre candidature${joinUrl ? ` : ${joinUrl}` : ""}. Votre compte deviendra un compte membre lorsque l'équipe l'aura acceptée.`,
+            "",
+            "Si vous n'êtes pas à l'origine de cette inscription, vous pouvez ignorer ce message.",
+        ].join("\n"),
+    }, { kind: "welcome" });
+
+// Code de connexion des comptes de l'equipe (double authentification). Le code n'est jamais
+// journalise ; sensitive : contenu efface de la file une fois envoye.
+exports.sendLoginCodeEmail = ({ to, fullName, code, ttlMinutes }) =>
+    send({
+        to,
+        subject: `${ORG_NAME} - Votre code de connexion`,
+        text: [
+            `Bonjour ${fullName || ""},`.trim(),
+            "",
+            `Votre code de connexion : ${code}`,
+            "",
+            `Ce code est valable ${ttlMinutes} minutes et ne peut servir qu'une fois.`,
+            "Ne le communiquez à personne : l'équipe ne vous le demandera jamais.",
+            "",
+            "Si vous n'êtes pas à l'origine de cette connexion, votre mot de passe est peut-être connu d'un tiers : changez-le sans attendre.",
+        ].join("\n"),
+    }, { kind: "login_code", sensitive: true, expiresInMinutes: ttlMinutes });
+
+exports.sendApplicationReceivedEmail =({ to, fullName }) =>
     send({
         to,
         subject: `${ORG_NAME} - Candidature bien reçue`,

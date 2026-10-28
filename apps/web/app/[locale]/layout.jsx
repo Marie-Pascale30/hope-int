@@ -43,7 +43,9 @@ export default async function LocaleLayout({ children, params }) {
 
   const t = await getTranslations({ locale, namespace: "nav" });
   // Messages envoyes au navigateur : habillage, site public et parcours de compte / don.
-  const messages = await loadMessages(locale, ["common", "site", "account", ...FEATURE_FILES]);
+  // Textes legaux : rendus cote serveur, seuls les libelles des liens (legal.links) sont envoyes.
+  const { legal, ...loaded } = await loadMessages(locale, ["common", "site", "account", "legal", ...FEATURE_FILES]);
+  const messages = { ...loaded, legal: { links: legal?.links || {} } };
   const { data: meta } = await settle(serverApi.meta(locale));
 
   return (

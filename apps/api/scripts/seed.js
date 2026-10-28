@@ -9,13 +9,8 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const db = require("../config/db");
 const { runMigrations } = require("../config/migrate");
-const { PHOTOS, photoUrl } = require("@hope/shared/photos");
-
-// Galerie (colonne JSON) a partir d'albums ou de photos du livret : gallery("noel-2022-yaounde", "p15_03").
-function gallery(...keys) {
-    const photos = PHOTOS.filter((photo) => keys.includes(photo.album) || keys.includes(photo.id));
-    return JSON.stringify(photos.map(({ src, width, height, kind }) => ({ src, width, height, kind })));
-}
+const { photoUrl } = require("@hope/shared/photos");
+const { importProjects, importNews, importTestimonials } = require("./content");
 
 // Usage : npm run seed            -> complete la base si elle est vide
 //         npm run seed -- --reset -> vide les donnees de demo puis les recree (avertissement,
@@ -59,102 +54,10 @@ const MEMBERS = [
         skills: "Agronomie", availability: "2 jours par mois",
     },
     { name: "Sandrine Tita", email: "sandrine@hope.org", password: "Member@123", roles: ["membre"], region: "Nord-Ouest" },
-];
-
-// Actions reelles de HOPE International Project (livret partenaires 2021-2025, guide de bienvenue).
-// Les beneficiaires ne reprennent que les chiffres attestes par le livret ; les objectifs de collecte
-// (EUR) sont indicatifs et se reglent dans l'administration. Les trois premiers projets recoivent
-// les dons de demonstration (seedPayments).
-const PROJECTS = [
+    // Compte invite (inscrit depuis le site, pas encore membre) : seul profil admis aux evenements benevoles.
     {
-        title: "Parrainage éducatif des enfants",
-        summary: "Accompagner chaque enfant parrainé de la rentrée jusqu'à son autonomie : frais de scolarité, fournitures et suivi.",
-        description: "Depuis la rentrée 2023, HOPE International Project prend en charge la scolarité d'enfants orphelins ou issus de familles vulnérables, avec l'engagement de les accompagner jusqu'à leur insertion professionnelle.\n\nDieu Merci, notre premier filleul, accueilli à l'orphelinat Petit Dan & Sarah (Yaoundé), entame en 2025-2026 sa troisième année avec nous. Divine FOLIFACK, à Dschang, a rejoint le programme en 2024 en partenariat avec sa famille, et MASSOH NDAH Abigail, de l'orphelinat du Buisson Ardent (Yaoundé), en 2025.\n\nVotre don finance les frais de scolarité, les fournitures, l'uniforme et le suivi de chaque enfant. « C'est ici que l'espoir commence : un enfant, un avenir, un acte d'amour à la fois. »",
-        image_url: photoUrl("p11_07"),
-        gallery: gallery("rentree-2023-yaounde", "rentree-2024-yaounde", "rentree-2024-dschang", "rentree-2025-buisson-ardent", "rentree-2025-yaounde", "rentree-2025-dschang"),
-        status: "en_cours", region: "Centre", start_date: "2023-09-01", end_date: null,
-        budget: null, goal_amount: 1500, beneficiaries: 3, trainees: 0, credits_granted: 0,
-    },
-    {
-        title: "Rentrée scolaire « Un sourire pour tous »",
-        summary: "Chaque été, des fournitures scolaires pour les enfants défavorisés, jusque dans les villages les plus reculés.",
-        description: "Chaque année, du 1er août au 1er septembre, HOPE International Project collecte et distribue des fournitures scolaires, des sacs et du matériel éducatif aux enfants qui en ont le plus besoin.\n\nNotre première rentrée solidaire a eu lieu en 2021-2022 au village de Balessing, dans l'Ouest du Cameroun. La campagne s'est depuis étendue aux orphelinats de Yaoundé et aux familles de Dschang.\n\n« Votre générosité porte l'espoir au cœur de chaque village et donne à chaque enfant la chance de rêver à nouveau. »",
-        image_url: photoUrl("p06_05"),
-        gallery: gallery("rentree-2021-balessing", "enseignants-2022-douala", "p15_04", "p22_01"),
-        status: "en_cours", region: "Ouest", start_date: "2021-09-01", end_date: null,
-        budget: null, goal_amount: 2000, beneficiaries: 0, trainees: 0, credits_granted: 0,
-    },
-    {
-        title: "Noël de l'espoir pour les orphelins",
-        summary: "La magie du cœur : vêtements, repas, friandises et jouets pour les orphelins de Douala et de Yaoundé.",
-        description: "Chaque mois de décembre, nos membres partagent la joie de Noël avec les enfants des orphelinats et les familles vulnérables : vêtements, repas, friandises, jouets et moments de fête.\n\nNous avons rendu visite aux orphelinats Petit Dan & Sarah et Le Bon Berger (Nkoabang) à Yaoundé, à l'orphelinat Mère Teresa la Vénérable (ASENDEF) à Douala, ainsi qu'à une famille de Bonabéri Mabanda.\n\n« Une lumière d'amour pour les orphelins, parce que chaque enfant mérite un Noël. »",
-        image_url: photoUrl("p12_12"),
-        gallery: gallery("noel-2022-yaounde", "noel-2022-douala", "noel-2023-mere-teresa", "noel-2023-bonaberi", "noel-2023-bon-berger", "p15_03"),
-        status: "en_cours", region: "Littoral", start_date: "2022-12-01", end_date: null,
-        budget: null, goal_amount: 1500, beneficiaries: 0, trainees: 0, credits_granted: 0,
-    },
-    {
-        title: "Autonomisation des femmes",
-        summary: "Soutenir les mères seules et les femmes vulnérables dans leur activité, à l'occasion du 8 mars.",
-        description: "À l'occasion de la Journée internationale des droits des femmes, HOPE International Project remet des chèques de soutien à des femmes qui font vivre leur famille avec courage et dignité.\n\nEn 2024, nous avons soutenu deux femmes à Yaoundé (snacks à base de soja, huile de palme) et, à Douala, Irène KAMENI (huile de palme) et Armelle Rofanie BOGNING NAMBOU (beignets et restauration), avec 50 000 FCFA chacune. En 2025, nous avons accompagné Sophie BESONG, femme en situation de handicap, dans son commerce à Yaoundé (75 000 FCFA).\n\nNous voulons aller plus loin : formations pratiques (couture, coiffure, agriculture…), insertion économique et, demain, microcrédit solidaire.",
-        image_url: photoUrl("p17_01"),
-        gallery: gallery("femmes-2024-yaounde", "femmes-2024-douala-irene", "femmes-2024-douala-armelle", "femmes-2025-yaounde", "p10_03", "p15_02", "p22_03"),
-        status: "en_cours", region: "Littoral", start_date: "2024-03-08", end_date: null,
-        budget: null, goal_amount: 1000, beneficiaries: 5, trainees: 0, credits_granted: 5,
-    },
-    {
-        title: "Sensibilisation santé : VIH et drépanocytose",
-        summary: "Informer le grand public sur la transmission et la prévention, et encourager le dépistage.",
-        description: "HOPE International Project participe aux journées internationales de santé : Journée mondiale de lutte contre la drépanocytose le 19 juin (campagne de sensibilisation et tests d'électrophorèse en partenariat avec GEDREPACAM, 2023) et Journée mondiale de lutte contre le sida le 1er décembre (2024, 2025).\n\nNos prochaines campagnes porteront aussi sur les hépatites, les cancers et la nutrition, avec la distribution de kits d'hygiène.",
-        image_url: photoUrl("p22_02"),
-        gallery: gallery("p10_02", "p15_00", "p22_02", "sida-2025"),
-        status: "en_cours", region: "Littoral", start_date: "2023-06-19", end_date: null,
-        budget: null, goal_amount: null, beneficiaries: 0, trainees: 0, credits_granted: 0,
-    },
-    {
-        title: "Un vêtement = Un sourire",
-        summary: "Collectes de vêtements pour les camps de réfugiés, les prisons et les orphelinats.",
-        description: "Deux grandes collectes de vêtements de tout genre ont été menées, du 20 novembre au 20 décembre 2022 puis du 15 novembre au 15 décembre 2023, pour habiller ceux qui ont froid : camps de réfugiés, prisons, orphelinats.",
-        image_url: photoUrl("p10_01"),
-        gallery: gallery("vetements-2022", "p10_01"),
-        status: "termine", region: "Littoral", start_date: "2022-11-20", end_date: "2023-12-15",
-        budget: null, goal_amount: null, beneficiaries: 0, trainees: 0, credits_granted: 0,
-    },
-    {
-        title: "Académie HOPE",
-        summary: "Une école avec bibliothèque, espace de loisirs, cantine et infirmerie pour les enfants défavorisés.",
-        description: "Notre grand projet de développement communautaire : créer l'Académie HOPE, un lieu d'éducation complet comprenant une école, une bibliothèque, un espace de loisirs, une cantine et une infirmerie. Le projet comprend aussi la formation de bénévoles et de leaders locaux.",
-        image_url: photoUrl("p20_09"),
-        gallery: gallery("p20_09", "p20_05", "p25_05"),
-        status: "planifie", region: "Littoral", start_date: null, end_date: null,
-        budget: null, goal_amount: null, beneficiaries: 0, trainees: 0, credits_granted: 0,
-    },
-    {
-        title: "Accès à l'eau potable dans les villages isolés",
-        summary: "Construire des puits et des forages et sensibiliser à l'hygiène communautaire.",
-        description: "HOPE International Project souhaite assister les communautés qui n'ont pas accès à l'eau potable : construction de puits et de forages, gestion par des comités d'habitants et sensibilisation à l'hygiène.",
-        image_url: photoUrl("p21_02"),
-        gallery: gallery("p21_02", "p06_07"),
-        status: "planifie", region: "Ouest", start_date: null, end_date: null,
-        budget: null, goal_amount: null, beneficiaries: 0, trainees: 0, credits_granted: 0,
-    },
-    {
-        title: "Microcrédit et entrepreneuriat solidaire",
-        summary: "Piste de développement : des microcrédits à taux solidaire pour les mères et les jeunes porteurs de projet.",
-        description: "Dans le prolongement des chèques de soutien du 8 mars, nous étudions la création d'un programme de microcrédit solidaire : petits prêts accompagnés d'une formation en gestion et d'un suivi régulier, remboursements réinvestis dans de nouvelles activités (commerce de proximité, transformation agricole, couture, élevage).\n\nCe projet est à l'étude ; il sera lancé lorsque les partenariats et les ressources nécessaires seront réunis.",
-        image_url: photoUrl("p23_05"),
-        gallery: gallery("p16_06", "p16_08", "p23_04", "p23_05"),
-        status: "planifie", region: "Littoral", start_date: null, end_date: null,
-        budget: null, goal_amount: null, beneficiaries: 0, trainees: 0, credits_granted: 0,
-    },
-    {
-        title: "Formations pratiques pour les jeunes filles mères",
-        summary: "Couture, coiffure, agriculture… pour permettre aux jeunes mères de subvenir dignement aux besoins de leurs enfants.",
-        description: "Accompagnement social et psychologique, formations pratiques (couture, coiffure, agriculture, mécanique, bâtiment) et aide à l'insertion économique des jeunes filles mères. Le programme pourra s'appuyer sur des groupes d'entraide et sur le futur microcrédit solidaire.",
-        image_url: photoUrl("p16_03"),
-        gallery: gallery("p16_03", "p18_04"),
-        status: "planifie", region: "Centre", start_date: null, end_date: null,
-        budget: null, goal_amount: null, beneficiaries: 0, trainees: 0, credits_granted: 0,
+        name: "Grâce Ekane", email: "invite@hope.org", password: "Guest@123", roles: ["invite"], region: "Littoral",
+        skills: "Animation d'enfants", availability: "Week-ends",
     },
 ];
 
@@ -203,56 +106,6 @@ async function resetDemoData() {
     await db.query("SET FOREIGN_KEY_CHECKS = 1");
 }
 
-async function seedProjects() {
-    if (!(await isEmpty("projects"))) {
-        const [rows] = await db.query("SELECT id FROM projects ORDER BY id");
-        return rows.map((row) => row.id);
-    }
-    const ids = [];
-    for (const project of PROJECTS) {
-        const [result] = await db.query("INSERT INTO projects SET ?", [project]);
-        ids.push(result.insertId);
-    }
-    return ids;
-}
-
-async function seedNewsAndTestimonials(projectIds) {
-    if (await isEmpty("news")) {
-        await db.query(
-            `INSERT INTO news (title, summary, content, image_url, gallery, project_id, created_at) VALUES ?`,
-            [[
-                ["Rentrée 2025-2026 : Abigail devient notre troisième filleule", "À l'orphelinat du Buisson Ardent, à Yaoundé, nous nous engageons auprès d'Abigail pour toute sa scolarité.",
-                    "Pour la rentrée 2025-2026, HOPE International Project accueille dans son programme de parrainage MASSOH NDAH Abigail, de l'orphelinat du Buisson Ardent (ASEEODRCAM) à Yaoundé. Nous nous engageons à l'accompagner tout au long de son parcours scolaire, avec amour et dévouement.\n\nLa même rentrée marque la troisième année de Dieu Merci (orphelinat Petit Dan & Sarah) et la deuxième de Divine FOLIFACK à Dschang : fournitures, sacs, uniformes et frais de scolarité leur ont été remis.",
-                    photoUrl("p24_09"), gallery("rentree-2025-buisson-ardent", "rentree-2025-yaounde", "rentree-2025-dschang"), projectIds[0], new Date("2025-09-15T10:00:00Z")],
-                ["8 mars 2025 : soutien à Sophie BESONG", "Pour la Journée des droits des femmes, nous avons accompagné une commerçante en situation de handicap à Yaoundé.",
-                    "En cette Journée internationale des droits des femmes, HOPE International Project célèbre la remarquable résilience de Sophie BESONG, femme vivant avec un handicap, que nous avons eu l'honneur de soutenir avec un chèque de 75 000 FCFA pour son commerce. Son parcours reflète la force et l'espoir au cœur de notre mission.\n\nGrâce à votre générosité, nous pouvons continuer à aider des femmes comme Sophie à briller avec confiance et dignité.",
-                    photoUrl("p23_02"), gallery("femmes-2025-yaounde"), projectIds[3], new Date("2025-03-15T10:00:00Z")],
-                ["Une lumière d'amour pour les orphelins de Douala", "Noël à l'orphelinat Mère Teresa la Vénérable et auprès d'une famille de Bonabéri Mabanda.",
-                    "Pour Noël, nos membres ont partagé la magie du cœur avec les enfants de l'orphelinat Mère Teresa la Vénérable (ASENDEF) à Douala : vêtements, vivres, friandises et un après-midi de fête. Nous avons aussi rendu visite à une famille de Bonabéri Mabanda.\n\nÀ Yaoundé, les enfants de l'orphelinat Le Bon Berger (Nkoabang) ont reçu la même visite. Parce que chaque enfant mérite un Noël.",
-                    photoUrl("p12_12"), gallery("noel-2023-mere-teresa", "noel-2023-bonaberi", "noel-2023-bon-berger"), projectIds[2], new Date("2023-12-22T10:00:00Z")],
-                ["Soutien à Noël Clinton, au service des personnes de la rue", "Un ancien sans-abri devenu aidant reçoit 100 000 FCFA pour poursuivre son engagement à Douala.",
-                    "Le 19 juin 2024, HOPE International Project a apporté son soutien à Noël Clinton, un homme de bonne volonté qui a lui-même vécu dans la rue et qui, après avoir reçu son appel, prend aujourd'hui soin des personnes sans abri à Douala. HOPE International Project reste engagé auprès de ceux qui sont dans le besoin.",
-                    photoUrl("p19_03"), gallery("solidarite-rue-2024"), null, new Date("2024-06-19T10:00:00Z")],
-                ["Journée mondiale des enseignants à Douala", "HOPE International Project soutient les enseignants dans leur belle mission d'éduquer nos enfants.",
-                    "À l'occasion de la Journée mondiale des enseignants, nos membres sont allés à la rencontre d'enseignantes de Douala pour leur remettre des présents et saluer leur vocation. Soutenir les enseignants dans l'exercice de leur métier fait partie de nos priorités pour l'éducation.",
-                    photoUrl("p07_05"), gallery("enseignants-2022-douala"), null, new Date("2022-10-05T10:00:00Z")],
-            ]]
-        );
-    }
-
-    if (await isEmpty("testimonials")) {
-        await db.query(
-            "INSERT INTO testimonials (author, role_label, content, project_id) VALUES ?",
-            [[
-                // Citations des documents officiels, en attendant les temoignages recueillis aupres des beneficiaires.
-                ["HOPE International Project", "Guide de bienvenue", "Nous croyons que l'amour de Dieu, manifesté par des actes concrets, transforme des vies.", null],
-                ["HOPE International Project", "Guide de bienvenue", "Nous investissons dans les rêves, la santé et la dignité des personnes les plus démunies, avec bienveillance, expertise et engagement durable.", projectIds[0]],
-                ["HOPE International Project", "Livret partenaires", "Votre générosité porte l'espoir au cœur de chaque village et donne à chaque enfant la chance de rêver à nouveau.", projectIds[1]],
-            ]]
-        );
-    }
-}
-
 async function seedEvents(projectIds, userIds, orgaId) {
     if (!(await isEmpty("events"))) return;
     const day = 86400000;
@@ -281,13 +134,15 @@ async function seedEvents(projectIds, userIds, orgaId) {
     const ids = [];
     for (const event of events) {
         const [result] = await db.query(
-            `INSERT INTO events (title, description, location, region, start_at, end_at, capacity, image_url, project_id, created_by)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [...event, orgaId]
+            `INSERT INTO events (title, description, location, region, start_at, end_at, capacity, image_url, project_id, created_by, audience)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            // Assemblee generale : evenement interne, reserve aux membres.
+            [...event, orgaId, event[0].startsWith("Assemblée générale") ? "members" : "volunteers"]
         );
         ids.push(result.insertId);
     }
-    const registrations = [[ids[0], userIds.alice], [ids[0], userIds.brice], [ids[1], userIds.kevin], [ids[1], userIds.alice], [ids[4], userIds.kevin]];
+    // Benevolat : le compte invite ; assemblee generale (dernier evenement) : des membres.
+    const registrations = [[ids[0], userIds.invite], [ids[1], userIds.invite], [ids.at(-1), userIds.alice], [ids.at(-1), userIds.kevin], [ids.at(-1), userIds.brice]];
     await db.query("INSERT INTO event_registrations (event_id, user_id) VALUES ?", [registrations]);
 }
 
@@ -405,10 +260,13 @@ async function main() {
             alice: ids["alice@hope.org"],
             brice: ids["brice@hope.org"],
             kevin: ids["kevin@hope.org"],
+            invite: ids["invite@hope.org"],
         };
 
-        const projectIds = await seedProjects();
-        await seedNewsAndTestimonials(projectIds);
+        // Contenu reel (partage avec import-content.js) ; en developpement, le texte des actualites est remis a jour.
+        const { ids: projectIds } = await importProjects(db);
+        await importNews(db, projectIds, { update: true });
+        await importTestimonials(db, projectIds);
         await seedEvents(projectIds, userIds, ids["orga@hope.org"]);
         await seedMessagesAndApplications(ids["secretaire@hope.org"]);
         await seedPayments(projectIds, userIds);
@@ -418,6 +276,7 @@ async function main() {
         console.log("Admin : admin@hope.org / Admin@123456");
         console.log("Équipe : directrice@, rh@, finance@, orga@, it@, region@, secretaire@hope.org / Hope@123456");
         console.log("Membres : alice@, brice@, kevin@, sandrine@hope.org / Member@123");
+        console.log("Invité (bénévole) : invite@hope.org / Guest@123");
     } catch (error) {
         console.error("Erreur seed:", error.message);
         process.exitCode = 1;

@@ -717,7 +717,8 @@
         "region": "Region",
         "start": "Start",
         "end": "End",
-        "capacity": "Capacity"
+        "capacity": "Capacity",
+        "audience": "Audience"
       },
       "placeholders": {
         "noProject": "No project",
@@ -727,11 +728,19 @@
       "hints": {
         "description": "Programme, intended audience, what to bring… ({min} characters minimum)",
         "capacity": "Leave blank for unlimited spots.",
-        "capacityRegistered": "Leave blank for unlimited spots. {count, plural, one {# person} other {# people}} currently registered."
+        "capacityRegistered": "Leave blank for unlimited spots. {count, plural, one {# person} other {# people}} currently registered.",
+        "audience": {
+          "volunteers": "Only guest accounts (non-members) can register.",
+          "members": "Internal event (general assembly, meeting): only members can register."
+        }
       },
       "errors": {
         "end": "The end must be after the start",
         "capacity": "At least {min, plural, one {# spot} other {# spots}}: {count, plural, one {# person is} other {# people are}} already registered"
+      },
+      "audiences": {
+        "volunteers": "Volunteers (guests)",
+        "members": "Members of the association"
       }
     },
     "registrations": {

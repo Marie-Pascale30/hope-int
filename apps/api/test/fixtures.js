@@ -44,11 +44,13 @@ async function insertPayment({ amount = 10, currency = "eur", projectId = null, 
     return result.insertId;
 }
 
-async function insertEvent({ title = "Événement test", startAt, endAt = null, region = null, published = 1, imageUrl = null } = {}) {
+async function insertEvent({
+    title = "Événement test", startAt, endAt = null, region = null, published = 1, imageUrl = null, audience = "volunteers",
+} = {}) {
     const [result] = await db.query(
-        `INSERT INTO events (title, description, location, region, start_at, end_at, published, image_url)
-         VALUES (?, 'Description de l''événement', 'Douala', ?, ?, ?, ?, ?)`,
-        [title, region, startAt, endAt, published, imageUrl]
+        `INSERT INTO events (title, description, location, region, start_at, end_at, published, image_url, audience)
+         VALUES (?, 'Description de l''événement', 'Douala', ?, ?, ?, ?, ?, ?)`,
+        [title, region, startAt, endAt, published, imageUrl, audience]
     );
     return result.insertId;
 }

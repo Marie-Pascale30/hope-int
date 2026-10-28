@@ -93,7 +93,7 @@ describe("truncate / initials / resolveImage", () => {
 
   it("sert les uploads depuis l'API et laisse les autres URL intactes", () => {
     expect(resolveImage("/uploads/a.png")).toBe("http://localhost:5000/uploads/a.png");
-    expect(resolveImage("/images/projects/eau.svg")).toBe("/images/projects/eau.svg");
+    expect(resolveImage("/images/livret/p06_01.jpg")).toBe("/images/livret/p06_01.jpg");
     expect(resolveImage("https://cdn.example.org/x.jpg")).toBe("https://cdn.example.org/x.jpg");
     expect(resolveImage("")).toBeNull();
   });

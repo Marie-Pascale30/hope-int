@@ -3,12 +3,12 @@
 import { ArrowLeft, ArrowRight, CalendarDays, Clock, MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Badge, Button, ProgressBar, StatusBadge } from "../../../components/ui";
-import NumberTicker from "../../../components/motion/NumberTicker";
 import Reveal from "../../../components/motion/Reveal";
 import { useFormat } from "../../../i18n/format";
 import { Link, useLocalePath } from "../../../i18n/navigation";
 import { truncate } from "../../../utils/format";
 import { TONES } from "../../../utils/labels";
+import { projectFallbackPhoto } from "../projectCover";
 import CoverImage, { IMAGE_SIZES } from "./CoverImage";
 import RegisteredBadge from "./RegisteredBadge";
 import { campaignPercent, cx, euros, eventTimeRange, hasCampaign, spotsStatus } from "./helpers";
@@ -54,10 +54,9 @@ export function CampaignProgress({ project, large }) {
   return (
     <div className={cx("pub-campaign", large && "pub-campaign--large")}>
       <p className="pub-campaign__figures">
-        {/* Montant collecte anime, barre qui se remplit : rejoues a chaque passage a l'ecran */}
+        {/* Montant collecte affiche tel quel ; seule la barre se remplit au passage a l'ecran */}
         {t.rich("raised", {
-          // key : t.rich place l'element dans une liste
-          raised: <NumberTicker key="raised" value={project.raised_eur} kind="eur" />,
+          raised: euros(f, project.raised_eur),
           goal: euros(f, project.goal_amount),
           strong: (chunks) => <strong>{chunks}</strong>,
         })}
@@ -88,7 +87,7 @@ export function ProjectCard({ project, headingLevel = 3 }) {
       <div className="pub-card__badge">
         <StatusBadge status={statusOf(project.status)} />
       </div>
-      <CoverImage src={project.image_url} alt={project.image_alt} />
+      <CoverImage src={project.image_url} alt={project.image_alt} fallback={projectFallbackPhoto(project)} />
       <div className="pub-card__body">
         {project.region && (
           <div className="pub-card__meta">

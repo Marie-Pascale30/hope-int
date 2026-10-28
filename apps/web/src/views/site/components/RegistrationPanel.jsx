@@ -3,6 +3,7 @@
 // Inscription a un evenement. La page est rendue sans session : une fois connecte, l'evenement
 // est relu cote client (compteurs a jour et statut d'inscription is_registered).
 import { useCallback, useEffect, useState } from "react";
+import { canJoinAudience } from "@hope/shared/volunteering";
 import { CheckCircle2, Hourglass, LogIn } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Alert, Badge, Button, Card } from "@/src/components/ui";
@@ -23,7 +24,7 @@ export default function RegistrationPanel({ initialEvent }) {
   const tWait = useTranslations("volunteering.waitlist");
   const f = useFormat();
   const lp = useLocalePath();
-  const { status } = useAuth();
+  const { status, user } = useAuth();
   const [event, setEvent] = useState(initialEvent);
   const [busy, setBusy] = useState(false);
   const { toast, showError, confirmAction } = useAlerts();
@@ -45,6 +46,8 @@ export default function RegistrationPanel({ initialEvent }) {
   const spots = spotsStatus(event, tSpots);
   const full = event.remaining_spots !== null && event.remaining_spots !== undefined && event.remaining_spots <= 0;
   const past = isPast(event);
+  // Benevolat reserve aux invites, evenements internes (AG) aux membres : l'API applique la meme regle.
+  const audience = event.audience === "members" ? "members" : "volunteers";
 
   const register = async () => {
     setBusy(true);
@@ -138,6 +141,14 @@ export default function RegistrationPanel({ initialEvent }) {
         <Button variant="secondary" block loading={busy} onClick={leaveWaitlist}>{tWait("leave")}</Button>
       </>
     );
+  } else if (!canJoinAudience(user?.roles || [], audience)) {
+    action = (
+      <Alert tone="info">
+        {audience === "members"
+          ? t.rich("membersOnly", { link: (chunks) => <Link href="/rejoindre">{chunks}</Link> })
+          : t("volunteersOnly")}
+      </Alert>
+    );
   } else if (full) {
     action = (
       <>
@@ -156,6 +167,10 @@ export default function RegistrationPanel({ initialEvent }) {
         <div className="row row--between">
           <span className="muted">{t("spots")}</span>
           <Badge tone={spots.tone}>{spots.label}</Badge>
+        </div>
+        <div className="row row--between">
+          <span className="muted">{t("audienceLabel")}</span>
+          <Badge tone={audience === "members" ? "info" : "accent"}>{t(`audience.${audience}`)}</Badge>
         </div>
         <div className="row row--between">
           <span className="muted">{t("participants")}</span>

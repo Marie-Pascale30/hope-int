@@ -6,6 +6,7 @@ const logService = require("./activityLogService");
 const emailService = require("./emailService");
 const { normalizeRoles, canGrantRoles } = require("@hope/shared/rbac");
 const { normalizeInterests } = require("@hope/shared/applications");
+const { GUEST_ROLE, isGuestOnly } = require("@hope/shared/volunteering");
 const { HttpError, conflict, forbidden, notFound } = require("../utils/httpError");
 const { FRONTEND_URL } = require("../utils/security");
 
@@ -19,7 +20,8 @@ function notify(sendPromise) {
 
 // Les poles d'interet sont indicatifs ; les roles demandes (ancien champ desiredRoles) sont ignores.
 // Reponse identique quel que soit l'email (pas d'enumeration des comptes ni des candidatures) :
-// - compte existant : rien n'est enregistre, le titulaire est prevenu par email ;
+// - compte existant d'un membre : rien n'est enregistre, le titulaire est prevenu par email ;
+// - compte invite : la candidature est enregistree ; l'equipe la rattache au compte en l'acceptant ;
 // - candidature deja ouverte : rien n'est enregistre (journalise).
 // Renvoie l'id de la candidature creee, ou null.
 exports.submit = async (payload) => {
@@ -28,7 +30,7 @@ exports.submit = async (payload) => {
         return null;
     }
     const existing = await userRepo.findByEmail(payload.email);
-    if (existing) {
+    if (existing && !isGuestOnly(existing.roles)) {
         notify(emailService.send({
             to: existing.email,
             subject: `${ORG_NAME} - Votre candidature`,
@@ -142,12 +144,15 @@ async function closeAsAccepted(connection, actor, id, { reviewNote, userId }) {
 
 // Rattachement a un compte existant et actif : mot de passe inchange, roles ajoutes seulement si
 // l'acteur peut les attribuer (verifie avant l'appel) et possede deja tous les droits du compte.
+// Un invite accepte devient membre : son role invite est retire.
 async function acceptOnExistingAccount(actor, application, existing, { roles, reviewNote }) {
     if (existing.status !== "active") {
         throw forbidden("Ce compte est désactivé : réactivez-le avant d'y rattacher la candidature");
     }
-    const merged = normalizeRoles([...existing.roles, ...roles]);
-    const rolesChanged = merged.length !== existing.roles.length;
+    const kept = existing.roles.filter((role) => role !== GUEST_ROLE);
+    const merged = normalizeRoles([...kept, ...roles.filter((role) => role !== GUEST_ROLE)]);
+    if (merged.length === 0) merged.push("membre");
+    const rolesChanged = merged.length !== existing.roles.length || merged.some((role) => !existing.roles.includes(role));
     if (rolesChanged) {
         if (Number(existing.id) === Number(actor.id)) throw forbidden("Vous ne pouvez pas modifier vos propres rôles");
         userService.assertCanManage(actor, existing);

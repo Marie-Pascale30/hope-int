@@ -228,6 +228,7 @@ exports.register = async (user, id) => {
     await withTransaction(async (connection) => {
         const event = await eventRepo.lockForRegistration(connection, id, user.id);
         if (!event || !event.published) throw REGISTRATION_ERRORS.not_found();
+        waitlist.assertAudience(user, event);
         if (new Date(event.start_at) < new Date()) throw REGISTRATION_ERRORS.past();
         if (event.alreadyRegistered) throw REGISTRATION_ERRORS.already();
         if (event.capacity !== null && event.registered >= Number(event.capacity)) throw REGISTRATION_ERRORS.full();

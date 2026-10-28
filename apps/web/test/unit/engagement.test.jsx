@@ -1,12 +1,13 @@
 import { fireEvent, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import engagementFr from "@/src/i18n/messages/fr/engagement.json";
+import legalFr from "@/src/i18n/messages/fr/legal.json";
 import ConsentCheckboxes, { initialConsents } from "@/src/views/engagement/ConsentCheckboxes";
 import SocialLinks from "@/src/views/engagement/SocialLinks";
 import { isSafeSocialUrl, socialLinks } from "@/src/views/engagement/socialNetworks";
 import { frMessages, renderWithIntl } from "../intl";
 
-const messages = { ...frMessages, ...engagementFr };
+const messages = { ...frMessages, ...engagementFr, ...legalFr };
 const t = engagementFr.engagement;
 
 describe("ConsentCheckboxes", () => {
@@ -16,6 +17,7 @@ describe("ConsentCheckboxes", () => {
     expect(screen.getByRole("checkbox", { name: t.consent.newsletter })).not.toBeChecked();
     expect(screen.getByRole("checkbox", { name: t.consent.project_news })).toBeChecked();
     expect(screen.getByRole("group", { name: t.consent.legend })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: legalFr.legal.links.privacyNote })).toHaveAttribute("href", "/confidentialite");
   });
 
   it("transmet la nouvelle valeur complete au changement", () => {

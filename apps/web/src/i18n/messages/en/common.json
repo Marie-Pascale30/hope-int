@@ -95,7 +95,8 @@
       "responsable_it": "IT manager",
       "directrice_regionale": "Regional director",
       "secretaire_generale": "Secretary general",
-      "membre": "Member"
+      "membre": "Member",
+      "invite": "Guest"
     },
     "projectStatus": {
       "planifie": "Coming soon",

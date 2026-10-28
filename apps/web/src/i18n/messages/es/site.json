@@ -309,8 +309,15 @@
         "past": "Este evento ya ha terminado. Consulta la agenda para ver las próximas citas.",
         "checking": "Comprobando tu sesión…",
         "login": "Inicia sesión para inscribirte",
-        "noAccount": "¿Todavía no tienes cuenta? <link>Créala en un minuto</link>.",
-        "youAreRegistered": "Estás inscrito/a en este evento."
+        "noAccount": "¿Todavía no tienes cuenta? <link>Regístrate como invitado</link> para ser voluntario.",
+        "youAreRegistered": "Estás inscrito/a en este evento.",
+        "audienceLabel": "Abierto a",
+        "audience": {
+          "volunteers": "Voluntarios (invitados)",
+          "members": "Miembros de la asociación"
+        },
+        "membersOnly": "Este evento interno está reservado a los miembros de la asociación. <link>Hacerse miembro</link>",
+        "volunteersOnly": "El voluntariado está reservado a los invitados, es decir, a las personas que aún no son miembros. Como miembro, participas en los eventos internos de la asociación."
       },
       "calendar": {
         "add": "Añadir a mi calendario"

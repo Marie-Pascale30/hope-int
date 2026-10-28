@@ -75,6 +75,7 @@ services:
       args:
         NEXT_PUBLIC_API_BASE_URL: http://localhost:5000/api
         NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
+        NEXT_PUBLIC_SITE_URL: http://localhost:3001
     restart: unless-stopped
     environment:
       # Rendu serveur des pages publiques : l'API est jointe par le reseau interne Docker.

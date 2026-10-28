@@ -25,7 +25,8 @@ describe("paiements : abonnements, dates prestataire, bilans et rapprochement pl
 
     before(async () => {
         await resetDatabase();
-        member = await createUser();
+        // Invite : peut aussi s'inscrire aux evenements benevoles (tests d'evenements plus bas).
+        member = await createUser({ roles: ["invite"] });
         memberHttp = await loginAs(member);
         financeHttp = await loginAs(await createUser({ roles: ["responsable_finance"] }));
     });
@@ -221,7 +222,7 @@ describe("paiements : abonnements, dates prestataire, bilans et rapprochement pl
 
             assert.equal((await memberHttp.post(`/api/events/${open}/registration`)).status, 201);
             assert.equal((await memberHttp.post(`/api/events/${open}/registration`)).status, 409);
-            const other = await loginAs(await createUser());
+            const other = await loginAs(await createUser({ roles: ["invite"] }));
             const full = await other.post(`/api/events/${open}/registration`);
             assert.equal(full.status, 409);
             assert.equal(full.body.error, "Cet événement est complet");

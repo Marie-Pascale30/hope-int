@@ -41,6 +41,7 @@ export const ROLE_KEYS = [
   "directrice_regionale",
   "secretaire_generale",
   "membre",
+  "invite",
 ];
 export const STATUS_KEYS = Object.fromEntries(Object.entries(TONES).map(([group, tones]) => [group, Object.keys(tones)]));
 export const PAYMENT_METHOD_KEYS = ["card", "mobile_money"];

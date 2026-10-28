@@ -3,7 +3,7 @@
 import "../../styles/account.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { MailCheck, UserPlus } from "lucide-react";
+import { LogIn, UserPlus } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Alert, Button, Input, LoadingState } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
@@ -59,7 +59,8 @@ export default function RegisterView() {
     const email = form.email.trim().toLowerCase();
     try {
       // Reponse volontairement neutre (201 meme si l'email existe deja) : pas de connexion
-      // automatique, le message invite a verifier sa boite de reception.
+      // automatique. Un compte cree est invite et recoit un email de bienvenue ; le titulaire
+      // d'un compte existant recoit un avertissement.
       await authApi.register({ name: form.name.trim(), email, password: form.password, consents });
       setSentTo(email);
       setForm(EMPTY);
@@ -87,7 +88,7 @@ export default function RegisterView() {
             {t.rich("sentText", { email: sentTo, strong: (chunks) => <strong>{chunks}</strong> })}
           </Alert>
           <p className="muted acc-small">{t("sentHelp")}</p>
-          <Button href={lp(`/connexion?email=${encodeURIComponent(sentTo)}`)} size="lg" block icon={MailCheck}>
+          <Button href={lp(`/connexion?email=${encodeURIComponent(sentTo)}`)} size="lg" block icon={LogIn}>
             {t("sentLogin")}
           </Button>
         </div>

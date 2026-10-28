@@ -1,6 +1,7 @@
 const authService = require("../services/authService");
 const { resolveLocale } = require("../i18n");
 const { setSessionCookie, clearSessionCookie } = require("../config/session");
+const { readDeviceCookie, setDeviceCookie } = require("../utils/deviceCookie");
 
 // Reponse identique que l'email soit deja inscrit ou non (voir authService.register).
 exports.register = async (req, res) => {
@@ -8,10 +9,30 @@ exports.register = async (req, res) => {
     res.status(201).json({ message: "Inscription enregistrée : vous pouvez vous connecter. Si un compte existait déjà avec cet email, son titulaire vient d'être prévenu." });
 };
 
+// Compte de l'equipe sur un appareil non reconnu : pas de session, un code est envoye par email
+// et la reponse porte { mfaRequired: true, challenge } (seconde etape : /login/verify).
 exports.login = async (req, res) => {
-    const result = await authService.login(req.body.email, req.body.password);
+    const result = await authService.login(req.body.email, req.body.password, { deviceToken: readDeviceCookie(req) });
+    if (result.mfaRequired) return res.json(result);
     setSessionCookie(res, result.token);
     res.json({ user: result.user });
+};
+
+exports.verifyLoginCode = async (req, res) => {
+    const result = await authService.verifyLoginCode({
+        challenge: req.body.challenge,
+        code: req.body.code,
+        trustDevice: req.body.trustDevice === true,
+        userAgent: req.get("user-agent") || null,
+    });
+    setSessionCookie(res, result.token);
+    if (result.deviceToken) setDeviceCookie(res, result.deviceToken);
+    res.json({ user: result.user });
+};
+
+exports.resendLoginCode = async (req, res) => {
+    const result = await authService.resendLoginCode(req.body.challenge);
+    res.json({ message: "Un nouveau code vient d'être envoyé.", ...result });
 };
 
 exports.logout = async (_req, res) => {

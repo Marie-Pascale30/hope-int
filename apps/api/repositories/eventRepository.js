@@ -1,7 +1,7 @@
 const db = require("../config/db");
 
 const FIELDS = [
-    "title", "description", "location", "region", "start_at", "end_at", "capacity", "image_url", "image_alt", "project_id", "published",
+    "title", "description", "location", "region", "start_at", "end_at", "capacity", "image_url", "image_alt", "project_id", "published", "audience",
 ];
 
 const SELECT = `
@@ -80,7 +80,7 @@ exports.remove = async (id) => {
 // les compteurs utiles aux regles metier (appliquees par eventService). null si introuvable.
 exports.lockForRegistration = async (connection, eventId, userId) => {
     const [[event]] = await connection.query(
-        "SELECT id, capacity, start_at, published FROM events WHERE id = ? FOR UPDATE",
+        "SELECT id, capacity, start_at, published, audience FROM events WHERE id = ? FOR UPDATE",
         [eventId]
     );
     if (!event) return null;

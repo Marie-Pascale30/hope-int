@@ -34,8 +34,11 @@
 .page-banner {
   position: relative;
   height: calc(var(--header-offset) + clamp(150px, 20vw, 290px));
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 45%, rgba(0, 0, 0, 0.6) 68%, rgba(0, 0, 0, 0.2) 86%, transparent 100%);
-  mask-image: linear-gradient(180deg, #000 0%, #000 45%, rgba(0, 0, 0, 0.6) 68%, rgba(0, 0, 0, 0.2) 86%, transparent 100%);
+  /* Fondu court et adouci (courbe en S) : la photo reste nette, puis s'efface sur le dernier quart
+     sans longue bande delavee */
+  --banner-fade: linear-gradient(180deg, #000 0%, #000 70%, rgba(0, 0, 0, 0.92) 75%, rgba(0, 0, 0, 0.72) 81%, rgba(0, 0, 0, 0.45) 87%, rgba(0, 0, 0, 0.2) 93%, rgba(0, 0, 0, 0.05) 98%, transparent 100%);
+  -webkit-mask-image: var(--banner-fade);
+  mask-image: var(--banner-fade);
 }
 
 .page-banner img {
@@ -876,6 +879,18 @@ html.has-mobile-nav body {
   border-top: 1px solid var(--on-dark-line);
   font-size: var(--text-sm);
   color: var(--on-dark-3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+}
+
+/* Liens legaux (mentions legales, confidentialite) a cote du copyright */
+.site-footer .site-footer__legal {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 4px 20px;
 }
 
 @media (max-width: 768px) {

@@ -4,9 +4,9 @@
 // sont branchees cote site dans apps/web/src/components/native/NativeBridge.jsx.
 //
 // HOPE_APP_URL : adresse du site charge par l'application.
-//   - production : https://... (valeur par defaut ci-dessous, a remplacer par le domaine reel)
+//   - production : https://hopeintapp.com (valeur par defaut ci-dessous)
 //   - developpement Android : http://localhost:3001 avec "adb reverse" (voir scripts/android-dev.js)
-const APP_URL = process.env.HOPE_APP_URL || "https://hope-international.org";
+const APP_URL = process.env.HOPE_APP_URL || "https://hopeintapp.com";
 const isHttp = APP_URL.startsWith("http://");
 
 /** @type {import('@capacitor/cli').CapacitorConfig} */

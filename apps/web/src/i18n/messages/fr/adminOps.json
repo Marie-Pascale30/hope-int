@@ -717,7 +717,8 @@
         "region": "Région",
         "start": "Début",
         "end": "Fin",
-        "capacity": "Capacité"
+        "capacity": "Capacité",
+        "audience": "Public"
       },
       "placeholders": {
         "noProject": "Aucun projet",
@@ -727,11 +728,19 @@
       "hints": {
         "description": "Programme, public attendu, ce qu'il faut apporter… ({min} caractères minimum)",
         "capacity": "Laisser vide = places illimitées.",
-        "capacityRegistered": "Laisser vide = places illimitées. {count, plural, one {# personne inscrite} other {# personnes inscrites}} actuellement."
+        "capacityRegistered": "Laisser vide = places illimitées. {count, plural, one {# personne inscrite} other {# personnes inscrites}} actuellement.",
+        "audience": {
+          "volunteers": "Seuls les comptes invités (non-membres) peuvent s’inscrire.",
+          "members": "Événement interne (assemblée générale, réunion) : seuls les membres peuvent s’inscrire."
+        }
       },
       "errors": {
         "end": "La fin doit être après le début",
         "capacity": "Au moins {min, plural, one {# place} other {# places}} : {count, plural, one {# personne déjà inscrite} other {# personnes déjà inscrites}}"
+      },
+      "audiences": {
+        "volunteers": "Bénévoles (invités)",
+        "members": "Membres de l’association"
       }
     },
     "registrations": {

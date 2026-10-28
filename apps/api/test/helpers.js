@@ -75,10 +75,29 @@ function client() {
     };
 }
 
+// Code de connexion connu des tests : le code envoye par email n'est stocke que sous forme
+// d'empreinte, les tests remplacent donc cette empreinte en base (aucun contournement cote API).
+const TEST_LOGIN_CODE = "246810";
+
+async function setLoginCode(challenge, code = TEST_LOGIN_CODE) {
+    const { hashLoginCode } = require("../services/authService");
+    const { sha256 } = require("../utils/security");
+    const tokenHash = sha256(challenge);
+    await db.query("UPDATE login_challenges SET code_hash = ? WHERE token_hash = ?", [hashLoginCode(tokenHash, code), tokenHash]);
+    return code;
+}
+
+// Connexion complete ; pour un compte de l'equipe, passe aussi l'etape du code recu par email.
 async function loginAs(user) {
     const http = client();
-    const res = await http.post("/api/auth/login", { email: user.email, password: user.password });
-    if (res.status !== 200) throw new Error(`Connexion impossible pour ${user.email} : ${res.status}`);
+    let res = await http.post("/api/auth/login", { email: user.email, password: user.password });
+    if (res.status === 200 && res.body.mfaRequired) {
+        const code = await setLoginCode(res.body.challenge);
+        res = await http.post("/api/auth/login/verify", { challenge: res.body.challenge, code });
+        // Un meme compte se connecte souvent plus de 5 fois par fichier : compteur d'envois remis a zero.
+        if (res.body.user) await db.query("DELETE FROM auth_attempts WHERE scope = 'login_code' AND identifier = ?", [`user:${res.body.user.id}`]);
+    }
+    if (res.status !== 200 || !res.body.user) throw new Error(`Connexion impossible pour ${user.email} : ${res.status}`);
     return http;
 }
 
@@ -119,4 +138,4 @@ function mockMethods(target, methods) {
     return () => Object.assign(target, originals);
 }
 
-module.exports = { app, db, request, resetDatabase, createUser, createPayment, mockMethods, client, loginAs, PASSWORD };
+module.exports = { app, db, request, resetDatabase, createUser, createPayment, mockMethods, client, loginAs, setLoginCode, TEST_LOGIN_CODE, PASSWORD };

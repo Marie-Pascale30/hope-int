@@ -74,8 +74,11 @@ export function AuthProvider({ children }) {
     }
   }, [user, pathname, router, locale]);
 
+  // Compte de l'equipe sur un appareil non reconnu : l'API envoie un code par email et ne pose
+  // pas de session ({ mfaRequired, challenge }) ; la connexion se termine par authApi.verifyLogin.
   const login = useCallback(async (email, password) => {
     const result = await authApi.login({ email, password });
+    if (result.mfaRequired) return result;
     setSessionHint(true);
     setUser(result.user);
     setStatus("authenticated");

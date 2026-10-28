@@ -14,8 +14,11 @@ COPY apps/web apps/web
 # etre passees en build-args (voir docker-compose.yml).
 ARG NEXT_PUBLIC_API_BASE_URL
 ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+# Adresse publique du site (liens canoniques, sitemap, partage) : https://hopeintapp.com en production.
+ARG NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build -w @hope/web

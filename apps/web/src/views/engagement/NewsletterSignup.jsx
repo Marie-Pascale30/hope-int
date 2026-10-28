@@ -2,15 +2,19 @@
 
 // Inscription a la lettre d'information (pied de page) : double opt-in, l'API envoie un email de
 // confirmation ; la reponse est identique que l'adresse soit deja inscrite ou non.
+import Link from "next/link";
 import { useId, useState } from "react";
 import { Send } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { localizePath } from "../../i18n/config";
 import { preferencesApi } from "../../services/engagement";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function NewsletterSignup() {
   const t = useTranslations("engagement.footer");
+  const tLegal = useTranslations("legal.links");
+  const locale = useLocale();
   const id = useId();
   const [email, setEmail] = useState("");
   const [state, setState] = useState("idle"); // idle | loading | done | invalid | error
@@ -60,7 +64,9 @@ export default function NewsletterSignup() {
       <p id={`${id}-status`} className={`eng-newsletter__status eng-newsletter__status--${state}`} role="status" aria-live="polite">
         {message || ""}
       </p>
-      <p id={`${id}-note`} className="eng-newsletter__note">{t("consentNote")}</p>
+      <p id={`${id}-note`} className="eng-newsletter__note">
+        {t("consentNote")} <Link href={localizePath(locale, "/confidentialite")}>{tLegal("privacyNote")}</Link>
+      </p>
     </form>
   );
 }

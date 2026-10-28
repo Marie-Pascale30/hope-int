@@ -12,13 +12,13 @@ describe("authentification : inscription neutre, sessions et limitations par com
     after(() => db.end());
 
     describe("POST /auth/register", () => {
-        it("cree un compte membre et repond 201 avec un message", async () => {
+        it("cree un compte invite et repond 201 avec un message", async () => {
             const res = await client().post("/api/auth/register", { name: "Nouvelle Membre", email: "Nouvelle@Test.hope.org", password: "Secret@1234" });
 
             assert.equal(res.status, 201);
             assert.equal(typeof res.body.message, "string");
             const [[user]] = await db.query("SELECT roles, status FROM users WHERE email = 'nouvelle@test.hope.org'");
-            assert.deepEqual(JSON.parse(user.roles), ["membre"]);
+            assert.deepEqual(JSON.parse(user.roles), ["invite"]);
             assert.equal(user.status, "active");
             assert.equal((await loginAs({ email: "nouvelle@test.hope.org", password: "Secret@1234" })).agent ? 1 : 0, 1);
         });

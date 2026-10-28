@@ -309,8 +309,15 @@
         "past": "This event has ended. Check the calendar for upcoming events.",
         "checking": "Checking your session…",
         "login": "Sign in to register",
-        "noAccount": "No account yet? <link>Create one in a minute</link>.",
-        "youAreRegistered": "You are registered for this event."
+        "noAccount": "No account yet? <link>Sign up as a guest</link> to become a volunteer.",
+        "youAreRegistered": "You are registered for this event.",
+        "audienceLabel": "Open to",
+        "audience": {
+          "volunteers": "Volunteers (guests)",
+          "members": "Members of the association"
+        },
+        "membersOnly": "This internal event is reserved for members of the association. <link>Become a member</link>",
+        "volunteersOnly": "Volunteering is reserved for guests, that is, people who are not yet members. As a member, you take part in the association’s internal events."
       },
       "calendar": {
         "add": "Add to my calendar"

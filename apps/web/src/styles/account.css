@@ -135,6 +135,57 @@
   text-decoration: underline;
 }
 
+.acc-link-button:disabled {
+  color: var(--ink-2);
+  cursor: default;
+  text-decoration: none;
+}
+
+/* Connexion en deux etapes (comptes de l'equipe) : code recu par email */
+
+.acc-code-input {
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.4em;
+  text-align: center;
+}
+
+.acc-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.45;
+  cursor: pointer;
+}
+
+.acc-check input {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--brand);
+}
+
+.acc-check__hint {
+  display: block;
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+}
+
+.acc-code-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--text-md);
+}
+
+.acc-code-actions .acc-link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .acc-form-actions {
   justify-content: flex-start;
 }

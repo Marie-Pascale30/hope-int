@@ -6,6 +6,7 @@ const can = require("../middlewares/permissionMiddleware");
 const validate = require("../middlewares/validateRequest");
 const upload = require("../middlewares/uploadMiddleware");
 const { ORG_ROLES, PERMISSIONS: P } = require("@hope/shared/rbac");
+const { EVENT_AUDIENCES } = require("@hope/shared/volunteering");
 const {
     REGIONS, MESSAGE_STATUSES, USER_STATUSES, PAYMENT_STATUSES, PROJECT_STATUSES, APPLICATION_STATUSES,
 } = require("@hope/shared/constants");
@@ -85,6 +86,7 @@ const eventValidation = (isCreate) => [
     body("capacity").optional({ values: "falsy" }).isInt({ min: 1, max: 100000 }),
     body("region").optional({ values: "falsy" }).isIn(REGIONS),
     body("project_id").optional({ values: "falsy" }).isInt({ min: 1 }),
+    body("audience").optional().isIn(EVENT_AUDIENCES),
     optionalText("image_alt", 255),
     validate,
 ];

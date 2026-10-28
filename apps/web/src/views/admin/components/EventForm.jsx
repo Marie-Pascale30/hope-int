@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { Save } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { EVENT_AUDIENCES } from "@hope/shared/volunteering";
 import { Alert, Button, Input, Modal, Select, Switch, Textarea } from "@/src/components/ui";
 import { regionOptions, useMeta } from "@/src/hooks/useMeta";
 import { adminApi } from "@/src/services";
@@ -26,6 +27,7 @@ function initialValues(event) {
     capacity: event?.capacity ? String(event.capacity) : "",
     project_id: event?.project_id ? String(event.project_id) : "",
     image_alt: event?.image_alt || "",
+    audience: event?.audience || "volunteers",
   };
 }
 
@@ -109,6 +111,13 @@ export default function EventForm({ event, projects = [], onClose, onSaved }) {
             options={projects.map((project) => ({ value: String(project.id), label: project.title }))}
             value={values.project_id}
             onChange={set("project_id")}
+          />
+          <Select
+            label={t("fields.audience")}
+            options={EVENT_AUDIENCES.map((audience) => ({ value: audience, label: t(`audiences.${audience}`) }))}
+            value={values.audience}
+            onChange={set("audience")}
+            hint={t(`hints.audience.${values.audience}`)}
           />
         </div>
 

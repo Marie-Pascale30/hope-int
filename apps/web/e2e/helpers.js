@@ -26,7 +26,14 @@ export function m(key, locale = "fr") {
 // Comptes crees par npm run seed (voir README).
 export const DEMO_MEMBER = { email: "alice@hope.org", password: "Member@123" };
 
-/** Connexion par le formulaire /connexion. */
+/**
+ * Connexion par le formulaire /connexion.
+ * Comptes non-equipe uniquement (membre, invite) : un compte de l'equipe (access_admin_dashboard)
+ * doit saisir un code envoye par email, que Playwright ne peut pas lire. Un scenario de
+ * back-office devra d'abord inserer un appareil de confiance en base (table trusted_devices,
+ * empreinte SHA-256 du jeton, token_version du compte) et poser le cookie hope_device
+ * (path /api/auth) dans le contexte du navigateur ; aucune option de contournement n'existe dans l'API.
+ */
 export async function login(page, { email, password } = DEMO_MEMBER) {
   await page.goto("/connexion");
   await page.getByLabel(m("account.fields.email"), { exact: true }).fill(email);

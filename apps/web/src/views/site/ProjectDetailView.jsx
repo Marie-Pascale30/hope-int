@@ -13,6 +13,7 @@ import FieldJournal from "./components/FieldJournal";
 import StickyAction from "./components/StickyAction";
 import { campaignPercent, euros, hasCampaign, paragraphs } from "./components/helpers";
 import { contentGallery } from "./gallery";
+import { projectFallbackPhoto } from "./projectCover";
 
 function CampaignAside({ project }) {
   const t = useTranslations("site.projectDetail.aside");
@@ -65,7 +66,14 @@ export default function ProjectDetailView({ project, related = [] }) {
     <>
       <div className="container pub-detail-head">
         <BackLink href="/projets">{t("back")}</BackLink>
-        <CoverImage src={project.image_url} alt={project.image_alt} variant="wide" priority sizes="wide" />
+        <CoverImage
+          src={project.image_url}
+          alt={project.image_alt}
+          fallback={projectFallbackPhoto(project)}
+          variant="wide"
+          priority
+          sizes="wide"
+        />
         <div className="pub-detail-title">
           <div className="chip-list" style={{ marginBottom: 14 }}>
             <StatusBadge status={statusOf(project.status)} />

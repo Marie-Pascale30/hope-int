@@ -9,6 +9,8 @@
 //                 (dons etendus ; RGPD, CRM, newsletter ; benevolat ; transparence), une racine chacun
 //   adminOps.json -> { "adminOps": { ... } } back-office : dons, finance, rapport, contenus,
 //                                           evenements, journal
+//   legal.json   -> { "legal": { ... } }   mentions legales et politique de confidentialite (rendu
+//                                           serveur ; seul legal.links est envoye au navigateur)
 //
 // Chaque fichier possede ses cles de premier niveau : deux fichiers ne doivent jamais
 // declarer la meme (verifie au chargement). Une cle absente dans une langue retombe
@@ -18,7 +20,7 @@ import { DEFAULT_LOCALE, isLocale } from "../config";
 // Modules fonctionnels : charges a la fois par le site et par le back-office.
 export const FEATURE_FILES = ["fundraising","engagement","volunteering","transparency"];
 
-export const MESSAGE_FILES = ["common", "site", "account", "admin", "adminOps", ...FEATURE_FILES];
+export const MESSAGE_FILES = ["common", "site", "account", "admin", "adminOps", "legal", ...FEATURE_FILES];
 
 const loaders = {
   fr: {
@@ -31,6 +33,7 @@ const loaders = {
     engagement: () => import("./fr/engagement.json"),
     volunteering: () => import("./fr/volunteering.json"),
     transparency: () => import("./fr/transparency.json"),
+    legal: () => import("./fr/legal.json"),
   },
   en: {
     common: () => import("./en/common.json"),
@@ -42,6 +45,7 @@ const loaders = {
     engagement: () => import("./en/engagement.json"),
     volunteering: () => import("./en/volunteering.json"),
     transparency: () => import("./en/transparency.json"),
+    legal: () => import("./en/legal.json"),
   },
   es: {
     common: () => import("./es/common.json"),
@@ -53,6 +57,7 @@ const loaders = {
     engagement: () => import("./es/engagement.json"),
     volunteering: () => import("./es/volunteering.json"),
     transparency: () => import("./es/transparency.json"),
+    legal: () => import("./es/legal.json"),
   },
 };
 

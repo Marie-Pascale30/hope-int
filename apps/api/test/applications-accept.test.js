@@ -183,4 +183,20 @@ describe("candidatures : poles d'interet et acceptation", () => {
             });
         });
     });
+
+    describe("compte invite", () => {
+        it("enregistre la candidature d'un invite et le fait devenir membre a l'acceptation", async () => {
+            const email = "invite-candidat@test.hope.org";
+            const guest = await createUser({ roles: ["invite"], email });
+            const { res, id } = await submitApplication({ email });
+            assert.equal(res.status, 201);
+            assert.ok(id, "la candidature d'un invite est enregistree");
+
+            const accept = await rhHttp.post(`/api/admin/applications/${id}/accept`, { roles: ["membre"], linkExisting: true });
+            assert.equal(accept.status, 200);
+            assert.deepEqual(accept.body.user.roles, ["membre"]);
+            assert.equal(accept.body.application.user_id, guest.id);
+        });
+    });
 });
+

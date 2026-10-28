@@ -309,8 +309,15 @@
         "past": "Cet événement est terminé. Consultez l’agenda pour les prochains rendez-vous.",
         "checking": "Vérification de votre session…",
         "login": "Se connecter pour s’inscrire",
-        "noAccount": "Pas encore de compte ? <link>Créez-le en une minute</link>.",
-        "youAreRegistered": "Vous êtes inscrit(e) à cet événement."
+        "noAccount": "Pas encore de compte ? <link>Inscrivez-vous comme invité</link> pour devenir bénévole.",
+        "youAreRegistered": "Vous êtes inscrit(e) à cet événement.",
+        "audienceLabel": "Ouvert à",
+        "audience": {
+          "volunteers": "Bénévoles (invités)",
+          "members": "Membres de l’association"
+        },
+        "membersOnly": "Cet événement interne est réservé aux membres de l’association. <link>Devenir membre</link>",
+        "volunteersOnly": "Le bénévolat est réservé aux invités, c’est-à-dire aux personnes qui ne sont pas encore membres. En tant que membre, vous participez aux événements internes de l’association."
       },
       "calendar": {
         "add": "Ajouter à mon agenda"

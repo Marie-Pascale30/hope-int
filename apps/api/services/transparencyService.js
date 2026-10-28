@@ -139,9 +139,9 @@ exports.getRegions = async () => cached("regions", async () => {
     };
 });
 
-// Groupe d'un portrait : equipe (au moins un role de l'organisation) ou benevoles (membres).
+// Groupe d'un portrait : equipe (au moins un role de l'organisation) ou benevoles (membres, invites).
 function teamGroup(roles) {
-    return roles.some((role) => role !== "membre") ? "team" : "volunteers";
+    return roles.some((role) => role !== "membre" && role !== "invite") ? "team" : "volunteers";
 }
 
 function parseRoles(row) {

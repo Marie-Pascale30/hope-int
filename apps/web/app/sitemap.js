@@ -19,6 +19,8 @@ const STATIC_PAGES = [
   { path: "/contact", priority: 0.5, changeFrequency: "yearly" },
   { path: "/transparence", priority: 0.7, changeFrequency: "monthly" },
   { path: "/equipe", priority: 0.5, changeFrequency: "monthly" },
+  { path: "/mentions-legales", priority: 0.2, changeFrequency: "yearly" },
+  { path: "/confidentialite", priority: 0.3, changeFrequency: "yearly" },
 ];
 
 function entry(path, { lastModified, priority = 0.6, changeFrequency = "weekly" } = {}) {

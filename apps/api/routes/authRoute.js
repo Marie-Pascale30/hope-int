@@ -36,6 +36,23 @@ router.post(
     authController.login
 );
 
+// Seconde etape de connexion des comptes de l'equipe (code recu par email).
+const challenge = body("challenge").isString().matches(/^[a-f0-9]{64}$/).withMessage("Connexion expirée : reconnectez-vous");
+
+router.post(
+    "/login/verify",
+    authLimiter,
+    [
+        challenge,
+        body("code").isString().trim().matches(/^\d{6}$/).withMessage("Le code comporte 6 chiffres"),
+        body("trustDevice").optional().isBoolean({ strict: true }),
+        validate,
+    ],
+    authController.verifyLoginCode
+);
+
+router.post("/login/resend", authLimiter, [challenge, validate], authController.resendLoginCode);
+
 router.post(
     "/forgot-password",
     authLimiter,

@@ -49,8 +49,11 @@
   gap: 10px;
 }
 
-.eng-social__list a {
+/* .site-footer devant : l'emporte sur .site-footer ul a (inline-block + padding) qui decentrait l'icone */
+.eng-social__list a,
+.site-footer .eng-social__list a {
   display: inline-flex;
+  padding: 0;
   align-items: center;
   justify-content: center;
   width: 40px;
@@ -213,4 +216,10 @@
 .eng-note p {
   margin: 4px 0 0;
   white-space: pre-wrap;
+}
+
+/* Lien vers la politique de confidentialite dans les mentions de consentement */
+.eng-newsletter__note a,
+.eng-consents__note a {
+  text-decoration: underline;
 }

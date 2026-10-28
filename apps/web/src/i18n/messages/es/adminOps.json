@@ -717,7 +717,8 @@
         "region": "Región",
         "start": "Inicio",
         "end": "Fin",
-        "capacity": "Aforo"
+        "capacity": "Aforo",
+        "audience": "Público"
       },
       "placeholders": {
         "noProject": "Ningún proyecto",
@@ -727,11 +728,19 @@
       "hints": {
         "description": "Programa, público previsto, qué hay que llevar… (mínimo {min} caracteres)",
         "capacity": "Vacío = plazas ilimitadas.",
-        "capacityRegistered": "Vacío = plazas ilimitadas. {count, plural, one {# persona inscrita} other {# personas inscritas}} actualmente."
+        "capacityRegistered": "Vacío = plazas ilimitadas. {count, plural, one {# persona inscrita} other {# personas inscritas}} actualmente.",
+        "audience": {
+          "volunteers": "Solo las cuentas de invitado (no miembros) pueden inscribirse.",
+          "members": "Evento interno (asamblea general, reunión): solo los miembros pueden inscribirse."
+        }
       },
       "errors": {
         "end": "El fin debe ser posterior al inicio",
         "capacity": "Al menos {min, plural, one {# plaza} other {# plazas}}: {count, plural, one {ya hay # persona inscrita} other {ya hay # personas inscritas}}"
+      },
+      "audiences": {
+        "volunteers": "Voluntarios (invitados)",
+        "members": "Miembros de la asociación"
       }
     },
     "registrations": {

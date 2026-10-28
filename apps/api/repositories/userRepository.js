@@ -100,12 +100,12 @@ exports.getAll = async ({ region, status, role, q } = {}, pagination = null) => 
     return { rows: rows.map(mapUserRow), total: Number(count.total) };
 };
 
-// Equipe assignable (comptes actifs ayant au moins un role autre que "membre"), filtree en SQL.
+// Equipe assignable (comptes actifs ayant au moins un role autre que "membre" et "invite"), filtree en SQL.
 exports.getStaff = async () => {
     const [rows] = await db.query(
         `SELECT id, name, role, roles FROM users
          WHERE status = 'active'
-           AND ((roles IS NULL AND role <> 'membre') OR (roles IS NOT NULL AND NOT JSON_CONTAINS('["membre"]', roles)))
+           AND ((roles IS NULL AND role NOT IN ('membre', 'invite')) OR (roles IS NOT NULL AND NOT JSON_CONTAINS('["membre", "invite"]', roles)))
          ORDER BY name ASC, id ASC`
     );
     return rows.map(mapUserRow).map(({ id, name, roles }) => ({ id, name, roles }));

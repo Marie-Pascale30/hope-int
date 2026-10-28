@@ -53,11 +53,15 @@ Comptes de démo : `admin@hope.org` / `Admin@123456` · équipe (`directrice@`, 
 | `test` | Tests de `@hope/shared` et de l'API |
 | `migrate` | Applique les migrations (`npm run migrate -- --status` pour l'état) |
 | `seed` | Données de démonstration |
+| `content:import` | Contenu réel (projets, actualités, témoignages) sans données de démonstration : utilisable en production |
+| `admin:create` | Premier compte administrateur (`-- --email … --name "…"`), mot de passe provisoire affiché une fois |
 | `db` | MySQL + phpMyAdmin dans Docker |
 
 **Ports en développement** : `npm run dev` vise 5000 pour l'API et 3001 pour le site ; si un port est occupé, le suivant libre est pris et les deux applications reçoivent les bonnes adresses (URL de l'API pour le site, origine CORS et liens de retour pour l'API). Les URL réellement utilisées s'affichent au démarrage. Ports souhaités modifiables avec `API_PORT` et `WEB_PORT`. Si le site HOPE tourne déjà, le lanceur l'indique au lieu d'en démarrer un second (Next n'en accepte qu'un par dossier). Lancée seule (`npm run dev:api`), l'API bascule aussi sur le port suivant ; `npm run dev:web` vise alors l'API sur `API_PORT`. En production, le port reste imposé : un conflit est une erreur.
 
 Pour un script d'une seule appli : `npm run <script> -w @hope/api` (ou `@hope/web`, `@hope/shared`). Une dépendance s'ajoute dans son workspace : `npm install <paquet> -w @hope/web`.
+
+**Mise en production** : voir [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md) (domaine hopeintapp.com, variables, premier déploiement, vérifications).
 
 ## Configuration
 
@@ -117,7 +121,9 @@ Portée régionale : une directrice régionale (permission régionale sans port�
 
 Session : l'API pose le JWT dans un cookie `httpOnly` (`SameSite=Lax`, `Secure` en production), inaccessible au JavaScript du site. Toute requête d'écriture authentifiée par cookie doit porter l'en-tête `X-Requested-With: XMLHttpRequest` (protection CSRF). Un changement de mot de passe ferme les autres sessions ; `POST /api/auth/logout` efface le cookie. L'en-tête `Authorization: Bearer` reste accepté pour les scripts.
 
-Double authentification : une vérification par code à usage unique envoyé par email ou SMS est prévue (la connexion se fait aujourd'hui par email et mot de passe uniquement).
+Double authentification (comptes de l'équipe, permission `access_admin_dashboard`) : depuis un appareil non reconnu, un mot de passe correct n'ouvre pas de session ; l'API envoie un code à 6 chiffres par email (valable 10 minutes, à usage unique, stocké haché, invalidé après 5 erreurs, renvoi possible après 60 s, 5 envois au plus par compte sur 15 minutes) et répond `{ mfaRequired: true, challenge }`. La session s'ouvre avec `POST /api/auth/login/verify` ; « Faire confiance à cet appareil » pose le cookie `hope_device` (30 jours, révoqué par un changement de mot de passe ou « Se déconnecter partout »). Les comptes invités et membres se connectent avec leur seul mot de passe. Sans SMTP en développement, le code s'affiche dans la console de l'API.
+
+Inscription : un compte créé depuis `/inscription` est **invité** (bénévolat aux événements, candidature sur `/rejoindre` pour devenir membre) et reçoit un email de bienvenue ; la réponse reste identique si l'email est déjà inscrit (son titulaire est prévenu par email).
 
 ## Base de données et migrations
 

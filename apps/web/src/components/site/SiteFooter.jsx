@@ -69,6 +69,12 @@ export default function SiteFooter({ organization }) {
       </div>
       <div className="container site-footer__bottom">
         <span>© {new Date().getFullYear()} {org.name}. {t("footer.rights")}</span>
+        <nav aria-label={t("legal.links.label")}>
+          <ul className="site-footer__legal">
+            <li><Link href="/mentions-legales">{t("legal.links.notice")}</Link></li>
+            <li><Link href="/confidentialite">{t("legal.links.privacy")}</Link></li>
+          </ul>
+        </nav>
       </div>
     </footer>
   );

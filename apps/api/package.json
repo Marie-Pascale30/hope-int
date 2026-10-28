@@ -11,6 +11,8 @@
     "lint": "eslint .",
     "test:coverage": "node --test --test-concurrency=1 --experimental-test-coverage --test-coverage-lines=85 --test-coverage-exclude=\"test/**\" \"test/*.test.js\"",
     "seed:demo": "node scripts/seed-demo.js",
+    "content:import": "node scripts/import-content.js",
+    "admin:create": "node scripts/create-admin.js",
     "docs:api": "redocly lint openapi.yaml && redocly build-docs openapi.yaml -o docs/index.html"
   },
   "type": "commonjs",
