@@ -6,8 +6,9 @@ test("bascule de langue fr -> en sur /projets", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("lang", "fr");
   await expect(page.getByRole("heading", { level: 1, name: m("site.projects.title") })).toBeVisible();
 
-  // Selecteur de langue du pied de page (liens reels, visibles sans ouvrir de menu).
-  await page.getByRole("contentinfo").getByRole("link", { name: "English" }).click();
+  // Menu de langue de l'en-tete : bouton "Langue : Francais. Changer de langue", puis lien reel.
+  await page.getByRole("banner").getByRole("button", { name: /Changer de langue/ }).click();
+  await page.getByRole("banner").getByRole("link", { name: "English" }).click();
 
   await expect(page).toHaveURL(/\/en\/projets$/);
   await expect(page.locator("html")).toHaveAttribute("lang", "en");

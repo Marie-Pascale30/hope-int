@@ -20,7 +20,8 @@ const catalogs = { fr: load("fr"), en: load("en") };
 export function m(key, locale = "fr") {
   const value = key.split(".").reduce((node, part) => node?.[part], catalogs[locale]);
   if (typeof value !== "string") throw new Error(`Cle de traduction introuvable : ${key} (${locale})`);
-  return value;
+  // Texte tel qu'affiche : sans les balises de mise en forme de t.rich (<hl>, <strong>, <link>...).
+  return value.replace(/<\/?[a-zA-Z]+>/g, "");
 }
 
 // Comptes crees par npm run seed (voir README).
@@ -34,10 +35,12 @@ export const DEMO_MEMBER = { email: "alice@hope.org", password: "Member@123" };
  * empreinte SHA-256 du jeton, token_version du compte) et poser le cookie hope_device
  * (path /api/auth) dans le contexte du navigateur ; aucune option de contournement n'existe dans l'API.
  */
+// Champs cherches par nom accessible (role textbox) : le texte du <label> contient l'asterisque des
+// champs obligatoires (aria-hidden), que getByLabel ne retire pas.
 export async function login(page, { email, password } = DEMO_MEMBER) {
   await page.goto("/connexion");
-  await page.getByLabel(m("account.fields.email"), { exact: true }).fill(email);
-  await page.getByLabel(m("account.fields.password"), { exact: true }).fill(password);
+  await page.getByRole("textbox", { name: m("account.fields.email"), exact: true }).fill(email);
+  await page.getByRole("textbox", { name: m("account.fields.password"), exact: true }).fill(password);
   await page.getByRole("button", { name: m("account.login.submit") }).click();
 }
 

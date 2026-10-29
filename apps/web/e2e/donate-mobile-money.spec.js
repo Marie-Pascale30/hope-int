@@ -38,9 +38,9 @@ test("don Mobile Money anonyme jusqu'a la redirection vers le prestataire", asyn
     .check({ force: true });
 
   // Etape 4 : coordonnees du donateur et numero Mobile Money camerounais.
-  await page.getByLabel(m("account.donate.donor.name"), { exact: true }).fill("Donatrice E2E");
-  await page.getByLabel(m("account.donate.donor.email"), { exact: true }).fill("donatrice.e2e@example.com");
-  await page.getByLabel(m("account.donate.donor.phone"), { exact: true }).fill("6 77 12 34 56");
+  await page.getByRole("textbox", { name: m("account.donate.donor.name"), exact: true }).fill("Donatrice E2E");
+  await page.getByRole("textbox", { name: m("account.donate.donor.email"), exact: true }).fill("donatrice.e2e@example.com");
+  await page.getByRole("textbox", { name: m("account.donate.donor.phone"), exact: true }).fill("6 77 12 34 56");
 
   // Etape 5 : validation (le bouton annonce le montant en FCFA).
   const submit = page.getByRole("button", { name: /FCFA/ }).last();
